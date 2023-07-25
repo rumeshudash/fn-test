@@ -1,0 +1,20 @@
+{
+    "name": "fn-test",
+    "version": "1.0.0",
+    "repository": "https://github.com/rumeshudash/fn-test.git",
+    "license": "MIT",
+    "devDependencies": {
+        "@playwright/test": "^1.35.1",
+        "chalk": "^4",
+        "cross-env": "^7.0.3"
+    },
+    "scripts": {
+        "test:ui": "playwright test --ui",
+        "test": "playwright test",
+        "test:prod": "cross-env TEST_ENV=production playwright test",
+        "test:local": "cross-env TEST_ENV=local playwright test",
+        "test:debug": "playwright test --debug",
+        "report": "playwright show-report report",
+        "postinstall": "npx playwright install"
+    }
+}

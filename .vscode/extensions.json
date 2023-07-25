@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "esbenp.prettier-vscode",
+        "rvest.vs-code-prettier-eslint",
+        "ms-playwright.playwright",
+        "dbaeumer.vscode-eslint"
+    ]
+}

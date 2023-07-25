@@ -1,0 +1,6 @@
+/node_modules
+/results
+/report
+state.json
+yarn.lock
+yarn-error.log
