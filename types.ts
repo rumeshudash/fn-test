@@ -4,6 +4,7 @@ interface LocatorOptions {
     placeholder?: string;
     name?: string;
     text?: string | RegExp;
+    label?: string;
     class?: string[];
 }
 
@@ -90,3 +91,16 @@ type LocatorRoles =
     | "tree"
     | "treegrid"
     | "treeitem";
+
+interface ExpenseDetailInputs {
+    to?: string;
+    to_nth?: number;
+    from?: string;
+    from_nth?: number;
+    amount: number;
+    taxable_amount: number;
+    department?: string;
+    expense_head?: string;
+    poc?: string;
+    pay_to?: string;
+}

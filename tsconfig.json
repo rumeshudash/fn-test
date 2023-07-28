@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "esModuleInterop": true,
+        "paths": {
+            "@/*": ["src/*"],
+            "@/fixtures": ["src/fixtures"],
+            "@/helpers": ["src/helpers"],
+        }
+    }
+}

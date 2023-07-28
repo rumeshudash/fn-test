@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { Page, expect, test } from "@playwright/test";
 import fs from "fs";
 import { TEST_URL } from "../constants/api.constants";
 import { BaseHelper } from "../helpers/BaseHelper/base.helper";
@@ -9,10 +9,11 @@ if (fs.existsSync("./state.json")) {
 
 export const PROCESS_TEST = test.extend<{ login: void }>({
     login: [
-        async ({ page }: any, use: () => any) => {
+        async ({ page }: { page: Page }, use: () => any) => {
             const helper = new BaseHelper(page);
 
             await page.goto(TEST_URL + "/login", { waitUntil: "networkidle" });
+            await page.waitForTimeout(2000);
 
             if (await helper.isVisible({ id: "username" })) {
                 await helper.fillText("testauto@company.com", {

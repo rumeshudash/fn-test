@@ -3,6 +3,8 @@
         "esbenp.prettier-vscode",
         "rvest.vs-code-prettier-eslint",
         "ms-playwright.playwright",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "christian-kohler.path-intellisense",
+        "streetsidesoftware.code-spell-checker"
     ]
 }

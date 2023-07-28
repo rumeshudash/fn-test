@@ -34,6 +34,7 @@ export const TEST_URL = handleTestUrl(
 
 export const LISTING_ROUTES = {
     EXPENSES: TEST_URL + "/e/f/expenses",
+    RAISE_EXPENSES: TEST_URL + "/e/f/expense/c",
     EMPLOYEE_ADVANCES: TEST_URL + "/e/f/employee-advances",
     BUSINESSESS: TEST_URL + "/e/f/my-businesses",
     VENDORS: TEST_URL + "/e/f/vendors",
