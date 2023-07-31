@@ -102,7 +102,6 @@ test.describe("Signup", () => {
       confirm_password: "123456",
     });
     await signup.clickPolicy();
-
     await signup.nextPage();
   });
 });

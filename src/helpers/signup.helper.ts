@@ -16,6 +16,9 @@ export class SignupHelper extends BaseHelper {
     await this.click({ text: "Next" });
     await this._page.waitForTimeout(2000);
   }
+  public async checkNextPage() {
+    this.locate('//button[text()="Next →"]');
+  }
 
   public async errorMessage() {
     return this._page
@@ -27,7 +30,7 @@ export class SignupHelper extends BaseHelper {
     return this._page.locator("//input[@type='checkbox']");
   }
   public async clickPolicy() {
-    this._page.locator("//input[@type='checkbox']").click();
+    await this._page.locator("//input[@type='checkbox']").click();
   }
 
   public async fillSignup(data: SignupDetailsInput) {
