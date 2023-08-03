@@ -17,7 +17,7 @@ export class SignupHelper extends BaseHelper {
     await this._page.waitForTimeout(2000);
   }
   public async checkNextPage() {
-    this.locate('//button[text()="Next →"]');
+    return this.locate('//button[text()="Next →"]');
   }
 
   public async errorMessage() {
@@ -26,7 +26,7 @@ export class SignupHelper extends BaseHelper {
       .textContent();
   }
 
-  public async isTermsChecked() {
+  public async isPolicyChecked() {
     return this._page.locator("//input[@type='checkbox']");
   }
   public async clickPolicy() {

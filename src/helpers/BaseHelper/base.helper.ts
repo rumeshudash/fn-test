@@ -197,6 +197,7 @@ export class BaseHelper {
       placeholder?: string;
       label?: string;
       name?: string;
+      hasText?: string;
     }
   ) {
     const { selector, placeholder, name, label } = options || {};
@@ -232,8 +233,10 @@ export class BaseHelper {
     placeholder?: string;
     label?: string;
     name?: string;
+    hasText?: string;
   }) {
-    const { selector, placeholder, name, label, input, option } = options || {};
+    const { selector, placeholder, name, label, input, option, hasText } =
+      options || {};
 
     let tempSelector = '//div[contains(@class,"selectbox-container")]';
 
@@ -241,6 +244,9 @@ export class BaseHelper {
       tempSelector += `//div[contains(@class,"placeholder")][text()="${placeholder}"]/ancestor::div[contains(@class,"selectbox-container")]`;
     if (name)
       tempSelector += `//input[@name='${name}']/ancestor::div[contains(@class,"selectbox-container")]`;
+
+    if (hasText)
+      tempSelector += `//input[@text="${hasText}"]/ancestor::div[contains(@class,"selectbox-container")]`;
 
     const selectBox = this.locate(selector || tempSelector);
 

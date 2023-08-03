@@ -46,4 +46,5 @@ export const LISTING_ROUTES = {
   EXPENSE_APPROVAL: TEST_URL + "/e/f/expense-approval",
   ADVANCE_APPROVAL: TEST_URL + "/e/f/advance-approval",
   SIGNUP: TEST_URL + "/signup",
+  VERIFYEMAIL: TEST_URL + "/verify-email",
 };

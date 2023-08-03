@@ -16,6 +16,13 @@ describe("Raise Expense", () => {
         from_nth: 1,
         amount: 1000,
         taxable_amount: 900,
+        desc: "Dummy Text",
+      },
+    ]);
+    await expense.addTaxesData([
+      {
+        gst: "5%",
+        cess: "2000",
       },
     ]);
   });
@@ -35,7 +42,7 @@ describe("Raise Expense", () => {
         department: "Hr",
         expense_head: "Rent",
         poc: "Abhishek",
-        pay_to: "Employee",
+        pay_to: "Vendor",
       },
     ]);
   });
