@@ -4,7 +4,7 @@ import { BaseHelper } from "./BaseHelper/base.helper";
 
 export class ExpenseHelper extends BaseHelper {
   // private static DOM_SELECTOR =
-  //     '//div[text()="Details"]/parent::div/parent::div';
+  //     '//div[text()='Details']/parent::div/parent::div';
   private static DETAIL_DOM_SELECTOR = '//div[text()="Details"]/parent::div';
 
   private static ADD_TAX_DOM_SELECTOR = '//div[@role="dialog"]';
@@ -32,7 +32,7 @@ export class ExpenseHelper extends BaseHelper {
   }
 
   /**
-   * Performs the action of clicking the "Next" button and waits for 2 seconds.
+   * Performs the action of clicking the 'Next' button and waits for 2 seconds.
    *
    * @return {Promise<void>} - A promise that resolves once the action is completed.
    */
@@ -62,7 +62,7 @@ export class ExpenseHelper extends BaseHelper {
     const { dropdownLabel = "bill-to" } = selectors;
 
     const dropdown = this.locate(
-      `//button[text()="${dropdownName}"]/parent::div[@aria-label="${dropdownLabel}"]`
+      `//button[text()='${dropdownName}']/parent::div[@aria-label='${dropdownLabel}']`
     );
 
     if (!(await dropdown.isVisible())) {
@@ -103,8 +103,8 @@ export class ExpenseHelper extends BaseHelper {
 
     menuSelector += "//span";
 
-    if (name) menuSelector += `[contains(text(), "${name}")]`;
-    if (gstin) menuSelector += `[contains(text(), "${gstin}")]`;
+    if (name) menuSelector += `[contains(text(), '${name}')]`;
+    if (gstin) menuSelector += `[contains(text(), '${gstin}')]`;
 
     menuSelector += `/parent::div/parent::div`;
 
@@ -142,7 +142,9 @@ export class ExpenseHelper extends BaseHelper {
           dropdownLabel: "bill-from",
           nth: expData.from_nth,
         });
-
+      await helper.fillInput(expData.invoice, {
+        name: "invoice_number",
+      });
       await helper.fillInput(expData.amount, {
         name: "amount",
       });
@@ -186,23 +188,54 @@ export class ExpenseHelper extends BaseHelper {
         await helper._page
           .getByRole("tab", { name: "GST", exact: true })
           .click();
-        // await helper.selectOption({ option: taxData.gst, hasText: "5%" });
+        // await helper.selectOption({ option: taxData.gst, hasText: '5%' });
         await helper._page
           .locator("div")
           .filter({ hasText: /^5%$/ })
           .nth(2)
           .click();
-        await helper.fillInput(taxData.gst, { hasText: "5%" });
+        await helper._page
+          .getByText(`${taxData.gst}`, { exact: true })
+          .first()
+          .click();
       }
       if (taxData.cess) {
         await helper._page.getByRole("tab", { name: "CESS" }).click();
-        await helper.fillInput(taxData.cess, {
+        await helper.fillText(taxData.cess, {
           placeholder: "Enter Amount",
         });
+        await this._page.waitForTimeout(1200);
       }
+      if (taxData.tds) {
+        await helper._page.getByRole("tab", { name: "TDS" }).click();
+        await this._page
+          .locator('(//div[text()="Select..."]/following-sibling::div)[1]')
+          .click();
+        await this._page
+          .locator(
+            `#react-select-7-listbox [id='react-select-7-option-${taxData.tds}']`
+          )
+          .click();
+        await this._page.waitForTimeout(1200);
+      }
+      if (taxData.tds_text) {
+        //working on this where endpoint can enter name of TDS
+        await helper._page.getByRole("tab", { name: "TDS" }).click();
+        await helper.fillText(taxData.tds_text, {
+          placeholder: "Select...",
+        });
+      }
+      if (taxData.tcs) {
+        await helper._page.getByRole("tab", { name: "TCS" }).click();
+        await helper.fillText(taxData.tcs, {
+          placeholder: "Enter Percentage",
+        });
+      }
+      await this._page.getByRole("button", { name: "Save" }).click();
     }
   }
-  public async clickSave() {
-    await this._page.getByRole("button", { name: "Save" });
+  public async clickButton(buttonName: string) {
+    await this._page.getByRole("button", { name: buttonName }).click();
+    await this._page.waitForTimeout(2000);
   }
 }

@@ -255,13 +255,13 @@ export class BaseHelper {
         .getLocator()
         .locator('input[type="text"]')
         .fill(input + "");
-      await this._page.waitForTimeout(5000);
+      await this._page.waitForTimeout(1000);
     } else {
       await selectBox.click();
     }
-
+    console.log(`${input || option} is selected`);
     await this.click({
-      selector: `//div[contains(@class,"MenuList")]//div[contains(@class,"option")]//div[text()="${
+      selector: `//div[contains(@id,"listbox")]//div[contains(@class,"option")]//div[text()="${
         input || option
       }"]`,
     });

@@ -97,6 +97,7 @@ interface ExpenseDetailInputs {
   to_nth?: number;
   from?: string;
   from_nth?: number;
+  invoice?: string;
   amount: number;
   taxable_amount: number;
   department?: string;
@@ -110,6 +111,7 @@ interface AddTaxesData {
   gst?: string;
   cess?: string;
   tds?: string;
+  tds_text?: string;
   tcs?: string;
 }
 
