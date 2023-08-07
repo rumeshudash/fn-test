@@ -261,7 +261,7 @@ export class BaseHelper {
     }
     console.log(`${input || option} is selected`);
     await this.click({
-      selector: `//div[contains(@id,"listbox")]//div[contains(@class,"option")]//div[text()="${
+      selector: `//div[contains(@class,"menuportal")]//div[contains(@class,"option")]//div[text()="${
         input || option
       }"]`,
     });
