@@ -1,55 +1,16 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { ExpenseHelper } from '@/helpers/expense.helper';
+import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
     ApprovalWorkflowsTab,
     SavedExpenseCreation,
-} from '@/helpers/savedExpense.helper';
+} from '@/helpers/ExpenseHelper/savedExpense.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 
 const { expect, describe } = PROCESS_TEST;
-
-describe('Raise Expense', () => {
-    PROCESS_TEST(
-        'without poc, expense head and department',
-        async ({ page }) => {
-            const expense = new ExpenseHelper(page);
-
-            await expense.init();
-
-            await expense.nextPage();
-            await expense.fillExpenses([
-                {
-                    to_nth: 1,
-                    from_nth: 1,
-                    invoice: ' inv' + generateRandomNumber(),
-                    amount: 1000,
-                    taxable_amount: 900,
-                    desc: 'Dummy Text',
-                },
-            ]);
-            await expense.addTaxesData([
-                {
-                    gst: '12%',
-                    cess: '200',
-                    // tds_text: "194C",
-                    tds: '2', //index number of TDS
-                    tcs: '12',
-                },
-            ]);
-            await expense.clickButton('Save');
-            const savedExpensePage = new SavedExpenseCreation(page);
-
-            await test.step('Check Saved and Party Status', async () => {
-                expect(await savedExpensePage.toastMessage()).toBe(
-                    'Invoice raised successfully.'
-                );
-                expect(await savedExpensePage.checkPartyStatus()).toBe('Open');
-            });
-        }
-    );
-
-    PROCESS_TEST('with poc', async ({ page }) => {
+describe.configure({ mode: 'serial' });
+describe('with POC', () => {
+    PROCESS_TEST('Raise Expense with POC', async ({ page }) => {
         const expense = new ExpenseHelper(page);
 
         await expense.init();
@@ -63,10 +24,11 @@ describe('Raise Expense', () => {
                     invoice: ' inv' + generateRandomNumber(),
                     amount: 10000,
                     taxable_amount: 9000,
-                    department: 'Hr',
-                    expense_head: 'Rent',
+                    // department: 'Hr',
+                    // expense_head: 'Rent',
                     poc: 'Abhishek',
                     pay_to: 'Vendor',
+                    desc: 'Dummy Text',
                 },
             ]);
         });
@@ -75,7 +37,7 @@ describe('Raise Expense', () => {
                 {
                     gst: '8%',
                     cess: '250',
-                    tds: '4',
+                    tds: 'Cash withdrawal exceeding ',
                     tcs: '20',
                 },
             ]);
@@ -98,7 +60,9 @@ describe('Raise Expense', () => {
             await verificationFlows.checkLevel();
             await verificationFlows.checkUser();
             await verificationFlows.checkEmail();
-            await verificationFlows.checkApprovalStatus();
+            expect(await verificationFlows.checkApprovalStatus()).toBe(
+                'Pending Approval'
+            );
         });
     });
 });

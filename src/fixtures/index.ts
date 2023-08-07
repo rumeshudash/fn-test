@@ -23,7 +23,7 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
                 await helper.fillText('123456', { id: 'password' });
                 await helper.click({ role: 'button', name: 'Submit' });
 
-                // await expect(helper.locateByText("Select Portal")).toBeVisible();
+                // await (helper.locateByText("Select Portal")).toBeVisible();
 
                 await helper.click({ text: 'FinOps Portal' });
                 // await helper.click({
