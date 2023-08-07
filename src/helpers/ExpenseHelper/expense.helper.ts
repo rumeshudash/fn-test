@@ -1,10 +1,10 @@
 import { expect } from '@playwright/test';
-import { uuidV4 } from '../utils/common.utils';
-import { BaseHelper } from './BaseHelper/base.helper';
+import { uuidV4 } from '../../utils/common.utils';
+import { BaseHelper } from '.././BaseHelper/base.helper';
 
 export class ExpenseHelper extends BaseHelper {
     // private static DOM_SELECTOR =
-    //     '//div[text()="Details"]/parent::div/parent::div';
+    //     '//div[text()='Details']/parent::div/parent::div';
     private static DETAIL_DOM_SELECTOR = '//div[text()="Details"]/parent::div';
 
     private static ADD_TAX_DOM_SELECTOR = '//div[@role="dialog"]';
@@ -121,6 +121,9 @@ export class ExpenseHelper extends BaseHelper {
         const helper = this.locate(ExpenseHelper.DETAIL_DOM_SELECTOR);
 
         for (let expData of data) {
+            await helper.fillText(expData.invoice, {
+                name: 'invoice_number',
+            });
             if (expData.to)
                 await helper._selectDropdown('Select Business', {
                     name: expData.to,
@@ -186,23 +189,36 @@ export class ExpenseHelper extends BaseHelper {
                 await helper._page
                     .getByRole('tab', { name: 'GST', exact: true })
                     .click();
-                // await helper.selectOption({ option: taxData.gst, hasText: "5%" });
-                await helper._page
-                    .locator('div')
-                    .filter({ hasText: /^5%$/ })
-                    .nth(2)
-                    .click();
-                await helper.fillInput(taxData.gst, { hasText: '5%' });
+                await helper.selectOption({
+                    option: taxData.gst,
+                    hasText: '5%',
+                });
             }
             if (taxData.cess) {
                 await helper._page.getByRole('tab', { name: 'CESS' }).click();
-                await helper.fillInput(taxData.cess, {
+                await helper.fillText(taxData.cess, {
                     placeholder: 'Enter Amount',
                 });
             }
+
+            if (taxData.tds) {
+                await helper._page.getByRole('tab', { name: 'TDS' }).click();
+                await helper.selectOption({
+                    option: taxData.tds,
+                    placeholder: 'Select...',
+                });
+            }
+            if (taxData.tcs) {
+                await helper._page.getByRole('tab', { name: 'TCS' }).click();
+                await helper.fillText(taxData.tcs, {
+                    placeholder: 'Enter Percentage',
+                });
+            }
+            await this._page.getByRole('button', { name: 'Save' }).click();
         }
     }
-    public async clickSave() {
-        await this._page.getByRole('button', { name: 'Save' });
+    public async clickButton(buttonName: string) {
+        await this._page.getByRole('button', { name: buttonName }).click();
+        await this._page.waitForTimeout(2000);
     }
 }

@@ -200,7 +200,7 @@ export class BaseHelper {
             hasText?: string;
         }
     ) {
-        const { selector, placeholder, name, label } = options || {};
+        const { selector, placeholder, name, label, hasText } = options || {};
         await this.fillText(text + '', {
             selector: selector || 'input',
             placeholder,
@@ -234,6 +234,7 @@ export class BaseHelper {
         label?: string;
         name?: string;
         hasText?: string;
+        exact?: boolean;
     }) {
         const { selector, placeholder, name, label, input, option, hasText } =
             options || {};
@@ -246,7 +247,7 @@ export class BaseHelper {
             tempSelector += `//input[@name='${name}']/ancestor::div[contains(@class,"selectbox-container")]`;
 
         if (hasText)
-            tempSelector += `//input[@text="${hasText}"]/ancestor::div[contains(@class,"selectbox-container")]`;
+            tempSelector += `//div[text()="${hasText}"]/ancestor::div[contains(@class,"selectbox-container")]`;
 
         const selectBox = this.locate(selector || tempSelector);
 
@@ -255,16 +256,36 @@ export class BaseHelper {
                 .getLocator()
                 .locator('input[type="text"]')
                 .fill(input + '');
-            await this._page.waitForTimeout(5000);
+            await this._page.waitForTimeout(1000);
         } else {
             await selectBox.click();
         }
+        console.log(`${input || option} is selected`);
+        // await this.click({
+        //     selector: `//div[contains(@class,"MenuList")]//div[contains(@class,"option")]//div[contains(text(),"${
+        //         input || option
+        //     }")]`,
+        // });
 
-        await this.click({
-            selector: `//div[contains(@class,"MenuList")]//div[contains(@class,"option")]//div[text()="${
-                input || option
-            }"]`,
-        });
+        const elements = await this._page
+            .locator(
+                `//div[contains(@class,"MenuList")]//div[contains(@class,"option")]//div[contains(text(),"${
+                    input || option
+                }")]`
+            )
+            .elementHandles();
+
+        if (elements.length === 1) {
+            await elements[0].click();
+        } else if (elements.length > 1) {
+            for (const element of elements) {
+                const textContent = await element.textContent();
+                if (textContent === input || textContent === option) {
+                    await element.click();
+                    break;
+                }
+            }
+        }
     }
 
     /**
