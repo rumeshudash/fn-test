@@ -1,24 +1,24 @@
 // This will Generate Random Name
 export function generateRandomName() {
-    var prefixes = ["John", "Alice", "Robert", "Emily", "Michael", "Olivia"];
-    var suffixes = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Davis"];
+    var prefixes = ['John', 'Alice', 'Robert', 'Emily', 'Michael', 'Olivia'];
+    var suffixes = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Davis'];
 
     var randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
     var randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
 
-    return randomPrefix + " " + randomSuffix;
+    return randomPrefix + ' ' + randomSuffix;
 }
 
 // This will select the select box options
 export async function selectBoxSelect(page, placeholder, optionIndex) {
-    await page.locator("div").filter({ hasText: placeholder }).nth(1).click();
+    await page.locator('div').filter({ hasText: placeholder }).nth(1).click();
     await page.locator(`div[id$="-option-${optionIndex}"]`).click();
 }
 
 // this will select the date
-export async function selectDate(page, placeholder, date = "25") {
+export async function selectDate(page, placeholder, date = '25') {
     await page.getByPlaceholder(placeholder).click();
-    await page.getByRole("button", { name: date }).nth(2).click();
+    await page.getByRole('button', { name: date }).nth(2).click();
 }
 
 // this will select the input box
@@ -29,7 +29,7 @@ export async function SelectInput(page, id, data) {
 // This will Access Listing Button
 export async function ClickListingAdd(page, btnName: string) {
     await page
-        .getByRole("button", { name: `add_circle_outline ${btnName}` })
+        .getByRole('button', { name: `add_circle_outline ${btnName}` })
         .click();
 }
 
@@ -50,11 +50,11 @@ export function generateRandomNumber() {
  * @returns string
  */
 export function uuidV4() {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
         /[xy]/g,
         function (c) {
             let r = (Math.random() * 16) | 0,
-                v = c == "x" ? r : (r & 0x3) | 0x8;
+                v = c == 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
         }
     );

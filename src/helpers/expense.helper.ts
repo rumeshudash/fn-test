@@ -1,29 +1,30 @@
-import { expect } from "@playwright/test";
-import { uuidV4 } from "../utils/common.utils";
-import { BaseHelper } from "./BaseHelper/base.helper";
+import { expect } from '@playwright/test';
+import { uuidV4 } from '../utils/common.utils';
+import { BaseHelper } from './BaseHelper/base.helper';
 
 export class ExpenseHelper extends BaseHelper {
     // private static DOM_SELECTOR =
     //     '//div[text()="Details"]/parent::div/parent::div';
     private static DETAIL_DOM_SELECTOR = '//div[text()="Details"]/parent::div';
 
+    private static ADD_TAX_DOM_SELECTOR = '//div[@role="dialog"]';
     public amounts = [
-        "100", // Auto Reject
-        "110", //testing managers
-        "2000", //Departmental
-        "10000", // Verification Approval Travel Auto Approve
-        "20000", // Auto Approval
-        "810000", // All expenses
-        "5000", // All travel bill
-        "110000", // Sales bill greater than
-        "510000", //Finance department invoices greater than
+        '100', // Auto Reject
+        '110', //testing managers
+        '2000', //Departmental
+        '10000', // Verification Approval Travel Auto Approve
+        '20000', // Auto Approval
+        '810000', // All expenses
+        '5000', // All travel bill
+        '110000', // Sales bill greater than
+        '510000', //Finance department invoices greater than
     ];
-    public tax = "80";
-    public department = "Sales";
-    public expenseHead = "Travelling";
+    public tax = '80';
+    public department = 'Sales';
+    public expenseHead = 'Travelling';
 
     public async init() {
-        await this.navigateTo("RAISE_EXPENSES");
+        await this.navigateTo('RAISE_EXPENSES');
     }
 
     public static genInvoiceNumber() {
@@ -36,7 +37,7 @@ export class ExpenseHelper extends BaseHelper {
      * @return {Promise<void>} - A promise that resolves once the action is completed.
      */
     public async nextPage() {
-        await this.click({ text: "Next" });
+        await this.click({ text: 'Next' });
         await this._page.waitForTimeout(2000);
     }
 
@@ -58,7 +59,7 @@ export class ExpenseHelper extends BaseHelper {
             nth?: number;
         }
     ) {
-        const { dropdownLabel = "bill-to" } = selectors;
+        const { dropdownLabel = 'bill-to' } = selectors;
 
         const dropdown = this.locate(
             `//button[text()="${dropdownName}"]/parent::div[@aria-label="${dropdownLabel}"]`
@@ -86,7 +87,7 @@ export class ExpenseHelper extends BaseHelper {
         gstin?: string;
         nth?: number;
     }) {
-        if (!name && !gstin && !nth) throw new Error("No name or gstin or nth");
+        if (!name && !gstin && !nth) throw new Error('No name or gstin or nth');
 
         let menuSelector =
             '//div[@data-radix-popper-content-wrapper]/div[@role="dialog"]';
@@ -100,7 +101,7 @@ export class ExpenseHelper extends BaseHelper {
             return;
         }
 
-        menuSelector += "//span";
+        menuSelector += '//span';
 
         if (name) menuSelector += `[contains(text(), "${name}")]`;
         if (gstin) menuSelector += `[contains(text(), "${gstin}")]`;
@@ -121,57 +122,87 @@ export class ExpenseHelper extends BaseHelper {
 
         for (let expData of data) {
             if (expData.to)
-                await helper._selectDropdown("Select Business", {
+                await helper._selectDropdown('Select Business', {
                     name: expData.to,
                 });
             if (expData.to_nth)
-                await helper._selectDropdown("Select Business", {
+                await helper._selectDropdown('Select Business', {
                     nth: expData.to_nth,
                 });
 
             await this._page.waitForTimeout(1000);
 
             if (expData.from)
-                await helper._selectDropdown("Select Vendor", {
-                    dropdownLabel: "bill-from",
+                await helper._selectDropdown('Select Vendor', {
+                    dropdownLabel: 'bill-from',
                     name: expData.from,
                 });
             if (expData.from_nth)
-                await helper._selectDropdown("Select Vendor", {
-                    dropdownLabel: "bill-from",
+                await helper._selectDropdown('Select Vendor', {
+                    dropdownLabel: 'bill-from',
                     nth: expData.from_nth,
                 });
 
             await helper.fillInput(expData.amount, {
-                name: "amount",
+                name: 'amount',
             });
             await helper.fillInput(expData.taxable_amount, {
-                name: "taxable_amount",
+                name: 'taxable_amount',
             });
 
             if (expData.department)
                 await helper.selectOption({
                     input: expData.department,
-                    placeholder: "Select Department",
+                    placeholder: 'Select Department',
                 });
 
             if (expData.expense_head)
                 await helper.selectOption({
                     input: expData.expense_head,
-                    placeholder: "Select Expense Head",
+                    placeholder: 'Select Expense Head',
                 });
 
             if (expData.poc)
                 await helper.selectOption({
                     input: expData.poc,
-                    placeholder: "Select POC",
+                    placeholder: 'Select POC',
                 });
 
             if (expData.pay_to)
                 await helper.selectOption({
                     option: expData.pay_to,
-                    name: "pay_to",
+                    name: 'pay_to',
                 });
+            await helper.fillText(expData.desc, { name: 'description' });
         }
+    }
+
+    public async addTaxesData(data: AddTaxesData[] = []) {
+        await this._page.getByRole('button', { name: 'Add Taxes' }).click();
+        await this._page.waitForTimeout(1000);
+        const helper = this.locate(ExpenseHelper.ADD_TAX_DOM_SELECTOR);
+        for (let taxData of data) {
+            if (taxData.gst) {
+                await helper._page
+                    .getByRole('tab', { name: 'GST', exact: true })
+                    .click();
+                // await helper.selectOption({ option: taxData.gst, hasText: "5%" });
+                await helper._page
+                    .locator('div')
+                    .filter({ hasText: /^5%$/ })
+                    .nth(2)
+                    .click();
+                await helper.fillInput(taxData.gst, { hasText: '5%' });
+            }
+            if (taxData.cess) {
+                await helper._page.getByRole('tab', { name: 'CESS' }).click();
+                await helper.fillInput(taxData.cess, {
+                    placeholder: 'Enter Amount',
+                });
+            }
+        }
+    }
+    public async clickSave() {
+        await this._page.getByRole('button', { name: 'Save' });
     }
 }

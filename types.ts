@@ -103,6 +103,14 @@ interface ExpenseDetailInputs {
   expense_head?: string;
   poc?: string;
   pay_to?: string;
+  desc?: string;
+}
+
+interface AddTaxesData {
+  gst?: string;
+  cess?: string;
+  tds?: string;
+  tcs?: string;
 }
 
 interface SignupDetailsInput {
@@ -112,6 +120,6 @@ interface SignupDetailsInput {
   confirm_password: string;
 }
 
-interface errorDetails {
-  selector: string;
+interface CreateBusinessInput {
+  business_name: string;
 }
