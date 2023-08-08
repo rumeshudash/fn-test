@@ -1,4 +1,4 @@
-import { BaseHelper } from './BaseHelper/base.helper';
+import { BaseHelper } from '../BaseHelper/base.helper';
 
 export class CreateBusinessHelper extends BaseHelper {
     private CREATE_BUSINESS_DOM_SELECTOR =

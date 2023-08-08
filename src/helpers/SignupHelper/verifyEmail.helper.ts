@@ -1,5 +1,5 @@
 import { uuidV4 } from '@/utils/common.utils';
-import { BaseHelper } from './BaseHelper/base.helper';
+import { BaseHelper } from '.././BaseHelper/base.helper';
 
 export class VerifyEmailHelper extends BaseHelper {
     private static VERIFY_EMAIL_DOM_SELECTOR =

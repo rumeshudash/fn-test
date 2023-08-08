@@ -1,5 +1,5 @@
 import { uuidV4 } from '@/utils/common.utils';
-import { BaseHelper } from './BaseHelper/base.helper';
+import { BaseHelper } from '.././BaseHelper/base.helper';
 
 export class SignupHelper extends BaseHelper {
     private static SIGNUP_DOM_SELECTOR = '//form/parent::div';
