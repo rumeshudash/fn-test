@@ -8,8 +8,7 @@ import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 
 const { expect, describe } = PROCESS_TEST;
-describe.configure({ mode: 'serial' });
-describe('with POC', () => {
+describe('TECF002', () => {
     PROCESS_TEST('Raise Expense with POC', async ({ page }) => {
         const expense = new ExpenseHelper(page);
 

@@ -105,8 +105,8 @@ interface ExpenseDetailInputs {
     from?: string;
     from_nth?: number;
     invoice?: string;
-    amount: number;
-    taxable_amount: number;
+    amount?: number;
+    taxable_amount?: number;
     department?: string;
     expense_head?: string;
     poc?: string;

@@ -1,6 +1,6 @@
-import { CreateBusinessHelper } from '@/helpers/createBusiness.helper';
-import { SignupHelper } from '@/helpers/signup.helper';
-import { VerifyEmailHelper } from '@/helpers/verifyEmail.helper';
+import { CreateBusinessHelper } from '@/helpers/SignupHelper/createBusiness.helper';
+import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
+import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import { expect, test } from '@playwright/test';
 
 test.describe('Signup', () => {
