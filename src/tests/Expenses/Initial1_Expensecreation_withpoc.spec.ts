@@ -18,11 +18,11 @@ describe('TECF002', () => {
         await test.step('Fill Expense', async () => {
             await expense.fillExpenses([
                 {
-                    to_nth: 1,
-                    from_nth: 1,
+                    to: 'Hidesign India Pvt Ltd',
+                    from: 'Adidas India Marketing Private Limited',
                     invoice: ' inv' + generateRandomNumber(),
                     amount: 10000,
-                    taxable_amount: 9000,
+                    taxable_amount: 10000,
                     // department: 'Hr',
                     // expense_head: 'Rent',
                     poc: 'Abhishek',

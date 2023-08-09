@@ -75,12 +75,12 @@ describe('TECF006', () => {
                 const signIn = new SignInHelper(page);
                 const pocEmail = await verificationFlows.checkEmail();
                 const expData = await verificationFlows.getExpData();
-                await verificationFlows.logOut();
+                await savedExpensePage.logOut();
 
                 await signIn.signInPage(pocEmail, '1234567');
-                await verificationFlows.clickLink('Expenses');
-                await verificationFlows.clickLink(expData.slice(1));
-                await verificationFlows.clickReject();
+                await savedExpensePage.clickLink('Expenses');
+                await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.clickReject();
                 await savedExpensePage.clickTab('Approval Workflows');
                 expect(await verificationFlows.checkApprovalStatus()).toBe(
                     'Rejected'

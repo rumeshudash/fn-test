@@ -2,6 +2,8 @@ import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
     ApprovalWorkflowsTab,
+    FinOpsVerificationHelper,
+    PaymentVerificationHelper,
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
@@ -9,12 +11,14 @@ import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 
 const { expect, describe } = PROCESS_TEST;
-describe.configure({ mode: 'serial' });
-describe('TECF003', () => {
-    PROCESS_TEST('Expense Approval by POC', async ({ page, login }) => {
-        const expense = new ExpenseHelper(page);
+
+describe('TECF007', () => {
+    PROCESS_TEST('Expense Approval by FinOps', async ({ page }) => {
         const signIn = new SignInHelper(page);
+        const expense = new ExpenseHelper(page);
         const verificationFlows = new ApprovalWorkflowsTab(page);
+        const finOpsFlows = new FinOpsVerificationHelper(page);
+        const paymentFlows = new PaymentVerificationHelper(page);
 
         await expense.init();
 
@@ -22,12 +26,14 @@ describe('TECF003', () => {
         await test.step('Fill Expense', async () => {
             await expense.fillExpenses([
                 {
-                    to: 'Hidesign India Pvt Ltd',
-                    from: 'Adidas India Marketing Private Limited',
+                    to_nth: 1,
+                    from_nth: 1,
                     invoice: ' inv' + generateRandomNumber(),
                     amount: 10000,
                     taxable_amount: 10000,
-                    poc: 'Abhishek',
+                    department: 'Sales',
+                    expense_head: 'Refund',
+                    poc: 'Sunil',
                     pay_to: 'Vendor',
                     desc: 'Dummy Text',
                 },
@@ -66,7 +72,7 @@ describe('TECF003', () => {
             );
         });
 
-        await test.step('Expense Approve', async () => {
+        await test.step('POC Approval', async () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
@@ -74,30 +80,48 @@ describe('TECF003', () => {
             await signIn.signInPage(pocEmail, '1234567');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
-            await savedExpensePage.clickApprove([
-                {
-                    department: 'Admin',
-                    expense_head: 'Refund',
-                },
-            ]);
+            await savedExpensePage.clickApprove();
             await savedExpensePage.clickTab('Approval Workflows');
             expect(await verificationFlows.checkApprovalStatus()).toBe(
                 'Approved'
             );
         });
-        await test.step('Level Status in FinOps', async () => {
+        await test.step('Check finOpsFlows Details', async () => {
+            await page.reload();
+            await page.reload();
+
+            await savedExpensePage.clickTab('Approval Workflows');
+            await finOpsFlows.getLevelName();
+            await finOpsFlows.getLevelStatus();
+            await finOpsFlows.getEmailName();
+            await finOpsFlows.getFinopsEmail();
+        });
+
+        await test.step('FinOps Approval', async () => {
+            const finOpsEmail = await finOpsFlows.getFinopsEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-            await signIn.signInPage('newtestauto@company.com', '123456');
+            await signIn.signInPage(finOpsEmail, '1234567');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
+            await savedExpensePage.clickApprove();
+
             await savedExpensePage.clickTab('Approval Workflows');
-            expect(await verificationFlows.checkByFinOpsAdmin()).toBe(
-                'Approved'
-            );
-            // expect(
-            //     await savedExpensePage.expenseStatus('verification')
-            // ).toBeTruthy();
+            expect(await finOpsFlows.getLevelStatus()).toBe('Approved');
+        });
+
+        await test.step('Payment Approval', async () => {
+            const paymentEmail = await paymentFlows.getPaymentEmail();
+            const expData = await verificationFlows.getExpData();
+            await savedExpensePage.logOut();
+            await signIn.signInPage(paymentEmail, '1234567');
+            await savedExpensePage.clickLink('Expenses');
+            await savedExpensePage.clickLink(expData.slice(1));
+
+            await savedExpensePage.clickApprove();
+
+            await savedExpensePage.clickTab('Approval Workflows');
+            expect(await paymentFlows.getLevelStatus()).toBe('Approved');
         });
     });
 });

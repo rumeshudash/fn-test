@@ -1,7 +1,8 @@
-import { expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 
 let pocEmail;
+let finopsEmail;
 export class SavedExpenseCreation extends BaseHelper {
     private static SAVED_EXPENSE_DOM_SELECTOR =
         "//div[@dir='ltr']/following-sibling::div[1]";
@@ -20,7 +21,69 @@ export class SavedExpenseCreation extends BaseHelper {
     }
 
     public async clickTab(buttonName: string) {
-        await this._page.getByRole('tab', { name: buttonName }).click();
+        await this.click({ role: 'tab', name: buttonName });
+    }
+    public async clickLink(linkName: string) {
+        await this._page.locator('a').filter({ hasText: linkName }).click();
+    }
+
+    // public async expenseStatus(statusName: string) {
+    //     if (statusName === 'verification') {
+    //         const status = await this._page
+    //             .locator(`#expense-status-${statusName}[css="text-success"]`)
+    //             .first()
+    //             .textContent();
+    //         return status;
+    //     }
+    // }
+    public async clickReject() {
+        await this._page.getByRole('button', { name: 'Reject' }).click();
+        await this.fillText('Rejected', { placeholder: 'Write a comment...' });
+        await this._page.getByRole('button', { name: 'Reject' }).click();
+        await this._page.waitForTimeout(1000);
+    }
+
+    public async clickApprove(data: ExpenseDetailInputs[] = []) {
+        await this.click({ role: 'button', name: 'Approve' });
+        const title = await this._page
+            .getByRole('dialog')
+            .getByText('Warning')
+            .isVisible();
+        if (title === true) {
+            const buttons = this._page.getByRole('dialog').locator('button');
+            expect(await buttons.count()).toBe(3);
+            await expect(buttons.nth(0)).toContainText('Update');
+            await expect(buttons.nth(1)).toContainText('Ok');
+
+            await this.click({ role: 'button', name: 'Update' });
+            for (let update of data) {
+                if (update.department)
+                    await this.selectOption({
+                        input: update.department,
+                        placeholder: 'Select Department',
+                    });
+
+                if (update.expense_head)
+                    await this.selectOption({
+                        input: update.expense_head,
+                        placeholder: 'Select Expense Head',
+                    });
+            }
+            await this.fillText('Approved', {
+                placeholder: 'Write a comment...',
+            });
+            await this.click({ role: 'button', name: 'Approve' });
+        } else {
+            await this.fillText('Approved', {
+                placeholder: 'Write a comment...',
+            });
+            await this.click({ role: 'button', name: 'Approve' });
+        }
+        await this._page.waitForTimeout(1000);
+    }
+    public async logOut() {
+        await this._page.locator('a').filter({ hasText: 'Logout' }).click();
+        await this._page.waitForTimeout(1000);
     }
 }
 
@@ -57,62 +120,93 @@ export class ApprovalWorkflowsTab extends BaseHelper {
             .first()
             .textContent();
     }
-
-    public async logOut() {
-        await this._page.locator('a').filter({ hasText: 'Logout' }).click();
-        await this._page.waitForTimeout(2000);
-    }
-
-    public async clickLink(linkName: string) {
-        await this._page.locator('a').filter({ hasText: linkName }).click();
-        await this._page.waitForTimeout(2000);
-    }
-
-    public async clickReject() {
-        await this._page.getByRole('button', { name: 'Reject' }).click();
-        await this.fillText('Rejected', { placeholder: 'Write a comment...' });
-        await this._page.getByRole('button', { name: 'Reject' }).click();
-        await this._page.waitForTimeout(1000);
-    }
-
-    public async clickApprove(data: ExpenseDetailInputs[] = []) {
-        await this.click({ role: 'button', name: 'Approve' });
-        const title = await this._page.getByText('Warning').isVisible();
-        if (title === true) {
-            await this.click({ role: 'button', name: 'Update' });
-            for (let update of data) {
-                if (update.department)
-                    await this.selectOption({
-                        input: update.department,
-                        placeholder: 'Select Department',
-                    });
-
-                if (update.expense_head)
-                    await this.selectOption({
-                        input: update.expense_head,
-                        placeholder: 'Select Expense Head',
-                    });
-            }
-            await this.fillText('Approved', {
-                placeholder: 'Write a comment...',
-            });
-            await this.click({ role: 'button', name: 'Approve' });
-        } else {
-            await this.fillText('Approved', {
-                placeholder: 'Write a comment...',
-            });
-            await this.click({ role: 'button', name: 'Approve' });
-        }
-        await this._page.waitForTimeout(1000);
+    public async checkByFinOpsAdmin() {
+        this.locate(ApprovalWorkflowsTab.APPROVAL_WORKFLOWS_DOM_SELECTOR);
+        return await this._page
+            .locator('div.approval-status')
+            .nth(1)
+            .textContent();
     }
 
     public async clickApproveWithoutComment() {
-        await this._page
-            .locator(
-                "//div[contains(@class,'w-full border-r')]/following-sibling::button[1]"
-            )
-            .click();
+        // await this._page
+        //     .locator(
+        //         "//div[contains(@class,'w-full border-r')]/following-sibling::button[1]"
+        //     )
+        //     .click();
+        await this.click({
+            selector:
+                "//div[contains(@class,'w-full border-r')]/following-sibling::button[1]",
+        });
         await this.click({ role: 'menuitem', name: 'Approve without comment' });
         await this._page.waitForTimeout(1000);
+    }
+}
+
+export class FinOpsVerificationHelper extends BaseHelper {
+    private FINOPS_VERIFICATION_DOM_SELECTOR =
+        '//div[@aria-label="FinOps Approvals"]';
+    helper = this.locate(this.FINOPS_VERIFICATION_DOM_SELECTOR);
+    public async getLevelName() {
+        return await this.helper._page
+            .locator('span.level-name')
+            .first()
+            .textContent();
+    }
+
+    public async getLevelStatus() {
+        return await this.helper._page
+            .locator('div.approval-status')
+            .first()
+            .textContent();
+    }
+
+    public async getFinopsEmail() {
+        finopsEmail = await this.helper._page
+            .locator('span.approval-user-email')
+            .first()
+            .textContent();
+        return finopsEmail;
+    }
+
+    public async getEmailName() {
+        return await this.helper._page
+            .locator('p.approval-user-name')
+            .first()
+            .textContent();
+    }
+}
+
+export class PaymentVerificationHelper extends BaseHelper {
+    private PAYMENT_VERIFICATION_DOM_SELECTOR =
+        '//div[@aria-label="Payment Approvals"]';
+    helper = this.locate(this.PAYMENT_VERIFICATION_DOM_SELECTOR);
+    public async getLevelName() {
+        return await this.helper._page
+            .locator('span.level-name')
+            .first()
+            .textContent();
+    }
+
+    public async getLevelStatus() {
+        return await this.helper._page
+            .locator('div.approval-status')
+            .first()
+            .textContent();
+    }
+
+    public async getPaymentEmail() {
+        finopsEmail = await this.helper._page
+            .locator('span.approval-user-email')
+            .first()
+            .textContent();
+        return finopsEmail;
+    }
+
+    public async getEmailName() {
+        return await this.helper._page
+            .locator('p.approval-user-name')
+            .first()
+            .textContent();
     }
 }
