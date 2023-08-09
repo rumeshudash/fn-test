@@ -23,8 +23,8 @@ describe('TECF005', () => {
             await test.step('Fill Expense', async () => {
                 await expense.fillExpenses([
                     {
-                        to_nth: 1,
-                        from_nth: 1,
+                        to: 'Hidesign India Pvt Ltd',
+                        from: 'Adidas India Marketing Private Limited',
                         invoice: ' inv' + generateRandomNumber(),
                         amount: 10000,
                         taxable_amount: 10000,
@@ -75,11 +75,11 @@ describe('TECF005', () => {
                 const signIn = new SignInHelper(page);
                 const pocEmail = await verificationFlows.checkEmail();
                 const expData = await verificationFlows.getExpData();
-                await verificationFlows.logOut();
+                await savedExpensePage.logOut();
 
                 await signIn.signInPage(pocEmail, '1234567');
-                await verificationFlows.clickLink('Expenses');
-                await verificationFlows.clickLink(expData.slice(1));
+                await savedExpensePage.clickLink('Expenses');
+                await savedExpensePage.clickLink(expData.slice(1));
                 await verificationFlows.clickApproveWithoutComment();
                 await savedExpensePage.clickTab('Approval Workflows');
                 expect(await verificationFlows.checkApprovalStatus()).toBe(

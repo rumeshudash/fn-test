@@ -22,6 +22,13 @@ export class SignInHelper extends BaseHelper {
                 exact: true,
             })
             .isVisible();
+        if (username === 'newtestauto@company.com') {
+            await this._page
+                .getByRole('dialog')
+                .getByText('FinOps Portal')
+                .click();
+            await this._page.waitForTimeout(2000);
+        }
         if (createPassword === true) {
             await this.fillText(setPassword, {
                 placeholder: 'Enter Current Password',
