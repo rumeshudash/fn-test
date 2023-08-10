@@ -12,10 +12,11 @@ const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
 describe('TECF005', () => {
     PROCESS_TEST(
-        'Expense Approval by POC with all details',
+        'Expense Approval by POC without Comment',
         async ({ page }) => {
             const expense = new ExpenseHelper(page);
             const verificationFlows = new ApprovalWorkflowsTab(page);
+            const signIn = new SignInHelper(page);
 
             await expense.init();
 
@@ -65,14 +66,14 @@ describe('TECF005', () => {
                 await verificationFlows.checkLevel();
                 await verificationFlows.checkUser();
                 await verificationFlows.checkEmail();
-                console.log('POC Email ', await verificationFlows.checkEmail());
-                expect(await verificationFlows.checkApprovalStatus()).toBe(
-                    'Pending Approval'
-                );
+                expect(
+                    await verificationFlows.checkApprovalStatus(
+                        'Verification Approvals'
+                    )
+                ).toBe('Pending Approval');
             });
 
-            await test.step('Expense Approve', async () => {
-                const signIn = new SignInHelper(page);
+            await test.step('Expense Approve and check status', async () => {
                 const pocEmail = await verificationFlows.checkEmail();
                 const expData = await verificationFlows.getExpData();
                 await savedExpensePage.logOut();
@@ -82,9 +83,35 @@ describe('TECF005', () => {
                 await savedExpensePage.clickLink(expData.slice(1));
                 await verificationFlows.clickApproveWithoutComment();
                 await savedExpensePage.clickTab('Approval Workflows');
-                expect(await verificationFlows.checkApprovalStatus()).toBe(
-                    'Approved'
-                );
+                expect(
+                    await verificationFlows.checkApprovalStatus(
+                        'Verification Approvals'
+                    )
+                ).toBe('Approved');
+            });
+
+            await test.step('Level Status in FinOps', async () => {
+                const expData = await verificationFlows.getExpData();
+                await savedExpensePage.logOut();
+                await signIn.signInPage('newtestauto@company.com', '123456');
+                await savedExpensePage.clickLink('Expenses');
+                await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.clickTab('Approval Workflows');
+                expect(
+                    await verificationFlows.checkByFinOpsAdmin(
+                        'Verification Approvals'
+                    )
+                ).toBe('Approved');
+                expect(
+                    await savedExpensePage.expenseStatusSuccess('verification')
+                ).toBe(true);
+
+                expect(
+                    await savedExpensePage.expenseStatusSuccess('finops')
+                ).toBe(false);
+                expect(
+                    await savedExpensePage.expenseStatusSuccess('payment')
+                ).toBe(false);
             });
         }
     );

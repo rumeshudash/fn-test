@@ -25,17 +25,19 @@ export class SavedExpenseCreation extends BaseHelper {
     }
     public async clickLink(linkName: string) {
         await this._page.locator('a').filter({ hasText: linkName }).click();
+        await this._page.waitForTimeout(1000);
     }
 
-    // public async expenseStatus(statusName: string) {
-    //     if (statusName === 'verification') {
-    //         const status = await this._page
-    //             .locator(`#expense-status-${statusName}[css="text-success"]`)
-    //             .first()
-    //             .textContent();
-    //         return status;
-    //     }
-    // }
+    public async expenseStatusSuccess(statusName: string) {
+        const status = this._page
+            .locator(`#expense-status-${statusName}`)
+            .locator(`div.bg-success`);
+
+        if (status) {
+            return await status.isVisible();
+        }
+    }
+
     public async clickReject() {
         await this._page.getByRole('button', { name: 'Reject' }).click();
         await this.fillText('Rejected', { placeholder: 'Write a comment...' });
@@ -83,7 +85,6 @@ export class SavedExpenseCreation extends BaseHelper {
     }
     public async logOut() {
         await this._page.locator('a').filter({ hasText: 'Logout' }).click();
-        await this._page.waitForTimeout(1000);
     }
 }
 
@@ -113,19 +114,43 @@ export class ApprovalWorkflowsTab extends BaseHelper {
             .textContent();
         return pocEmail;
     }
-    public async checkApprovalStatus() {
+    public async checkApprovalStatus(labelName) {
         this.locate(ApprovalWorkflowsTab.APPROVAL_WORKFLOWS_DOM_SELECTOR);
         return await this._page
+            .getByLabel(labelName)
             .locator('div.approval-status')
             .first()
             .textContent();
     }
-    public async checkByFinOpsAdmin() {
+    public async checkByFinOpsAdmin(labelName) {
         this.locate(ApprovalWorkflowsTab.APPROVAL_WORKFLOWS_DOM_SELECTOR);
-        return await this._page
-            .locator('div.approval-status')
-            .nth(1)
-            .textContent();
+        await this._page
+            .getByLabel(labelName)
+            .locator('div.workflow-level-header div.icon-container')
+            .filter({ hasText: /^arrow_back_ios_new$/ })
+            .click();
+        const levelStatus = this._page.locator('div.approval-status').nth(1);
+
+        if (await levelStatus.isVisible()) {
+            return levelStatus.textContent();
+        } else {
+            return this._page
+                .locator('div.approval-status')
+                .first()
+                .textContent();
+        }
+    }
+
+    public async nextPendingFlows(flowsName) {
+        await this._page.reload();
+
+        await this._page.reload();
+        await this._page.waitForTimeout(1000);
+        const flowsContainer = this._page
+            .locator(`//div[@aria-label='${flowsName}']`)
+            .locator('div.approval-status');
+        if (await flowsContainer.isVisible())
+            return await flowsContainer.textContent();
     }
 
     public async clickApproveWithoutComment() {
@@ -197,6 +222,7 @@ export class PaymentVerificationHelper extends BaseHelper {
 
     public async getPaymentEmail() {
         finopsEmail = await this.helper._page
+            .getByLabel('Payment Approvals')
             .locator('span.approval-user-email')
             .first()
             .textContent();

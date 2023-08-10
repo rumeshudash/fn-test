@@ -9,7 +9,6 @@ import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 
 const { expect, describe } = PROCESS_TEST;
-describe.configure({ mode: 'serial' });
 describe('TECF003', () => {
     PROCESS_TEST('Expense Approval by POC', async ({ page, login }) => {
         const expense = new ExpenseHelper(page);
@@ -25,8 +24,8 @@ describe('TECF003', () => {
                     to: 'Hidesign India Pvt Ltd',
                     from: 'Adidas India Marketing Private Limited',
                     invoice: ' inv' + generateRandomNumber(),
-                    amount: 10000,
-                    taxable_amount: 10000,
+                    amount: 900,
+                    taxable_amount: 900,
                     poc: 'Abhishek',
                     pay_to: 'Vendor',
                     desc: 'Dummy Text',
@@ -60,10 +59,11 @@ describe('TECF003', () => {
             await verificationFlows.checkLevel();
             await verificationFlows.checkUser();
             await verificationFlows.checkEmail();
-            console.log('POC Email ', await verificationFlows.checkEmail());
-            expect(await verificationFlows.checkApprovalStatus()).toBe(
-                'Pending Approval'
-            );
+            expect(
+                await verificationFlows.checkApprovalStatus(
+                    'Verification Approvals'
+                )
+            ).toBe('Pending Approval');
         });
 
         await test.step('Expense Approve', async () => {
@@ -81,9 +81,11 @@ describe('TECF003', () => {
                 },
             ]);
             await savedExpensePage.clickTab('Approval Workflows');
-            expect(await verificationFlows.checkApprovalStatus()).toBe(
-                'Approved'
-            );
+            expect(
+                await verificationFlows.checkApprovalStatus(
+                    'Verification Approvals'
+                )
+            ).toBe('Approved');
         });
         await test.step('Level Status in FinOps', async () => {
             const expData = await verificationFlows.getExpData();
@@ -92,12 +94,23 @@ describe('TECF003', () => {
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickTab('Approval Workflows');
-            expect(await verificationFlows.checkByFinOpsAdmin()).toBe(
-                'Approved'
+            expect(
+                await verificationFlows.checkByFinOpsAdmin(
+                    'Verification Approvals'
+                )
+            ).toBe('Approved');
+        });
+
+        await test.step('Check Expense Status', async () => {
+            expect(
+                await savedExpensePage.expenseStatusSuccess('verification')
+            ).toBe(true);
+            expect(await savedExpensePage.expenseStatusSuccess('finops')).toBe(
+                true
             );
-            // expect(
-            //     await savedExpensePage.expenseStatus('verification')
-            // ).toBeTruthy();
+            expect(await savedExpensePage.expenseStatusSuccess('payment')).toBe(
+                true
+            );
         });
     });
 });

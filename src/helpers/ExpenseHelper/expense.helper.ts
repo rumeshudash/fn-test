@@ -38,7 +38,7 @@ export class ExpenseHelper extends BaseHelper {
      */
     public async nextPage() {
         await this.click({ text: 'Next' });
-        await this._page.waitForTimeout(2000);
+        await this._page.waitForTimeout(1000);
     }
 
     /**
