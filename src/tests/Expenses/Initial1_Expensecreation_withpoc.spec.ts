@@ -59,9 +59,11 @@ describe('TECF002', () => {
             await verificationFlows.checkLevel();
             await verificationFlows.checkUser();
             await verificationFlows.checkEmail();
-            expect(await verificationFlows.checkApprovalStatus()).toBe(
-                'Pending Approval'
-            );
+            expect(
+                await verificationFlows.checkApprovalStatus(
+                    'Verification Approvals'
+                )
+            ).toBe('Pending Approval');
         });
     });
 });

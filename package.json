@@ -16,5 +16,8 @@
         "test:debug": "playwright test --debug",
         "report": "playwright show-report report",
         "postinstall": "npx playwright install"
+    },
+    "dependencies": {
+        "http-server": "^14.1.1"
     }
 }

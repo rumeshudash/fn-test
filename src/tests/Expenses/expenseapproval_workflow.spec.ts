@@ -66,10 +66,11 @@ describe('TECF007', () => {
             await verificationFlows.checkLevel();
             await verificationFlows.checkUser();
             await verificationFlows.checkEmail();
-            console.log('POC Email ', await verificationFlows.checkEmail());
-            expect(await verificationFlows.checkApprovalStatus()).toBe(
-                'Pending Approval'
-            );
+            expect(
+                await verificationFlows.checkApprovalStatus(
+                    'Verification Approvals'
+                )
+            ).toBe('Pending Approval');
         });
 
         await test.step('POC Approval', async () => {
@@ -82,14 +83,39 @@ describe('TECF007', () => {
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickApprove();
             await savedExpensePage.clickTab('Approval Workflows');
-            expect(await verificationFlows.checkApprovalStatus()).toBe(
-                'Approved'
+            expect(
+                await verificationFlows.checkApprovalStatus(
+                    'Verification Approvals'
+                )
+            ).toBe('Approved');
+        });
+        await test.step('Level Status in FinOps', async () => {
+            const expData = await verificationFlows.getExpData();
+            await savedExpensePage.logOut();
+            await signIn.signInPage('newtestauto@company.com', '123456');
+            await savedExpensePage.clickLink('Expenses');
+            await savedExpensePage.clickLink(expData.slice(1));
+            await savedExpensePage.clickTab('Approval Workflows');
+            expect(
+                await verificationFlows.checkByFinOpsAdmin(
+                    'Verification Approvals'
+                )
+            ).toBe('Approved');
+
+            // expect(
+            //     await savedExpensePage.expenseStatus('verification')
+            // ).toBeTruthy();
+        });
+        await test.step('Check pending flows and party status in finops', async () => {
+            expect(
+                await verificationFlows.nextPendingFlows('FinOps Approvals')
+            ).toBe('Pending Approval');
+            expect(await savedExpensePage.checkPartyStatus()).toBe(
+                'Pending Approval'
             );
         });
-        await test.step('Check finOpsFlows Details', async () => {
-            await page.reload();
-            await page.reload();
 
+        await test.step('Check finOpsFlows Details', async () => {
             await savedExpensePage.clickTab('Approval Workflows');
             await finOpsFlows.getLevelName();
             await finOpsFlows.getLevelStatus();

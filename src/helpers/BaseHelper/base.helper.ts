@@ -304,7 +304,6 @@ export class BaseHelper {
         if (options) this.locate(selector, rest);
 
         info(`Click: ${button} click in ${this._getSelector(options)}`);
-        await this._page.waitForTimeout(1000);
         await this._locator.click({ button });
         success(`Click: ${button} click in ${this._getSelector(options)}`);
     }

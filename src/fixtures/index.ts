@@ -31,7 +31,7 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
                 //   text: "FinOps Portal",
                 // });
 
-                await page.waitForTimeout(2000);
+                await page.waitForTimeout(1000);
 
                 // await expect(
                 //   helper.locateByText("Test Automation Account Org")

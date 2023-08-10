@@ -27,7 +27,7 @@ export class SignInHelper extends BaseHelper {
                 .getByRole('dialog')
                 .getByText('FinOps Portal')
                 .click();
-            await this._page.waitForTimeout(2000);
+            await this._page.waitForTimeout(1000);
         }
         if (createPassword === true) {
             await this.fillText(setPassword, {
@@ -40,7 +40,6 @@ export class SignInHelper extends BaseHelper {
                 placeholder: 'Re-Enter New Password',
             });
             await this.click({ role: 'button', name: 'Submit' });
-            await this._page.waitForTimeout(1000);
             await this.click({ role: 'button', name: 'Back To Sign In →' });
 
             await this.fillText(username, { id: 'username' });

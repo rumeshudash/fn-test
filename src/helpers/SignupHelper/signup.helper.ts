@@ -13,7 +13,7 @@ export class SignupHelper extends BaseHelper {
     }
     public async nextPage() {
         await this.click({ text: 'Next' });
-        await this._page.waitForTimeout(2000);
+        await this._page.waitForTimeout(1000);
     }
     public async checkNextPage() {
         return this.locate('//button[text()="Next →"]');
