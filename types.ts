@@ -131,3 +131,17 @@ interface SignupDetailsInput {
 interface CreateBusinessInput {
     business_name: string;
 }
+interface ClientBusinessDetails {
+    businessName: string;
+    gstin: string;
+}
+interface ClientBankAccountDetails {
+    accountNumber: string;
+    ifsc: string;
+}
+
+interface UploadDocuments {
+    imagePath?: string;
+    tdsCert?: string;
+    tdsPercentage?: string;
+}

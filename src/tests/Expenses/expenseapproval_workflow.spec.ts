@@ -11,7 +11,18 @@ import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 
 const { expect, describe } = PROCESS_TEST;
-
+const EXPENSEDETAILS = {
+    to: 'Hidesign India Pvt Ltd',
+    from: 'Chumbak Design Private Limited',
+    invoice: ' inv' + generateRandomNumber(),
+    amount: 10000,
+    taxable_amount: 10000,
+    department: 'Sales',
+    expense_head: 'Refund',
+    poc: 'Sunil',
+    pay_to: 'Vendor',
+    desc: 'Dummy Text',
+};
 describe('TECF007', () => {
     PROCESS_TEST('Expense Approval by FinOps', async ({ page }) => {
         const signIn = new SignInHelper(page);
@@ -24,20 +35,7 @@ describe('TECF007', () => {
 
         await expense.nextPage();
         await test.step('Fill Expense', async () => {
-            await expense.fillExpenses([
-                {
-                    to_nth: 1,
-                    from_nth: 1,
-                    invoice: ' inv' + generateRandomNumber(),
-                    amount: 10000,
-                    taxable_amount: 10000,
-                    department: 'Sales',
-                    expense_head: 'Refund',
-                    poc: 'Sunil',
-                    pay_to: 'Vendor',
-                    desc: 'Dummy Text',
-                },
-            ]);
+            await expense.fillExpenses([EXPENSEDETAILS]);
         });
         await test.step('Add Taxes', async () => {
             await expense.addTaxesData([
@@ -148,6 +146,12 @@ describe('TECF007', () => {
 
             await savedExpensePage.clickTab('Approval Workflows');
             expect(await paymentFlows.getLevelStatus()).toBe('Approved');
+        });
+        await test.step('Check Business and Vendor', async () => {
+            expect(await savedExpensePage.checkExpenseTo()).toBe(
+                EXPENSEDETAILS.to + '…'
+            );
+            await page.waitForTimeout(1000);
         });
     });
 });
