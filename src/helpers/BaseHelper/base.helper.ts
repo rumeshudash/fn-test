@@ -243,6 +243,7 @@ export class BaseHelper {
 
         if (placeholder)
             tempSelector += `//div[contains(@class,"placeholder")][text()="${placeholder}"]/ancestor::div[contains(@class,"selectbox-container")]`;
+
         if (name)
             tempSelector += `//input[@name='${name}']/ancestor::div[contains(@class,"selectbox-container")]`;
 

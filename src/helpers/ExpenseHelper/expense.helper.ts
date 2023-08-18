@@ -121,9 +121,6 @@ export class ExpenseHelper extends BaseHelper {
         const helper = this.locate(ExpenseHelper.DETAIL_DOM_SELECTOR);
 
         for (let expData of data) {
-            await helper.fillText(expData.invoice, {
-                name: 'invoice_number',
-            });
             if (expData.to)
                 await helper._selectDropdown('Select Business', {
                     name: expData.to,
@@ -132,7 +129,9 @@ export class ExpenseHelper extends BaseHelper {
                 await helper._selectDropdown('Select Business', {
                     nth: expData.to_nth,
                 });
-
+            await helper.fillText(expData.invoice, {
+                name: 'invoice_number',
+            });
             await this._page.waitForTimeout(1000);
 
             if (expData.from)
@@ -168,7 +167,7 @@ export class ExpenseHelper extends BaseHelper {
             if (expData.poc)
                 await helper.selectOption({
                     input: expData.poc,
-                    placeholder: 'Select POC',
+                    name: 'poc',
                 });
 
             if (expData.pay_to)

@@ -131,3 +131,34 @@ interface SignupDetailsInput {
 interface CreateBusinessInput {
     business_name: string;
 }
+interface ClientBusinessDetails {
+    businessName: string;
+    gstin: string;
+}
+interface ClientBankAccountDetails {
+    accountNumber: string;
+    ifsc: string;
+}
+
+interface VENDORACCOUNTDETAILS {
+    businessName: string;
+    vendorBusiness: string;
+    displayName?: string;
+    pinCode: string;
+    address: string;
+    businessType: string;
+    vendorEmail: string;
+    vendorNumber: string;
+}
+
+interface BUSINESSMANAGEDONBOARDING {
+    businessName: string;
+    gstin: string;
+    vendorEmail: string;
+    vendorNumber: string;
+}
+interface UploadDocuments {
+    imagePath?: string;
+    tdsCert?: string;
+    tdsPercentage?: string;
+}
