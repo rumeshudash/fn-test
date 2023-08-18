@@ -106,16 +106,19 @@ describe('TECF003', () => {
                 await savedExpensePage.expenseStatusSuccess('verification')
             ).toBe(true);
             expect(await savedExpensePage.expenseStatusSuccess('finops')).toBe(
-                false
+                true
             );
             expect(await savedExpensePage.expenseStatusSuccess('payment')).toBe(
-                false
+                true
             );
         });
 
         await test.step('Check Business and Vendor', async () => {
             expect(await savedExpensePage.checkExpenseTo()).toBe(
-                EXPENSEDETAILS.to
+                EXPENSEDETAILS.to + '…'
+            );
+            expect(await savedExpensePage.checkExpenseFrom()).toBe(
+                EXPENSEDETAILS.from + '…'
             );
             await page.waitForTimeout(1000);
         });

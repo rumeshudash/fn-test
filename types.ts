@@ -140,6 +140,23 @@ interface ClientBankAccountDetails {
     ifsc: string;
 }
 
+interface VENDORACCOUNTDETAILS {
+    businessName: string;
+    vendorBusiness: string;
+    displayName?: string;
+    pinCode: string;
+    address: string;
+    businessType: string;
+    vendorEmail: string;
+    vendorNumber: string;
+}
+
+interface BUSINESSMANAGEDONBOARDING {
+    businessName: string;
+    gstin: string;
+    vendorEmail: string;
+    vendorNumber: string;
+}
 interface UploadDocuments {
     imagePath?: string;
     tdsCert?: string;

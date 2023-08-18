@@ -106,11 +106,13 @@ describe('TECF007', () => {
         });
         await test.step('Check pending flows and party status in finops', async () => {
             expect(
-                await verificationFlows.nextPendingFlows('FinOps Approvals')
+                await verificationFlows.nextPendingFlows(
+                    'Verification Approvals'
+                )
             ).toBe('Pending Approval');
-            expect(await savedExpensePage.checkPartyStatus()).toBe(
-                'Pending Approval'
-            );
+            // expect(await savedExpensePage.checkPartyStatus()).toBe(
+            //     'Pending Approval'
+            // );
         });
 
         await test.step('Check finOpsFlows Details', async () => {

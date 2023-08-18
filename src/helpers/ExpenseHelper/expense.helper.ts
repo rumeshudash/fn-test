@@ -167,7 +167,7 @@ export class ExpenseHelper extends BaseHelper {
             if (expData.poc)
                 await helper.selectOption({
                     input: expData.poc,
-                    placeholder: 'Select POC',
+                    name: 'poc',
                 });
 
             if (expData.pay_to)

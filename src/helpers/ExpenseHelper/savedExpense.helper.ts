@@ -48,6 +48,16 @@ export class SavedExpenseCreation extends BaseHelper {
         return toBusiness;
     }
 
+    public async checkExpenseFrom() {
+        const toLocator = this._page.locator(
+            '(//div[@aria-label="bill-from-card"]//div)[1]'
+        );
+        const toBusiness = await toLocator
+            .locator('(//a[@class="table-link w-full"]//div)[2]')
+            .textContent();
+        return toBusiness;
+    }
+
     public async clickReject() {
         await this._page.getByRole('button', { name: 'Reject' }).click();
         await this.fillText('Rejected', { placeholder: 'Write a comment...' });
@@ -117,13 +127,10 @@ export class ApprovalWorkflowsTab extends BaseHelper {
     public async checkLevel() {
         const helper = this.locate(this.APPROVAL_WORKFLOWS_DOM_SELECTOR);
         const verificationContainer = helper.locateByText('Pending Approval');
-        console.log(
-            'Available Container: ',
-            await verificationContainer.count()
-        );
+
         if ((await verificationContainer.count()) >= 2) {
             return await helper._page
-                .locator("(//div[@class='col-flex']) [2]")
+                .locator("(//div[@class='col-flex']) [1]")
                 .locator('span.level-number')
                 .textContent();
         } else {
@@ -218,7 +225,8 @@ export class ApprovalWorkflowsTab extends BaseHelper {
         await this._page.waitForTimeout(1000);
         const flowsContainer = this._page
             .locator(`//div[@aria-label='${flowsName}']`)
-            .locator('div.approval-status');
+            .locator('div.approval-status')
+            .nth(2);
         if (await flowsContainer.isVisible())
             return await flowsContainer.textContent();
     }
