@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
+import { firefox } from 'playwright';
 
 let pocEmail;
 let finopsEmail;
@@ -37,6 +38,25 @@ export class SavedExpenseCreation extends BaseHelper {
             return await status.isVisible();
         }
     }
+    public async checkExpenseTo() {
+        const toLocator = this._page.locator(
+            '(//div[@aria-label="bill-to-card"]//div)[1]'
+        );
+        const toBusiness = await toLocator
+            .locator('(//div[contains(@class,"flex-1 gap-1")]//div)[1]')
+            .textContent();
+        return toBusiness;
+    }
+
+    public async checkExpenseFrom() {
+        const toLocator = this._page.locator(
+            '(//div[@aria-label="bill-from-card"]//div)[1]'
+        );
+        const toBusiness = await toLocator
+            .locator('(//a[@class="table-link w-full"]//div)[2]')
+            .textContent();
+        return toBusiness;
+    }
 
     public async clickReject() {
         await this._page.getByRole('button', { name: 'Reject' }).click();
@@ -46,7 +66,13 @@ export class SavedExpenseCreation extends BaseHelper {
     }
 
     public async clickApprove(data: ExpenseDetailInputs[] = []) {
-        await this.click({ role: 'button', name: 'Approve' });
+        const partyStatus = await this._page
+            .locator("//div[@id='party-status']/div[1]/div[1]")
+            .textContent();
+        console.log('Before Approve check Party Status: ', partyStatus);
+        if (partyStatus === 'Submitted' || partyStatus === 'Pending Approval') {
+            await this.click({ role: 'button', name: 'Approve' });
+        }
         const title = await this._page
             .getByRole('dialog')
             .getByText('Warning')
@@ -89,55 +115,106 @@ export class SavedExpenseCreation extends BaseHelper {
 }
 
 export class ApprovalWorkflowsTab extends BaseHelper {
-    private static APPROVAL_WORKFLOWS_DOM_SELECTOR =
+    private APPROVAL_WORKFLOWS_DOM_SELECTOR =
         "//div[@aria-label='Verification Approvals']";
 
     public async getExpData() {
-        return this._page
+        const helper = this.locate(this.APPROVAL_WORKFLOWS_DOM_SELECTOR);
+        return helper._page
             .locator("//span[@class='text-base text-base-secondary']")
             .textContent();
     }
     public async checkLevel() {
-        this.locate(ApprovalWorkflowsTab.APPROVAL_WORKFLOWS_DOM_SELECTOR);
-        await this._page.locator('span.level-number').textContent();
+        const helper = this.locate(this.APPROVAL_WORKFLOWS_DOM_SELECTOR);
+        const verificationContainer = helper.locateByText('Pending Approval');
+
+        if ((await verificationContainer.count()) >= 2) {
+            return await helper._page
+                .locator("(//div[@class='col-flex']) [1]")
+                .locator('span.level-number')
+                .textContent();
+        } else {
+            return await helper._page
+                .locator("(//div[@class='col-flex'])")
+                .locator('span.level-number')
+                .textContent();
+        }
     }
 
     public async checkUser() {
-        this.locate(ApprovalWorkflowsTab.APPROVAL_WORKFLOWS_DOM_SELECTOR);
-        await this._page.locator('p.approval-user-name').textContent();
+        const helper = this.locate(this.APPROVAL_WORKFLOWS_DOM_SELECTOR);
+        await helper._page.locator('p.approval-user-name').textContent();
     }
 
     public async checkEmail() {
-        this.locate(ApprovalWorkflowsTab.APPROVAL_WORKFLOWS_DOM_SELECTOR);
-        pocEmail = await this._page
+        const helper = this.locate(this.APPROVAL_WORKFLOWS_DOM_SELECTOR);
+        pocEmail = await helper._page
             .locator('span.approval-user-email')
             .textContent();
         return pocEmail;
     }
-    public async checkApprovalStatus(labelName) {
-        this.locate(ApprovalWorkflowsTab.APPROVAL_WORKFLOWS_DOM_SELECTOR);
-        return await this._page
-            .getByLabel(labelName)
+    public async checkApprovalStatus(levelName) {
+        const helper = this.locate(this.APPROVAL_WORKFLOWS_DOM_SELECTOR);
+        return await helper._page
+            .getByLabel(levelName)
             .locator('div.approval-status')
             .first()
             .textContent();
     }
-    public async checkByFinOpsAdmin(labelName) {
-        this.locate(ApprovalWorkflowsTab.APPROVAL_WORKFLOWS_DOM_SELECTOR);
-        await this._page
-            .getByLabel(labelName)
-            .locator('div.workflow-level-header div.icon-container')
-            .filter({ hasText: /^arrow_back_ios_new$/ })
-            .click();
-        const levelStatus = this._page.locator('div.approval-status').nth(1);
-
-        if (await levelStatus.isVisible()) {
-            return levelStatus.textContent();
+    public async checkByFinOpsAdmin(labelName: string) {
+        const levelOne = this._page.locator("(//div[@class='col-flex'])[1]");
+        const levelOneVisibility = await levelOne
+            .locator(
+                "(//div[contains(@class,'row-flex justify-between')]/following-sibling::div)[1]"
+            )
+            .isVisible();
+        if (levelOneVisibility === false) {
+            await this._page
+                .getByLabel(labelName)
+                .locator('div.workflow-level-header div.icon-container')
+                .filter({ hasText: /^arrow_back_ios_new$/ })
+                .click();
+            return this._page.locator('div.approval-status').textContent();
         } else {
             return this._page
                 .locator('div.approval-status')
                 .first()
                 .textContent();
+        }
+    }
+
+    public async nextVerificationFlows() {
+        await this._page.reload();
+        await this._page.reload();
+        const helper = this.locate(this.APPROVAL_WORKFLOWS_DOM_SELECTOR);
+        const verificationContainer = helper.locateByText('Pending Approval');
+        console.log(
+            'verificationContainer: ',
+            await verificationContainer.count()
+        );
+        for (let i; i < (await verificationContainer.count()); i++) {
+            return await verificationContainer.nth(i).textContent();
+        }
+    }
+
+    public async nextApprovalFlows(flowsName) {
+        await this._page.reload();
+
+        await this._page.reload();
+        await this._page.waitForTimeout(1000);
+        const flowsContainer = this._page.locator(
+            `//div[@aria-label='${flowsName}']`
+        );
+
+        const flowsStatus = flowsContainer
+            .locator('(//div[@class="col-flex"])')
+            .filter({ hasText: 'Pending Approval' });
+        if (flowsStatus) {
+            const email = await flowsStatus
+                .locator("(//span[@class='text-xs approval-user-email'])[2]")
+                .textContent();
+            console.log(email);
+            return email;
         }
     }
 
@@ -148,17 +225,13 @@ export class ApprovalWorkflowsTab extends BaseHelper {
         await this._page.waitForTimeout(1000);
         const flowsContainer = this._page
             .locator(`//div[@aria-label='${flowsName}']`)
-            .locator('div.approval-status');
+            .locator('div.approval-status')
+            .nth(2);
         if (await flowsContainer.isVisible())
             return await flowsContainer.textContent();
     }
 
     public async clickApproveWithoutComment() {
-        // await this._page
-        //     .locator(
-        //         "//div[contains(@class,'w-full border-r')]/following-sibling::button[1]"
-        //     )
-        //     .click();
         await this.click({
             selector:
                 "//div[contains(@class,'w-full border-r')]/following-sibling::button[1]",
