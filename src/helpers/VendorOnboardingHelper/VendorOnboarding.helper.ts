@@ -104,13 +104,8 @@ export class VendorOnboarding extends BaseHelper {
         await this._page.waitForTimeout(1000);
         const dropdown = this._page
             .locator('#react-select-4-placeholder')
-            .filter({ hasText: 'Select Your Business' })
-            ? this._page
-                  .locator('#react-select-4-placeholder')
-                  .filter({ hasText: 'Select Your Business' })
-            : this._page
-                  .locator('#react-select-7-placeholder')
-                  .filter({ hasText: 'Select Your Business' });
+            .filter({ hasText: 'Select Your Business' });
+
         const gstinDropdown = this._page
             .locator('#react-select-6-placeholder')
             .filter({ hasText: 'Select gstin' });
@@ -120,11 +115,7 @@ export class VendorOnboarding extends BaseHelper {
                 option: clientBusinessName,
                 placeholder: 'Select Your Business',
             });
-            const clientID = await this._page
-                .getByPlaceholder('Enter client Id')
-                .textContent();
 
-            console.log(chalk.gray('Auto Fetch Client ID: ', clientID));
             if (await gstinDropdown.isVisible()) {
                 await this.selectOption({
                     option: '33AACC',
@@ -133,6 +124,11 @@ export class VendorOnboarding extends BaseHelper {
             }
             await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
         }
+        const clientID = await this._page
+            .locator('input[name="identifier"]')
+            .textContent();
+
+        console.log(chalk.gray('Auto Fetch Client ID: ', await clientID));
     }
 
     public async uploadImageDocuments(imagePath: string) {

@@ -1,19 +1,11 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { SavedExpenseCreation } from '@/helpers/ExpenseHelper/savedExpense.helper';
-import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
-import {
-    VendorInvitationDetails,
-    VendorOnboarding,
-    VendorOnboardingWithGSTIN,
-} from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
+import { VendorOnboarding } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboardingwithoutgstin.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 
-let businessName: string;
-let businessNameGSTIN: string;
 let clientName: string;
 let clientNameGSTIN: string;
 const VENDORDETAILS = [
@@ -129,12 +121,14 @@ describe('VOWOG002', () => {
             );
             expect(await withnogstin.checkClient()).toBe(clientName + ' ');
 
-            expect(await withnogstin.checkFromGSTIN()).toBe(businessNameGSTIN);
+            expect(await withnogstin.checkFromGSTIN()).toBe(
+                'Not Registered Business'
+            );
             expect(await withnogstin.checkClientGSTIN()).toBe(clientNameGSTIN);
         });
 
         await test.step('Check Uploaded Doucments', async () => {
-            await withnogstin.checkDoument('GSTIN Certificate');
+            await withnogstin.checkDoument('COI');
             await withnogstin.checkDoument('Pan Card');
             await withnogstin.checkDoument('MSME');
             await withnogstin.checkDoument('Lower TDS');

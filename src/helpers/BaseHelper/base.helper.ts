@@ -328,7 +328,7 @@ export class BaseHelper {
 
     public async clickButton(buttonName: string) {
         await this._page.getByRole('button', { name: buttonName }).click();
-        await this._page.waitForTimeout(1000);
+
         const error = this._page.locator('span.label.text-error');
         const errorCount = await error.count();
         if (errorCount > 0) {
@@ -379,6 +379,7 @@ export class BaseHelper {
                 console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
             }
         }
+        await this._page.waitForTimeout(1000);
     }
 
     public async toastMessage() {

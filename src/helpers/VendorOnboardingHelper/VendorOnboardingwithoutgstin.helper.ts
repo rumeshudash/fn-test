@@ -165,11 +165,7 @@ export class VendorManagedWithoutGSTIN extends BaseHelper {
                 option: clientBusinessName,
                 placeholder: 'Select Your Business',
             });
-            const clientID = await this._page
-                .getByPlaceholder('Enter client Id')
-                .textContent();
 
-            console.log(chalk.gray('Auto Fetch Client ID: ', clientID));
             if (await gstinDropdown.isVisible()) {
                 await this.selectOption({
                     option: '33AACC',
@@ -178,6 +174,11 @@ export class VendorManagedWithoutGSTIN extends BaseHelper {
             }
             await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
         }
+        const clientID = await this._page
+            .locator("input[name='identifier']")
+            .textContent();
+
+        console.log(chalk.gray('Auto Fetch Client ID: ', clientID));
     }
 
     public async fillBankAccount(data: ClientBankAccountDetails[] = []) {
@@ -250,7 +251,7 @@ export class VendorManagedWithoutGSTIN extends BaseHelper {
     public async checkFromGSTIN() {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
-            .locator("//span[contains(@class,'text-xs text-base-tertiary')]")
+            .locator("(//div[contains(@class,'text-center rounded')])[1]")
             .textContent();
     }
     public async checkClient() {

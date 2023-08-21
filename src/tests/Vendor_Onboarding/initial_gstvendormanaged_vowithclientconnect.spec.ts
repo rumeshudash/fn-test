@@ -18,8 +18,8 @@ let clientNameGSTIN: string;
 const { expect, describe } = PROCESS_TEST;
 const BUSINESSDETAILS = [
     {
-        businessName: 'Boat India',
-        gstin: '33BCNPJ3749P1ZY',
+        businessName: 'INFOSYS LIMITED',
+        gstin: '04AAACI4798L2Z5',
     },
 ];
 
@@ -63,7 +63,6 @@ describe('TCCC002', () => {
             await vendorOnboarding.clickButton('Create New Business');
 
             await vendorOnboarding.businessDetails(BUSINESSDETAILS);
-            await page.waitForTimeout(1000);
             await vendorOnboarding.clickButton('Next');
             await vendorOnboarding.checkBusinessName();
             businessName = await vendorOnboarding.checkBusinessName();
@@ -97,6 +96,9 @@ describe('TCCC002', () => {
             await vendorOnboarding.clickButton('Next');
             expect(page.getByText('Onboarding Completed')).toBeTruthy();
             await vendorOnboarding.clickButton('Close');
+        });
+
+        await test.step('Client Connect', async () => {
             await vendorOnboarding.clickButton('Connect');
             await vendorOnboarding.clientInvitation();
             await vendorOnboarding.checkBusinessName();
