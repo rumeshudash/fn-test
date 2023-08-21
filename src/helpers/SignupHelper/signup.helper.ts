@@ -1,5 +1,6 @@
 import { uuidV4 } from '@/utils/common.utils';
 import { BaseHelper } from '.././BaseHelper/base.helper';
+import { expect } from '@playwright/test';
 
 export class SignupHelper extends BaseHelper {
     private static SIGNUP_DOM_SELECTOR = '//form/parent::div';
@@ -40,5 +41,24 @@ export class SignupHelper extends BaseHelper {
         await helper.fillInput(data.confirm_password, {
             name: 'confirmPassword',
         });
+    }
+    public async checkSignInLink() {
+        const result = await this.locateByText('Sign In');
+
+        // const element = await result.locator('[href="/login"]');
+        expect(result, {
+            message: 'login link is not found !!',
+        }).toBeVisible();
+        await result.click();
+        await this._page.waitForURL('**/login', {
+            waitUntil: 'commit',
+        });
+        const signInNode = await this.locateByText('Sign In', {
+            role: 'heading',
+            exactText: true,
+        }).isVisible();
+        await expect(signInNode, {
+            message: 'Sign In page not found !!',
+        }).toBe(true);
     }
 }

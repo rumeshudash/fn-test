@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
     testDir: './src/tests',
     /* Maximum time one test can run for. */
-    timeout: 1 * 60 * 2000,
+    timeout: 1 * 60 * 1000,
 
     expect: {
         /**
