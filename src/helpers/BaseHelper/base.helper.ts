@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { Locator, Page } from 'playwright-core';
 import { LISTING_ROUTES } from '../../constants/api.constants';
+import { expect } from '@playwright/test';
 
 const error = (...text: unknown[]) => console.log(chalk.bold.red('⨯', text));
 const info = (...text: unknown[]) => console.log(chalk.blue('-', text));
@@ -309,6 +310,26 @@ export class BaseHelper {
         success(`Click: ${button} click in ${this._getSelector(options)}`);
     }
 
+    public async checkDisplayName() {
+        const display_input = await this._page
+            .locator('#display_name')
+            .textContent();
+        return display_input;
+    }
+    public async checkWizardNavigationClickDocument() {
+        const document_navigation = await this.locateByText('Documents');
+        await document_navigation.click();
+    }
+    // we can't display display name field before gstin data fetched
+    public async beforeGstinNameNotVisibleDisplayName() {
+        const display_input = await this._page
+            .locator('#display_name')
+            .isVisible();
+        expect(!display_input, {
+            message:
+                'Display name could not be displayed before gstin fetched !!',
+        }).toBe(true);
+    }
     /**
      * Determines if the element is visible.
      *
@@ -328,6 +349,7 @@ export class BaseHelper {
 
     public async clickButton(buttonName: string) {
         await this._page.getByRole('button', { name: buttonName }).click();
+        await this._page.waitForTimeout(1000);
 
         const error = this._page.locator('span.label.text-error');
         const errorCount = await error.count();

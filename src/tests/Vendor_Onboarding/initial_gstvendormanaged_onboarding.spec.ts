@@ -22,7 +22,6 @@ describe('TCVO001', () => {
             const URL = await vendorOnboarding.linkURL();
             await vendorOnboarding.closeDialog();
             await vendorOnboarding.logOut();
-            console.log(URL);
             await vendorOnboarding.init(URL);
         });
 
@@ -53,7 +52,8 @@ describe('TCVO001', () => {
                     gstin: '36AATFN8007H1ZW',
                 },
             ]);
-
+            await vendorOnboarding.beforeGstinNameNotVisibleDisplayName();
+            await vendorOnboarding.checkWizardNavigationClickDocument();
             await vendorOnboarding.clickButton('Next');
             await vendorOnboarding.checkBusinessName();
             await vendorOnboarding.checkGSTIN();
@@ -61,12 +61,16 @@ describe('TCVO001', () => {
             await vendorOnboarding.checkAddress();
             await vendorOnboarding.checkBusinessType();
             await vendorOnboarding.checkPAN();
+
+            await vendorOnboarding.checkDisplayName();
+
             await vendorOnboarding.clickButton('Next');
 
             expect(await vendorOnboarding.toastMessage()).toBe(
                 'Successfully saved'
             );
-            await vendorOnboarding.clickButton('Next');
+            await page.waitForTimeout(2 * 1000);
+            // await vendorOnboarding.clickButton('Next');
             await vendorOnboarding.uploadDocument([
                 {
                     tdsCert: '333333333',
