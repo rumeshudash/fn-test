@@ -42,40 +42,6 @@ export class VendorOnboarding extends BaseHelper {
             .locator("//button[contains(@class,'absolute right-4')]")
             .click();
     }
-    public async toastMessage() {
-        const toast = this._page.locator('div.ct-toast-success');
-        const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-        const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
-
-        const toastErrorCount = await toastError.count();
-        const toastWarnCount = await toastWarn.count();
-        if (toastWarnCount > 0) {
-            console.log(
-                chalk.red(
-                    `Multiple toastMessage ocurred \n ${toastWarn}:`,
-                    toastWarnCount
-                )
-            );
-            for (let i = 0; i < toastWarnCount; i++) {
-                const errorMsg = await toastWarn.nth(i).textContent();
-                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-            }
-        }
-        if (toastErrorCount > 0) {
-            console.log(
-                chalk.red(
-                    `Multiple toastMessage ocurred \n ${toastError}:`,
-                    toastErrorCount
-                )
-            );
-            for (let i = 0; i < toastErrorCount; i++) {
-                const errorMsg = await toastError.nth(i).textContent();
-                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-            }
-        }
-
-        return await toast.last().textContent();
-    }
 
     public async init(URL: string) {
         await this._page.goto(URL);
@@ -84,15 +50,11 @@ export class VendorOnboarding extends BaseHelper {
     public async logOut() {
         await this._page.locator('a').filter({ hasText: 'Logout' }).click();
     }
-    public async clickButton(buttonName: string) {
-        await this._page.getByRole('button', { name: buttonName }).click();
-        await this._page.waitForTimeout(1000);
-    }
 
     public async businessDetails(data: ClientBusinessDetails[] = []) {
         for (let details of data) {
             await this.fillText(details.gstin, {
-                placeholder: 'Enter GSTIN number',
+                placeholder: 'ENTER GSTIN NUMBER',
             });
         }
     }
@@ -142,7 +104,13 @@ export class VendorOnboarding extends BaseHelper {
         await this._page.waitForTimeout(1000);
         const dropdown = this._page
             .locator('#react-select-4-placeholder')
-            .filter({ hasText: 'Select Your Business' });
+            .filter({ hasText: 'Select Your Business' })
+            ? this._page
+                  .locator('#react-select-4-placeholder')
+                  .filter({ hasText: 'Select Your Business' })
+            : this._page
+                  .locator('#react-select-7-placeholder')
+                  .filter({ hasText: 'Select Your Business' });
         const gstinDropdown = this._page
             .locator('#react-select-6-placeholder')
             .filter({ hasText: 'Select gstin' });
@@ -292,13 +260,13 @@ export class VendorInvitationDetails extends BaseHelper {
     }
 }
 
-export class VendorOnboardingWithoutGSTIN extends BaseHelper {
+export class VendorOnboardingWithGSTIN extends BaseHelper {
     public static VENDORONBOARDINGWITHOUTGSTIN_DOM =
         '//div[text()="Documents for Approval"]';
 
     public async checkDoument(title: string) {
         const helper = this.locate(
-            VendorOnboardingWithoutGSTIN.VENDORONBOARDINGWITHOUTGSTIN_DOM
+            VendorOnboardingWithGSTIN.VENDORONBOARDINGWITHOUTGSTIN_DOM
         );
         helper._page
             .locator(`(//div[contains(@class,'border-b cursor-pointer')])`)

@@ -34,9 +34,4 @@ export class BusinessManagedOnboarding extends BaseHelper {
         await partyClick.click();
         await this._page.waitForTimeout(2000);
     }
-
-    public async clickButton(buttonName: string) {
-        await this._page.getByRole('button', { name: buttonName }).click();
-        await this._page.waitForTimeout(1000);
-    }
 }

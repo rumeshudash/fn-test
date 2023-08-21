@@ -6,7 +6,7 @@ import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import {
     VendorInvitationDetails,
     VendorOnboarding,
-    VendorOnboardingWithoutGSTIN,
+    VendorOnboardingWithGSTIN,
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
@@ -18,14 +18,14 @@ let clientNameGSTIN: string;
 const { expect, describe } = PROCESS_TEST;
 const BUSINESSDETAILS = [
     {
-        businessName: 'Shopper Stop',
-        gstin: '09AABCS4383A1ZJ',
+        businessName: 'Boat India',
+        gstin: '33BCNPJ3749P1ZY',
     },
 ];
 
 //Vendor Managed with Client Connect
 describe('TCCC002', () => {
-    PROCESS_TEST('Vendor Onboarding Copy Link', async ({ page }) => {
+    PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
         const vendorOnboarding = new VendorOnboarding(page);
         await vendorOnboarding.clickLink('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
@@ -74,10 +74,11 @@ describe('TCCC002', () => {
             await vendorOnboarding.checkBusinessType();
             await vendorOnboarding.checkPAN();
             await vendorOnboarding.clickButton('Next');
-            await vendorOnboarding.clickButton('Next');
             expect(await vendorOnboarding.toastMessage()).toBe(
                 'Successfully saved'
             );
+            await vendorOnboarding.clickButton('Next');
+
             await vendorOnboarding.uploadDocument([
                 {
                     tdsCert: '333333333',
@@ -112,8 +113,6 @@ describe('TCCC002', () => {
             expect(await vendorOnboarding.toastMessage()).toBe(
                 'Successfully created'
             );
-
-            await page.waitForTimeout(2000);
         });
         await test.step('Client Verify and Approve', async () => {
             const invitationDetails = new VendorInvitationDetails(page);
@@ -133,7 +132,7 @@ describe('TCCC002', () => {
         });
 
         await test.step('Check Uploaded Doucments', async () => {
-            const withoutGSTIN = new VendorOnboardingWithoutGSTIN(page);
+            const withoutGSTIN = new VendorOnboardingWithGSTIN(page);
             await withoutGSTIN.checkDoument('GSTIN Certificate');
             await withoutGSTIN.checkDoument('Pan Card');
             await withoutGSTIN.checkDoument('MSME');

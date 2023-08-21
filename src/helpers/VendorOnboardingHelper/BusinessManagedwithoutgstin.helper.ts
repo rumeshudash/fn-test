@@ -15,11 +15,6 @@ export class OnboardingWithoutGSTIN extends BaseHelper {
         await this._page.waitForTimeout(2000);
     }
 
-    public async clickButton(buttonName: string) {
-        await this._page.getByRole('button', { name: buttonName }).click();
-        await this._page.waitForTimeout(1000);
-    }
-
     public async addVendorAccount(data: VENDORACCOUNTDETAILS[] = []) {
         await this._page
             .locator(

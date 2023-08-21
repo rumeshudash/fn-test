@@ -138,6 +138,7 @@ interface ClientBusinessDetails {
 interface ClientBankAccountDetails {
     accountNumber: string;
     ifsc: string;
+    imagePath?: string;
 }
 
 interface VENDORACCOUNTDETAILS {
@@ -162,3 +163,25 @@ interface UploadDocuments {
     tdsCert?: string;
     tdsPercentage?: string;
 }
+
+interface VENDORDETAILS {
+    businessName: string;
+    displayName?: string;
+    businessType: string;
+    pinCode: string;
+    address: string;
+}
+
+interface VENDORDOCUMENTDETAILS {
+    selectInput?: string;
+    imagePath?: string;
+    tdsNumber?: string;
+    date?: string;
+    tdsPercentage?: string;
+    msme?: string;
+}
+
+// interface BANKACCOUNTDETAILS {
+//     bankAccount: string;
+//     ifsc: string;
+// }
