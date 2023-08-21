@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { Locator, Page } from 'playwright-core';
 import { LISTING_ROUTES } from '../../constants/api.constants';
+import { expect } from '@playwright/test';
 
 const error = (...text: unknown[]) => console.log(chalk.bold.red('⨯', text));
 const info = (...text: unknown[]) => console.log(chalk.blue('-', text));
@@ -175,8 +176,14 @@ export class BaseHelper {
         const { selector, ...rest } = options || {};
         if (options) this.locate(selector, rest);
 
+        const isVisibleElement = await this.isVisible();
+        expect(isVisibleElement, {
+            message: `${this._tempSelector} does not exist !!`,
+        }).toBe(true);
+
         info(`Fill: ${text} in ${this._getSelector(options)}`);
         await this._locator.fill(text + '');
+
         success(`Fill: ${text} in ${this._getSelector(options)}`);
     }
 

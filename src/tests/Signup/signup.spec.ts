@@ -144,4 +144,9 @@ test.describe('Signup', () => {
             await expect(page).toHaveTitle('Finnoto - Analytical Dashboard');
         });
     });
+    test('Verify Sign In clickable link', async ({ page }) => {
+        const signup = new SignupHelper(page);
+        await signup.init();
+        await signup.checkSignInLink();
+    });
 });
