@@ -1,5 +1,4 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import { VendorOnboarding } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
