@@ -22,6 +22,7 @@ export default class GenericGstinCardHelper extends BaseHelper {
         const element = await this.locate('div', {
             id: 'gstin_trade_name',
         })._locator;
+
         await expect(element, {
             message: 'Gstin Trade Name not matched !!',
         }).toHaveText(this.gstin_data.trade_name);
@@ -36,15 +37,16 @@ export default class GenericGstinCardHelper extends BaseHelper {
         }).toHaveText(this.gstin_data.value);
     }
     async checkAddress() {
-        const element = await this.locate('div', {
+        const element = await this.locate('span', {
             id: 'gstin_address',
         })._locator;
+
         await expect(element, {
             message: 'Gstin Address  not matched !!',
         }).toHaveText(this.gstin_data.address);
     }
     async checkBusinessType() {
-        const element = await this.locate('div', {
+        const element = await this.locate('span', {
             id: 'gstin_business_type',
         })._locator;
         await expect(element, {
@@ -52,7 +54,7 @@ export default class GenericGstinCardHelper extends BaseHelper {
         }).toHaveText(this.gstin_data.business_type);
     }
     async checkPAN() {
-        const element = await this.locate('div', {
+        const element = await this.locate('span', {
             id: 'gstin_pan',
         })._locator;
         await expect(element, {

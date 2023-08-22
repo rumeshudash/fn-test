@@ -1,4 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
+import GenericGstinCardHelper from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import { VendorOnboarding } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
@@ -45,21 +46,35 @@ describe('TCVO001', () => {
 
         await test.step('Create Business Client', async () => {
             await vendorOnboarding.clickButton('Create New Business');
+            const gstin_info = {
+                trade_name: 'Natural Capsules Ltd',
+                value: '29AAACN6209M1Z5',
+                address:
+                    'TRIDENT TOWERS, 100 FEET ROAD, JAYANAGAR 2ND BLOCK, 23, Bengaluru Urban, , , 560011, , Karnataka, NA, 4th Floor,',
+                business_type: 'Proprietorship',
+                pan_number: 'AAACN6209M',
+                status: 'Active',
+            };
 
             await vendorOnboarding.businessDetails([
                 {
-                    businessName: 'Reebok India',
-                    gstin: '27AAACR3007K1ZJ',
+                    businessName: gstin_info?.trade_name,
+                    gstin: gstin_info?.value,
                 },
             ]);
 
+            const gstinOnboarding = new GenericGstinCardHelper(
+                gstin_info,
+                page
+            );
             await vendorOnboarding.clickButton('Next');
-            await vendorOnboarding.checkBusinessName();
-            await vendorOnboarding.checkGSTIN();
-            await vendorOnboarding.checkStatus();
-            await vendorOnboarding.checkAddress();
-            await vendorOnboarding.checkBusinessType();
-            await vendorOnboarding.checkPAN();
+            await gstinOnboarding.gstinInfoCheck();
+            // await vendorOnboarding.checkBusinessName();
+            // await vendorOnboarding.checkGSTIN();
+            // await vendorOnboarding.checkStatus();
+            // await vendorOnboarding.checkAddress();
+            // await vendorOnboarding.checkBusinessType();
+            // await vendorOnboarding.checkPAN();
             await vendorOnboarding.clickButton('Next');
 
             expect(await vendorOnboarding.toastMessage()).toBe(
