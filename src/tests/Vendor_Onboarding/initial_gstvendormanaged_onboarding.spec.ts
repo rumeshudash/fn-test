@@ -63,18 +63,18 @@ describe('TCVO001', () => {
                 },
             ]);
 
-            const gstinOnboarding = new GenericGstinCardHelper(
-                gstin_info,
-                page
-            );
+            // const gstinOnboarding = new GenericGstinCardHelper(
+            //     gstin_info,
+            //     page
+            // );
             await vendorOnboarding.clickButton('Next');
-            await gstinOnboarding.gstinInfoCheck();
-            // await vendorOnboarding.checkBusinessName();
-            // await vendorOnboarding.checkGSTIN();
-            // await vendorOnboarding.checkStatus();
-            // await vendorOnboarding.checkAddress();
-            // await vendorOnboarding.checkBusinessType();
-            // await vendorOnboarding.checkPAN();
+            // await gstinOnboarding.gstinInfoCheck();
+            await vendorOnboarding.checkBusinessName();
+            await vendorOnboarding.checkGSTIN();
+            await vendorOnboarding.checkStatus();
+            await vendorOnboarding.checkAddress();
+            await vendorOnboarding.checkBusinessType();
+            await vendorOnboarding.checkPAN();
             await vendorOnboarding.clickButton('Next');
 
             expect(await vendorOnboarding.toastMessage()).toBe(
