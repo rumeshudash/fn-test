@@ -1,5 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { OnboardingWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/Withoutgstin.helper';
+import { OnboardingWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/BusinessManagedwithoutgstin.helper';
 
 const { expect, describe } = PROCESS_TEST;
 

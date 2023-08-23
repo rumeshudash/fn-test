@@ -1,5 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { BusinessManagedOnboarding } from '@/helpers/VendorOnboardingHelper/businessManagedOnboarding.helper';
+import { BusinessManagedOnboarding } from '@/helpers/VendorOnboardingHelper/BusinessManagedOnboarding.helper';
 
 const { expect, describe } = PROCESS_TEST;
 

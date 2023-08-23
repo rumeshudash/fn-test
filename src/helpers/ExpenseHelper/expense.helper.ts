@@ -216,8 +216,4 @@ export class ExpenseHelper extends BaseHelper {
             await this._page.getByRole('button', { name: 'Save' }).click();
         }
     }
-    public async clickButton(buttonName: string) {
-        await this._page.getByRole('button', { name: buttonName }).click();
-        await this._page.waitForTimeout(2000);
-    }
 }
