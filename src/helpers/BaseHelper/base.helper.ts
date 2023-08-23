@@ -316,6 +316,35 @@ export class BaseHelper {
         success(`Click: ${button} click in ${this._getSelector(options)}`);
     }
 
+    public async checkDisplayName() {
+        const display_input = await this._page
+            .locator('#display_name')
+            .textContent();
+        return display_input;
+    }
+    public async checkDisplayNameVisibility() {
+        const display_input = await this._page
+            .locator('#display_name')
+            .isVisible();
+        return display_input;
+    }
+    public async checkWizardNavigationClickDocument(navLink: string) {
+        const document_navigation = this._page.getByText(navLink, {
+            exact: true,
+        });
+        await document_navigation.click();
+        await this._page.waitForTimeout(1000);
+    }
+    // we can't display display name field before gstin data fetched
+    public async beforeGstinNameNotVisibleDisplayName() {
+        const display_input = await this._page
+            .locator('#display_name')
+            .isVisible();
+        expect(!display_input, {
+            message:
+                'Display name could not be displayed before gstin fetched !!',
+        }).toBe(true);
+    }
     /**
      * Determines if the element is visible.
      *
@@ -331,5 +360,104 @@ export class BaseHelper {
         if (options) this.locate(selector, rest);
 
         return this._locator.isVisible({ timeout });
+    }
+
+    public async checkButtonVisibility(buttonName: string) {
+        const btnCheck = this._page.locator(`//button[text()='${buttonName}']`);
+        return await btnCheck.isEnabled();
+    }
+
+    public async clickButton(buttonName: string) {
+        await this._page.getByRole('button', { name: buttonName }).click();
+        await this._page.waitForTimeout(1000);
+
+        const error = this._page.locator('span.label.text-error');
+        const errorCount = await error.count();
+        if (errorCount > 0) {
+            console.log(chalk.red(`Error ocurred: ${errorCount}`));
+            for (let i = 0; i < errorCount; i++) {
+                const errorMsg = await error.nth(i).textContent();
+                console.log(`Error (error ${i}): `, chalk.red(errorMsg));
+            }
+        }
+        const toast = this._page.locator('div.ct-toast-success');
+        const toastError = this._page.locator('div.ct-toast.ct-toast-error');
+        const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+
+        const toastErrorCount = await toastError.count();
+        const toastWarnCount = await toastWarn.count();
+        const toastCount = await toast.count();
+        if (toastCount > 0) {
+            console.log(chalk.green(`toastMessage (success): ${toastCount}:`));
+            for (let i = 0; i < toastCount; i++) {
+                const successMsg = await toast.nth(i).textContent();
+                console.log(
+                    `toastMessage (success ${i}): `,
+                    chalk.green(successMsg)
+                );
+            }
+        }
+        if (toastWarnCount > 0) {
+            console.log(
+                chalk.red(
+                    `Multiple toastMessage ocurred \n ${toastWarn}:`,
+                    toastWarnCount
+                )
+            );
+            for (let i = 0; i < toastWarnCount; i++) {
+                const errorMsg = await toastWarn.nth(i).textContent();
+                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
+            }
+        }
+        if (toastErrorCount > 0) {
+            console.log(
+                chalk.red(
+                    `Multiple toastMessage ocurred \n ${toastError}:`,
+                    toastErrorCount
+                )
+            );
+            for (let i = 0; i < toastErrorCount; i++) {
+                const errorMsg = await toastError.nth(i).textContent();
+                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
+            }
+        }
+        await this._page.waitForTimeout(1000);
+    }
+
+    public async toastMessage() {
+        const error = this._page.locator('span.label.text-error');
+        const errorCount = await error.count();
+        if (errorCount > 0) {
+            console.log(chalk.red(`Error ocurred: ${errorCount}`));
+            for (let i = 0; i < errorCount; i++) {
+                const errorMsg = await error.nth(i).textContent();
+                return errorMsg;
+            }
+        }
+        const toast = this._page.locator('div.ct-toast-success');
+        const toastError = this._page.locator('div.ct-toast.ct-toast-error');
+        const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+
+        const toastErrorCount = await toastError.count();
+        const toastWarnCount = await toastWarn.count();
+        const toastCount = await toast.count();
+        if (toastCount > 0) {
+            for (let i = 0; i < toastCount; i++) {
+                const successMsg = await toast.last().textContent();
+                return successMsg;
+            }
+        }
+        if (toastWarnCount > 0) {
+            for (let i = 0; i < toastWarnCount; i++) {
+                const errorMsg = await toastWarn.nth(i).textContent();
+                return errorMsg;
+            }
+        }
+        if (toastErrorCount > 0) {
+            for (let i = 0; i < toastErrorCount; i++) {
+                const errorMsg = await toastError.nth(i).textContent();
+                return errorMsg;
+            }
+        }
     }
 }

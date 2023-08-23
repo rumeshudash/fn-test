@@ -1,20 +1,27 @@
 import { PROCESS_TEST } from '@/fixtures';
-import GenericGstinCardHelper from '@/helpers/CommonCardHelper/genericGstin.card.helper';
+import { SavedExpenseCreation } from '@/helpers/ExpenseHelper/savedExpense.helper';
+import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import {
-    BankAccountDetails,
+    VendorInvitationDetails,
     VendorOnboarding,
+    VendorOnboardingWithGSTIN,
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
+import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboardingwithoutgstin.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 
+let businessName: string;
+let businessNameGSTIN: string;
+let clientName: string;
+let clientNameGSTIN: string;
 const { expect, describe } = PROCESS_TEST;
 
-//Vendor Managed Onboarding
-describe('TCVO001', () => {
+//Vendor Managed with Client Connect
+describe('VOWOG001', () => {
     PROCESS_TEST('Vendor Onboarding Copy Link', async ({ page }) => {
-        const getBankDetails = new BankAccountDetails(page);
+        const withnogstin = new VendorManagedWithoutGSTIN(page);
         const vendorOnboarding = new VendorOnboarding(page);
         await vendorOnboarding.clickLink('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
@@ -26,6 +33,7 @@ describe('TCVO001', () => {
             const URL = await vendorOnboarding.linkURL();
             await vendorOnboarding.closeDialog();
             await vendorOnboarding.logOut();
+            console.log(URL);
             await vendorOnboarding.init(URL);
         });
 
@@ -49,60 +57,47 @@ describe('TCVO001', () => {
 
         await test.step('Create Business Client', async () => {
             await vendorOnboarding.clickButton('Create New Business');
-            const gstin_info = {
-                trade_name: 'Natural Capsules Ltd',
-                value: '29AAACN6209M1Z5',
-                address:
-                    'TRIDENT TOWERS, 100 FEET ROAD, JAYANAGAR 2ND BLOCK, 23, Bengaluru Urban, , , 560011, , Karnataka, NA, 4th Floor,',
-                business_type: 'Proprietorship',
-                pan_number: 'AAACN6209M',
-                status: 'Active',
-            };
 
-            await vendorOnboarding.businessDetails([
+            await withnogstin.clicknotGSTIN();
+        });
+
+        await test.step('Fill Vendor Details', async () => {
+            await withnogstin.fillVendorDetails([
                 {
-                    businessName: 'ferrari  India',
-                    gstin: '36AATFN8007H1ZW',
+                    businessName: 'Hello India Pvt Ltd',
+                    displayName: 'Hello India',
+                    businessType: 'LLP',
+                    pinCode: '110001',
+                    address: 'Delhi',
                 },
             ]);
-            await vendorOnboarding.beforeGstinNameNotVisibleDisplayName();
-            await vendorOnboarding.checkWizardNavigationClickDocument(
-                'Documents'
-            );
-            await vendorOnboarding.checkBusinessName();
-            await vendorOnboarding.checkGSTIN();
-            await vendorOnboarding.checkStatus();
-            await vendorOnboarding.checkAddress();
-            await vendorOnboarding.checkBusinessType();
-            await vendorOnboarding.checkPAN();
+            await withnogstin.clickButton('Next');
+            expect(await withnogstin.toastMessage()).toBe('Successfully saved');
+        });
 
-            await vendorOnboarding.checkDisplayName();
-
-            await vendorOnboarding.clickButton('Next');
-
-            expect(await vendorOnboarding.toastMessage()).toBe(
-                'Successfully saved'
-            );
-            await page.waitForTimeout(2 * 1000);
-            // await vendorOnboarding.clickButton('Next');
-            await vendorOnboarding.uploadDocument([
+        await test.step('Fill Document Tab', async () => {
+            await withnogstin.fillDocuments([
                 {
-                    tdsCert: '333333333',
-                    tdsPercentage: '22',
+                    selectInput: 'Lower TDS',
+
+                    tdsNumber: '10',
+                    date: '22-02-2023',
+                    tdsPercentage: '20',
+                    imagePath: 'pan-card.jpg',
                 },
             ]);
-            await vendorOnboarding.fileUpload('pan-card.jpg');
-            await vendorOnboarding.clickButton('Save');
-            await vendorOnboarding.clickButton('Next');
-            await vendorOnboarding.bankAccount([
+            await withnogstin.clickButton('Next');
+        });
+
+        await test.step('Fill Bank Account Details', async () => {
+            await withnogstin.fillBankAccount([
                 {
                     accountNumber: '1234567',
                     ifsc: 'HDFC0000001',
                 },
             ]);
-            await vendorOnboarding.clickButton('Next');
+            await withnogstin.clickButton('Next');
             expect(page.getByText('Onboarding Completed')).toBeTruthy();
-            await vendorOnboarding.clickButton('Close');
         });
     });
 });
