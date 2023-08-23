@@ -316,9 +316,18 @@ export class BaseHelper {
             .textContent();
         return display_input;
     }
-    public async checkWizardNavigationClickDocument() {
-        const document_navigation = await this.locateByText('Documents');
+    public async checkDisplayNameVisibility() {
+        const display_input = await this._page
+            .locator('#display_name')
+            .isVisible();
+        return display_input;
+    }
+    public async checkWizardNavigationClickDocument(navLink: string) {
+        const document_navigation = this._page.getByText(navLink, {
+            exact: true,
+        });
         await document_navigation.click();
+        await this._page.waitForTimeout(1000);
     }
     // we can't display display name field before gstin data fetched
     public async beforeGstinNameNotVisibleDisplayName() {
@@ -345,6 +354,11 @@ export class BaseHelper {
         if (options) this.locate(selector, rest);
 
         return this._locator.isVisible({ timeout });
+    }
+
+    public async checkButtonVisibility(buttonName: string) {
+        const btnCheck = this._page.locator(`//button[text()='${buttonName}']`);
+        return await btnCheck.isEnabled();
     }
 
     public async clickButton(buttonName: string) {

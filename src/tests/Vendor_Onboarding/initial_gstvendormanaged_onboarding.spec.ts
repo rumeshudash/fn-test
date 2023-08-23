@@ -2,7 +2,10 @@ import { PROCESS_TEST } from '@/fixtures';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
-import { VendorOnboarding } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
+import {
+    BankAccountDetails,
+    VendorOnboarding,
+} from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 
@@ -11,6 +14,7 @@ const { expect, describe } = PROCESS_TEST;
 //Vendor Managed Onboarding
 describe('TCVO001', () => {
     PROCESS_TEST('Vendor Onboarding Copy Link', async ({ page }) => {
+        const getBankDetails = new BankAccountDetails(page);
         const vendorOnboarding = new VendorOnboarding(page);
         await vendorOnboarding.clickLink('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
@@ -53,8 +57,9 @@ describe('TCVO001', () => {
                 },
             ]);
             await vendorOnboarding.beforeGstinNameNotVisibleDisplayName();
-            await vendorOnboarding.checkWizardNavigationClickDocument();
-            await vendorOnboarding.clickButton('Next');
+            await vendorOnboarding.checkWizardNavigationClickDocument(
+                'Documents'
+            );
             await vendorOnboarding.checkBusinessName();
             await vendorOnboarding.checkGSTIN();
             await vendorOnboarding.checkStatus();

@@ -175,7 +175,7 @@ export class VendorManagedWithoutGSTIN extends BaseHelper {
             await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
         }
         const clientID = await this._page
-            .locator("input[name='identifier']")
+            .locator("(//span[text()='Client Id']/following::input)[1]")
             .textContent();
 
         console.log(chalk.gray('Auto Fetch Client ID: ', clientID));
