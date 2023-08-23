@@ -1,8 +1,9 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
+import GenericGstinCardHelper from '../CommonCardHelper/genericGstin.card.helper';
 
 let clientBusinessName: string;
-export class VendorOnboarding extends BaseHelper {
+export class VendorOnboarding extends GenericGstinCardHelper {
     private BUSINESS_DETAILS_DOM =
         "//div[@class='input-addon-group input-group-md']/following-sibling::div[1]";
     public async clickLink(linkName: string) {
@@ -249,15 +250,15 @@ export class VendorOnboarding extends BaseHelper {
             }
         }
     }
-    public async checkBusinessName() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const businessName = await helper._page
-            .locator("//div[contains(@class,'pt-4 text-sm')]")
-            .textContent();
-        clientBusinessName = businessName;
-        console.log(chalk.gray('Auto Fetch Business Name: ', businessName));
-        return businessName;
-    }
+    // public async checkBusinessName() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const businessName = await helper._page
+    //         .locator("//div[contains(@class,'pt-4 text-sm')]")
+    //         .textContent();
+    //     clientBusinessName = businessName;
+    //     console.log(chalk.gray('Auto Fetch Business Name: ', businessName));
+    //     return businessName;
+    // }
 
     public async checkBusinessNameVisibility() {
         const helper = this.locate(this.BUSINESS_DETAILS_DOM);
@@ -289,14 +290,14 @@ export class VendorOnboarding extends BaseHelper {
         return gstin;
     }
 
-    public async checkAddress() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const address = await helper._page
-            .locator("(//div[@class='text-xs font-medium ']//span)[1]")
-            .textContent();
-        console.log(chalk.gray('Auto Fetch Business Address: ', address));
-        return address;
-    }
+    // public async checkAddress() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const address = await helper._page
+    //         .locator("(//div[@class='text-xs font-medium ']//span)[1]")
+    //         .textContent();
+    //     console.log(chalk.gray('Auto Fetch Business Address: ', address));
+    //     return address;
+    // }
     public async checkAddressVisibility() {
         const helper = this.locate(this.BUSINESS_DETAILS_DOM);
         const address = await helper._page
@@ -307,14 +308,14 @@ export class VendorOnboarding extends BaseHelper {
         );
         return address;
     }
-    public async checkBusinessType() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const businessType = await helper._page
-            .locator("(//div[@class='text-xs font-medium ']//span)[2]")
-            .textContent();
-        console.log(chalk.gray('Auto Fetch Business Type: ', businessType));
-        return businessType;
-    }
+    // public async checkBusinessType() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const businessType = await helper._page
+    //         .locator("(//div[@class='text-xs font-medium ']//span)[2]")
+    //         .textContent();
+    //     console.log(chalk.gray('Auto Fetch Business Type: ', businessType));
+    //     return businessType;
+    // }
 
     public async checkBusinessTypeVisibility() {
         const helper = this.locate(this.BUSINESS_DETAILS_DOM);
@@ -342,14 +343,14 @@ export class VendorOnboarding extends BaseHelper {
         console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
         return panNumber;
     }
-    public async checkPAN() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const panNumber = await helper._page
-            .locator("(//div[@class='text-xs font-medium ']//span)[3]")
-            .textContent();
-        console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
-        return panNumber;
-    }
+    // public async checkPAN() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const panNumber = await helper._page
+    //         .locator("(//div[@class='text-xs font-medium ']//span)[3]")
+    //         .textContent();
+    //     console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
+    //     return panNumber;
+    // }
 
     public async checkPANVisibility() {
         const helper = this.locate(this.BUSINESS_DETAILS_DOM);

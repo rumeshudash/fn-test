@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 
-type gstinDataType = {
+export type gstinDataType = {
     trade_name: string;
     address: string;
     status: string;

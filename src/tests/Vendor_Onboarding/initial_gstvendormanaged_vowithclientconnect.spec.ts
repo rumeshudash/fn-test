@@ -1,4 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
+import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import { SavedExpenseCreation } from '@/helpers/ExpenseHelper/savedExpense.helper';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
@@ -41,11 +42,21 @@ const VENDORDETAILS = [
     },
 ];
 
+const gstinInfo: gstinDataType = {
+    trade_name: 'Keshav Steel Traders',
+    value: '29BKXPA1489F1ZP',
+    pan_number: 'BKXPA1489F',
+    business_type: 'Proprietorship',
+    address:
+        ', Budihal Village,, Kasaba Hobli, Nelamangala Taluk,, Sy no. 125,, Bengaluru Rural, , , 562123, , Karnataka, NA, ,',
+    status: 'Active',
+};
+
 //Vendor Managed with Client Connect
 describe('TCCC002', () => {
     PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(page);
-        const vendorOnboarding = new VendorOnboarding(page);
+        const vendorOnboarding = new VendorOnboarding(gstinInfo, page);
         await vendorOnboarding.clickLink('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
         expect(await vendorOnboarding.toastMessage()).toBe(
@@ -85,22 +96,23 @@ describe('TCCC002', () => {
             await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Documents'
             );
-            businessName = await vendorOnboarding.checkBusinessName();
-            expect(await vendorOnboarding.checkBusinessNameVisibility()).toBe(
-                true
-            );
-            businessNameGSTIN = await vendorOnboarding.checkGSTIN();
-            expect(await vendorOnboarding.checkGSTINVisibility()).toBe(true);
-            businessStatus = await vendorOnboarding.checkStatus();
-            expect(await vendorOnboarding.checkStatusVisibility()).toBe(true);
-            await vendorOnboarding.checkAddress();
-            expect(await vendorOnboarding.checkAddressVisibility()).toBe(true);
-            await vendorOnboarding.checkBusinessType();
-            expect(await vendorOnboarding.checkBusinessTypeVisibility()).toBe(
-                true
-            );
-            await vendorOnboarding.checkPAN();
-            expect(await vendorOnboarding.checkPANVisibility()).toBe(true);
+            await vendorOnboarding.gstinInfoCheck();
+            // businessName = await vendorOnboarding.checkBusinessName();
+            // expect(await vendorOnboarding.checkBusinessNameVisibility()).toBe(
+            //     true
+            // );
+            // businessNameGSTIN = await vendorOnboarding.checkGSTIN();
+            // expect(await vendorOnboarding.checkGSTINVisibility()).toBe(true);
+            // businessStatus = await vendorOnboarding.checkStatus();
+            // expect(await vendorOnboarding.checkStatusVisibility()).toBe(true);
+            // await vendorOnboarding.checkAddress();
+            // expect(await vendorOnboarding.checkAddressVisibility()).toBe(true);
+            // await vendorOnboarding.checkBusinessType();
+            // expect(await vendorOnboarding.checkBusinessTypeVisibility()).toBe(
+            //     true
+            // );
+            // await vendorOnboarding.checkPAN();
+            // expect(await vendorOnboarding.checkPANVisibility()).toBe(true);
 
             await vendorOnboarding.checkDisplayName();
             expect(await vendorOnboarding.checkDisplayNameVisibility()).toBe(
@@ -141,7 +153,7 @@ describe('TCCC002', () => {
         await test.step('Client Connect', async () => {
             await vendorOnboarding.clickButton('Connect');
             await vendorOnboarding.clientInvitation(clientGSTIN);
-            clientName = await vendorOnboarding.checkBusinessName();
+            // clientName = await vendorOnboarding.checkBusinessName();
             clientNameGSTIN = await vendorOnboarding.checkGSTIN();
             await vendorOnboarding.checkBusinessType();
             await vendorOnboarding.checkBusinessDetailsPAN();
