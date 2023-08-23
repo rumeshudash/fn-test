@@ -22,7 +22,6 @@ describe('TCVO001', () => {
             const URL = await vendorOnboarding.linkURL();
             await vendorOnboarding.closeDialog();
             await vendorOnboarding.logOut();
-            console.log(URL);
             await vendorOnboarding.init(URL);
         });
 
