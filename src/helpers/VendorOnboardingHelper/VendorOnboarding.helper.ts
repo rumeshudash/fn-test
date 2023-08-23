@@ -46,9 +46,27 @@ export class VendorOnboarding extends BaseHelper {
         const toast = this._page.locator('div.ct-toast-success');
         const toastError = this._page.locator('div.ct-toast.ct-toast-error');
         const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+        const toastLoading = this._page.locator('div.loading-toast');
 
         const toastErrorCount = await toastError.count();
         const toastWarnCount = await toastWarn.count();
+        const toastLoadingCount = await toastLoading.count();
+        if (toastLoadingCount > 0) {
+            console.log(
+                chalk.red(
+                    `Multiple toastMessage ocurred \n ${toastLoading}:`,
+                    toastLoadingCount
+                )
+            );
+            for (let i = 0; i < toastLoadingCount; i++) {
+                const loadingMsg = await toastWarn.nth(i).textContent();
+                console.log(
+                    `toastMessage (loading ${i}): `,
+                    chalk.bgGreen(loadingMsg)
+                );
+            }
+        }
+
         if (toastWarnCount > 0) {
             console.log(
                 chalk.red(
