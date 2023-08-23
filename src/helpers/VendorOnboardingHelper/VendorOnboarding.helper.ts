@@ -104,13 +104,16 @@ export class VendorOnboarding extends GenericGstinCardHelper {
         await this._page.locator('a').filter({ hasText: 'Logout' }).click();
     }
 
-    public async businessDetails(data: ClientBusinessDetails[] = []) {
-        for (let details of data) {
-            await this.fillText(details.gstin, {
-                placeholder: 'ENTER GSTIN NUMBER',
-            });
-        }
-        await this._page.waitForTimeout(1000);
+    public async fillGstinInput() {
+        // for (let details of data) {
+        //     await this.fillText(details.gstin, {
+        //         placeholder: 'ENTER GSTIN NUMBER',
+        //     });
+        // }
+        // await this._page.waitForTimeout(1000);
+        this.fillText(this.gstin_data.value, {
+            placeholder: 'ENTER GSTIN NUMBER',
+        });
     }
     public async bankAccount(data: ClientBankAccountDetails[] = []) {
         for (let details of data) {
@@ -260,35 +263,35 @@ export class VendorOnboarding extends GenericGstinCardHelper {
     //     return businessName;
     // }
 
-    public async checkBusinessNameVisibility() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const businessName = await helper._page
-            .locator("//div[contains(@class,'pt-4 text-sm')]")
-            .isVisible();
-        console.log(
-            chalk.gray('Auto Fetch Business Name Visibility: ', businessName)
-        );
-        return businessName;
-    }
-    public async checkGSTIN() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const gstin = await helper._page
-            .locator("//div[@class='text-xs text-base-secondary']")
-            .textContent();
-        console.log(chalk.gray('Auto Fetch Business GSTIN: ', gstin));
-        return gstin;
-    }
+    // public async checkBusinessNameVisibility() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const businessName = await helper._page
+    //         .locator("//div[contains(@class,'pt-4 text-sm')]")
+    //         .isVisible();
+    //     console.log(
+    //         chalk.gray('Auto Fetch Business Name Visibility: ', businessName)
+    //     );
+    //     return businessName;
+    // }
+    // public async checkGSTIN() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const gstin = await helper._page
+    //         .locator("//div[@class='text-xs text-base-secondary']")
+    //         .textContent();
+    //     console.log(chalk.gray('Auto Fetch Business GSTIN: ', gstin));
+    //     return gstin;
+    // }
 
-    public async checkGSTINVisibility() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const gstin = await helper._page
-            .locator("//div[@class='text-xs text-base-secondary']")
-            .isVisible();
-        console.log(
-            chalk.gray('Auto Fetch Business GSTIN Visibility: ', gstin)
-        );
-        return gstin;
-    }
+    // public async checkGSTINVisibility() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const gstin = await helper._page
+    //         .locator("//div[@class='text-xs text-base-secondary']")
+    //         .isVisible();
+    //     console.log(
+    //         chalk.gray('Auto Fetch Business GSTIN Visibility: ', gstin)
+    //     );
+    //     return gstin;
+    // }
 
     // public async checkAddress() {
     //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
@@ -298,16 +301,16 @@ export class VendorOnboarding extends GenericGstinCardHelper {
     //     console.log(chalk.gray('Auto Fetch Business Address: ', address));
     //     return address;
     // }
-    public async checkAddressVisibility() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const address = await helper._page
-            .locator("(//div[@class='text-xs font-medium ']//span)[1]")
-            .isVisible();
-        console.log(
-            chalk.gray('Auto Fetch Business Address Visibility: ', address)
-        );
-        return address;
-    }
+    // public async checkAddressVisibility() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const address = await helper._page
+    //         .locator("(//div[@class='text-xs font-medium ']//span)[1]")
+    //         .isVisible();
+    //     console.log(
+    //         chalk.gray('Auto Fetch Business Address Visibility: ', address)
+    //     );
+    //     return address;
+    // }
     // public async checkBusinessType() {
     //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
     //     const businessType = await helper._page
@@ -317,32 +320,32 @@ export class VendorOnboarding extends GenericGstinCardHelper {
     //     return businessType;
     // }
 
-    public async checkBusinessTypeVisibility() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const businessType = await helper._page
-            .locator("(//div[@class='text-xs font-medium ']//span)[2]")
-            .isVisible();
-        console.log(
-            chalk.gray('Auto Fetch Business Type Visibility: ', businessType)
-        );
-        return businessType;
-    }
-    public async checkBusinessDetailsPAN() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const panNumber = await helper._page
-            .locator("(//div[@class='text-xs font-medium ']//span)[2]")
-            .textContent();
-        console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
-        return panNumber;
-    }
-    public async checkBusinessDetailsPANVisibility() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const panNumber = await helper._page
-            .locator("(//div[@class='text-xs font-medium ']//span)[2]")
-            .isVisible();
-        console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
-        return panNumber;
-    }
+    // public async checkBusinessTypeVisibility() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const businessType = await helper._page
+    //         .locator("(//div[@class='text-xs font-medium ']//span)[2]")
+    //         .isVisible();
+    //     console.log(
+    //         chalk.gray('Auto Fetch Business Type Visibility: ', businessType)
+    //     );
+    //     return businessType;
+    // }
+    // public async checkBusinessDetailsPAN() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const panNumber = await helper._page
+    //         .locator("(//div[@class='text-xs font-medium ']//span)[2]")
+    //         .textContent();
+    //     console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
+    //     return panNumber;
+    // }
+    // public async checkBusinessDetailsPANVisibility() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const panNumber = await helper._page
+    //         .locator("(//div[@class='text-xs font-medium ']//span)[2]")
+    //         .isVisible();
+    //     console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
+    //     return panNumber;
+    // }
     // public async checkPAN() {
     //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
     //     const panNumber = await helper._page
@@ -352,36 +355,36 @@ export class VendorOnboarding extends GenericGstinCardHelper {
     //     return panNumber;
     // }
 
-    public async checkPANVisibility() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const panNumber = await helper._page
-            .locator("(//div[@class='text-xs font-medium ']//span)[3]")
-            .isVisible();
-        console.log(
-            chalk.gray('Auto Fetch PAN Number Visibility: ', panNumber)
-        );
-        return panNumber;
-    }
+    // public async checkPANVisibility() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const panNumber = await helper._page
+    //         .locator("(//div[@class='text-xs font-medium ']//span)[3]")
+    //         .isVisible();
+    //     console.log(
+    //         chalk.gray('Auto Fetch PAN Number Visibility: ', panNumber)
+    //     );
+    //     return panNumber;
+    // }
 
-    public async checkStatus() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const status = await helper._page
-            .locator("//div[contains(@class,'text-center rounded')]")
-            .textContent();
-        console.log(chalk.gray('Auto Fetch Business Status: ', status));
-        return status;
-    }
+    // public async checkStatus() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const status = await helper._page
+    //         .locator("//div[contains(@class,'text-center rounded')]")
+    //         .textContent();
+    //     console.log(chalk.gray('Auto Fetch Business Status: ', status));
+    //     return status;
+    // }
 
-    public async checkStatusVisibility() {
-        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-        const status = await helper._page
-            .locator("//div[contains(@class,'text-center rounded')]")
-            .isVisible();
-        console.log(
-            chalk.gray('Auto Fetch Business Status Visibility: ', status)
-        );
-        return status;
-    }
+    // public async checkStatusVisibility() {
+    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+    //     const status = await helper._page
+    //         .locator("//div[contains(@class,'text-center rounded')]")
+    //         .isVisible();
+    //     console.log(
+    //         chalk.gray('Auto Fetch Business Status Visibility: ', status)
+    //     );
+    //     return status;
+    // }
 }
 
 export class VendorInvitationDetails extends BaseHelper {

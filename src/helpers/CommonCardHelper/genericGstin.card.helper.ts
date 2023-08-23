@@ -22,7 +22,9 @@ export default class GenericGstinCardHelper extends BaseHelper {
         const element = await this.locate('div', {
             id: 'gstin_trade_name',
         })._locator;
-
+        await expect(await element.isVisible(), {
+            message: 'Gstin Trade Name not found',
+        }).toBe(true);
         await expect(element, {
             message: 'Gstin Trade Name not matched !!',
         }).toHaveText(this.gstin_data.trade_name);
@@ -31,6 +33,9 @@ export default class GenericGstinCardHelper extends BaseHelper {
         const element = await this.locate('div', {
             id: 'gstin_number',
         })._locator;
+        await expect(await element.isVisible(), {
+            message: 'Gstin Number not found',
+        }).toBe(true);
 
         await expect(element, {
             message: 'Gstin Address  not matched !!',
@@ -41,6 +46,10 @@ export default class GenericGstinCardHelper extends BaseHelper {
             id: 'gstin_address',
         })._locator;
 
+        await expect(await element.isVisible(), {
+            message: 'Gstin  Address not found',
+        }).toBe(true);
+
         await expect(element, {
             message: 'Gstin Address  not matched !!',
         }).toHaveText(this.gstin_data.address);
@@ -49,6 +58,9 @@ export default class GenericGstinCardHelper extends BaseHelper {
         const element = await this.locate('span', {
             id: 'gstin_business_type',
         })._locator;
+        await expect(await element.isVisible(), {
+            message: 'Gstin  business type not found',
+        }).toBe(true);
         await expect(element, {
             message: 'Gstin Business Type  not matched !!',
         }).toHaveText(this.gstin_data.business_type);
@@ -57,6 +69,9 @@ export default class GenericGstinCardHelper extends BaseHelper {
         const element = await this.locate('span', {
             id: 'gstin_pan',
         })._locator;
+        await expect(await element.isVisible(), {
+            message: 'Pan number  not found',
+        }).toBe(true);
         await expect(element, {
             message: 'Gstin pan number  not matched !!',
         }).toHaveText(this.gstin_data.pan_number);
@@ -66,6 +81,10 @@ export default class GenericGstinCardHelper extends BaseHelper {
         const element = await this.locate('div', {
             id: 'gstin_status',
         })._locator;
+
+        await expect(await element.isVisible(), {
+            message: 'Gstin Status  not found',
+        }).toBe(true);
         await expect(element, {
             message: 'Gstin status  not matched !!',
         }).toHaveText(this.gstin_data.status);
