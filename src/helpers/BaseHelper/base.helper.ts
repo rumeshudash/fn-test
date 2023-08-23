@@ -177,9 +177,9 @@ export class BaseHelper {
         if (options) this.locate(selector, rest);
 
         const isVisibleElement = await this.isVisible();
-        expect(isVisibleElement, {
+        expect(!isVisibleElement, {
             message: `${this._tempSelector} does not exist !!`,
-        }).toBe(true);
+        }).toBe(false);
 
         info(`Fill: ${text} in ${this._getSelector(options)}`);
         await this._locator.fill(text + '');
@@ -320,6 +320,7 @@ export class BaseHelper {
         const display_input = await this._page
             .locator('#display_name')
             .textContent();
+        console.log('Display Name: ', display_input);
         return display_input;
     }
     public async checkDisplayNameVisibility() {
@@ -390,11 +391,14 @@ export class BaseHelper {
         if (toastCount > 0) {
             console.log(chalk.green(`toastMessage (success): ${toastCount}:`));
             for (let i = 0; i < toastCount; i++) {
-                const successMsg = await toast.nth(i).textContent();
-                console.log(
-                    `toastMessage (success ${i}): `,
-                    chalk.green(successMsg)
-                );
+                const successMsg = toast.nth(i);
+                if (await successMsg.isVisible()) {
+                    await successMsg.textContent();
+                    console.log(
+                        `toastMessage (success ${i}): `,
+                        chalk.green(successMsg)
+                    );
+                }
             }
         }
         if (toastWarnCount > 0) {

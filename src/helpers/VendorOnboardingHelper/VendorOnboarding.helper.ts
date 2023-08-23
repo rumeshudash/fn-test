@@ -157,28 +157,30 @@ export class VendorOnboarding extends BaseHelper {
 
     public async clientInvitation(clientGSTIN: string) {
         await this._page.waitForTimeout(1000);
-        const dropdown = this._page
-            .locator('#react-select-4-placeholder')
-            .filter({ hasText: 'Select Your Business' });
+        const dropdown = this._page.locator(
+            '//div[text()="Select Your Business"]'
+        );
 
-        const gstinDropdown = this._page
-            .locator('#react-select-6-placeholder')
-            .filter({ hasText: 'Select gstin' });
+        const gstinDropdown = this._page.locator(
+            `//div[text()="Select client business"]`
+        );
 
         if (await dropdown.isVisible()) {
             await this.selectOption({
                 option: clientBusinessName,
                 placeholder: 'Select Your Business',
             });
-
-            if (await gstinDropdown.isVisible()) {
-                await this.selectOption({
-                    option: clientGSTIN,
-                    placeholder: 'select gstin',
-                });
-            }
-            await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
         }
+        await this._page.waitForTimeout(1000);
+
+        if (await gstinDropdown.isVisible()) {
+            await this.selectOption({
+                option: clientGSTIN,
+                placeholder: 'Select client business',
+            });
+        }
+
+        await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
     }
     public async getClientID() {
         const clientID = await this._page
@@ -257,6 +259,43 @@ export class VendorOnboarding extends BaseHelper {
         clientBusinessName = businessName;
         console.log(chalk.gray('Auto Fetch Business Name: ', businessName));
         return businessName;
+    }
+    public async checkInvitationBusinessName() {
+        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+        const businessName = await helper._page
+            .locator("(//div[@class=' css-1gzzqje']//div)[2]")
+            .textContent();
+        clientBusinessName = businessName;
+        console.log(chalk.gray('Auto Fetch Business Name: ', businessName));
+        return businessName;
+    }
+    public async checkInvitationBusinessNameVisibility() {
+        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+        const businessName = await helper._page
+            .locator("(//div[@class=' css-1gzzqje']//div)[2]")
+            .isVisible();
+        console.log(chalk.gray('Auto Fetch Business Name: ', businessName));
+        return businessName;
+    }
+    public async checkInvitationGSTIN() {
+        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+        const gstin = await helper._page
+            .locator(
+                "(//span[@class='css-7pg0cj-a11yText']/following-sibling::div)[3]"
+            )
+            .textContent();
+        console.log(chalk.gray('Auto Fetch Business GSTIN: ', gstin));
+        return gstin;
+    }
+    public async checkInvitationGSTINVisibility() {
+        const helper = this.locate(this.BUSINESS_DETAILS_DOM);
+        const gstin = await helper._page
+            .locator(
+                "(//span[@class='css-7pg0cj-a11yText']/following-sibling::div)[3]"
+            )
+            .isVisible();
+        console.log(chalk.gray('Auto Fetch Business GSTIN: ', gstin));
+        return gstin;
     }
 
     public async checkBusinessNameVisibility() {
@@ -440,9 +479,16 @@ export class VendorOnboardingWithGSTIN extends BaseHelper {
 export class BankAccountDetails extends BaseHelper {
     public async bankAccountName() {
         const accountName = await this._page
-            .locator('//label[@for="account_name"]/following-sibling::div[1]')
+            .locator('#account_name')
             .textContent();
         console.log('Bank Account Name: ', accountName);
+        return accountName;
+    }
+    public async bankAccountNameVisibility() {
+        const accountName = await this._page
+            .locator('#account_name')
+            .isVisible();
+        console.log('Bank Account Name Visibility: ', accountName);
         return accountName;
     }
     public async bankAccountNumber() {

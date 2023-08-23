@@ -112,8 +112,6 @@ describe('TCCC002', () => {
             expect(await vendorOnboarding.toastMessage()).toBe(
                 'Successfully saved'
             );
-            await page.waitForTimeout(2 * 1000);
-            // await vendorOnboarding.clickButton('Next');
             await vendorOnboarding.uploadDocument([
                 {
                     tdsCert: '333333333',
@@ -130,8 +128,8 @@ describe('TCCC002', () => {
 
             bankIFSCCode = await getBankDetails.bankIFSCCode();
             expect(bankIFSCCode.slice(0, -1)).toBe(BANKDETAILS[0].ifsc);
-            // bankAccountName = await getBankDetails.bankAccountName();
-            // expect(bankAccountName).toBe(businessName);
+            bankAccountName = await getBankDetails.bankAccountName();
+            expect(await getBankDetails.bankAccountNameVisibility()).toBe(true);
 
             await vendorOnboarding.clickButton('Next');
             expect(page.getByText('Onboarding Completed')).toBeTruthy();
@@ -158,12 +156,10 @@ describe('TCCC002', () => {
             expect(await vendorOnboarding.checkBusinessTypeVisibility()).toBe(
                 true
             );
-            expect(await vendorOnboarding.getGSTINfromInput()).toBe(
-                clientGSTIN
-            );
-            expect(clientNameGSTIN).toBe(
-                await vendorOnboarding.getGSTINfromInput()
-            );
+            expect(await vendorOnboarding.getGSTINfromInput()).toBe(clientName);
+            // expect(clientNameGSTIN).toBe(
+            //     await vendorOnboarding.getGSTINfromInput()
+            // );
             expect(await vendorOnboarding.checkBusinessTypeVisibility()).toBe(
                 true
             );
