@@ -1,5 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
+import GenericGstinCardHelper from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import {
@@ -49,6 +49,15 @@ describe('TCVO001', () => {
 
         await test.step('Create Business Client', async () => {
             await vendorOnboarding.clickButton('Create New Business');
+            const gstin_info = {
+                trade_name: 'Natural Capsules Ltd',
+                value: '29AAACN6209M1Z5',
+                address:
+                    'TRIDENT TOWERS, 100 FEET ROAD, JAYANAGAR 2ND BLOCK, 23, Bengaluru Urban, , , 560011, , Karnataka, NA, 4th Floor,',
+                business_type: 'Proprietorship',
+                pan_number: 'AAACN6209M',
+                status: 'Active',
+            };
 
             await vendorOnboarding.businessDetails([
                 {

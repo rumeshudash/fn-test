@@ -42,6 +42,58 @@ export class VendorOnboarding extends BaseHelper {
             .locator("//button[contains(@class,'absolute right-4')]")
             .click();
     }
+    public async toastMessage() {
+        const toast = this._page.locator('div.ct-toast-success');
+        const toastError = this._page.locator('div.ct-toast.ct-toast-error');
+        const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+        const toastLoading = this._page.locator('div.loading-toast');
+
+        const toastErrorCount = await toastError.count();
+        const toastWarnCount = await toastWarn.count();
+        const toastLoadingCount = await toastLoading.count();
+        if (toastLoadingCount > 0) {
+            console.log(
+                chalk.red(
+                    `Multiple toastMessage ocurred \n ${toastLoading}:`,
+                    toastLoadingCount
+                )
+            );
+            for (let i = 0; i < toastLoadingCount; i++) {
+                const loadingMsg = await toastWarn.nth(i).textContent();
+                console.log(
+                    `toastMessage (loading ${i}): `,
+                    chalk.bgGreen(loadingMsg)
+                );
+            }
+        }
+
+        if (toastWarnCount > 0) {
+            console.log(
+                chalk.red(
+                    `Multiple toastMessage ocurred \n ${toastWarn}:`,
+                    toastWarnCount
+                )
+            );
+            for (let i = 0; i < toastWarnCount; i++) {
+                const errorMsg = await toastWarn.nth(i).textContent();
+                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
+            }
+        }
+        if (toastErrorCount > 0) {
+            console.log(
+                chalk.red(
+                    `Multiple toastMessage ocurred \n ${toastError}:`,
+                    toastErrorCount
+                )
+            );
+            for (let i = 0; i < toastErrorCount; i++) {
+                const errorMsg = await toastError.nth(i).textContent();
+                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
+            }
+        }
+
+        return await toast.last().textContent();
+    }
 
     public async init(URL: string) {
         await this._page.goto(URL);
