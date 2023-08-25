@@ -7,7 +7,7 @@ test.describe('Signup', () => {
     test('without details', async ({ page }) => {
         const signup = new SignupHelper(page);
         await signup.init();
-        await signup.nextPage();
+        await signup.clickButton('Next →');
         await expect(
             page.locator('//span[contains(@class, "label-text")]')
         ).toHaveCount(4);
@@ -22,7 +22,7 @@ test.describe('Signup', () => {
             password: '123456',
             confirm_password: '123456',
         });
-        await signup.nextPage();
+        await signup.clickButton('Next →');
         expect(await signup.errorMessage()).toBe('Name is required');
     });
 
@@ -35,7 +35,7 @@ test.describe('Signup', () => {
             password: '123456',
             confirm_password: '123456',
         });
-        await signup.nextPage();
+        await signup.clickButton('Next →');
         expect(await signup.errorMessage()).toBe('Email is required');
     });
 
@@ -61,7 +61,7 @@ test.describe('Signup', () => {
             password: '123456',
             confirm_password: '',
         });
-        await signup.nextPage();
+        await signup.clickButton('Next →');
         expect(await signup.errorMessage()).toBe(
             'Confirm Password is required'
         );
@@ -77,7 +77,7 @@ test.describe('Signup', () => {
             confirm_password: '123456',
         });
         expect(await signup.isPolicyChecked()).toBeChecked();
-        await signup.nextPage();
+        await signup.clickButton('Next →');
     });
 
     test('terms and condition unchecked', async ({ page }) => {
@@ -104,7 +104,7 @@ test.describe('Signup', () => {
             password: '123456',
             confirm_password: '123456',
         });
-        await signup.nextPage();
+        await signup.clickButton('Next →');
         await expect(
             page.getByText('Verify Your Email', { exact: true })
         ).toBeVisible();
@@ -120,18 +120,18 @@ test.describe('Signup', () => {
             password: '123456',
             confirm_password: '123456',
         });
-        await signup.nextPage();
+        await signup.clickButton('Next →');
         const verifyEmail = new VerifyEmailHelper(page);
         const business = new CreateBusinessHelper(page);
 
         await test.step('without OTP', async () => {
-            await verifyEmail.verifyPageClick();
+            await verifyEmail.clickButton('Verify →');
             expect(await verifyEmail.toastMessage()).toBe('Invalid code!');
         });
 
         await test.step('with valid OTP', async () => {
             await verifyEmail.fillCode('1');
-            await verifyEmail.verifyPageClick();
+            await verifyEmail.clickButton('Verify →');
         });
 
         await test.step('click continue', async () => {

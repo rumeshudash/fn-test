@@ -14,11 +14,6 @@ export class VerifyEmailHelper extends BaseHelper {
         return genEmail;
     }
 
-    public async verifyPageClick() {
-        await this._page.locator("//button[text()='Verify →']").click();
-        await this._page.waitForTimeout(2000);
-    }
-
     public async toastMessage() {
         return this._page.locator("//div[@role='status']").textContent();
     }

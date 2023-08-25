@@ -105,12 +105,6 @@ export class VendorOnboarding extends GenericGstinCardHelper {
     }
 
     public async fillGstinInput() {
-        // for (let details of data) {
-        //     await this.fillText(details.gstin, {
-        //         placeholder: 'ENTER GSTIN NUMBER',
-        //     });
-        // }
-        // await this._page.waitForTimeout(1000);
         this.fillText(this.gstin_data.value, {
             placeholder: 'ENTER GSTIN NUMBER',
         });
@@ -159,30 +153,30 @@ export class VendorOnboarding extends GenericGstinCardHelper {
         await this._page.waitForTimeout(2000);
     }
 
-    public async clientInvitation(clientGSTIN: string) {
+    public async clientInvitation(businessName: string, clientGSTIN: string) {
         await this._page.waitForTimeout(1000);
-        const dropdown = this._page
-            .locator('#react-select-4-placeholder')
-            .filter({ hasText: 'Select Your Business' });
+        const dropdown = this._page.locator(
+            '//div[text()="Select Your Business"]'
+        );
 
-        const gstinDropdown = this._page
-            .locator('#react-select-6-placeholder')
-            .filter({ hasText: 'Select gstin' });
+        const gstinDropdown = this._page.locator(
+            '//div[text()="Select client business"]'
+        );
 
         if (await dropdown.isVisible()) {
             await this.selectOption({
-                option: clientBusinessName,
+                option: businessName,
                 placeholder: 'Select Your Business',
             });
-
-            if (await gstinDropdown.isVisible()) {
-                await this.selectOption({
-                    option: clientGSTIN,
-                    placeholder: 'select gstin',
-                });
-            }
-            await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
         }
+        if (await gstinDropdown.isVisible()) {
+            await this.selectOption({
+                input: clientGSTIN,
+                placeholder: 'Select client business',
+            });
+        }
+        await this._page.waitForTimeout(1000);
+        await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
     }
     public async getClientID() {
         const clientID = await this._page
@@ -214,30 +208,55 @@ export class VendorOnboarding extends GenericGstinCardHelper {
 
     public async uploadImageDocuments(imagePath: string) {
         await this._page.waitForTimeout(2000);
-        const documentError = this._page.locator('div.text-xs.text-error');
-        const errorCount = await documentError.count();
+        const container = this._page.locator(
+            "(//div[contains(@class,'py-3 gap-1')])"
+        );
 
-        console.log('Document Image Error: ', errorCount);
-        for (let i = 0; i < errorCount; i++) {
+        const documentError = this._page.locator(
+            '//div[@class="text-xs text-error"]'
+        );
+        const containerBtn = this._page.locator(
+            '//div[@class="icon-container cursor-pointer"]'
+        );
+        const errorContainer = container.filter({ has: documentError });
+
+        // const containerError = containerTitle.filter({
+        //     has: documentError,
+        // });
+        // const imageIcon = documentError.locator(
+        //     '//div[@class="icon-container cursor-pointer"]'
+        // );
+        const errorContainerCount = await errorContainer.count();
+        console.log('Document Image Error: ', errorContainerCount);
+
+        for (let i = 0; i < errorContainerCount; i++) {
             console.log(
                 'Document Image Error: ',
-                chalk.red(await documentError.nth(i).textContent())
+                chalk.red(await documentError.nth(i).textContent()) +
+                    ' ' +
+                    chalk.blue(
+                        (await errorContainer.nth(i).textContent()).includes(
+                            'files'
+                        )
+                    )
             );
-        }
-        //Upload Document
-        for (let i = 1; i < 5; i++) {
-            const imageIcon = this._page.locator(
-                `(//div[@class='icon-container cursor-pointer'])[${i}]`
-            );
-            if (await imageIcon.isVisible()) {
-                await imageIcon.click();
 
+            if (errorContainer) {
+                const filesTextError = (
+                    await errorContainer.first().innerText()
+                ).includes('files');
+                console.log('INCLUDE Content: ', filesTextError);
+
+                if (filesTextError) {
+                    await errorContainer.getByRole('img').first().click();
+                    console.log('CLICKED ON IMG EDIT');
+                } else {
+                    await errorContainer.locator('i').first().click();
+                }
                 await this._page.setInputFiles(
                     "//input[@type='file']",
                     `./images/${imagePath}`
                 );
-                await this._page.waitForTimeout(1000);
-                await this.click({ role: 'button', name: 'Save' });
                 await this._page.waitForTimeout(1000);
 
                 if (
@@ -248,143 +267,71 @@ export class VendorOnboarding extends GenericGstinCardHelper {
                     await this.fillText('22', {
                         placeholder: 'Enter MSME number',
                     });
-                    await this.click({ role: 'button', name: 'Save' });
                 }
+
+                if (
+                    await this._page
+                        .getByPlaceholder('Enter COI number')
+                        .isVisible()
+                ) {
+                    await this.fillText('23332567', {
+                        placeholder: 'Enter COI number',
+                    });
+                }
+                await this.click({ role: 'button', name: 'Save' });
+                await this._page.waitForTimeout(2000);
             }
         }
+        // const imageIcon = documentError.locator(
+        //     `//div[@class='icon-container cursor-pointer']`
+        // );
+        //Upload Document
+        // for (let i = 0; i < errorCount; i++) {
+        //     for (const docs of await containerError.textContent()) {
+        //         const filesRequire = docs[i].includes('files');
+        //         // if (await containerError.isVisible()) {
+        //         if (filesRequire) {
+        //             const clickBtn = containerBtn;
+        //             if (await clickBtn.isVisible()) {
+        //                 await clickBtn.click();
+        //             }
+        //         } else {
+        //             const clickBtn = containerBtn.locator('i');
+        //             if (await clickBtn.isVisible()) {
+        //                 await clickBtn.click();
+        //             }
+        //         }
+
+        //         await this._page.setInputFiles(
+        //             "//input[@type='file']",
+        //             `./images/${imagePath}`
+        //         );
+        //         await this._page.waitForTimeout(1000);
+
+        //         if (
+        //             await this._page
+        //                 .getByPlaceholder('Enter MSME number')
+        //                 .isVisible()
+        //         ) {
+        //             await this.fillText('22', {
+        //                 placeholder: 'Enter MSME number',
+        //             });
+        //         }
+
+        //         if (
+        //             await this._page
+        //                 .getByPlaceholder('Enter COI number')
+        //                 .isVisible()
+        //         ) {
+        //             await this.fillText('23332567', {
+        //                 placeholder: 'Enter COI number',
+        //             });
+        //         }
+        //         await this.click({ role: 'button', name: 'Save' });
+        //         await this._page.waitForTimeout(1000);
+        //     }
+        // }
     }
-    // public async checkBusinessName() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const businessName = await helper._page
-    //         .locator("//div[contains(@class,'pt-4 text-sm')]")
-    //         .textContent();
-    //     clientBusinessName = businessName;
-    //     console.log(chalk.gray('Auto Fetch Business Name: ', businessName));
-    //     return businessName;
-    // }
-
-    // public async checkBusinessNameVisibility() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const businessName = await helper._page
-    //         .locator("//div[contains(@class,'pt-4 text-sm')]")
-    //         .isVisible();
-    //     console.log(
-    //         chalk.gray('Auto Fetch Business Name Visibility: ', businessName)
-    //     );
-    //     return businessName;
-    // }
-    // public async checkGSTIN() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const gstin = await helper._page
-    //         .locator("//div[@class='text-xs text-base-secondary']")
-    //         .textContent();
-    //     console.log(chalk.gray('Auto Fetch Business GSTIN: ', gstin));
-    //     return gstin;
-    // }
-
-    // public async checkGSTINVisibility() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const gstin = await helper._page
-    //         .locator("//div[@class='text-xs text-base-secondary']")
-    //         .isVisible();
-    //     console.log(
-    //         chalk.gray('Auto Fetch Business GSTIN Visibility: ', gstin)
-    //     );
-    //     return gstin;
-    // }
-
-    // public async checkAddress() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const address = await helper._page
-    //         .locator("(//div[@class='text-xs font-medium ']//span)[1]")
-    //         .textContent();
-    //     console.log(chalk.gray('Auto Fetch Business Address: ', address));
-    //     return address;
-    // }
-    // public async checkAddressVisibility() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const address = await helper._page
-    //         .locator("(//div[@class='text-xs font-medium ']//span)[1]")
-    //         .isVisible();
-    //     console.log(
-    //         chalk.gray('Auto Fetch Business Address Visibility: ', address)
-    //     );
-    //     return address;
-    // }
-    // public async checkBusinessType() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const businessType = await helper._page
-    //         .locator("(//div[@class='text-xs font-medium ']//span)[2]")
-    //         .textContent();
-    //     console.log(chalk.gray('Auto Fetch Business Type: ', businessType));
-    //     return businessType;
-    // }
-
-    // public async checkBusinessTypeVisibility() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const businessType = await helper._page
-    //         .locator("(//div[@class='text-xs font-medium ']//span)[2]")
-    //         .isVisible();
-    //     console.log(
-    //         chalk.gray('Auto Fetch Business Type Visibility: ', businessType)
-    //     );
-    //     return businessType;
-    // }
-    // public async checkBusinessDetailsPAN() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const panNumber = await helper._page
-    //         .locator("(//div[@class='text-xs font-medium ']//span)[2]")
-    //         .textContent();
-    //     console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
-    //     return panNumber;
-    // }
-    // public async checkBusinessDetailsPANVisibility() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const panNumber = await helper._page
-    //         .locator("(//div[@class='text-xs font-medium ']//span)[2]")
-    //         .isVisible();
-    //     console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
-    //     return panNumber;
-    // }
-    // public async checkPAN() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const panNumber = await helper._page
-    //         .locator("(//div[@class='text-xs font-medium ']//span)[3]")
-    //         .textContent();
-    //     console.log(chalk.gray('Auto Fetch PAN Number: ', panNumber));
-    //     return panNumber;
-    // }
-
-    // public async checkPANVisibility() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const panNumber = await helper._page
-    //         .locator("(//div[@class='text-xs font-medium ']//span)[3]")
-    //         .isVisible();
-    //     console.log(
-    //         chalk.gray('Auto Fetch PAN Number Visibility: ', panNumber)
-    //     );
-    //     return panNumber;
-    // }
-
-    // public async checkStatus() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const status = await helper._page
-    //         .locator("//div[contains(@class,'text-center rounded')]")
-    //         .textContent();
-    //     console.log(chalk.gray('Auto Fetch Business Status: ', status));
-    //     return status;
-    // }
-
-    // public async checkStatusVisibility() {
-    //     const helper = this.locate(this.BUSINESS_DETAILS_DOM);
-    //     const status = await helper._page
-    //         .locator("//div[contains(@class,'text-center rounded')]")
-    //         .isVisible();
-    //     console.log(
-    //         chalk.gray('Auto Fetch Business Status Visibility: ', status)
-    //     );
-    //     return status;
-    // }
 }
 
 export class VendorInvitationDetails extends BaseHelper {
