@@ -1,6 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { BusinessManagedOnboarding } from '@/helpers/VendorOnboardingHelper/BusinessManagedOnboarding.helper';
-
+import { BusinessManagedOnboarding } from '@/helpers/VendorOnboardingHelper/businessManagedOnboarding.helper';
 const { expect, describe } = PROCESS_TEST;
 
 //Business Managed vendor onboarding with GSTIN

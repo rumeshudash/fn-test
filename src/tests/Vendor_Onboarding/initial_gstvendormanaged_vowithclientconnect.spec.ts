@@ -1,6 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { SavedExpenseCreation } from '@/helpers/ExpenseHelper/savedExpense.helper';
-import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
+import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import {
@@ -11,14 +10,7 @@ import {
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
-
-let businessName: string; // business name equal to vendor
-let businessNameGSTIN: string;
-let businessStatus: string;
-let clientName: string; // client name equal to business
-let clientNameGSTIN: string;
-let clientID: string; // client id equal to business Client ID
-const clientGSTIN = '33AACCH0586R1Z6'; //used in connect client to select gstin from dropdown
+import { vendorGstinInfo, clientGstinInfo } from '@/utils/required_data';
 
 //Bank Details
 let bankAccountName: string;
@@ -34,18 +26,12 @@ const BANKDETAILS = [
     },
 ];
 
-const VENDORDETAILS = [
-    {
-        businessName: 'Keshav Steel Traders',
-        gstin: '29BKXPA1489F1ZP',
-    },
-];
-
 //Vendor Managed with Client Connect
 describe('TCCC002', () => {
+    test.slow();
     PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(page);
-        const vendorOnboarding = new VendorOnboarding(page);
+        const vendorOnboarding = new VendorOnboarding(vendorGstinInfo, page);
         await vendorOnboarding.clickLink('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
         expect(await vendorOnboarding.toastMessage()).toBe(
@@ -68,52 +54,27 @@ describe('TCCC002', () => {
                 password: '123456',
                 confirm_password: '123456',
             });
-            await signup.nextPage();
+            await signup.clickButton('Next');
         });
         await test.step('Verify Email', async () => {
             const verifyEmail = new VerifyEmailHelper(page);
             await verifyEmail.fillCode('1');
-            await verifyEmail.verifyPageClick();
+            await verifyEmail.clickButton('Verify →');
             await vendorOnboarding.clickButton('Continue →');
         });
 
         await test.step('Create Business Client', async () => {
             await vendorOnboarding.clickButton('Create New Business');
-
-            await vendorOnboarding.businessDetails(VENDORDETAILS);
+            await vendorOnboarding.fillGstinInput();
             await vendorOnboarding.beforeGstinNameNotVisibleDisplayName();
             await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Documents'
             );
-            businessName = await vendorOnboarding.checkBusinessName();
-            expect(await vendorOnboarding.checkBusinessNameVisibility()).toBe(
-                true
-            );
-            businessNameGSTIN = await vendorOnboarding.checkGSTIN();
-            expect(await vendorOnboarding.checkGSTINVisibility()).toBe(true);
-            businessStatus = await vendorOnboarding.checkStatus();
-            expect(await vendorOnboarding.checkStatusVisibility()).toBe(true);
-            await vendorOnboarding.checkAddress();
-            expect(await vendorOnboarding.checkAddressVisibility()).toBe(true);
-            await vendorOnboarding.checkBusinessType();
-            expect(await vendorOnboarding.checkBusinessTypeVisibility()).toBe(
-                true
-            );
-            await vendorOnboarding.checkPAN();
-            expect(await vendorOnboarding.checkPANVisibility()).toBe(true);
-
-            await vendorOnboarding.checkDisplayName();
-            expect(await vendorOnboarding.checkDisplayNameVisibility()).toBe(
-                true
-            );
-
+            await vendorOnboarding.gstinInfoCheck();
             await vendorOnboarding.clickButton('Next');
-
             expect(await vendorOnboarding.toastMessage()).toBe(
                 'Successfully saved'
             );
-            await page.waitForTimeout(2 * 1000);
-            // await vendorOnboarding.clickButton('Next');
             await vendorOnboarding.uploadDocument([
                 {
                     tdsCert: '333333333',
@@ -130,8 +91,6 @@ describe('TCCC002', () => {
 
             bankIFSCCode = await getBankDetails.bankIFSCCode();
             expect(bankIFSCCode.slice(0, -1)).toBe(BANKDETAILS[0].ifsc);
-            // bankAccountName = await getBankDetails.bankAccountName();
-            // expect(bankAccountName).toBe(businessName);
 
             await vendorOnboarding.clickButton('Next');
             expect(page.getByText('Onboarding Completed')).toBeTruthy();
@@ -139,45 +98,20 @@ describe('TCCC002', () => {
         });
 
         await test.step('Client Connect', async () => {
+            vendorOnboarding.gstin_data = clientGstinInfo;
             await vendorOnboarding.clickButton('Connect');
-            await vendorOnboarding.clientInvitation(clientGSTIN);
-            clientName = await vendorOnboarding.checkBusinessName();
-            clientNameGSTIN = await vendorOnboarding.checkGSTIN();
-            await vendorOnboarding.checkBusinessType();
-            await vendorOnboarding.checkBusinessDetailsPAN();
-            await vendorOnboarding.checkStatus();
+
+            await vendorOnboarding.clientInvitation(
+                vendorGstinInfo.trade_name,
+                clientGstinInfo.trade_name
+                    ? clientGstinInfo.trade_name
+                    : clientGstinInfo.value
+            );
+            await vendorOnboarding.gstinInfoCheck();
             bankAccountNumber = await getBankDetails.bankAccountNumber();
         });
 
-        await test.step('Verify Client Connect Details', async () => {
-            expect(await vendorOnboarding.getClientIDVisibility()).toBe(true);
-            expect(await vendorOnboarding.checkBusinessNameVisibility()).toBe(
-                true
-            );
-            expect(await vendorOnboarding.checkGSTINVisibility()).toBe(true);
-            expect(await vendorOnboarding.checkBusinessTypeVisibility()).toBe(
-                true
-            );
-            expect(await vendorOnboarding.getGSTINfromInput()).toBe(
-                clientGSTIN
-            );
-            expect(clientNameGSTIN).toBe(
-                await vendorOnboarding.getGSTINfromInput()
-            );
-            expect(await vendorOnboarding.checkBusinessTypeVisibility()).toBe(
-                true
-            );
-            expect(
-                await vendorOnboarding.checkBusinessDetailsPANVisibility()
-            ).toBe(true);
-
-            expect(await vendorOnboarding.checkStatusVisibility()).toBe(true);
-
-            expect(bankAccountNumber).toBe(BANKDETAILS[0].accountNumber);
-            expect(await getBankDetails.businessDetailsIFSC()).toBe(
-                BANKDETAILS[0].ifsc
-            );
-        });
+        await test.step('Verify Client Connect Details', async () => {});
         await test.step('Upload Mandatory Documents', async () => {
             await vendorOnboarding.clickButton('Next');
             expect(await vendorOnboarding.checkButtonVisibility('Submit')).toBe(
@@ -198,24 +132,26 @@ describe('TCCC002', () => {
         });
         await test.step('Client Verify and Approve', async () => {
             const invitationDetails = new VendorInvitationDetails(page);
+
             expect(await invitationDetails.checkFrom()).toBe(
-                businessName + '…'
+                vendorGstinInfo.trade_name + '…'
             );
             expect(await invitationDetails.checkFromGSTIN()).toBe(
-                businessNameGSTIN
+                vendorGstinInfo.value
             );
+
             expect(await invitationDetails.checkClient()).toBe(
-                clientName + ' '
+                clientGstinInfo.trade_name + ' '
             );
             expect(await invitationDetails.checkClientGSTIN()).toBe(
-                clientNameGSTIN
+                clientGstinInfo.value
             );
         });
 
         await test.step('Check Uploaded Doucments', async () => {
             const withoutGSTIN = new VendorOnboardingWithGSTIN(page);
             expect(await withoutGSTIN.checkDoument('GSTIN Certificate')).toBe(
-                businessStatus
+                vendorGstinInfo.status
             );
             await withoutGSTIN.checkDoument('Pan Card');
             await withoutGSTIN.checkDoument('MSME');

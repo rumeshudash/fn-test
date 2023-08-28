@@ -12,9 +12,7 @@ export class SignupHelper extends BaseHelper {
     public static genRandomEmail() {
         return `test-${uuidV4()}@gmail.com`;
     }
-    public async nextPage() {
-        await this.click({ text: 'Next' });
-    }
+
     public async checkNextPage() {
         return this.locate('//button[text()="Next →"]');
     }

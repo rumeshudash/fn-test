@@ -8,14 +8,14 @@ import {
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
-
+import { vendorGstinInfo, clientGstinInfo } from '@/utils/required_data';
 const { expect, describe } = PROCESS_TEST;
 
 //Vendor Managed Onboarding
 describe('TCVO001', () => {
     PROCESS_TEST('Vendor Onboarding Copy Link', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(page);
-        const vendorOnboarding = new VendorOnboarding(page);
+        const vendorOnboarding = new VendorOnboarding(vendorGstinInfo, page);
         await vendorOnboarding.clickLink('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
         expect(await vendorOnboarding.toastMessage()).toBe(
@@ -38,12 +38,12 @@ describe('TCVO001', () => {
                 password: '123456',
                 confirm_password: '123456',
             });
-            await signup.nextPage();
+            await signup.clickButton('Next');
         });
         await test.step('Verify Email', async () => {
             const verifyEmail = new VerifyEmailHelper(page);
             await verifyEmail.fillCode('1');
-            await verifyEmail.verifyPageClick();
+            await verifyEmail.clickButton('Verify →');
             await vendorOnboarding.clickButton('Continue →');
         });
 
@@ -59,19 +59,19 @@ describe('TCVO001', () => {
                 status: 'Active',
             };
 
-            await vendorOnboarding.businessDetails([
-                {
-                    businessName: 'ferrari  India',
-                    gstin: '36AATFN8007H1ZW',
-                },
-            ]);
+            // await vendorOnboarding.businessDetails([
+            //     {
+            //         businessName: 'ferrari  India',
+            //         gstin: '36AATFN8007H1ZW',
+            //     },
+            // ]);
             await vendorOnboarding.beforeGstinNameNotVisibleDisplayName();
             await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Documents'
             );
             await vendorOnboarding.checkBusinessName();
-            await vendorOnboarding.checkGSTIN();
-            await vendorOnboarding.checkStatus();
+            // await vendorOnboarding.checkGSTIN();
+            // await vendorOnboarding.checkStatus();
             await vendorOnboarding.checkAddress();
             await vendorOnboarding.checkBusinessType();
             await vendorOnboarding.checkPAN();

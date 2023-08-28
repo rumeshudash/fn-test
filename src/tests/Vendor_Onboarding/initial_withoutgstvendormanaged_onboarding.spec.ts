@@ -10,6 +10,7 @@ import {
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboardingwithoutgstin.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
+import { vendorGstinInfo } from '@/utils/required_data';
 import { test } from '@playwright/test';
 
 let businessName: string;
@@ -22,7 +23,7 @@ const { expect, describe } = PROCESS_TEST;
 describe('VOWOG001', () => {
     PROCESS_TEST('Vendor Onboarding Copy Link', async ({ page }) => {
         const withnogstin = new VendorManagedWithoutGSTIN(page);
-        const vendorOnboarding = new VendorOnboarding(page);
+        const vendorOnboarding = new VendorOnboarding(vendorGstinInfo, page);
         await vendorOnboarding.clickLink('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
         expect(await vendorOnboarding.toastMessage()).toBe(
@@ -46,12 +47,12 @@ describe('VOWOG001', () => {
                 password: '123456',
                 confirm_password: '123456',
             });
-            await signup.nextPage();
+            await signup.clickButton('Next');
         });
         await test.step('Verify Email', async () => {
             const verifyEmail = new VerifyEmailHelper(page);
             await verifyEmail.fillCode('1');
-            await verifyEmail.verifyPageClick();
+            await verifyEmail.clickButton('Verify →');
             await vendorOnboarding.clickButton('Continue →');
         });
 
