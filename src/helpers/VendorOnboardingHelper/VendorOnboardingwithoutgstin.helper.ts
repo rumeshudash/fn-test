@@ -11,12 +11,6 @@ export class VendorManagedWithoutGSTIN extends BaseHelper {
     public VENDORONBOARDINGWITHOUTGSTIN_DOM =
         '//div[text()="Documents for Approval"]';
 
-    public async clicknotGSTIN() {
-        const helper = this.locate(this.VENDOR_MANAGED_ONBOARDING_DOM);
-        await helper.locate("//div[text()='No, I don’t']").click();
-        await this._page.waitForTimeout(1000);
-    }
-
     public async fillVendorDetails(data: VENDORDETAILS[] = []) {
         const helper = this.locate(this.VENDOR_MANAGED_ONBOARDING_DOM);
         for (let details of data) {

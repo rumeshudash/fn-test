@@ -2,7 +2,7 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import GenericGstinCardHelper from '../CommonCardHelper/genericGstin.card.helper';
 import { expect } from '@playwright/test';
-import { vendorGstinInfo } from '@/utils/required_data';
+import { clientGstinInfo, vendorGstinInfo } from '@/utils/required_data';
 
 let clientBusinessName: string;
 export class VendorOnboarding extends GenericGstinCardHelper {
@@ -25,6 +25,9 @@ export class VendorOnboarding extends GenericGstinCardHelper {
             name: 'Invite Vendor',
         });
         const linkDialog = this._page.getByRole('dialog');
+        expect(await linkDialog.isVisible(), 'Link Dialog not found').toBe(
+            true
+        );
         if (await linkDialog.isVisible()) {
             await this._page
                 .locator(
@@ -107,6 +110,10 @@ export class VendorOnboarding extends GenericGstinCardHelper {
     }
 
     public async fillGstinInput() {
+        await expect(
+            this._page.getByPlaceholder('ENTER GSTIN NUMBER'),
+            'Gstin input field is not visible'
+        ).toBeVisible();
         await this.fillText(this.gstin_data.value, {
             placeholder: 'ENTER GSTIN NUMBER',
         });
@@ -121,6 +128,14 @@ export class VendorOnboarding extends GenericGstinCardHelper {
         }).toBe(vendorGstinInfo.trade_name);
     }
     public async bankAccount(data: ClientBankAccountDetails[] = []) {
+        const bankAccountName = await this._page
+            .locator('#account_name')
+            .inputValue();
+        expect(
+            bankAccountName,
+            'Bank Account Name doest not match to Vendor'
+        ).toBe(vendorGstinInfo.trade_name);
+
         for (let details of data) {
             await this.fillText(details.accountNumber, {
                 name: 'account_number',
@@ -137,6 +152,15 @@ export class VendorOnboarding extends GenericGstinCardHelper {
 
     public async uploadDocument(data: UploadDocuments[] = []) {
         await this._page.waitForTimeout(1000);
+        const addDocumentBtn = this._page.getByRole('button', {
+            name: ' Add New Document',
+        });
+
+        await expect(
+            addDocumentBtn,
+            'Add New Document button not visible'
+        ).toBeVisible();
+
         await this.click({ role: 'button', name: ' Add New Document' });
         const dialog = this._page.locator("//div[@role='dialog']");
         if ((await dialog.isVisible()) === true) {
@@ -179,10 +203,17 @@ export class VendorOnboarding extends GenericGstinCardHelper {
                 option: businessName,
                 placeholder: 'Select Your Business',
             });
+
+            expect
+                .soft(
+                    await gstinDropdown.textContent(),
+                    'Client Information is not auto fetched'
+                )
+                .toBe(clientGstinInfo.trade_name);
         }
         if (await gstinDropdown.isVisible()) {
             await this.selectOption({
-                input: clientGSTIN,
+                input: clientGstinInfo.value,
                 placeholder: 'Select client business',
             });
         }
