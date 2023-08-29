@@ -28,7 +28,7 @@ const BANKDETAILS = [
 
 //Vendor Managed with Client Connect
 describe('TCCC002', () => {
-    test.slow();
+    test.setTimeout(1 * 110 * 1000);
     PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(page);
         const vendorOnboarding = new VendorOnboarding(vendorGstinInfo, page);
@@ -56,6 +56,8 @@ describe('TCCC002', () => {
             });
             await signup.clickButton('Next');
         });
+
+        //Verifies account after signup
         await test.step('Verify Email', async () => {
             const verifyEmail = new VerifyEmailHelper(page);
             await verifyEmail.fillCode('1');
@@ -70,7 +72,16 @@ describe('TCCC002', () => {
             await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Documents'
             );
+        });
+
+        //Verifies vendor details in card with provided one
+        await test.step('Verify Vendor GSTIN Info', async () => {
+            // vendorOnboarding.gstin_data = vendorGstinInfo;
             await vendorOnboarding.gstinInfoCheck();
+            await vendorOnboarding.gstinDisplayName();
+        });
+
+        await test.step('Doucments - Vendor Onboarding', async () => {
             await vendorOnboarding.clickButton('Next');
             expect(await vendorOnboarding.toastMessage()).toBe(
                 'Successfully saved'
@@ -83,6 +94,10 @@ describe('TCCC002', () => {
             ]);
             await vendorOnboarding.fileUpload('pan-card.jpg');
             await vendorOnboarding.clickButton('Save');
+        });
+
+        //Adding Bank Account to vendor
+        await test.step('Bank Account - Vendor Onboarding', async () => {
             await vendorOnboarding.clickButton('Next');
             await vendorOnboarding.bankAccount(BANKDETAILS);
             await vendorOnboarding.checkWizardNavigationClickDocument(
@@ -97,8 +112,9 @@ describe('TCCC002', () => {
             await vendorOnboarding.clickButton('Close');
         });
 
+        //Connects client to vendor
         await test.step('Client Connect', async () => {
-            vendorOnboarding.gstin_data = clientGstinInfo;
+            // vendorOnboarding.gstin_data = clientGstinInfo;
             await vendorOnboarding.clickButton('Connect');
 
             await vendorOnboarding.clientInvitation(
@@ -107,12 +123,16 @@ describe('TCCC002', () => {
                     ? clientGstinInfo.trade_name
                     : clientGstinInfo.value
             );
+        });
+
+        //Verifies client details in card with provided one
+        await test.step('Verify Client GSTIN Info', async () => {
+            vendorOnboarding.gstin_data = clientGstinInfo;
             await vendorOnboarding.gstinInfoCheck();
             bankAccountNumber = await getBankDetails.bankAccountNumber();
         });
 
-        await test.step('Verify Client Connect Details', async () => {});
-        await test.step('Upload Mandatory Documents', async () => {
+        await test.step('Upload Mandatory Documents - Client Connect', async () => {
             await vendorOnboarding.clickButton('Next');
             expect(await vendorOnboarding.checkButtonVisibility('Submit')).toBe(
                 false
@@ -130,7 +150,9 @@ describe('TCCC002', () => {
                 'Successfully created'
             );
         });
-        await test.step('Client Verify and Approve', async () => {
+
+        //verifies vendor and client details with provided one
+        await test.step('Verify Vendor and Client', async () => {
             const invitationDetails = new VendorInvitationDetails(page);
 
             expect(await invitationDetails.checkFrom()).toBe(

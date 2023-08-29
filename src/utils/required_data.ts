@@ -1,5 +1,6 @@
 import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 
+//Vendor Onboarding with GSTIN
 export const vendorGstinInfo: gstinDataType = {
     trade_name: 'Cloudtail India Private Limited',
     value: '27AAQCS4259Q1ZA',

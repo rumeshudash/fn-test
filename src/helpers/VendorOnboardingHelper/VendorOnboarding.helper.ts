@@ -1,6 +1,8 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import GenericGstinCardHelper from '../CommonCardHelper/genericGstin.card.helper';
+import { expect } from '@playwright/test';
+import { vendorGstinInfo } from '@/utils/required_data';
 
 let clientBusinessName: string;
 export class VendorOnboarding extends GenericGstinCardHelper {
@@ -105,9 +107,18 @@ export class VendorOnboarding extends GenericGstinCardHelper {
     }
 
     public async fillGstinInput() {
-        this.fillText(this.gstin_data.value, {
+        await this.fillText(this.gstin_data.value, {
             placeholder: 'ENTER GSTIN NUMBER',
         });
+    }
+
+    public async gstinDisplayName() {
+        const display_name = await this._page
+            .locator('#display_name')
+            .inputValue();
+        expect(display_name, {
+            message: 'Display name is not matching to vendor',
+        }).toBe(vendorGstinInfo.trade_name);
     }
     public async bankAccount(data: ClientBankAccountDetails[] = []) {
         for (let details of data) {
@@ -232,10 +243,10 @@ export class VendorOnboarding extends GenericGstinCardHelper {
         for (let i = 0; i < errorContainerCount; i++) {
             console.log(
                 'Document Image Error: ',
-                chalk.red(await documentError.nth(i).textContent()) +
-                    ' ' +
+                chalk.red(await documentError.first().textContent()) +
+                    ' Editable: ' +
                     chalk.blue(
-                        (await errorContainer.nth(i).textContent()).includes(
+                        (await errorContainer.first().textContent()).includes(
                             'files'
                         )
                     )
@@ -245,11 +256,9 @@ export class VendorOnboarding extends GenericGstinCardHelper {
                 const filesTextError = (
                     await errorContainer.first().innerText()
                 ).includes('files');
-                console.log('INCLUDE Content: ', filesTextError);
 
                 if (filesTextError) {
                     await errorContainer.getByRole('img').first().click();
-                    console.log('CLICKED ON IMG EDIT');
                 } else {
                     await errorContainer.locator('i').first().click();
                 }

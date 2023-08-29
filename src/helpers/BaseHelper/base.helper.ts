@@ -283,6 +283,10 @@ export class BaseHelper {
             )
             .elementHandles();
 
+        expect(elements.length, {
+            message: `${input || option} does not found in dropdown`,
+        }).toBeGreaterThanOrEqual(1);
+
         if (elements.length === 1) {
             await elements[0].click();
         } else if (elements.length > 1) {
@@ -293,6 +297,10 @@ export class BaseHelper {
                     break;
                 }
             }
+        } else {
+            throw new Error(
+                chalk.red(`${input || option} does not found in dropdown`)
+            );
         }
     }
 
@@ -441,10 +449,10 @@ export class BaseHelper {
         const display_input = await this._page
             .locator('#display_name')
             .isVisible();
-        expect(!display_input, {
+        expect(display_input, {
             message:
                 'Display name could not be displayed before gstin fetched !!',
-        }).toBe(true);
+        }).toBe(false);
     }
     /**
      * Determines if the element is visible.

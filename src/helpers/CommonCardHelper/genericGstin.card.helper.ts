@@ -19,78 +19,78 @@ export default class GenericGstinCardHelper extends BaseHelper {
     }
 
     async checkBusinessName() {
-        const element = await this.locate('div', {
+        const element = this.locate('div', {
             id: 'gstin_trade_name',
         })._locator;
-        await expect(await element.isVisible(), {
-            message: 'Gstin Trade Name not found',
-        }).toBe(true);
-        await expect(element, {
-            message: 'Gstin Trade Name not matched !!',
-        }).toHaveText(this.gstin_data.trade_name);
+        console.log('Business Name element: ', element);
+        expect(await element.isVisible(), 'Gstin Trade Name not found').toBe(
+            true
+        );
+        await expect(element, 'Gstin Trade Name not matched !!').toHaveText(
+            this.gstin_data.trade_name
+        );
+        console.log('Business Name: ', this.gstin_data.trade_name);
     }
     async checkGstinNumber() {
-        const element = await this.locate('div', {
+        const element = this.locate('div', {
             id: 'gstin_number',
         })._locator;
-        await expect(await element.isVisible(), {
-            message: 'Gstin Number not found',
-        }).toBe(true);
 
-        await expect(element, {
-            message: 'Gstin Address  not matched !!',
-        }).toHaveText(this.gstin_data.value);
+        expect(await element.isVisible(), 'Gstin Number not found').toBe(true);
+        console.log('GSTIN Value element: ', element);
+        await expect(element, 'Gstin Number  not matched !!').toHaveText(
+            this.gstin_data.value
+        );
+        console.log('GSTIN Value: ', this.gstin_data.value);
     }
     async checkAddress() {
-        const element = await this.locate('span', {
+        const element = this.locate('span', {
             id: 'gstin_address',
         })._locator;
 
-        await expect(await element.isVisible(), {
-            message: 'Gstin  Address not found',
-        }).toBe(true);
+        expect(await element.isVisible(), 'Gstin  Address not found').toBe(
+            true
+        );
 
-        await expect(element, {
-            message: 'Gstin Address  not matched !!',
-        }).toHaveText(this.gstin_data.address);
+        await expect(element, 'Gstin Address  not matched !!').toHaveText(
+            this.gstin_data.address
+        );
     }
     async checkBusinessType() {
-        const element = await this.locate('span', {
+        const element = this.locate('span', {
             id: 'gstin_business_type',
         })._locator;
-        await expect(await element.isVisible(), {
-            message: 'Gstin  business type not found',
-        }).toBe(true);
-        await expect(element, {
-            message: 'Gstin Business Type  not matched !!',
-        }).toHaveText(this.gstin_data.business_type);
+        expect(
+            await element.isVisible(),
+            'Gstin  business type not found'
+        ).toBe(true);
+        await expect(element, 'Gstin Business Type  not matched !!').toHaveText(
+            this.gstin_data.business_type
+        );
     }
     async checkPAN() {
-        const element = await this.locate('span', {
+        const element = this.locate('span', {
             id: 'gstin_pan',
         })._locator;
-        await expect(await element.isVisible(), {
-            message: 'Pan number  not found',
-        }).toBe(true);
-        await expect(element, {
-            message: 'Gstin pan number  not matched !!',
-        }).toHaveText(this.gstin_data.pan_number);
+        expect(await element.isVisible(), 'Pan number  not found').toBe(true);
+        await expect(element, 'Gstin pan number  not matched !!').toHaveText(
+            this.gstin_data.pan_number
+        );
     }
 
     async checkGstinStatus() {
-        const element = await this.locate('div', {
+        const element = this.locate('div', {
             id: 'gstin_status',
         })._locator;
 
-        await expect(await element.isVisible(), {
-            message: 'Gstin Status  not found',
-        }).toBe(true);
-        await expect(element, {
-            message: 'Gstin status  not matched !!',
-        }).toHaveText(this.gstin_data.status);
+        expect(await element.isVisible(), 'Gstin Status  not found').toBe(true);
+        await expect(element, 'Gstin status  not matched !!').toHaveText(
+            this.gstin_data.status
+        );
     }
 
     async gstinInfoCheck() {
+        await this._page.waitForTimeout(2000);
         await this.checkBusinessName();
         await this.checkGstinNumber();
         // await this.checkAddress();
