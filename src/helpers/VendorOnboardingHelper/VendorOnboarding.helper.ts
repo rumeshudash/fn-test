@@ -252,6 +252,11 @@ export class VendorOnboarding extends GenericGstinCardHelper {
                     )
             );
 
+            const msme = {
+                msme_identifier: '20',
+                files: [],
+            };
+
             if (errorContainer) {
                 const filesTextError = (
                     await errorContainer.first().innerText()
@@ -273,7 +278,7 @@ export class VendorOnboarding extends GenericGstinCardHelper {
                         .getByPlaceholder('Enter MSME number')
                         .isVisible()
                 ) {
-                    await this.fillText('22', {
+                    await this.fillText(msme.msme_identifier, {
                         placeholder: 'Enter MSME number',
                     });
                 }

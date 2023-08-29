@@ -28,11 +28,13 @@ const BANKDETAILS = [
 
 //Vendor Managed with Client Connect
 describe('TCCC002', () => {
-    test.setTimeout(1 * 110 * 1000);
+    // test.setTimeout(1 * 110 * 1000);
     PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(page);
         const vendorOnboarding = new VendorOnboarding(vendorGstinInfo, page);
         await vendorOnboarding.clickLink('Vendor Invitations');
+
+        //@todo also you have to give clear message for copy field
         await vendorOnboarding.clickCopyLink();
         expect(await vendorOnboarding.toastMessage()).toBe(
             'Link Successfully Copied!!!'
@@ -50,10 +52,11 @@ describe('TCCC002', () => {
             const signup = new SignupHelper(page);
             await signup.fillSignup({
                 name: 'User130823',
-                email: `User${generateRandomNumber()}@test.com`,
+                email: `User`,
                 password: '123456',
                 confirm_password: '123456',
             });
+
             await signup.clickButton('Next');
         });
 
@@ -128,6 +131,7 @@ describe('TCCC002', () => {
         //Verifies client details in card with provided one
         await test.step('Verify Client GSTIN Info', async () => {
             vendorOnboarding.gstin_data = clientGstinInfo;
+
             await vendorOnboarding.gstinInfoCheck();
             bankAccountNumber = await getBankDetails.bankAccountNumber();
         });
