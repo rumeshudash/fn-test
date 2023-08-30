@@ -59,7 +59,7 @@ describe('VOWOG001', () => {
         await test.step('Create Business Client', async () => {
             await vendorOnboarding.clickButton('Create New Business');
 
-            await withnogstin.clicknotGSTIN();
+            await withnogstin.setCheckbox('No');
         });
 
         await test.step('Fill Vendor Details', async () => {

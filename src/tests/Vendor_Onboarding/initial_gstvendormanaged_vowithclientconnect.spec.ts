@@ -70,6 +70,7 @@ describe('TCCC002', () => {
 
         await test.step('Create Business Client', async () => {
             await vendorOnboarding.clickButton('Create New Business');
+            await vendorOnboarding.setCheckbox('Yes');
             await vendorOnboarding.fillGstinInput();
             await vendorOnboarding.beforeGstinNameNotVisibleDisplayName();
             await vendorOnboarding.checkWizardNavigationClickDocument(
@@ -78,17 +79,17 @@ describe('TCCC002', () => {
         });
 
         //Verifies vendor details in card with provided one
-        await test.step('Verify Vendor GSTIN Info', async () => {
+        await test.step('Verify Vendor GSTIN Info then Save', async () => {
             // vendorOnboarding.gstin_data = vendorGstinInfo;
             await vendorOnboarding.gstinInfoCheck();
             await vendorOnboarding.gstinDisplayName();
-        });
-
-        await test.step('Doucments - Vendor Onboarding', async () => {
             await vendorOnboarding.clickButton('Next');
             expect(await vendorOnboarding.toastMessage()).toBe(
                 'Successfully saved'
             );
+        });
+
+        await test.step('Doucments - Vendor Onboarding', async () => {
             await vendorOnboarding.uploadDocument([
                 {
                     tdsCert: '333333333',
@@ -111,7 +112,9 @@ describe('TCCC002', () => {
             expect(bankIFSCCode.slice(0, -1)).toBe(BANKDETAILS[0].ifsc);
 
             await vendorOnboarding.clickButton('Next');
-            expect(page.getByText('Onboarding Completed')).toBeTruthy();
+            expect(
+                await page.getByText('Onboarding Completed').isVisible()
+            ).toBe(true);
             await vendorOnboarding.clickButton('Close');
         });
 
@@ -134,13 +137,13 @@ describe('TCCC002', () => {
 
             await vendorOnboarding.gstinInfoCheck();
             bankAccountNumber = await getBankDetails.bankAccountNumber();
+            await vendorOnboarding.clickButton('Next');
         });
 
         await test.step('Upload Mandatory Documents - Client Connect', async () => {
-            await vendorOnboarding.clickButton('Next');
-            expect(await vendorOnboarding.checkButtonVisibility('Submit')).toBe(
-                false
-            );
+            expect(
+                await vendorOnboarding.checkButtonVisibility('Submit')
+            ).not.toBe(true);
 
             await vendorOnboarding.uploadImageDocuments('pan-card.jpg');
             expect(await vendorOnboarding.toastMessage()).toBe(

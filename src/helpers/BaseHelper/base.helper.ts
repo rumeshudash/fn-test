@@ -393,6 +393,15 @@ export class BaseHelper {
         });
         await document_navigation.click();
         await this._page.waitForTimeout(1000);
+
+        const vendorBankDetails = this._page.locator(
+            "(//div[contains(@class,'flex items-center')])[2]"
+        );
+        expect(
+            await vendorBankDetails.isVisible(),
+            'Vendor Bank Details is not visible'
+        ).toBe(true);
+
         const error = this._page.locator('span.label.text-error');
         const errorCount = await error.count();
         if (errorCount > 0) {
@@ -478,6 +487,9 @@ export class BaseHelper {
 
     public async clickButton(buttonName: string) {
         const btnClick = this._page.getByRole('button', { name: buttonName });
+        expect
+            .soft(await btnClick.isEnabled(), 'Button is not enabled to click')
+            .toBe(true);
         if (await btnClick.isEnabled()) {
             await btnClick.click();
         } else {
@@ -576,5 +588,17 @@ export class BaseHelper {
                 return errorMsg;
             }
         }
+    }
+    public async setCheckbox(choice: string) {
+        const checkBox = this.locate(
+            `//div[contains(text(),"${choice}")]`
+        )._locator;
+
+        expect(await checkBox.isVisible(), 'Checkbox is not visible').toBe(
+            true
+        );
+        console.log('CheckBox: ', checkBox);
+
+        await checkBox.click();
     }
 }
