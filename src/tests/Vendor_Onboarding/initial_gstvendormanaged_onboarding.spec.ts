@@ -8,7 +8,11 @@ import {
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
-import { vendorGstinInfo, clientGstinInfo } from '@/utils/required_data';
+import {
+    vendorGstinInfo,
+    clientGstinInfo,
+    LOWER_TDS_DETAILS,
+} from '@/utils/required_data';
 const { expect, describe } = PROCESS_TEST;
 
 //Vendor Managed Onboarding
@@ -85,12 +89,7 @@ describe('TCVO001', () => {
             );
             await page.waitForTimeout(2 * 1000);
             // await vendorOnboarding.clickButton('Next');
-            await vendorOnboarding.uploadDocument([
-                {
-                    tdsCert: '333333333',
-                    tdsPercentage: '22',
-                },
-            ]);
+            await vendorOnboarding.uploadDocument(LOWER_TDS_DETAILS);
             await vendorOnboarding.fileUpload('pan-card.jpg');
             await vendorOnboarding.clickButton('Save');
             await vendorOnboarding.clickButton('Next');

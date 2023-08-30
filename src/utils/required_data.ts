@@ -20,3 +20,24 @@ export const clientGstinInfo: gstinDataType = {
     pan_number: 'AACCH0586R',
     status: 'Active',
 };
+
+export const LOWER_TDS_DETAILS = [
+    {
+        tdsCert: '333333333',
+        tdsPercentage: '22',
+    },
+];
+
+//Vendor Bank Account Details - (Client Invitation Vendor Managed)
+export const BANKDETAILS = [
+    {
+        accountNumber: '1234567',
+        ifsc: 'HDFC0000001',
+        address: 'HDFC0000001, TULSIANI CHMBRS - NARIMAN PT ',
+    },
+];
+
+export const IMAGE_NAME = 'pan-card.jpg';
+export const MSME_NUMBER = '22';
+export const COI_NUMBER = '23332567';
+export const PICK_DATE = '20-06-2023';

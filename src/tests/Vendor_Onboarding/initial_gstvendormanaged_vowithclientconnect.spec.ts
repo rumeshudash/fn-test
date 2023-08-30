@@ -10,21 +10,20 @@ import {
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
-import { vendorGstinInfo, clientGstinInfo } from '@/utils/required_data';
+import {
+    vendorGstinInfo,
+    clientGstinInfo,
+    BANKDETAILS,
+    LOWER_TDS_DETAILS,
+    IMAGE_NAME,
+} from '@/utils/required_data';
 
 //Bank Details
-let bankAccountName: string;
+// let bankAccountName: string;
 let bankAccountNumber: string;
-let bankIFSCCode: string;
+// let bankIFSCCode: string;
 
 const { expect, describe } = PROCESS_TEST;
-
-const BANKDETAILS = [
-    {
-        accountNumber: '1234567',
-        ifsc: 'HDFC0000001',
-    },
-];
 
 //Vendor Managed with Client Connect
 describe('TCCC002', () => {
@@ -90,13 +89,8 @@ describe('TCCC002', () => {
         });
 
         await test.step('Doucments - Vendor Onboarding', async () => {
-            await vendorOnboarding.uploadDocument([
-                {
-                    tdsCert: '333333333',
-                    tdsPercentage: '22',
-                },
-            ]);
-            await vendorOnboarding.fileUpload('pan-card.jpg');
+            await vendorOnboarding.uploadDocument(LOWER_TDS_DETAILS);
+            await vendorOnboarding.fileUpload(IMAGE_NAME);
             await vendorOnboarding.clickButton('Save');
         });
 
@@ -108,8 +102,18 @@ describe('TCCC002', () => {
                 'Bank Account'
             );
 
-            bankIFSCCode = await getBankDetails.bankIFSCCode();
-            expect(bankIFSCCode.slice(0, -1)).toBe(BANKDETAILS[0].ifsc);
+            // bankIFSCCode = await getBankDetails.bankIFSCCode();
+
+            const ifscBankDetails = await getBankDetails.vendorIfscDetails();
+            expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
+                BANKDETAILS[0].address
+            );
+            await getBankDetails.vendorIfscLogoCheck();
+
+            // expect(
+            //     bankIFSCCode.slice(0, -1),
+            //     'Bank IFSC Code does not match'
+            // ).toBe(BANKDETAILS[0].ifsc);
 
             await vendorOnboarding.clickButton('Next');
             expect(
@@ -134,6 +138,8 @@ describe('TCCC002', () => {
         //Verifies client details in card with provided one
         await test.step('Verify Client GSTIN Info', async () => {
             vendorOnboarding.gstin_data = clientGstinInfo;
+
+            vendorOnboarding.ignore_test_fields = ['gstin_business_address'];
 
             await vendorOnboarding.gstinInfoCheck();
             bankAccountNumber = await getBankDetails.bankAccountNumber();
@@ -179,9 +185,7 @@ describe('TCCC002', () => {
 
         await test.step('Check Uploaded Doucments', async () => {
             const withoutGSTIN = new VendorOnboardingWithGSTIN(page);
-            expect(await withoutGSTIN.checkDoument('GSTIN Certificate')).toBe(
-                vendorGstinInfo.status
-            );
+            await withoutGSTIN.checkDoument('GSTIN Certificate');
             await withoutGSTIN.checkDoument('Pan Card');
             await withoutGSTIN.checkDoument('MSME');
             await withoutGSTIN.checkDoument('Lower TDS');

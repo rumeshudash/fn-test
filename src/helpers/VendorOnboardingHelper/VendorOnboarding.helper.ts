@@ -2,8 +2,19 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import GenericGstinCardHelper from '../CommonCardHelper/genericGstin.card.helper';
 import { expect } from '@playwright/test';
-import { clientGstinInfo, vendorGstinInfo } from '@/utils/required_data';
+import {
+    BANKDETAILS,
+    COI_NUMBER,
+    IMAGE_NAME,
+    LOWER_TDS_DETAILS,
+    MSME_NUMBER,
+    PICK_DATE,
+    clientGstinInfo,
+    vendorGstinInfo,
+} from '@/utils/required_data';
+import { ExpenseHelper } from '../ExpenseHelper/expense.helper';
 
+let getDate: string;
 let clientBusinessName: string;
 export class VendorOnboarding extends GenericGstinCardHelper {
     private BUSINESS_DETAILS_DOM =
@@ -38,9 +49,11 @@ export class VendorOnboarding extends GenericGstinCardHelper {
     }
 
     public async linkURL() {
-        return await this._page
-            .locator("//span[contains(@class,'px-3 overflow-hidden')]")
-            .textContent();
+        const linkInput = this._page.locator(
+            "//span[contains(@class,'px-3 overflow-hidden')]"
+        );
+        expect(await linkInput.isVisible(), 'Link Input not found').toBe(true);
+        return await linkInput.textContent();
     }
 
     public async closeDialog() {
@@ -59,16 +72,16 @@ export class VendorOnboarding extends GenericGstinCardHelper {
         const toastLoadingCount = await toastLoading.count();
         if (toastLoadingCount > 0) {
             console.log(
-                chalk.red(
+                chalk.magenta(
                     `Multiple toastMessage ocurred \n ${toastLoading}:`,
                     toastLoadingCount
                 )
             );
             for (let i = 0; i < toastLoadingCount; i++) {
-                const loadingMsg = await toastWarn.nth(i).textContent();
+                const loadingMsg = await toastLoading.nth(i).textContent();
                 console.log(
                     `toastMessage (loading ${i}): `,
-                    chalk.bgGreen(loadingMsg)
+                    chalk.magenta(loadingMsg)
                 );
             }
         }
@@ -171,11 +184,12 @@ export class VendorOnboarding extends GenericGstinCardHelper {
                 await this.fillText(details.tdsPercentage, {
                     placeholder: 'Enter Lower TDS Percentage',
                 });
-                await this._page.locator('#date').click();
-                await this._page
-                    .locator("button:has-text('20')")
-                    .first()
-                    .click();
+                await this._page.locator('#date').fill(PICK_DATE);
+                getDate = await this._page.locator('#date').inputValue();
+                // await this._page
+                //     .locator("button:has-text('20')")
+                //     .first()
+                //     .click();
             }
         }
     }
@@ -309,7 +323,7 @@ export class VendorOnboarding extends GenericGstinCardHelper {
                         .getByPlaceholder('Enter MSME number')
                         .isVisible()
                 ) {
-                    await this.fillText(msme.msme_identifier, {
+                    await this.fillText(MSME_NUMBER, {
                         placeholder: 'Enter MSME number',
                     });
                 }
@@ -319,7 +333,7 @@ export class VendorOnboarding extends GenericGstinCardHelper {
                         .getByPlaceholder('Enter COI number')
                         .isVisible()
                 ) {
-                    await this.fillText('23332567', {
+                    await this.fillText(COI_NUMBER, {
                         placeholder: 'Enter COI number',
                     });
                 }
@@ -421,12 +435,116 @@ export class VendorOnboardingWithGSTIN extends BaseHelper {
         const container = helper._page
             .locator(`(//div[contains(@class,'border-b cursor-pointer')])`)
             .filter({ hasText: title });
+        const imageName = helper._page.locator(
+            '//div[contains(@class,"overflow-hidden font-medium")]'
+        );
         if (container) {
             await container.click();
             if (title === 'GSTIN Certificate') {
-                return helper._page
-                    .locator("//p[text()='GST Status']/following-sibling::p")
-                    .textContent();
+                const gstinStatus = helper._page.locator(
+                    "//p[text()='GST Status']/following-sibling::p"
+                );
+
+                expect(
+                    await gstinStatus.isVisible(),
+                    'GSTIN Status is not visible'
+                ).toBe(true);
+                expect(
+                    await gstinStatus.textContent(),
+                    'GSTIN Status does not matched'
+                ).toBe(vendorGstinInfo.status);
+
+                if (await imageName.isVisible()) {
+                    expect(
+                        await imageName.textContent(),
+                        'Image Name does not matched'
+                    ).toBe(IMAGE_NAME);
+                }
+            }
+            if (title === 'Pan Card') {
+                if (await imageName.isVisible()) {
+                    expect(
+                        await imageName.textContent(),
+                        'Image Name does not matched'
+                    ).toBe('pan-card.jpg');
+                }
+            }
+
+            if (title === 'MSME') {
+                const msmeLocator = helper._page.locator(
+                    "//div[text()='MSME number']/following-sibling::div"
+                );
+                expect(await msmeLocator.isVisible()).toBe(true);
+                expect(await msmeLocator.textContent()).toBe(MSME_NUMBER);
+                if (await imageName.isVisible()) {
+                    expect(
+                        await imageName.textContent(),
+                        'Image Name does not matched'
+                    ).toBe(IMAGE_NAME);
+                }
+            }
+
+            if (title === 'Lower TDS') {
+                const tdsCertNumber = helper._page.locator(
+                    "//div[text()='TDS Certificate Number']/following-sibling::div"
+                );
+                const tdsPercentage = helper._page.locator(
+                    '//div[text()="Lower TDS Percentage"]/following-sibling::div'
+                );
+                const expireDate = helper._page.locator(
+                    '//div[text()="Expiry Date"]/following-sibling::div'
+                );
+
+                expect(
+                    await tdsCertNumber.textContent(),
+                    'TDS Certificate Number does not matched'
+                ).toBe(LOWER_TDS_DETAILS[0].tdsCert);
+
+                expect(
+                    await tdsPercentage.textContent(),
+                    'TDS Percentage does not matched'
+                ).toBe(MSME_NUMBER + '%');
+
+                expect
+                    .soft(
+                        await expireDate.textContent(),
+                        'Expiry Date does not matched'
+                    )
+                    .toBe(getDate);
+
+                if (await imageName.isVisible()) {
+                    expect(
+                        await imageName.textContent(),
+                        'Image Name does not matched'
+                    ).toBe(IMAGE_NAME);
+                }
+            }
+
+            if (title === 'Bank') {
+                const bankName = helper._page.locator(
+                    "//div[text()='Name']/following-sibling::div"
+                );
+                const accountNumber = helper._page.locator(
+                    '//div[text()="A/C Number"]/following-sibling::div'
+                );
+                const ifscCode = helper._page.locator(
+                    "//div[text()='IfSC Code']/following-sibling::div"
+                );
+
+                expect(
+                    await bankName.textContent(),
+                    'Bank Name does not matched'
+                ).toBe(vendorGstinInfo.trade_name);
+
+                expect(
+                    await accountNumber.textContent(),
+                    'Account Number does not matched'
+                ).toBe(BANKDETAILS[0].accountNumber);
+
+                expect(
+                    await ifscCode.textContent(),
+                    'IFSC Code does not matched'
+                ).toBe(BANKDETAILS[0].ifsc);
             }
         }
         await helper._page.waitForTimeout(1000);
@@ -434,6 +552,24 @@ export class VendorOnboardingWithGSTIN extends BaseHelper {
 }
 
 export class BankAccountDetails extends BaseHelper {
+    public async vendorIfscLogoCheck() {
+        const iconLocator = this.locate('//img[@alt="bank"]')._locator;
+        expect(
+            await iconLocator.isVisible(),
+            'IFSC Bank Logo is not visible'
+        ).toBe(true);
+    }
+    public async vendorIfscDetails() {
+        const ifsc_details = await this._page.locator(
+            '(//div[contains(@class,"flex items-center")])[2]'
+        );
+        expect(
+            await ifsc_details.isVisible(),
+            'Bank Details is not visible'
+        ).toBe(true);
+
+        return await ifsc_details.textContent();
+    }
     public async bankAccountName() {
         const accountName = await this._page
             .locator('//label[@for="account_name"]/following-sibling::div[1]')
