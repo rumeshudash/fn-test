@@ -487,9 +487,10 @@ export class BaseHelper {
 
     public async clickButton(buttonName: string) {
         const btnClick = this._page.getByRole('button', { name: buttonName });
-        expect
-            .soft(await btnClick.isEnabled(), 'Button is not enabled to click')
-            .toBe(true);
+        expect(
+            await btnClick.isEnabled(),
+            'Button is not enabled to click'
+        ).toBe(true);
         if (await btnClick.isEnabled()) {
             await btnClick.click();
         } else {
