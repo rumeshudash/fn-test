@@ -14,13 +14,13 @@
         "test": "playwright test",
         "test:prod": "cross-env TEST_ENV=production playwright test",
         "test:local": "cross-env TEST_ENV=local playwright test",
-        "test:ui:local": "cross-env TEST_ENV=local playwright test --ui ",
         "test:debug": "playwright test --debug",
         "report": "playwright show-report report",
         "postinstall": "npx playwright install"
     },
     "dependencies": {
         "clipboardy": "^3.0.0",
+        "date-fns": "^2.30.0",
         "http-server": "^14.1.1"
     }
 }

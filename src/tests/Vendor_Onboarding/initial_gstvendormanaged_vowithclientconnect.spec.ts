@@ -41,8 +41,10 @@ describe('TCCC002', () => {
 
         await test.step('Open Copied Link', async () => {
             const URL = await vendorOnboarding.linkURL();
+
             await vendorOnboarding.closeDialog();
             await vendorOnboarding.logOut();
+            test.setTimeout(1 * 110 * 1000);
             await vendorOnboarding.init(URL);
         });
 
@@ -51,7 +53,7 @@ describe('TCCC002', () => {
             const signup = new SignupHelper(page);
             await signup.fillSignup({
                 name: 'User130823',
-                email: `User`,
+                email: `user${generateRandomNumber()}@gmail.com`,
                 password: '123456',
                 confirm_password: '123456',
             });

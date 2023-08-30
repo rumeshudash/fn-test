@@ -13,6 +13,7 @@ import {
     vendorGstinInfo,
 } from '@/utils/required_data';
 import { ExpenseHelper } from '../ExpenseHelper/expense.helper';
+import { FormatDisplayDate } from '@/utils/common.utils';
 
 let getDate: string;
 let clientBusinessName: string;
@@ -504,13 +505,13 @@ export class VendorOnboardingWithGSTIN extends BaseHelper {
                     await tdsPercentage.textContent(),
                     'TDS Percentage does not matched'
                 ).toBe(MSME_NUMBER + '%');
-
+                console.log(getDate);
                 expect
                     .soft(
                         await expireDate.textContent(),
                         'Expiry Date does not matched'
                     )
-                    .toBe(getDate);
+                    .toBe(FormatDisplayDate(getDate));
 
                 if (await imageName.isVisible()) {
                     expect(

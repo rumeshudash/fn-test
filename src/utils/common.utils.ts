@@ -1,3 +1,9 @@
+import {
+    DISPLAY_DATE_TIME_FORMAT,
+    DISPLAY_DATE_FORMAT,
+} from '@/constants/preferences.constant';
+import { format, isDate, parse } from 'date-fns';
+
 // This will Generate Random Name
 export function generateRandomName() {
     var prefixes = ['John', 'Alice', 'Robert', 'Emily', 'Michael', 'Olivia'];
@@ -57,5 +63,18 @@ export function uuidV4() {
                 v = c == 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
         }
+    );
+}
+export const GetDateValue = (date: any, format?: string) => {
+    if (!date || isDate(date)) return date;
+    if (format) {
+        return parse(date, format, new Date());
+    }
+    return new Date(date);
+};
+export function FormatDisplayDate(date: string | Date, showTime?: boolean) {
+    return format(
+        GetDateValue(date),
+        showTime ? DISPLAY_DATE_TIME_FORMAT : DISPLAY_DATE_FORMAT
     );
 }
