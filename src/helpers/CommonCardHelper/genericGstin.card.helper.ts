@@ -23,13 +23,12 @@ export default class GenericGstinCardHelper extends BaseHelper {
             id: 'gstin_trade_name',
         })._locator;
 
-        const isElementVisible = await element.isVisible();
-
-        expect(isElementVisible, 'Gstin Trade Name not found').toBe(true);
-        await expect(element, 'Gstin Trade Name not matched !!').toContainText(
+        expect(await element.isVisible(), 'Gstin Trade Name not found').toBe(
+            true
+        );
+        await expect(element, 'Gstin Trade Name not matched !!').toHaveText(
             this.gstin_data.trade_name
         );
-        console.log('Business Name: ', this.gstin_data.trade_name);
     }
     async checkGstinNumber() {
         const element = this.locate('div', {
@@ -37,11 +36,9 @@ export default class GenericGstinCardHelper extends BaseHelper {
         })._locator;
 
         expect(await element.isVisible(), 'Gstin Number not found').toBe(true);
-        console.log('GSTIN Value element: ', element);
         await expect(element, 'Gstin Number  not matched !!').toHaveText(
             this.gstin_data.value
         );
-        console.log('GSTIN Value: ', this.gstin_data.value);
     }
     async checkAddress() {
         const element = this.locate('span', {
