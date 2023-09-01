@@ -1,32 +1,63 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { SavedExpenseCreation } from '@/helpers/ExpenseHelper/savedExpense.helper';
-import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
+import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import {
-    VendorInvitationDetails,
+    BankAccountDetails,
     VendorOnboarding,
-    VendorOnboardingWithGSTIN,
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
-import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboardingwithoutgstin.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
-import { vendorGstinInfo } from '@/utils/required_data';
 import { test } from '@playwright/test';
+import {
+    BANKDETAILS,
+    LOWER_TDS_DETAILS,
+    IMAGE_NAME,
+    NON_GSTIN_LOWER_TDS_DETAILS,
+    NON_GSTIN_BANK_DETAILS_ONE,
+} from '@/utils/required_data';
+import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
+import { nonGstinDataType } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
 
-let businessName: string;
-let businessNameGSTIN: string;
-let clientName: string;
-let clientNameGSTIN: string;
+//Vendor and Client Details
+const vendorNonGstinInfo: nonGstinDataType = {
+    trade_name: 'ABC Pvt Ltd',
+    display_name: 'ABC Pvt Ltd',
+    business_type: 'Partnership Firm',
+    pin_code: '110001',
+    address: '123/45 Test address',
+};
+
+const clientGstinInfo: gstinDataType = {
+    trade_name: 'Hidesign India Pvt Ltd',
+    value: '33AACCH0586R1Z6',
+    business_type: 'Private Limited',
+    address:
+        'EXPRESS AVENUE, 49/50 L-WHITES ROAD, ROYAPETTAH, SHOP NO.S 161 B, Chennai, , , 600014, , Tamil Nadu, NA, FIRST FLOOR, ',
+    pan_number: 'AACCH0586R',
+    status: 'Active',
+};
+
+let bankAccountNumber: string;
+
 const { expect, describe } = PROCESS_TEST;
 
 //Vendor Managed with Client Connect
-describe('VOWOG001', () => {
-    PROCESS_TEST('Vendor Onboarding Copy Link', async ({ page }) => {
-        const withnogstin = new VendorManagedWithoutGSTIN(page);
-        const vendorOnboarding = new VendorOnboarding(vendorGstinInfo, page);
-        await vendorOnboarding.clickLink('Vendor Invitations');
+describe('TCVO003', () => {
+    PROCESS_TEST('Vendor Onboarding Without GSTIN', async ({ page }) => {
+        const withnogstin = new VendorManagedWithoutGSTIN(
+            vendorNonGstinInfo,
+            page
+        );
+        const vendorOnboarding = new VendorOnboarding(page);
+
+        const getBankDetails = new BankAccountDetails(
+            NON_GSTIN_BANK_DETAILS_ONE,
+            page
+        );
+        // const vendorOnboarding = new VendorOnboarding(vendorNonGstinInfo, page);
+        await withnogstin.clickLinkInviteVendor('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
-        expect(await vendorOnboarding.toastMessage()).toBe(
+        expect(await withnogstin.toastMessage()).toBe(
             'Link Successfully Copied!!!'
         );
 
@@ -34,12 +65,12 @@ describe('VOWOG001', () => {
             const URL = await vendorOnboarding.linkURL();
             await vendorOnboarding.closeDialog();
             await vendorOnboarding.logOut();
-            console.log(URL);
             await vendorOnboarding.init(URL);
         });
 
         await test.step('Signup - Vendor Onboarding', async () => {
-            await vendorOnboarding.clickButton('Sign Up');
+            test.slow();
+            await withnogstin.clickButton('Sign Up');
             const signup = new SignupHelper(page);
             await signup.fillSignup({
                 name: 'User130823',
@@ -49,56 +80,61 @@ describe('VOWOG001', () => {
             });
             await signup.clickButton('Next');
         });
+
+        //Verifies account after signup
         await test.step('Verify Email', async () => {
             const verifyEmail = new VerifyEmailHelper(page);
             await verifyEmail.fillCode('1');
             await verifyEmail.clickButton('Verify →');
-            await vendorOnboarding.clickButton('Continue →');
+            await withnogstin.clickButton('Continue →');
         });
 
         await test.step('Create Business Client', async () => {
-            await vendorOnboarding.clickButton('Create New Business');
-
+            await withnogstin.clickButton('Create New Business');
             await withnogstin.setCheckbox('No');
         });
 
-        await test.step('Fill Vendor Details', async () => {
-            await withnogstin.fillVendorDetails([
-                {
-                    businessName: 'Hello India Pvt Ltd',
-                    displayName: 'Hello India',
-                    businessType: 'LLP',
-                    pinCode: '110001',
-                    address: 'Delhi',
-                },
-            ]);
+        await test.step('Fill Business Details', async () => {
+            await withnogstin.fillVendorDetails([vendorNonGstinInfo]);
             await withnogstin.clickButton('Next');
-            expect(await withnogstin.toastMessage()).toBe('Successfully saved');
+            expect(
+                await withnogstin.toastMessage(),
+                'Toast message does not occured'
+            ).toBe('Successfully saved');
         });
 
-        await test.step('Fill Document Tab', async () => {
-            await withnogstin.fillDocuments([
-                {
-                    selectInput: 'Lower TDS',
-
-                    tdsNumber: '10',
-                    date: '22-02-2023',
-                    tdsPercentage: '20',
-                    imagePath: 'pan-card.jpg',
-                },
-            ]);
+        await test.step('Fill Document Details', async () => {
+            await vendorOnboarding.fillDocuments(NON_GSTIN_LOWER_TDS_DETAILS);
             await withnogstin.clickButton('Next');
         });
 
         await test.step('Fill Bank Account Details', async () => {
-            await withnogstin.fillBankAccount([
-                {
-                    accountNumber: '1234567',
-                    ifsc: 'HDFC0000001',
-                },
-            ]);
+            test.slow();
+
+            await getBankDetails.fillBankAccount(NON_GSTIN_BANK_DETAILS_ONE);
+            await withnogstin.checkWizardNavigationClickDocument(
+                'Bank Account'
+            );
+        });
+        await test.step('Verify Bank Account Details', async () => {
+            const ifscBankDetails = await getBankDetails.vendorIfscDetails();
+            expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
+                NON_GSTIN_BANK_DETAILS_ONE[0].address
+            );
+            await getBankDetails.vendorIfscLogoCheck();
+            await withnogstin.clickButton('Previous');
             await withnogstin.clickButton('Next');
-            expect(page.getByText('Onboarding Completed')).toBeTruthy();
+
+            await getBankDetails.fillBankAccount(NON_GSTIN_BANK_DETAILS_ONE);
+            await withnogstin.checkWizardNavigationClickDocument(
+                'Bank Account'
+            );
+            await withnogstin.clickButton('Next');
+
+            expect(
+                await page.getByText('Onboarding Completed').isVisible()
+            ).toBe(true);
+            await withnogstin.clickButton('Close');
         });
     });
 });
