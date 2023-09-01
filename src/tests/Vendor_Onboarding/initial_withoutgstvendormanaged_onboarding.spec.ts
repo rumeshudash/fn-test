@@ -14,6 +14,7 @@ import {
     IMAGE_NAME,
     NON_GSTIN_LOWER_TDS_DETAILS,
     NON_GSTIN_BANK_DETAILS_ONE,
+    NON_GSTIN_BANK_DETAILS_TWO,
 } from '@/utils/required_data';
 import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { nonGstinDataType } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
@@ -110,8 +111,8 @@ describe('TCVO003', () => {
 
         await test.step('Fill Bank Account Details', async () => {
             test.slow();
-
-            await getBankDetails.fillBankAccount(NON_GSTIN_BANK_DETAILS_ONE);
+            await getBankDetails.validateBankAccountName();
+            await getBankDetails.fillBankAccount();
             await withnogstin.checkWizardNavigationClickDocument(
                 'Bank Account'
             );
@@ -119,13 +120,13 @@ describe('TCVO003', () => {
         await test.step('Verify Bank Account Details', async () => {
             const ifscBankDetails = await getBankDetails.vendorIfscDetails();
             expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
-                NON_GSTIN_BANK_DETAILS_ONE[0].address
+                getBankDetails.bankDetails.address
             );
             await getBankDetails.vendorIfscLogoCheck();
             await withnogstin.clickButton('Previous');
             await withnogstin.clickButton('Next');
 
-            await getBankDetails.fillBankAccount(NON_GSTIN_BANK_DETAILS_ONE);
+            await getBankDetails.fillBankAccount();
             await withnogstin.checkWizardNavigationClickDocument(
                 'Bank Account'
             );

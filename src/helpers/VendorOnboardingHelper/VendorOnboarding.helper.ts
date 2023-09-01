@@ -571,38 +571,42 @@ export class VendorManagedWithoutGSTIN extends GenericNonGstinCardHelper {
         }
     }
 }
+
 export class BankAccountDetails extends BaseHelper {
     public bankDetails;
     constructor(bankDetails, page) {
         super(page);
         this.bankDetails = bankDetails;
     }
-    public async fillBankAccount(data: ClientBankAccountDetails[] = []) {
+    // validate bank account name with business name
+    async validateBankAccountName() {
         expect(
             await this._page.locator('#account_name').isVisible(),
             'Bank Name is not visible'
         ).toBe(true);
-        clientBusinessName = await this._page
+
+        const clientBusinessName = await this._page
             .locator('#account_name')
             .inputValue();
         expect(clientBusinessName, 'Bank Name does not matched').toBe(
             this.bankDetails.bankName
         );
-        for (let details of data) {
-            await this.fillText(details.accountNumber, {
-                name: 'account_number',
-            });
-            await this.fillText(details.accountNumber, {
-                name: 're_account_number',
-            });
-            await this.fillText(details.ifsc, { name: 'ifsc_code' });
-            if (IMAGE_NAME) {
-                await this._page.setInputFiles(
-                    "//input[@type='file']",
-                    `./images/${IMAGE_NAME}`
-                );
-            }
+    }
+    public async fillBankAccount() {
+        await this.fillText(this.bankDetails.accountNumber, {
+            name: 'account_number',
+        });
+        await this.fillText(this.bankDetails.accountNumber, {
+            name: 're_account_number',
+        });
+        await this.fillText(this.bankDetails.ifsc, { name: 'ifsc_code' });
+        if (IMAGE_NAME) {
+            await this._page.setInputFiles(
+                "//input[@type='file']",
+                `./images/${IMAGE_NAME}`
+            );
         }
+
         expect(
             await this._page.getByRole('button', { name: 'Next' }).isEnabled(),
             'Next button is not clickable'
