@@ -21,12 +21,12 @@ export const clientGstinInfo: gstinDataType = {
     status: 'Active',
 };
 
-export const LOWER_TDS_DETAILS = [
-    {
-        tdsCert: '333333333',
-        tdsPercentage: '22',
-    },
-];
+export const LOWER_TDS_DETAILS = {
+    selectInput: 'Lower TDS',
+    tdsCertNumber: '333333333',
+    tdsPercentage: '22',
+    date: '22-02-2023',
+};
 
 export const NON_GSTIN_LOWER_TDS_DETAILS = {
     selectInput: 'Lower TDS',
@@ -36,13 +36,12 @@ export const NON_GSTIN_LOWER_TDS_DETAILS = {
 };
 
 //Vendor Bank Account Details - (Client Invitation Vendor Managed)
-export const BANKDETAILS = [
-    {
-        accountNumber: '1234567',
-        ifsc: 'HDFC0000002',
-        address: 'HDFC0000002, MUMBAI - KHAR WEST ',
-    },
-];
+export const BANKDETAILS = {
+    bankName: vendorGstinInfo.trade_name,
+    accountNumber: '1234567',
+    ifsc: 'HDFC0000002',
+    address: 'HDFC0000002, MUMBAI - KHAR WEST ',
+};
 
 export const NON_GSTIN_BANK_DETAILS_ONE = {
     bankName: 'ABC Pvt Ltd',

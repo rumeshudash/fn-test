@@ -4,18 +4,12 @@ import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import {
     BankAccountDetails,
-    VendorInvitationDetails,
     VendorOnboarding,
     VendorOnboardingWithGSTIN,
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
-import {
-    BANKDETAILS,
-    LOWER_TDS_DETAILS,
-    IMAGE_NAME,
-    BusinessVendorDetails,
-} from '@/utils/required_data';
+import { BANKDETAILS, LOWER_TDS_DETAILS } from '@/utils/required_data';
 
 //Vendor and Client Details
 const vendorGstinInfo: gstinDataType = {
@@ -28,30 +22,13 @@ const vendorGstinInfo: gstinDataType = {
     status: 'Active',
 };
 
-const clientGstinInfo: gstinDataType = {
-    trade_name: 'Hidesign India Pvt Ltd',
-    value: '33AACCH0586R1Z6',
-    business_type: 'Private Limited',
-    address:
-        'EXPRESS AVENUE, 49/50 L-WHITES ROAD, ROYAPETTAH, SHOP NO.S 161 B, Chennai, , , 600014, , Tamil Nadu, NA, FIRST FLOOR, ',
-    pan_number: 'AACCH0586R',
-    status: 'Active',
-};
-//Bank Details
-// let bankAccountName: string;
-let bankAccountNumber: string;
-// let bankIFSCCode: string;
-
 const { expect, describe } = PROCESS_TEST;
 
 //Vendor Managed with Client Connect
 describe('TCCC001', () => {
     PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(BANKDETAILS, page);
-        const vendorOnboarding = new VendorOnboarding(
-            BusinessVendorDetails,
-            page
-        );
+        const vendorOnboarding = new VendorOnboarding(LOWER_TDS_DETAILS, page);
         const withgstin = new VendorOnboardingWithGSTIN(vendorGstinInfo, page);
         await vendorOnboarding.clickLinkInviteVendor('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
@@ -99,7 +76,6 @@ describe('TCCC001', () => {
 
         //Verifies vendor details in card with provided one
         await test.step('Verify Vendor GSTIN Info then Save', async () => {
-            // vendorOnboarding.gstin_data = vendorGstinInfo;
             await withgstin.gstinInfoCheck();
             await withgstin.gstinDisplayName();
             await vendorOnboarding.clickButton('Next');
@@ -108,40 +84,29 @@ describe('TCCC001', () => {
             );
         });
 
-        await test.step('Doucments - Vendor Onboarding', async () => {
-            await vendorOnboarding.uploadDocument(LOWER_TDS_DETAILS);
-            await vendorOnboarding.fileUpload(IMAGE_NAME);
-            await vendorOnboarding.clickButton('Save');
+        await test.step('Documents - Vendor Onboarding', async () => {
+            await vendorOnboarding.fillDocuments(); // LOWER_TDS_DETAILS
         });
 
         //Adding Bank Account to vendor
         await test.step('Bank Account - Vendor Onboarding', async () => {
-            test.slow();
             await vendorOnboarding.clickButton('Next');
-            await vendorOnboarding.bankAccount(BANKDETAILS);
+            await getBankDetails.fillBankAccount(); //BANKDETAILS
             await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Bank Account'
             );
 
-            // bankIFSCCode = await getBankDetails.bankIFSCCode();
-
             const ifscBankDetails =
                 await getBankDetails.vendorIfscDetailsValidation();
             expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
-                BANKDETAILS[0].address
+                getBankDetails.bankDetails.address
             );
             await getBankDetails.vendorIfscLogoVisibilityValidation();
-
-            // expect(
-            //     bankIFSCCode.slice(0, -1),
-            //     'Bank IFSC Code does not match'
-            // ).toBe(BANKDETAILS[0].ifsc);
 
             await vendorOnboarding.clickButton('Next');
             expect(
                 await page.getByText('Onboarding Completed').isVisible()
             ).toBe(true);
-            // await vendorOnboarding.clickButton('Close');
         });
     });
 });

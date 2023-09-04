@@ -25,10 +25,10 @@ import GenericNonGstinCardHelper, {
 let getDate: string;
 let clientBusinessName: string;
 export class VendorOnboarding extends BaseHelper {
-    public lowerTdsNonGstin;
-    constructor(lowerTdsNonGstin, page) {
+    public lowerTDS;
+    constructor(lowerTDS, page) {
         super(page);
-        this.lowerTdsNonGstin = lowerTdsNonGstin;
+        this.lowerTDS = lowerTDS;
     }
     private BUSINESS_DETAILS_DOM =
         "//div[@class='input-addon-group input-group-md']/following-sibling::div[1]";
@@ -64,58 +64,6 @@ export class VendorOnboarding extends BaseHelper {
             .locator("//button[contains(@class,'absolute right-4')]")
             .click();
     }
-    // public async toastMessage() {
-    //     const toast = this._page.locator('div.ct-toast-success');
-    //     const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-    //     const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
-    //     const toastLoading = this._page.locator('div.loading-toast');
-
-    //     const toastErrorCount = await toastError.count();
-    //     const toastWarnCount = await toastWarn.count();
-    //     const toastLoadingCount = await toastLoading.count();
-    //     if (toastLoadingCount > 0) {
-    //         console.log(
-    //             chalk.magenta(
-    //                 `Multiple toastMessage ocurred \n ${toastLoading}:`,
-    //                 toastLoadingCount
-    //             )
-    //         );
-    //         for (let i = 0; i < toastLoadingCount; i++) {
-    //             const loadingMsg = await toastLoading.nth(i).textContent();
-    //             console.log(
-    //                 `toastMessage (loading ${i}): `,
-    //                 chalk.magenta(loadingMsg)
-    //             );
-    //         }
-    //     }
-
-    //     if (toastWarnCount > 0) {
-    //         console.log(
-    //             chalk.red(
-    //                 `Multiple toastMessage ocurred \n ${toastWarn}:`,
-    //                 toastWarnCount
-    //             )
-    //         );
-    //         for (let i = 0; i < toastWarnCount; i++) {
-    //             const errorMsg = await toastWarn.nth(i).textContent();
-    //             console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-    //         }
-    //     }
-    //     if (toastErrorCount > 0) {
-    //         console.log(
-    //             chalk.red(
-    //                 `Multiple toastMessage ocurred \n ${toastError}:`,
-    //                 toastErrorCount
-    //             )
-    //         );
-    //         for (let i = 0; i < toastErrorCount; i++) {
-    //             const errorMsg = await toastError.nth(i).textContent();
-    //             console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-    //         }
-    //     }
-
-    //     return await toast.last().textContent();
-    // }
 
     public async init(URL: string) {
         await this._page.goto(URL);
@@ -125,60 +73,60 @@ export class VendorOnboarding extends BaseHelper {
         await this._page.locator('a').filter({ hasText: 'Logout' }).click();
     }
 
-    public async bankAccount(data: ClientBankAccountDetails[] = []) {
-        const bankAccountName = await this._page
-            .locator('#account_name')
-            .inputValue();
-        expect(
-            bankAccountName,
-            'Bank Account Name doest not match to Vendor'
-        ).toBe(vendorGstinInfo.trade_name);
+    // public async bankAccount(data: ClientBankAccountDetails[] = []) {
+    //     const bankAccountName = await this._page
+    //         .locator('#account_name')
+    //         .inputValue();
+    //     expect(
+    //         bankAccountName,
+    //         'Bank Account Name doest not match to Vendor'
+    //     ).toBe(vendorGstinInfo.trade_name);
 
-        for (let details of data) {
-            await this.fillText(details.accountNumber, {
-                name: 'account_number',
-            });
-            await this.fillText(details.accountNumber, {
-                name: 're_account_number',
-            });
-            await this.fillText(details.ifsc, {
-                name: 'ifsc_code',
-            });
-        }
-        await this._page.waitForTimeout(2000);
-    }
+    //     for (let details of data) {
+    //         await this.fillText(details.accountNumber, {
+    //             name: 'account_number',
+    //         });
+    //         await this.fillText(details.accountNumber, {
+    //             name: 're_account_number',
+    //         });
+    //         await this.fillText(details.ifsc, {
+    //             name: 'ifsc_code',
+    //         });
+    //     }
+    //     await this._page.waitForTimeout(2000);
+    // }
 
-    public async uploadDocument(data: UploadDocuments[] = []) {
-        await this._page.waitForTimeout(1000);
-        const addDocumentBtn = this._page.getByRole('button', {
-            name: ' Add New Document',
-        });
+    // public async uploadDocument(data: UploadDocuments[] = []) {
+    //     await this._page.waitForTimeout(1000);
+    //     const addDocumentBtn = this._page.getByRole('button', {
+    //         name: ' Add New Document',
+    //     });
 
-        await expect(
-            addDocumentBtn,
-            'Add New Document button not visible'
-        ).toBeVisible();
+    //     await expect(
+    //         addDocumentBtn,
+    //         'Add New Document button not visible'
+    //     ).toBeVisible();
 
-        await this.click({ role: 'button', name: ' Add New Document' });
-        const dialog = this._page.locator("//div[@role='dialog']");
-        if ((await dialog.isVisible()) === true) {
-            for (let details of data) {
-                await this.fillText(details.tdsCert, {
-                    placeholder: 'Enter TDS Certificate Number',
-                });
-                await this.fillText(details.tdsPercentage, {
-                    placeholder: 'Enter Lower TDS Percentage',
-                });
-                await this._page.locator('#date').fill(PICK_DATE);
-                getDate = await this._page.locator('#date').inputValue();
-                // await this._page
-                //     .locator("button:has-text('20')")
-                //     .first()
-                //     .click();
-            }
-        }
-    }
-    public async fillDocuments() {
+    //     await this.click({ role: 'button', name: ' Add New Document' });
+    //     const dialog = this._page.locator("//div[@role='dialog']");
+    //     if ((await dialog.isVisible()) === true) {
+    //         for (let details of data) {
+    //             await this.fillText(details.tdsCert, {
+    //                 placeholder: 'Enter TDS Certificate Number',
+    //             });
+    //             await this.fillText(details.tdsPercentage, {
+    //                 placeholder: 'Enter Lower TDS Percentage',
+    //             });
+    //             await this._page.locator('#date').fill(PICK_DATE);
+    //             getDate = await this._page.locator('#date').inputValue();
+    //             // await this._page
+    //             //     .locator("button:has-text('20')")
+    //             //     .first()
+    //             //     .click();
+    //         }
+    //     }
+    // }
+    async fillDocuments() {
         await this._page.waitForTimeout(1500);
 
         await expect(
@@ -189,17 +137,17 @@ export class VendorOnboarding extends BaseHelper {
 
         // for (let details of data) {
         const inputSelect = this._page.locator(
-            `//div[text()='${this.lowerTdsNonGstin.selectInput}']`
+            `//div[text()='${this.lowerTDS.selectInput}']`
         );
         if ((await inputSelect.textContent()) === 'Lower TDS') {
-            await this.fillText(this.lowerTdsNonGstin.tdsCertNumber, {
+            await this.fillText(this.lowerTDS.tdsCertNumber, {
                 name: 'identifier',
             });
-            await this.fillInput(this.lowerTdsNonGstin.date, {
+            await this.fillInput(this.lowerTDS.date, {
                 name: 'date',
             });
             getDate = await this._page.locator('#date').inputValue();
-            await this.fillText(this.lowerTdsNonGstin.tdsPercentage, {
+            await this.fillText(this.lowerTDS.tdsPercentage, {
                 placeholder: 'Enter Lower TDS Percentage',
             });
         }
@@ -225,11 +173,7 @@ export class VendorOnboarding extends BaseHelper {
                 await this.click({ role: 'button', name: 'Save' });
                 await this._page.waitForTimeout(2000);
             }
-            // await this._page
-            //     .locator('div')
-            //     .filter({ hasText: /^Pan Cardadd_circle_outline$/ })
-            //     .locator('i')
-            //     .click();
+
             const panCard = await this._page
                 .locator("//input[@placeholder='Enter Pan Card number']")
                 .isVisible();
@@ -335,12 +279,6 @@ export class VendorOnboarding extends BaseHelper {
         );
         const errorContainer = container.filter({ has: documentError });
 
-        // const containerError = containerTitle.filter({
-        //     has: documentError,
-        // });
-        // const imageIcon = documentError.locator(
-        //     '//div[@class="icon-container cursor-pointer"]'
-        // );
         const errorContainerCount = await errorContainer.count();
         console.log('Document Image Error: ', errorContainerCount);
 
@@ -395,55 +333,6 @@ export class VendorOnboarding extends BaseHelper {
                 await this._page.waitForTimeout(2000);
             }
         }
-        // const imageIcon = documentError.locator(
-        //     `//div[@class='icon-container cursor-pointer']`
-        // );
-        //Upload Document
-        // for (let i = 0; i < errorCount; i++) {
-        //     for (const docs of await containerError.textContent()) {
-        //         const filesRequire = docs[i].includes('files');
-        //         // if (await containerError.isVisible()) {
-        //         if (filesRequire) {
-        //             const clickBtn = containerBtn;
-        //             if (await clickBtn.isVisible()) {
-        //                 await clickBtn.click();
-        //             }
-        //         } else {
-        //             const clickBtn = containerBtn.locator('i');
-        //             if (await clickBtn.isVisible()) {
-        //                 await clickBtn.click();
-        //             }
-        //         }
-
-        //         await this._page.setInputFiles(
-        //             "//input[@type='file']",
-        //             `./images/${imagePath}`
-        //         );
-        //         await this._page.waitForTimeout(1000);
-
-        //         if (
-        //             await this._page
-        //                 .getByPlaceholder('Enter MSME number')
-        //                 .isVisible()
-        //         ) {
-        //             await this.fillText('22', {
-        //                 placeholder: 'Enter MSME number',
-        //             });
-        //         }
-
-        //         if (
-        //             await this._page
-        //                 .getByPlaceholder('Enter COI number')
-        //                 .isVisible()
-        //         ) {
-        //             await this.fillText('23332567', {
-        //                 placeholder: 'Enter COI number',
-        //             });
-        //         }
-        //         await this.click({ role: 'button', name: 'Save' });
-        //         await this._page.waitForTimeout(1000);
-        //     }
-        // }
     }
 }
 
@@ -672,11 +561,11 @@ export class BankAccountDetails extends BaseHelper {
 
 export class VendorInvitationDetails extends BaseHelper {
     public bankDetails;
-    public lowerTdsNonGstin;
-    constructor(bankDetails, lowerTdsNonGstin, page) {
+    public lowerTDS;
+    constructor(bankDetails, lowerTDS, page) {
         super(page);
         this.bankDetails = bankDetails;
-        this.lowerTdsNonGstin = lowerTdsNonGstin;
+        this.lowerTDS = lowerTDS;
     }
     private INVITATION_DETAILS_DOM =
         "(//div[contains(@class,'flex-1 gap-4')])[2]";
@@ -818,12 +707,12 @@ export class VendorInvitationDetails extends BaseHelper {
                 expect(
                     await tdsCertNumber.textContent(),
                     'TDS Certificate Number does not matched'
-                ).toBe(this.lowerTdsNonGstin.tdsCertNumber);
+                ).toBe(this.lowerTDS.tdsCertNumber);
 
                 expect(
                     await tdsPercentage.textContent(),
                     'TDS Percentage does not matched'
-                ).toBe(this.lowerTdsNonGstin.tdsPercentage + '%');
+                ).toBe(this.lowerTDS.tdsPercentage + '%');
 
                 expect
                     .soft(
