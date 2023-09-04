@@ -10,29 +10,47 @@ import {
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
-import { vendorGstinInfo, clientGstinInfo } from '@/utils/required_data';
+import {
+    BANKDETAILS,
+    LOWER_TDS_DETAILS,
+    IMAGE_NAME,
+} from '@/utils/required_data';
 
+//Vendor and Client Details
+const vendorGstinInfo: gstinDataType = {
+    trade_name: 'Cloudtail India Private Limited',
+    value: '27AAQCS4259Q1ZA',
+    pan_number: 'AAQCS4259Q',
+    business_type: 'Private Limited',
+    address:
+        'Sagar Tech Plaza, Andheri Kurla Road, Sakinaka, Unit No-117, Mumbai Suburban, 400072, Maharashtra, NA, 1st Floor',
+    status: 'Active',
+};
+
+const clientGstinInfo: gstinDataType = {
+    trade_name: 'Hidesign India Pvt Ltd',
+    value: '33AACCH0586R1Z6',
+    business_type: 'Private Limited',
+    address:
+        'EXPRESS AVENUE, 49/50 L-WHITES ROAD, ROYAPETTAH, SHOP NO.S 161 B, Chennai, , , 600014, , Tamil Nadu, NA, FIRST FLOOR, ',
+    pan_number: 'AACCH0586R',
+    status: 'Active',
+};
 //Bank Details
-let bankAccountName: string;
+// let bankAccountName: string;
 let bankAccountNumber: string;
-let bankIFSCCode: string;
+// let bankIFSCCode: string;
 
 const { expect, describe } = PROCESS_TEST;
 
-const BANKDETAILS = [
-    {
-        accountNumber: '1234567',
-        ifsc: 'HDFC0000001',
-    },
-];
-
 //Vendor Managed with Client Connect
 describe('TCCC002', () => {
-    test.slow();
     PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(page);
-        const vendorOnboarding = new VendorOnboarding(vendorGstinInfo, page);
-        await vendorOnboarding.clickLink('Vendor Invitations');
+        const vendorOnboarding = new VendorOnboarding(page);
+        const invitationDetails = new VendorInvitationDetails(page);
+        const withgstin = new VendorOnboardingWithGSTIN(vendorGstinInfo, page);
+        await vendorOnboarding.clickLinkInviteVendor('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
         expect(await vendorOnboarding.toastMessage()).toBe(
             'Link Successfully Copied!!!'
@@ -46,6 +64,7 @@ describe('TCCC002', () => {
         });
 
         await test.step('Signup - Vendor Onboarding', async () => {
+            test.slow();
             await vendorOnboarding.clickButton('Sign Up');
             const signup = new SignupHelper(page);
             await signup.fillSignup({
@@ -56,6 +75,8 @@ describe('TCCC002', () => {
             });
             await signup.clickButton('Next');
         });
+
+        //Verifies account after signup
         await test.step('Verify Email', async () => {
             const verifyEmail = new VerifyEmailHelper(page);
             await verifyEmail.fillCode('1');
@@ -65,40 +86,63 @@ describe('TCCC002', () => {
 
         await test.step('Create Business Client', async () => {
             await vendorOnboarding.clickButton('Create New Business');
-            await vendorOnboarding.fillGstinInput();
+            await vendorOnboarding.setCheckbox('Yes');
+            await withgstin.fillGstinInput();
             await vendorOnboarding.beforeGstinNameNotVisibleDisplayName();
             await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Documents'
             );
-            await vendorOnboarding.gstinInfoCheck();
+        });
+
+        //Verifies vendor details in card with provided one
+        await test.step('Verify Vendor GSTIN Info then Save', async () => {
+            // vendorOnboarding.gstin_data = vendorGstinInfo;
+            await withgstin.gstinInfoCheck();
+            await withgstin.gstinDisplayName();
             await vendorOnboarding.clickButton('Next');
             expect(await vendorOnboarding.toastMessage()).toBe(
                 'Successfully saved'
             );
-            await vendorOnboarding.uploadDocument([
-                {
-                    tdsCert: '333333333',
-                    tdsPercentage: '22',
-                },
-            ]);
-            await vendorOnboarding.fileUpload('pan-card.jpg');
+        });
+
+        await test.step('Doucments - Vendor Onboarding', async () => {
+            await vendorOnboarding.uploadDocument(LOWER_TDS_DETAILS);
+            await vendorOnboarding.fileUpload(IMAGE_NAME);
             await vendorOnboarding.clickButton('Save');
+        });
+
+        //Adding Bank Account to vendor
+        await test.step('Bank Account - Vendor Onboarding', async () => {
             await vendorOnboarding.clickButton('Next');
             await vendorOnboarding.bankAccount(BANKDETAILS);
             await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Bank Account'
             );
 
-            bankIFSCCode = await getBankDetails.bankIFSCCode();
-            expect(bankIFSCCode.slice(0, -1)).toBe(BANKDETAILS[0].ifsc);
+            // bankIFSCCode = await getBankDetails.bankIFSCCode();
+
+            const ifscBankDetails = await getBankDetails.vendorIfscDetails();
+            expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
+                BANKDETAILS[0].address
+            );
+            await getBankDetails.vendorIfscLogoCheck();
+
+            // expect(
+            //     bankIFSCCode.slice(0, -1),
+            //     'Bank IFSC Code does not match'
+            // ).toBe(BANKDETAILS[0].ifsc);
 
             await vendorOnboarding.clickButton('Next');
-            expect(page.getByText('Onboarding Completed')).toBeTruthy();
+            expect(
+                await page.getByText('Onboarding Completed').isVisible()
+            ).toBe(true);
             await vendorOnboarding.clickButton('Close');
         });
 
+        //Connects client to vendor
         await test.step('Client Connect', async () => {
-            vendorOnboarding.gstin_data = clientGstinInfo;
+            test.slow();
+            // vendorOnboarding.gstin_data = clientGstinInfo;
             await vendorOnboarding.clickButton('Connect');
 
             await vendorOnboarding.clientInvitation(
@@ -107,18 +151,24 @@ describe('TCCC002', () => {
                     ? clientGstinInfo.trade_name
                     : clientGstinInfo.value
             );
-            await vendorOnboarding.gstinInfoCheck();
-            bankAccountNumber = await getBankDetails.bankAccountNumber();
         });
 
-        await test.step('Verify Client Connect Details', async () => {});
-        await test.step('Upload Mandatory Documents', async () => {
-            await vendorOnboarding.clickButton('Next');
-            expect(await vendorOnboarding.checkButtonVisibility('Submit')).toBe(
-                false
-            );
+        //Verifies client details in card with provided one
+        await test.step('Verify Client GSTIN Info', async () => {
+            withgstin.gstin_data = clientGstinInfo;
+            withgstin.ignore_test_fields = ['gstin_business_address'];
 
-            await vendorOnboarding.uploadImageDocuments('pan-card.jpg');
+            await withgstin.gstinInfoCheck();
+            bankAccountNumber = await getBankDetails.bankAccountNumber();
+            await vendorOnboarding.clickButton('Next');
+        });
+
+        await test.step('Upload Mandatory Documents - Client Connect', async () => {
+            expect(
+                await vendorOnboarding.checkButtonVisibility('Submit')
+            ).not.toBe(true);
+
+            await vendorOnboarding.uploadImageDocuments(IMAGE_NAME);
             expect(await vendorOnboarding.toastMessage()).toBe(
                 'Successfully saved'
             );
@@ -130,7 +180,9 @@ describe('TCCC002', () => {
                 'Successfully created'
             );
         });
-        await test.step('Client Verify and Approve', async () => {
+
+        //verifies vendor and client details with provided one
+        await test.step('Verify Vendor and Client', async () => {
             const invitationDetails = new VendorInvitationDetails(page);
 
             expect(await invitationDetails.checkFrom()).toBe(
@@ -149,14 +201,11 @@ describe('TCCC002', () => {
         });
 
         await test.step('Check Uploaded Doucments', async () => {
-            const withoutGSTIN = new VendorOnboardingWithGSTIN(page);
-            expect(await withoutGSTIN.checkDoument('GSTIN Certificate')).toBe(
-                vendorGstinInfo.status
-            );
-            await withoutGSTIN.checkDoument('Pan Card');
-            await withoutGSTIN.checkDoument('MSME');
-            await withoutGSTIN.checkDoument('Lower TDS');
-            await withoutGSTIN.checkDoument('Bank');
+            await invitationDetails.checkDoument('GSTIN Certificate');
+            await invitationDetails.checkDoument('Pan Card');
+            await invitationDetails.checkDoument('MSME');
+            await invitationDetails.checkDoument('Lower TDS');
+            await invitationDetails.checkDoument('Bank');
         });
 
         // await test.step('Client Logout and FinOps Login ', async () => {

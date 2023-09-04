@@ -283,6 +283,10 @@ export class BaseHelper {
             )
             .elementHandles();
 
+        expect(elements.length, {
+            message: `${input || option} does not found in dropdown`,
+        }).toBeGreaterThanOrEqual(1);
+
         if (elements.length === 1) {
             await elements[0].click();
         } else if (elements.length > 1) {
@@ -293,6 +297,10 @@ export class BaseHelper {
                     break;
                 }
             }
+        } else {
+            throw new Error(
+                chalk.red(`${input || option} does not found in dropdown`)
+            );
         }
     }
 
@@ -385,6 +393,15 @@ export class BaseHelper {
         });
         await document_navigation.click();
         await this._page.waitForTimeout(1000);
+
+        const vendorBankDetails = this._page.locator(
+            "(//div[contains(@class,'flex items-center')])[2]"
+        );
+        expect(
+            await vendorBankDetails.isVisible(),
+            'Vendor Bank Details is not visible'
+        ).toBe(true);
+
         const error = this._page.locator('span.label.text-error');
         const errorCount = await error.count();
         if (errorCount > 0) {
@@ -441,10 +458,10 @@ export class BaseHelper {
         const display_input = await this._page
             .locator('#display_name')
             .isVisible();
-        expect(!display_input, {
+        expect(display_input, {
             message:
                 'Display name could not be displayed before gstin fetched !!',
-        }).toBe(true);
+        }).toBe(false);
     }
     /**
      * Determines if the element is visible.
@@ -470,8 +487,13 @@ export class BaseHelper {
 
     public async clickButton(buttonName: string) {
         const btnClick = this._page.getByRole('button', { name: buttonName });
+        expect(
+            await btnClick.isEnabled(),
+            'Button is not enabled to click'
+        ).toBe(true);
         if (await btnClick.isEnabled()) {
             await btnClick.click();
+            await this._page.waitForTimeout(1000);
         } else {
             return console.log(
                 chalk.red(buttonName, ' button is not clickable or disabled')
@@ -479,7 +501,7 @@ export class BaseHelper {
         }
         // await this._page.waitForTimeout(1500);
 
-        const error = this._page.locator('span.label.text-error');
+        const error = this.locate('span.label.text-error')._locator;
         const errorCount = await error.count();
         if (errorCount > 0) {
             console.log(chalk.red(`Error ocurred: ${errorCount}`));
@@ -492,14 +514,14 @@ export class BaseHelper {
         const toastError = this._page.locator('div.ct-toast.ct-toast-error');
         const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
 
-        await this._page.waitForTimeout(1000);
         const toastErrorCount = await toastError.count();
         const toastWarnCount = await toastWarn.count();
         const toastCount = await toast.count();
         if (toastCount > 0) {
             console.log(chalk.green(`toastMessage (success): ${toastCount}:`));
             for (let i = 0; i < toastCount; i++) {
-                const successMsg = await toast.nth(i).textContent();
+                const successMsg = toast.nth(i);
+                if (await successMsg.isVisible()) successMsg.textContent();
                 console.log(
                     `toastMessage (success ${i}): `,
                     chalk.green(successMsg)
@@ -568,5 +590,27 @@ export class BaseHelper {
                 return errorMsg;
             }
         }
+    }
+    public async setCheckbox(choice: string) {
+        const checkBox = this.locate(
+            `//div[contains(text(),"${choice}")]`
+        )._locator;
+
+        expect(await checkBox.isVisible(), 'Checkbox is not visible').toBe(
+            true
+        );
+        console.log('CheckBox: ', checkBox);
+
+        await checkBox.click();
+    }
+    public async clickLinkInviteVendor(linkName: string) {
+        const partyHover = this._page.getByText('Partiesarrow_drop_down');
+        const partyClick = this._page
+            .locator('a')
+            .filter({ hasText: linkName })
+            .nth(1);
+        await partyHover.hover();
+        await partyClick.click();
+        await this._page.waitForTimeout(2000);
     }
 }
