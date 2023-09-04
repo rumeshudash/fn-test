@@ -14,6 +14,7 @@ import {
     BANKDETAILS,
     LOWER_TDS_DETAILS,
     IMAGE_NAME,
+    BusinessVendorDetails,
 } from '@/utils/required_data';
 
 //Vendor and Client Details
@@ -46,8 +47,11 @@ const { expect, describe } = PROCESS_TEST;
 //Vendor Managed with Client Connect
 describe('TCCC001', () => {
     PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
-        const getBankDetails = new BankAccountDetails(page);
-        const vendorOnboarding = new VendorOnboarding(page);
+        const getBankDetails = new BankAccountDetails(BANKDETAILS, page);
+        const vendorOnboarding = new VendorOnboarding(
+            BusinessVendorDetails,
+            page
+        );
         const withgstin = new VendorOnboardingWithGSTIN(vendorGstinInfo, page);
         await vendorOnboarding.clickLinkInviteVendor('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
@@ -121,11 +125,12 @@ describe('TCCC001', () => {
 
             // bankIFSCCode = await getBankDetails.bankIFSCCode();
 
-            const ifscBankDetails = await getBankDetails.vendorIfscDetails();
+            const ifscBankDetails =
+                await getBankDetails.vendorIfscDetailsValidation();
             expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
                 BANKDETAILS[0].address
             );
-            await getBankDetails.vendorIfscLogoCheck();
+            await getBankDetails.vendorIfscLogoVisibilityValidation();
 
             // expect(
             //     bankIFSCCode.slice(0, -1),

@@ -49,7 +49,10 @@ describe('TCVO003', () => {
             vendorNonGstinInfo,
             page
         );
-        const vendorOnboarding = new VendorOnboarding(page);
+        const vendorOnboarding = new VendorOnboarding(
+            NON_GSTIN_LOWER_TDS_DETAILS,
+            page
+        );
 
         const getBankDetails = new BankAccountDetails(
             NON_GSTIN_BANK_DETAILS_ONE,
@@ -105,7 +108,7 @@ describe('TCVO003', () => {
         });
 
         await test.step('Fill Document Details', async () => {
-            await vendorOnboarding.fillDocuments(NON_GSTIN_LOWER_TDS_DETAILS);
+            await vendorOnboarding.fillDocuments();
             await withnogstin.clickButton('Next');
         });
 
@@ -118,11 +121,12 @@ describe('TCVO003', () => {
             );
         });
         await test.step('Verify Bank Account Details', async () => {
-            const ifscBankDetails = await getBankDetails.vendorIfscDetails();
+            const ifscBankDetails =
+                await getBankDetails.vendorIfscDetailsValidation();
             expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
                 getBankDetails.bankDetails.address
             );
-            await getBankDetails.vendorIfscLogoCheck();
+            await getBankDetails.vendorIfscLogoVisibilityValidation();
             await withnogstin.clickButton('Previous');
             await withnogstin.clickButton('Next');
 

@@ -20,7 +20,6 @@ export default class GenericGstinCardHelper extends BaseHelper {
     }
 
     async checkBusinessName() {
-        console.log('Checking Business Name', this.ignore_test_fields);
         const element = this.locate('div', {
             id: 'gstin_trade_name',
         })._locator;

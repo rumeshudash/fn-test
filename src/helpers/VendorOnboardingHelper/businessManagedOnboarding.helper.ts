@@ -1,11 +1,16 @@
+import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
+import { LISTING_ROUTES, TEST_URL } from '@/constants/api.constants';
 
 export class BusinessManagedOnboarding extends BaseHelper {
+    public vendorBusiness;
+    constructor(vendorBusiness, page) {
+        super(page);
+        this.vendorBusiness = vendorBusiness;
+    }
     private BUSINESS_MANAGED_ONBOARDING_DOM = '//div[@role="dialog"]';
 
-    public async addBusinessManagedVendor(
-        data: BUSINESSMANAGEDONBOARDING[] = []
-    ) {
+    async addBusinessManagedVendor() {
         this.locate(this.BUSINESS_MANAGED_ONBOARDING_DOM);
         await this._page
             .locator(
@@ -13,18 +18,20 @@ export class BusinessManagedOnboarding extends BaseHelper {
             )
             .click();
 
-        for (let details of data) {
-            await this.selectOption({
-                option: details.businessName,
-                placeholder: 'Search business name',
-            });
-            await this.fillText(details.gstin, { name: 'gstin' });
-            await this.fillText(details.vendorEmail, { name: 'email' });
-            await this.fillText(details.vendorNumber, { name: 'mobile' });
-        }
+        // for (let details of data) {
+        await this.selectOption({
+            option: this.vendorBusiness.businessName,
+            placeholder: 'Search business name',
+        });
+        await this.fillText(this.vendorBusiness.gstin, { name: 'gstin' });
+        await this.fillText(this.vendorBusiness.vendorEmail, { name: 'email' });
+        await this.fillText(this.vendorBusiness.vendorNumber, {
+            name: 'mobile',
+        });
+        // }
     }
 
-    public async clickVendor(linkName: string) {
+    async clickVendor(linkName: string) {
         const partyHover = this._page.getByText('Partiesarrow_drop_down');
         const partyClick = this._page
             .locator('a')
@@ -33,5 +40,11 @@ export class BusinessManagedOnboarding extends BaseHelper {
         await partyHover.hover();
         await partyClick.click();
         await this._page.waitForTimeout(2000);
+    }
+    async verifyVendorPageURL() {
+        await expect(
+            this._page,
+            'URL is not correct to Invite Vendor '
+        ).toHaveURL(LISTING_ROUTES.VENDORS);
     }
 }
