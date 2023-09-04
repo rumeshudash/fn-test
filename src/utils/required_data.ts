@@ -21,49 +21,52 @@ export const clientGstinInfo: gstinDataType = {
     status: 'Active',
 };
 
-export const LOWER_TDS_DETAILS = [
-    {
-        tdsCert: '333333333',
-        tdsPercentage: '22',
-    },
-];
+export const LOWER_TDS_DETAILS = {
+    selectInput: 'Lower TDS',
+    tdsCertNumber: '333333333',
+    tdsPercentage: '22',
+    date: '22-02-2023',
+};
 
-export const NON_GSTIN_LOWER_TDS_DETAILS = [
-    {
-        selectInput: 'Lower TDS',
-        tdsNumber: '10',
-        date: '22-02-2023',
-        tdsPercentage: '20',
-    },
-];
+export const NON_GSTIN_LOWER_TDS_DETAILS = {
+    selectInput: 'Lower TDS',
+    tdsCertNumber: '10',
+    date: '22-02-2023',
+    tdsPercentage: '20',
+};
 
 //Vendor Bank Account Details - (Client Invitation Vendor Managed)
-export const BANKDETAILS = [
-    {
-        accountNumber: '1234567',
-        ifsc: 'HDFC0000002',
-        address: 'HDFC0000002, MUMBAI - KHAR WEST ',
-    },
-];
+export const BANKDETAILS = {
+    bankName: vendorGstinInfo.trade_name,
+    accountNumber: '1234567',
+    ifsc: 'HDFC0000002',
+    address: 'HDFC0000002, MUMBAI - KHAR WEST ',
+};
 
-export const NON_GSTIN_BANK_DETAILS_ONE = [
-    {
-        bankName: 'ABC Pvt Ltd',
-        accountNumber: '12345678',
-        ifsc: 'HDFC0000009',
-        address: 'HDFC0000009, Bangalore - Kasturba Gandhi Marg ',
-    },
-];
+export const NON_GSTIN_BANK_DETAILS_ONE = {
+    bankName: 'ABC Pvt Ltd',
+    accountNumber: '12345678',
+    ifsc: 'HDFC0000009',
+    address: 'HDFC0000009, Bangalore - Kasturba Gandhi Marg ',
+};
 
 export const NON_GSTIN_BANK_DETAILS_TWO = {
     bankName: 'ABD Pvt Ltd',
     accountNumber: '1234567',
     ifsc: 'HDFC0000002',
-    address: 'HDFC0000002, Bangalore - Kasturba Gandhi Marg ',
+    address: 'HDFC0000002, MUMBAI - KHAR WEST ',
 };
 
 export const IMAGE_NAME = 'pan-card.jpg';
 export const MSME_NUMBER = '22';
+export const PAN_CARD = '20';
 export const COI_NUMBER = '23332567';
 export const PICK_DATE = '20-06-2023';
 export const PAN_CODE_ADDRESS = 'New Delhi Central, Delhi';
+
+export const BusinessVendorDetails = {
+    businessName: 'Hidesign India',
+    gstin: '06AAEFH0313D1Z7',
+    vendorEmail: 'meatshop@shop.com',
+    vendorNumber: '9876543210',
+};

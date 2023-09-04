@@ -14,6 +14,7 @@ import {
     BANKDETAILS,
     LOWER_TDS_DETAILS,
     IMAGE_NAME,
+    BusinessVendorDetails,
 } from '@/utils/required_data';
 
 //Vendor and Client Details
@@ -46,9 +47,13 @@ const { expect, describe } = PROCESS_TEST;
 //Vendor Managed with Client Connect
 describe('TCCC002', () => {
     PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
-        const getBankDetails = new BankAccountDetails(page);
-        const vendorOnboarding = new VendorOnboarding(page);
-        const invitationDetails = new VendorInvitationDetails(page);
+        const getBankDetails = new BankAccountDetails(BANKDETAILS, page);
+        const vendorOnboarding = new VendorOnboarding(LOWER_TDS_DETAILS, page);
+        const invitationDetails = new VendorInvitationDetails(
+            BANKDETAILS,
+            LOWER_TDS_DETAILS,
+            page
+        );
         const withgstin = new VendorOnboardingWithGSTIN(vendorGstinInfo, page);
         await vendorOnboarding.clickLinkInviteVendor('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
@@ -105,27 +110,26 @@ describe('TCCC002', () => {
             );
         });
 
-        await test.step('Doucments - Vendor Onboarding', async () => {
-            await vendorOnboarding.uploadDocument(LOWER_TDS_DETAILS);
-            await vendorOnboarding.fileUpload(IMAGE_NAME);
-            await vendorOnboarding.clickButton('Save');
+        await test.step('Documents - Vendor Onboarding', async () => {
+            await vendorOnboarding.fillDocuments(); // LOWER_TDS_DETAILS
         });
 
         //Adding Bank Account to vendor
         await test.step('Bank Account - Vendor Onboarding', async () => {
             await vendorOnboarding.clickButton('Next');
-            await vendorOnboarding.bankAccount(BANKDETAILS);
+            await getBankDetails.fillBankAccount();
             await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Bank Account'
             );
 
             // bankIFSCCode = await getBankDetails.bankIFSCCode();
 
-            const ifscBankDetails = await getBankDetails.vendorIfscDetails();
+            const ifscBankDetails =
+                await getBankDetails.vendorIfscDetailsValidation();
             expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
-                BANKDETAILS[0].address
+                getBankDetails.bankDetails.address
             );
-            await getBankDetails.vendorIfscLogoCheck();
+            await getBankDetails.vendorIfscLogoVisibilityValidation();
 
             // expect(
             //     bankIFSCCode.slice(0, -1),
@@ -159,7 +163,7 @@ describe('TCCC002', () => {
             withgstin.ignore_test_fields = ['gstin_business_address'];
 
             await withgstin.gstinInfoCheck();
-            bankAccountNumber = await getBankDetails.bankAccountNumber();
+            await getBankDetails.bankAccountNumber();
             await vendorOnboarding.clickButton('Next');
         });
 
@@ -183,7 +187,11 @@ describe('TCCC002', () => {
 
         //verifies vendor and client details with provided one
         await test.step('Verify Vendor and Client', async () => {
-            const invitationDetails = new VendorInvitationDetails(page);
+            const invitationDetails = new VendorInvitationDetails(
+                BANKDETAILS,
+                LOWER_TDS_DETAILS,
+                page
+            );
 
             expect(await invitationDetails.checkFrom()).toBe(
                 vendorGstinInfo.trade_name + '…'
@@ -200,12 +208,12 @@ describe('TCCC002', () => {
             );
         });
 
-        await test.step('Check Uploaded Doucments', async () => {
-            await invitationDetails.checkDoument('GSTIN Certificate');
-            await invitationDetails.checkDoument('Pan Card');
-            await invitationDetails.checkDoument('MSME');
-            await invitationDetails.checkDoument('Lower TDS');
-            await invitationDetails.checkDoument('Bank');
+        await test.step('Check Uploaded Documents', async () => {
+            await invitationDetails.checkDocument('GSTIN Certificate');
+            await invitationDetails.checkDocument('Pan Card');
+            await invitationDetails.checkDocument('MSME');
+            await invitationDetails.checkDocument('Lower TDS');
+            await invitationDetails.checkDocument('Bank');
         });
 
         // await test.step('Client Logout and FinOps Login ', async () => {

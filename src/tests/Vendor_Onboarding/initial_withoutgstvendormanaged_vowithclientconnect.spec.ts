@@ -59,8 +59,15 @@ describe('TCVO004', () => {
                 vendorNonGstinInfo,
                 page
             );
-            const vendorOnboarding = new VendorOnboarding(page);
-            const invitationDetails = new VendorInvitationDetails(page);
+            const vendorOnboarding = new VendorOnboarding(
+                NON_GSTIN_LOWER_TDS_DETAILS,
+                page
+            );
+            const invitationDetails = new VendorInvitationDetails(
+                NON_GSTIN_BANK_DETAILS_TWO,
+                NON_GSTIN_LOWER_TDS_DETAILS,
+                page
+            );
             const getBankDetails = new BankAccountDetails(
                 NON_GSTIN_BANK_DETAILS_TWO,
                 page
@@ -91,6 +98,7 @@ describe('TCVO004', () => {
                     confirm_password: '123456',
                 });
                 await signup.clickButton('Next');
+                test.slow();
             });
 
             //Verifies account after signup
@@ -116,35 +124,29 @@ describe('TCVO004', () => {
             });
 
             await test.step('Fill Document Details', async () => {
-                await vendorOnboarding.fillDocuments(
-                    NON_GSTIN_LOWER_TDS_DETAILS
-                );
+                await vendorOnboarding.fillDocuments();
                 await withnogstin.clickButton('Next');
             });
 
             await test.step('Fill Bank Account Details', async () => {
                 test.slow();
 
-                await getBankDetails.fillBankAccount(
-                    NON_GSTIN_BANK_DETAILS_CLIENT_CONNECTS
-                );
+                await getBankDetails.fillBankAccount();
                 await withnogstin.checkWizardNavigationClickDocument(
                     'Bank Account'
                 );
             });
             await test.step('Verify Bank Account Details', async () => {
                 const ifscBankDetails =
-                    await getBankDetails.vendorIfscDetails();
+                    await getBankDetails.vendorIfscDetailsValidation();
                 expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
-                    NON_GSTIN_BANK_DETAILS_CLIENT_CONNECTS[0].address
+                    getBankDetails.bankDetails.address
                 );
-                await getBankDetails.vendorIfscLogoCheck();
+                await getBankDetails.vendorIfscLogoVisibilityValidation();
                 await withnogstin.clickButton('Previous');
                 await withnogstin.clickButton('Next');
 
-                await getBankDetails.fillBankAccount(
-                    NON_GSTIN_BANK_DETAILS_CLIENT_CONNECTS
-                );
+                await getBankDetails.fillBankAccount();
                 await withnogstin.checkWizardNavigationClickDocument(
                     'Bank Account'
                 );
@@ -198,11 +200,11 @@ describe('TCVO004', () => {
             });
 
             await test.step('Check Uploaded Doucments', async () => {
-                await invitationDetails.checkNonGstinDoument('COI');
-                await invitationDetails.checkNonGstinDoument('Pan Card');
-                await invitationDetails.checkNonGstinDoument('MSME');
-                await invitationDetails.checkNonGstinDoument('Lower TDS');
-                await invitationDetails.checkNonGstinDoument('Bank');
+                await invitationDetails.checkDocument('COI');
+                await invitationDetails.checkDocument('Pan Card');
+                await invitationDetails.checkDocument('MSME');
+                await invitationDetails.checkDocument('Lower TDS');
+                await invitationDetails.checkDocument('Bank');
             });
         }
     );

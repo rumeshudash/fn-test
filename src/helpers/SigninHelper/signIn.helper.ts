@@ -1,4 +1,3 @@
-import { TEST_URL } from '@/constants/api.constants';
 import { BaseHelper } from '../BaseHelper/base.helper';
 
 export class SignInHelper extends BaseHelper {

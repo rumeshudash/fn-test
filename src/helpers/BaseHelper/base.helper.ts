@@ -493,7 +493,7 @@ export class BaseHelper {
         ).toBe(true);
         if (await btnClick.isEnabled()) {
             await btnClick.click();
-            await this._page.waitForTimeout(1000);
+            await this._page.waitForTimeout(500);
         } else {
             return console.log(
                 chalk.red(buttonName, ' button is not clickable or disabled')

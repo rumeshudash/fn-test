@@ -1,7 +1,7 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import GenericGstinCardHelper from '../CommonCardHelper/genericGstin.card.helper';
-import { expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
     BANKDETAILS,
     COI_NUMBER,
@@ -11,6 +11,7 @@ import {
     NON_GSTIN_BANK_DETAILS_ONE,
     NON_GSTIN_BANK_DETAILS_TWO,
     NON_GSTIN_LOWER_TDS_DETAILS,
+    PAN_CARD,
     PAN_CODE_ADDRESS,
     PICK_DATE,
     clientGstinInfo,
@@ -24,6 +25,11 @@ import GenericNonGstinCardHelper, {
 let getDate: string;
 let clientBusinessName: string;
 export class VendorOnboarding extends BaseHelper {
+    public lowerTDS;
+    constructor(lowerTDS, page) {
+        super(page);
+        this.lowerTDS = lowerTDS;
+    }
     private BUSINESS_DETAILS_DOM =
         "//div[@class='input-addon-group input-group-md']/following-sibling::div[1]";
 
@@ -58,58 +64,6 @@ export class VendorOnboarding extends BaseHelper {
             .locator("//button[contains(@class,'absolute right-4')]")
             .click();
     }
-    // public async toastMessage() {
-    //     const toast = this._page.locator('div.ct-toast-success');
-    //     const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-    //     const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
-    //     const toastLoading = this._page.locator('div.loading-toast');
-
-    //     const toastErrorCount = await toastError.count();
-    //     const toastWarnCount = await toastWarn.count();
-    //     const toastLoadingCount = await toastLoading.count();
-    //     if (toastLoadingCount > 0) {
-    //         console.log(
-    //             chalk.magenta(
-    //                 `Multiple toastMessage ocurred \n ${toastLoading}:`,
-    //                 toastLoadingCount
-    //             )
-    //         );
-    //         for (let i = 0; i < toastLoadingCount; i++) {
-    //             const loadingMsg = await toastLoading.nth(i).textContent();
-    //             console.log(
-    //                 `toastMessage (loading ${i}): `,
-    //                 chalk.magenta(loadingMsg)
-    //             );
-    //         }
-    //     }
-
-    //     if (toastWarnCount > 0) {
-    //         console.log(
-    //             chalk.red(
-    //                 `Multiple toastMessage ocurred \n ${toastWarn}:`,
-    //                 toastWarnCount
-    //             )
-    //         );
-    //         for (let i = 0; i < toastWarnCount; i++) {
-    //             const errorMsg = await toastWarn.nth(i).textContent();
-    //             console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-    //         }
-    //     }
-    //     if (toastErrorCount > 0) {
-    //         console.log(
-    //             chalk.red(
-    //                 `Multiple toastMessage ocurred \n ${toastError}:`,
-    //                 toastErrorCount
-    //             )
-    //         );
-    //         for (let i = 0; i < toastErrorCount; i++) {
-    //             const errorMsg = await toastError.nth(i).textContent();
-    //             console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-    //         }
-    //     }
-
-    //     return await toast.last().textContent();
-    // }
 
     public async init(URL: string) {
         await this._page.goto(URL);
@@ -119,60 +73,60 @@ export class VendorOnboarding extends BaseHelper {
         await this._page.locator('a').filter({ hasText: 'Logout' }).click();
     }
 
-    public async bankAccount(data: ClientBankAccountDetails[] = []) {
-        const bankAccountName = await this._page
-            .locator('#account_name')
-            .inputValue();
-        expect(
-            bankAccountName,
-            'Bank Account Name doest not match to Vendor'
-        ).toBe(vendorGstinInfo.trade_name);
+    // public async bankAccount(data: ClientBankAccountDetails[] = []) {
+    //     const bankAccountName = await this._page
+    //         .locator('#account_name')
+    //         .inputValue();
+    //     expect(
+    //         bankAccountName,
+    //         'Bank Account Name doest not match to Vendor'
+    //     ).toBe(vendorGstinInfo.trade_name);
 
-        for (let details of data) {
-            await this.fillText(details.accountNumber, {
-                name: 'account_number',
-            });
-            await this.fillText(details.accountNumber, {
-                name: 're_account_number',
-            });
-            await this.fillText(details.ifsc, {
-                name: 'ifsc_code',
-            });
-        }
-        await this._page.waitForTimeout(2000);
-    }
+    //     for (let details of data) {
+    //         await this.fillText(details.accountNumber, {
+    //             name: 'account_number',
+    //         });
+    //         await this.fillText(details.accountNumber, {
+    //             name: 're_account_number',
+    //         });
+    //         await this.fillText(details.ifsc, {
+    //             name: 'ifsc_code',
+    //         });
+    //     }
+    //     await this._page.waitForTimeout(2000);
+    // }
 
-    public async uploadDocument(data: UploadDocuments[] = []) {
-        await this._page.waitForTimeout(1000);
-        const addDocumentBtn = this._page.getByRole('button', {
-            name: ' Add New Document',
-        });
+    // public async uploadDocument(data: UploadDocuments[] = []) {
+    //     await this._page.waitForTimeout(1000);
+    //     const addDocumentBtn = this._page.getByRole('button', {
+    //         name: ' Add New Document',
+    //     });
 
-        await expect(
-            addDocumentBtn,
-            'Add New Document button not visible'
-        ).toBeVisible();
+    //     await expect(
+    //         addDocumentBtn,
+    //         'Add New Document button not visible'
+    //     ).toBeVisible();
 
-        await this.click({ role: 'button', name: ' Add New Document' });
-        const dialog = this._page.locator("//div[@role='dialog']");
-        if ((await dialog.isVisible()) === true) {
-            for (let details of data) {
-                await this.fillText(details.tdsCert, {
-                    placeholder: 'Enter TDS Certificate Number',
-                });
-                await this.fillText(details.tdsPercentage, {
-                    placeholder: 'Enter Lower TDS Percentage',
-                });
-                await this._page.locator('#date').fill(PICK_DATE);
-                getDate = await this._page.locator('#date').inputValue();
-                // await this._page
-                //     .locator("button:has-text('20')")
-                //     .first()
-                //     .click();
-            }
-        }
-    }
-    public async fillDocuments(data: VENDORDOCUMENTDETAILS[] = []) {
+    //     await this.click({ role: 'button', name: ' Add New Document' });
+    //     const dialog = this._page.locator("//div[@role='dialog']");
+    //     if ((await dialog.isVisible()) === true) {
+    //         for (let details of data) {
+    //             await this.fillText(details.tdsCert, {
+    //                 placeholder: 'Enter TDS Certificate Number',
+    //             });
+    //             await this.fillText(details.tdsPercentage, {
+    //                 placeholder: 'Enter Lower TDS Percentage',
+    //             });
+    //             await this._page.locator('#date').fill(PICK_DATE);
+    //             getDate = await this._page.locator('#date').inputValue();
+    //             // await this._page
+    //             //     .locator("button:has-text('20')")
+    //             //     .first()
+    //             //     .click();
+    //         }
+    //     }
+    // }
+    async fillDocuments() {
         await this._page.waitForTimeout(1500);
 
         await expect(
@@ -181,63 +135,59 @@ export class VendorOnboarding extends BaseHelper {
         ).toBeVisible();
         await this.clickButton('Add New Document');
 
-        for (let details of data) {
-            const inputSelect = this._page.locator(
-                `//div[text()='${details.selectInput}']`
-            );
-            if ((await inputSelect.textContent()) === 'Lower TDS') {
-                await this.fillText(details.tdsNumber, {
-                    name: 'identifier',
-                });
-                await this.fillInput(details.date, {
-                    name: 'date',
-                });
-                getDate = await this._page.locator('#date').inputValue();
-                await this.fillText(details.tdsPercentage, {
-                    placeholder: 'Enter Lower TDS Percentage',
-                });
-            }
-            await this.click({ role: 'button', name: 'Save' });
-            await this._page.waitForTimeout(2000);
+        // for (let details of data) {
+        const inputSelect = this._page.locator(
+            `//div[text()='${this.lowerTDS.selectInput}']`
+        );
+        if ((await inputSelect.textContent()) === 'Lower TDS') {
+            await this.fillText(this.lowerTDS.tdsCertNumber, {
+                name: 'identifier',
+            });
+            await this.fillInput(this.lowerTDS.date, {
+                name: 'date',
+            });
+            getDate = await this._page.locator('#date').inputValue();
+            await this.fillText(this.lowerTDS.tdsPercentage, {
+                placeholder: 'Enter Lower TDS Percentage',
+            });
+        }
+        await this.click({ role: 'button', name: 'Save' });
+        await this._page.waitForTimeout(2000);
 
-            const plusIcon = this._page.locator(
-                "(//div[@class='icon-container cursor-pointer']//i)"
-            );
-            const plusIconCount = await plusIcon.count();
-            if (plusIconCount > 0) {
-                await plusIcon.first().click();
-                const coiField = await this._page
-                    .locator("//input[@placeholder='Enter COI number']")
-                    .isVisible();
-                if (coiField === true) {
-                    await this.fillText('20', { name: 'identifier' });
-                    await this.locateByText('Upload Documents').click();
-                    await this._page.setInputFiles(
-                        "//input[@type='file']",
-                        `./images/${IMAGE_NAME}`
-                    );
-                    await this.click({ role: 'button', name: 'Save' });
-                    await this._page.waitForTimeout(2000);
-                }
-                // await this._page
-                //     .locator('div')
-                //     .filter({ hasText: /^Pan Cardadd_circle_outline$/ })
-                //     .locator('i')
-                //     .click();
-                const panCard = await this._page
-                    .locator("//input[@placeholder='Enter Pan Card number']")
-                    .isVisible();
-                if (panCard === true) {
-                    await this.fillText('20', { name: 'identifier' });
-                    await this.locateByText('Upload Documents').click();
-                    await this._page.setInputFiles(
-                        "//input[@type='file']",
-                        `./images/${IMAGE_NAME}`
-                    );
-                    await this.click({ role: 'button', name: 'Save' });
-                    await this._page.waitForTimeout(2000);
-                }
+        const plusIcon = this._page.locator(
+            "(//div[@class='icon-container cursor-pointer']//i)"
+        );
+        const plusIconCount = await plusIcon.count();
+        if (plusIconCount > 0) {
+            await plusIcon.first().click();
+            const coiField = await this._page
+                .locator("//input[@placeholder='Enter COI number']")
+                .isVisible();
+            if (coiField === true) {
+                await this.fillText('20', { name: 'identifier' });
+                await this.locateByText('Upload Documents').click();
+                await this._page.setInputFiles(
+                    "//input[@type='file']",
+                    `./images/${IMAGE_NAME}`
+                );
+                await this.click({ role: 'button', name: 'Save' });
+                await this._page.waitForTimeout(2000);
             }
+
+            const panCard = await this._page
+                .locator("//input[@placeholder='Enter Pan Card number']")
+                .isVisible();
+            if (panCard === true) {
+                await this.fillText(PAN_CARD, { name: 'identifier' });
+                await this.locateByText('Upload Documents').click();
+                await this._page.setInputFiles(
+                    "//input[@type='file']",
+                    `./images/${IMAGE_NAME}`
+                );
+                await this.click({ role: 'button', name: 'Save' });
+                await this._page.waitForTimeout(2000);
+            }
+            // }
         }
     }
     public async fileUpload(imagePath: string) {
@@ -329,12 +279,6 @@ export class VendorOnboarding extends BaseHelper {
         );
         const errorContainer = container.filter({ has: documentError });
 
-        // const containerError = containerTitle.filter({
-        //     has: documentError,
-        // });
-        // const imageIcon = documentError.locator(
-        //     '//div[@class="icon-container cursor-pointer"]'
-        // );
         const errorContainerCount = await errorContainer.count();
         console.log('Document Image Error: ', errorContainerCount);
 
@@ -389,55 +333,6 @@ export class VendorOnboarding extends BaseHelper {
                 await this._page.waitForTimeout(2000);
             }
         }
-        // const imageIcon = documentError.locator(
-        //     `//div[@class='icon-container cursor-pointer']`
-        // );
-        //Upload Document
-        // for (let i = 0; i < errorCount; i++) {
-        //     for (const docs of await containerError.textContent()) {
-        //         const filesRequire = docs[i].includes('files');
-        //         // if (await containerError.isVisible()) {
-        //         if (filesRequire) {
-        //             const clickBtn = containerBtn;
-        //             if (await clickBtn.isVisible()) {
-        //                 await clickBtn.click();
-        //             }
-        //         } else {
-        //             const clickBtn = containerBtn.locator('i');
-        //             if (await clickBtn.isVisible()) {
-        //                 await clickBtn.click();
-        //             }
-        //         }
-
-        //         await this._page.setInputFiles(
-        //             "//input[@type='file']",
-        //             `./images/${imagePath}`
-        //         );
-        //         await this._page.waitForTimeout(1000);
-
-        //         if (
-        //             await this._page
-        //                 .getByPlaceholder('Enter MSME number')
-        //                 .isVisible()
-        //         ) {
-        //             await this.fillText('22', {
-        //                 placeholder: 'Enter MSME number',
-        //             });
-        //         }
-
-        //         if (
-        //             await this._page
-        //                 .getByPlaceholder('Enter COI number')
-        //                 .isVisible()
-        //         ) {
-        //             await this.fillText('23332567', {
-        //                 placeholder: 'Enter COI number',
-        //             });
-        //         }
-        //         await this.click({ role: 'button', name: 'Save' });
-        //         await this._page.waitForTimeout(1000);
-        //     }
-        // }
     }
 }
 
@@ -592,7 +487,15 @@ export class BankAccountDetails extends BaseHelper {
             this.bankDetails.bankName
         );
     }
-    public async fillBankAccount() {
+
+    // Check if a button with the name 'Next' is visible and clickable on the page
+    async isBtnVisible() {
+        expect(
+            await this._page.getByRole('button', { name: 'Next' }).isEnabled(),
+            'Next button is not clickable'
+        ).toBe(true);
+    }
+    async fillBankAccount() {
         await this.fillText(this.bankDetails.accountNumber, {
             name: 'account_number',
         });
@@ -606,20 +509,16 @@ export class BankAccountDetails extends BaseHelper {
                 `./images/${IMAGE_NAME}`
             );
         }
-
-        expect(
-            await this._page.getByRole('button', { name: 'Next' }).isEnabled(),
-            'Next button is not clickable'
-        ).toBe(true);
+        await this.isBtnVisible();
     }
-    public async vendorIfscLogoCheck() {
+    async vendorIfscLogoVisibilityValidation() {
         const iconLocator = this.locate('//img[@alt="bank"]')._locator;
         expect(
             await iconLocator.isVisible(),
             'IFSC Bank Logo is not visible'
         ).toBe(true);
     }
-    public async vendorIfscDetails() {
+    async vendorIfscDetailsValidation() {
         const ifsc_details = await this._page.locator(
             '(//div[contains(@class,"flex items-center")])[2]'
         );
@@ -630,28 +529,28 @@ export class BankAccountDetails extends BaseHelper {
 
         return await ifsc_details.textContent();
     }
-    public async bankAccountName() {
+    async bankAccountName() {
         const accountName = await this._page
             .locator('//label[@for="account_name"]/following-sibling::div[1]')
             .textContent();
         console.log('Bank Account Name: ', accountName);
         return accountName;
     }
-    public async bankAccountNumber() {
+    async bankAccountNumber() {
         const account_number = await this._page
             .locator('//div[text()="Account Number"]/following-sibling::div')
             .textContent();
         console.log('Bank Account Number: ', account_number);
         return account_number;
     }
-    public async bankIFSCCode() {
+    async bankIFSCCode() {
         const ifsc_code = await this._page
             .locator("//img[@alt='bank']/following-sibling::p[1]")
             .textContent();
         console.log('Bank Account Number: ', ifsc_code);
         return ifsc_code;
     }
-    public async businessDetailsIFSC() {
+    async businessDetailsIFSC() {
         const gstin = await this._page
             .locator('//div[text()="IFSC Code"]/following-sibling::div')
             .textContent();
@@ -661,16 +560,23 @@ export class BankAccountDetails extends BaseHelper {
 }
 
 export class VendorInvitationDetails extends BaseHelper {
+    public bankDetails;
+    public lowerTDS;
+    constructor(bankDetails, lowerTDS, page) {
+        super(page);
+        this.bankDetails = bankDetails;
+        this.lowerTDS = lowerTDS;
+    }
     private INVITATION_DETAILS_DOM =
         "(//div[contains(@class,'flex-1 gap-4')])[2]";
 
-    public async checkFrom() {
+    async checkFrom() {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("(//div[contains(@class,'flex-1 gap-1')]//div)[1]")
             .textContent();
     }
-    public async checkFromGSTIN() {
+    async checkFromGSTIN() {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         const businessGSTIN = helper._page.locator(
             "//span[contains(@class,'text-xs text-base-tertiary')]"
@@ -681,14 +587,14 @@ export class VendorInvitationDetails extends BaseHelper {
         if (await businessGSTIN.isVisible())
             return await businessGSTIN.textContent();
     }
-    public async checkClient() {
+    async checkClient() {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("//span[contains(@class,'inline-block w-3/4')]")
             .textContent();
     }
 
-    public async checkClientGSTIN() {
+    async checkClientGSTIN() {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("//span[contains(@class,'text-xs cursor-pointer')]")
@@ -696,13 +602,13 @@ export class VendorInvitationDetails extends BaseHelper {
     }
 
     //For non GSTIN Information
-    public async checkNonGstinFrom() {
+    async checkNonGstinFrom() {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("(//div[@class='w-full']//span)[3]")
             .textContent();
     }
-    public async checkGstinFromNonGstin() {
+    async checkGstinFromNonGstin() {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         const businessGSTIN = helper._page.locator(
             "(//div[contains(@class,'text-center rounded')])[1]"
@@ -714,21 +620,21 @@ export class VendorInvitationDetails extends BaseHelper {
             return await businessGSTIN.textContent();
     }
 
-    public async checkNonGstinClient() {
+    async checkNonGstinClient() {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("//span[contains(@class,'inline-block w-3/4')]")
             .textContent();
     }
 
-    public async checkNonGstinClientGSTIN() {
+    async checkNonGstinClientGSTIN() {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("//span[contains(@class,'text-xs cursor-pointer')]")
             .textContent();
     }
 
-    public async checkDoument(title: string) {
+    async checkDocument(title: string) {
         const helper = this.locate(
             VendorOnboardingWithGSTIN.VENDORONBOARDINGWITHOUTGSTIN_DOM
         );
@@ -766,7 +672,7 @@ export class VendorInvitationDetails extends BaseHelper {
                     expect(
                         await imageName.textContent(),
                         'Image Name does not matched'
-                    ).toBe('pan-card.jpg');
+                    ).toBe(IMAGE_NAME);
                 }
             }
 
@@ -791,6 +697,9 @@ export class VendorInvitationDetails extends BaseHelper {
                 const tdsPercentage = helper._page.locator(
                     '//div[text()="Lower TDS Percentage"]/following-sibling::div'
                 );
+                console.log(
+                    'Lower TDS Percentage: ' + (await tdsPercentage.innerText())
+                );
                 const expireDate = helper._page.locator(
                     '//div[text()="Expiry Date"]/following-sibling::div'
                 );
@@ -798,12 +707,12 @@ export class VendorInvitationDetails extends BaseHelper {
                 expect(
                     await tdsCertNumber.textContent(),
                     'TDS Certificate Number does not matched'
-                ).toBe(LOWER_TDS_DETAILS[0].tdsCert);
+                ).toBe(this.lowerTDS.tdsCertNumber);
 
                 expect(
                     await tdsPercentage.textContent(),
                     'TDS Percentage does not matched'
-                ).toBe(MSME_NUMBER + '%');
+                ).toBe(this.lowerTDS.tdsPercentage + '%');
 
                 expect
                     .soft(
@@ -834,139 +743,17 @@ export class VendorInvitationDetails extends BaseHelper {
                 expect(
                     await bankName.textContent(),
                     'Bank Name does not matched'
-                ).toBe(vendorGstinInfo.trade_name);
+                ).toBe(this.bankDetails.bankName);
 
                 expect(
                     await accountNumber.textContent(),
                     'Account Number does not matched'
-                ).toBe(BANKDETAILS[0].accountNumber);
+                ).toBe(this.bankDetails.accountNumber);
 
                 expect(
                     await ifscCode.textContent(),
                     'IFSC Code does not matched'
-                ).toBe(BANKDETAILS[0].ifsc);
-            }
-        }
-        await helper._page.waitForTimeout(1000);
-    }
-
-    public async checkNonGstinDoument(title: string) {
-        const helper = this.locate(
-            VendorOnboardingWithGSTIN.VENDORONBOARDINGWITHOUTGSTIN_DOM
-        );
-        const container = helper._page
-            .locator(`(//div[contains(@class,'border-b cursor-pointer')])`)
-            .filter({ hasText: title });
-        const imageName = helper._page.locator(
-            '//div[contains(@class,"overflow-hidden font-medium")]'
-        );
-        if (await container.isVisible()) {
-            await container.click();
-            if (title === 'GSTIN Certificate') {
-                const gstinStatus = helper._page.locator(
-                    "//p[text()='GST Status']/following-sibling::p"
-                );
-
-                expect(
-                    await gstinStatus.isVisible(),
-                    'GSTIN Status is not visible'
-                ).toBe(true);
-                expect(
-                    await gstinStatus.textContent(),
-                    'GSTIN Status does not matched'
-                ).toBe(vendorGstinInfo.status);
-
-                if (await imageName.isVisible()) {
-                    expect(
-                        await imageName.textContent(),
-                        'Image Name does not matched'
-                    ).toBe(IMAGE_NAME);
-                }
-            }
-            if (title === 'Pan Card') {
-                if (await imageName.isVisible()) {
-                    expect(
-                        await imageName.textContent(),
-                        'Image Name does not matched'
-                    ).toBe('pan-card.jpg');
-                }
-            }
-
-            if (title === 'MSME') {
-                const msmeLocator = helper._page.locator(
-                    "//div[text()='MSME number']/following-sibling::div"
-                );
-                expect(await msmeLocator.isVisible()).toBe(true);
-                expect(await msmeLocator.textContent()).toBe(MSME_NUMBER);
-                if (await imageName.isVisible()) {
-                    expect(
-                        await imageName.textContent(),
-                        'Image Name does not matched'
-                    ).toBe(IMAGE_NAME);
-                }
-            }
-
-            if (title === 'Lower TDS') {
-                const tdsCertNumber = helper._page.locator(
-                    "//div[text()='TDS Certificate Number']/following-sibling::div"
-                );
-                const tdsPercentage = helper._page.locator(
-                    '//div[text()="Lower TDS Percentage"]/following-sibling::div'
-                );
-                const expireDate = helper._page.locator(
-                    '//div[text()="Expiry Date"]/following-sibling::div'
-                );
-
-                expect(
-                    await tdsCertNumber.textContent(),
-                    'TDS Certificate Number does not matched'
-                ).toBe(NON_GSTIN_LOWER_TDS_DETAILS[0].tdsNumber);
-
-                expect(
-                    await tdsPercentage.textContent(),
-                    'TDS Percentage does not matched'
-                ).toBe(NON_GSTIN_LOWER_TDS_DETAILS[0].tdsPercentage + '%');
-
-                expect
-                    .soft(
-                        await expireDate.textContent(),
-                        'Expiry Date does not matched'
-                    )
-                    .toBe(getDate);
-
-                if (await imageName.isVisible()) {
-                    expect(
-                        await imageName.textContent(),
-                        'Image Name does not matched'
-                    ).toBe(IMAGE_NAME);
-                }
-            }
-
-            if (title === 'Bank') {
-                const bankName = helper._page.locator(
-                    "//div[text()='Name']/following-sibling::div"
-                );
-                const accountNumber = helper._page.locator(
-                    '//div[text()="A/C Number"]/following-sibling::div'
-                );
-                const ifscCode = helper._page.locator(
-                    "//div[text()='IfSC Code']/following-sibling::div"
-                );
-
-                expect(
-                    await bankName.textContent(),
-                    'Bank Name does not matched'
-                ).toBe(NON_GSTIN_BANK_DETAILS_ONE[0].bankName);
-
-                expect(
-                    await accountNumber.textContent(),
-                    'Account Number does not matched'
-                ).toBe(NON_GSTIN_BANK_DETAILS_ONE[0].accountNumber);
-
-                expect(
-                    await ifscCode.textContent(),
-                    'IFSC Code does not matched'
-                ).toBe(NON_GSTIN_BANK_DETAILS_ONE[0].ifsc);
+                ).toBe(this.bankDetails.ifsc);
             }
         }
         await helper._page.waitForTimeout(1000);
