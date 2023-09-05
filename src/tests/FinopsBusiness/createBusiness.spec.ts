@@ -3,7 +3,7 @@ import GenericGstinCardHelper, {
     gstinDataType,
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
-
+import { test } from '@playwright/test';
 const businessGstinInfo: gstinDataType = {
     trade_name: 'Cloudtail India Private Limited',
     value: '27AAQCS4259Q1ZA',
@@ -13,6 +13,7 @@ const businessGstinInfo: gstinDataType = {
         'Sagar Tech Plaza, Andheri Kurla Road, Sakinaka, Unit No-117, Mumbai Suburban, 400072, Maharashtra, NA, 1st Floor',
     status: 'Active',
 };
+
 const { expect, describe } = PROCESS_TEST;
 const businessInformation = {
     gstin: '27AAQCS4259Q1ZA',
@@ -33,7 +34,17 @@ describe(`TBA001`, () => {
         await helper.checkFormIsOpen();
 
         await helper.fillBusinessInputInformation(businessInformation);
+        await helper.checkMandatoryFields();
 
         await gstin_helper.gstinInfoCheck();
+        // test('with all value filled', async () => {
+
+        //     // await helper.checkMandatoryFields();
+        // });
     });
+
+    PROCESS_TEST(
+        'without Gstin Number-submit button check',
+        async ({ page }) => {}
+    );
 });

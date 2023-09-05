@@ -51,4 +51,22 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         await this.fillInput(data?.mobile, { name: 'mobile' });
         await this.fillInput(data?.email, { name: 'email' });
     }
+
+    async checkRequiredInputField(labelProps: string) {
+        const label = await this.locateByText(labelProps);
+
+        expect(await label.isVisible(), `${labelProps} not found !!`);
+        const span = await label.getByText('*');
+
+        await expect(
+            await span.isVisible(),
+            `${labelProps} is required missing !!`
+        ).toBeTruthy();
+    }
+
+    async checkMandatoryFields() {
+        // await this.checkRequiredInputField('GSTIN Number');
+        await this.checkRequiredInputField('Email');
+        // await this.checkRequiredInputField('Mobile');
+    }
 }

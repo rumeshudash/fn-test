@@ -53,7 +53,11 @@ export class BaseHelper {
      * @param {LocatorOptions} [options={}] - The options for locating the element.
      * @return {this} - Returns the current instance of the class.
      */
-    public locate(selector?: string, options: LocatorOptions = {}) {
+    public locate(
+        selector?: string,
+        options: LocatorOptions = {},
+        exactText: boolean = false
+    ) {
         this._tempSelector = selector || 'html ';
 
         if (options.id) {
@@ -80,7 +84,9 @@ export class BaseHelper {
         }
 
         if (options.text) {
-            this._locator = this._locator.getByText(options.text);
+            this._locator = this._locator.getByText(options.text, {
+                exact: exactText,
+            });
         }
         if (options.label) {
             this._locator = this._locator.getByLabel(options.label);
@@ -107,7 +113,7 @@ export class BaseHelper {
         }
     ) {
         const { selector, exactText, ...rest } = options || {};
-        return this.locate(selector, { ...rest, text }).getLocator();
+        return this.locate(selector, { ...rest, text }, exactText).getLocator();
     }
 
     /**
