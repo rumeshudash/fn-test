@@ -158,6 +158,11 @@ export class ExpenseHelper extends BaseHelper {
                     placeholder: 'Select Department',
                 });
 
+            await this._page
+                .locator('//div[text()="Details"]/parent::div')
+                .locator("(//*[name()='svg'][@class='css-8mmkcg'])[4]")
+                .click();
+
             if (expData.expense_head)
                 await helper.selectOption({
                     input: expData.expense_head,
@@ -181,7 +186,9 @@ export class ExpenseHelper extends BaseHelper {
 
     public async addTaxesData(data: AddTaxesData[] = []) {
         await this._page.getByRole('button', { name: 'Add Taxes' }).click();
-        await this._page.waitForTimeout(1000);
+        await this._page.waitForSelector('//div[@role="dialog"]', {
+            state: 'attached',
+        });
         const helper = this.locate(ExpenseHelper.ADD_TAX_DOM_SELECTOR);
         for (let taxData of data) {
             if (taxData.gst) {
@@ -215,5 +222,13 @@ export class ExpenseHelper extends BaseHelper {
             }
             await this._page.getByRole('button', { name: 'Save' }).click();
         }
+    }
+
+    public async addDocument() {
+        await this._page
+            .locator("//div[@role='presentation']")
+            .locator("//input[@type='file']")
+            .setInputFiles('images/pan-card.jpg');
+        await this._page.waitForTimeout(1000);
     }
 }
