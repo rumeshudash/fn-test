@@ -339,6 +339,17 @@ export class BaseHelper {
             })
             .isVisible();
     }
+    public async checkInputErrorMessage(options?: InputFieldLocatorOptions) {
+        if (options && Object.keys(options).length)
+            this.locate('input', options);
+
+        return this._locator
+            .locator('//ancestor::div[contains(@class,"form-control")]')
+            .locator(
+                '//span[contains(@class," label label-text-alt text-error ")]'
+            )
+            .isVisible();
+    }
 
     public async checkDisplayName() {
         const display_input = await this._page

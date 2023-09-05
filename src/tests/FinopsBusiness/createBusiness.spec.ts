@@ -36,6 +36,7 @@ describe(`TBA001`, () => {
         const { helper, gstin_helper } = await createInit(page);
 
         await helper.fillBusinessInputInformation(businessInformation);
+
         await helper.checkMandatoryFields();
         await gstin_helper.gstinInfoCheck();
         // test('with all value filled', async () => {
@@ -45,13 +46,14 @@ describe(`TBA001`, () => {
     });
 
     PROCESS_TEST(
-        'without Gstin Number-submit button check',
+        'without Gstin Number-submit button disabled check',
         async ({ page }) => {
             const { helper } = await createInit(page);
             await helper.fillBusinessInputInformation({
                 ...businessInformation,
                 gstin: '',
             });
+            await helper.checkGstinError();
             await helper.checkDisableSubmit();
         }
     );
@@ -59,10 +61,12 @@ describe(`TBA001`, () => {
         'without Mobile Number-submit button check',
         async ({ page }) => {
             const { helper } = await createInit(page);
+
             await helper.fillBusinessInputInformation({
                 ...businessInformation,
                 mobile: '',
             });
+            await helper.checkMobileError();
             await helper.checkDisableSubmit();
         }
     );
@@ -72,6 +76,7 @@ describe(`TBA001`, () => {
             ...businessInformation,
             email: '',
         });
+        await helper.checkEmailError();
         await helper.checkDisableSubmit();
     });
 });

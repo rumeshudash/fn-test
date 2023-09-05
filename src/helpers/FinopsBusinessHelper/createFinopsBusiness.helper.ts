@@ -93,18 +93,6 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
     //     await this.checkDisableSubmit();
     // }
 
-    async checkRequiredInputField(labelProps: string) {
-        const label = await this.locateByText(labelProps);
-
-        expect(await label.isVisible(), `${labelProps} not found !!`);
-        const span = await label.getByText('*');
-
-        await expect(
-            await span.isVisible(),
-            `${labelProps} is required missing !!`
-        ).toBeTruthy();
-    }
-
     async checkMandatoryFields() {
         expect(await this.isInputMandatory({ name: 'gstin' }), {
             message: 'Gstin is required?',
@@ -115,5 +103,14 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         expect(await this.isInputMandatory({ name: 'email' }), {
             message: 'Email is required?',
         }).toBeTruthy();
+    }
+    async checkEmailError() {
+        expect(await this.checkInputErrorMessage({ name: 'email' }));
+    }
+    async checkMobileError() {
+        expect(await this.checkInputErrorMessage({ name: 'mobile' }));
+    }
+    async checkGstinError() {
+        expect(await this.checkInputErrorMessage({ name: 'gstin' }));
     }
 }
