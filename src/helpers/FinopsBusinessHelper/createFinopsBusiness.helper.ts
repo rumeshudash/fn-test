@@ -1,6 +1,6 @@
+import { LISTING_ROUTES } from '@/constants/api.constants';
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
-import { LISTING_ROUTES } from '@/constants/api.constants';
 interface gstinBusinessInformation {
     gstin: string;
     mobile: string;
@@ -106,8 +106,14 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
     }
 
     async checkMandatoryFields() {
-        // await this.checkRequiredInputField('GSTIN Number');
-        await this.checkRequiredInputField('Email');
-        // await this.checkRequiredInputField('Mobile');
+        expect(await this.isInputMandatory({ name: 'gstin' }), {
+            message: 'Gstin is required?',
+        }).toBeTruthy();
+        expect(await this.isInputMandatory({ name: 'mobile' }), {
+            message: 'Mobile is required?',
+        }).toBeTruthy();
+        expect(await this.isInputMandatory({ name: 'email' }), {
+            message: 'Email is required?',
+        }).toBeTruthy();
     }
 }
