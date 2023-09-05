@@ -14,6 +14,8 @@ export default class GenericGstinCardHelper extends BaseHelper {
     public gstin_data: gstinDataType;
     public ignore_test_fields: string[] = [];
 
+    public expand_card: boolean;
+
     constructor(gstin_data: gstinDataType, page: any) {
         super(page);
         this.gstin_data = gstin_data;
@@ -85,19 +87,34 @@ export default class GenericGstinCardHelper extends BaseHelper {
             this.gstin_data.status
         );
     }
+    // it helps to expand gstin card
+    async expandGstinCard() {
+        const element = await this.locate('div', {
+            id: 'gstin_trade_name',
+        });
 
+        expect(await element.isVisible(), 'Gstin Trade name found').toBe(true);
+        await await element.click();
+    }
     async gstinInfoCheck() {
         await this._page.waitForTimeout(2000);
+        if (this.expand_card) await this.expandGstinCard();
+
         if (!this.ignore_test_fields.includes('gstin_business_name'))
             await this.checkBusinessName();
+
         if (!this.ignore_test_fields.includes('gstin_business_number'))
             await this.checkGstinNumber();
+
         if (!this.ignore_test_fields.includes('gstin_business_address'))
             await this.checkAddress();
+
         if (!this.ignore_test_fields.includes('gstin_business_business_type'))
             await this.checkBusinessType();
+
         if (!this.ignore_test_fields.includes('gstin_business_pan'))
             await this.checkPAN();
+
         if (!this.ignore_test_fields.includes('gstin_business_status'))
             await this.checkGstinStatus();
     }
