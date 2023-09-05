@@ -321,6 +321,7 @@ export class BaseHelper {
 
         info(`Click: ${button} click in ${this._getSelector(options)}`);
         await this._locator.click({ button });
+        await this._page.waitForLoadState('networkidle');
         success(`Click: ${button} click in ${this._getSelector(options)}`);
 
         // const error = this._page.locator('span.label.text-error');
