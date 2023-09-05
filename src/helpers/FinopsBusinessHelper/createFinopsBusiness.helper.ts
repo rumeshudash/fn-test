@@ -46,11 +46,52 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         // this.checkModalHeaderTitle(element);
     }
 
-    async fillBusinessInputInformation(data: gstinBusinessInformation) {
-        await this.fillInput(data?.gstin, { name: 'gstin' });
-        await this.fillInput(data?.mobile, { name: 'mobile' });
-        await this.fillInput(data?.email, { name: 'email' });
+    async fillGstin(gstin: string) {
+        await this.fillInput(gstin, { name: 'gstin' });
     }
+
+    async fillMobile(mobile: string) {
+        await this.fillInput(mobile, { name: 'mobile' });
+    }
+
+    async fillEmail(email: string) {
+        await this.fillInput(email, { name: 'email' });
+    }
+
+    async fillBusinessInputInformation(data: gstinBusinessInformation) {
+        await this.fillGstin(data.gstin);
+        await this.fillMobile(data.mobile);
+        await this.fillEmail(data.email);
+    }
+
+    async checkDisableSubmit() {
+        await this.locate('button', {
+            text: 'save',
+        });
+
+        expect(await this._locator.isVisible(), 'Save button is not found !!');
+        expect(await this._locator.isDisabled(), 'Save button is not disabled');
+    }
+
+    // async checkWithoutGstinSubmitButtonDisabled(data: {
+    //     email: string;
+    //     mobile: string;
+    // }) {
+    //     await this.fillMobile(data.mobile);
+    //     await this.fillEmail(data.email);
+
+    //     await this.checkDisableSubmit();
+    // }
+
+    // async checkDisableSubmitWithoutEmail(data: {
+    //     gstin: string;
+    //     mobile: string;
+    // }) {
+    //     await this.fillGstin(data.gstin);
+    //     await this.fillMobile(data.mobile);
+
+    //     await this.checkDisableSubmit();
+    // }
 
     async checkRequiredInputField(labelProps: string) {
         const label = await this.locateByText(labelProps);
