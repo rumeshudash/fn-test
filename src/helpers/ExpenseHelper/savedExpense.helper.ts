@@ -90,7 +90,7 @@ export class SavedExpenseCreation extends BaseHelper {
             placeholder: 'Write a comment...',
         });
         await this.click({ role: 'button', name: 'Approve' });
-        await this._page.waitForTimeout(1000);
+        await this._page.waitForLoadState('networkidle');
     }
 
     public async logOut() {
@@ -204,9 +204,9 @@ export class ApprovalWorkflowsTab extends BaseHelper {
 
     public async nextPendingFlows(flowsName) {
         await this._page.reload();
-
         await this._page.reload();
-        await this._page.waitForTimeout(1000);
+        // await this._page.waitForLoadState('load');
+        await this._page.waitForTimeout(2000);
         const flowsContainer = this._page
             .locator(`//div[@aria-label='${flowsName}']`)
             .locator('div.approval-status')

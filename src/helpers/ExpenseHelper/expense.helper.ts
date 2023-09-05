@@ -155,7 +155,7 @@ export class ExpenseHelper extends BaseHelper {
             if (expData.department)
                 await helper.selectOption({
                     input: expData.department,
-                    placeholder: 'Select Department',
+                    name: 'department',
                 });
 
             await this._page

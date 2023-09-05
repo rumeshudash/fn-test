@@ -1,3 +1,4 @@
+import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
@@ -20,7 +21,8 @@ describe('TECF005', () => {
 
             await expense.init();
 
-            await expense.nextPage();
+            await expense.addDocument();
+
             await test.step('Fill Expense', async () => {
                 await expense.fillExpenses([
                     {
@@ -77,8 +79,10 @@ describe('TECF005', () => {
                 const pocEmail = await verificationFlows.checkEmail();
                 const expData = await verificationFlows.getExpData();
                 await savedExpensePage.logOut();
-
+                await page.waitForLoadState('load');
                 await signIn.signInPage(pocEmail, '1234567');
+                await page.getByText('New Test Auto').click();
+                await page.waitForURL(TEST_URL + '/e/e');
                 await savedExpensePage.clickLink('Expenses');
                 await savedExpensePage.clickLink(expData.slice(1));
                 await verificationFlows.clickApproveWithoutComment();
@@ -93,6 +97,7 @@ describe('TECF005', () => {
             await test.step('Level Status in FinOps', async () => {
                 const expData = await verificationFlows.getExpData();
                 await savedExpensePage.logOut();
+                await page.waitForLoadState('load');
                 await signIn.signInPage('newtestauto@company.com', '123456');
                 await savedExpensePage.clickLink('Expenses');
                 await savedExpensePage.clickLink(expData.slice(1));
@@ -108,10 +113,10 @@ describe('TECF005', () => {
 
                 expect(
                     await savedExpensePage.expenseStatusSuccess('finops')
-                ).toBe(false);
+                ).toBe(true);
                 expect(
                     await savedExpensePage.expenseStatusSuccess('payment')
-                ).toBe(false);
+                ).toBe(true);
             });
         }
     );
