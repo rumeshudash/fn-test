@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
-import { firefox } from 'playwright';
+// import { firefox } from 'playwright';
 
 let pocEmail;
 let finopsEmail;
@@ -12,13 +12,13 @@ export class SavedExpenseCreation extends BaseHelper {
         this.locate(SavedExpenseCreation.SAVED_EXPENSE_DOM_SELECTOR);
     }
     public async checkPartyStatus() {
-        return this._page
+        return await this._page
             .locator("//div[@id='party-status']/div[1]/div[1]")
             .textContent();
     }
 
     public async toastMessage() {
-        return this._page.locator("//div[@role='status']").textContent();
+        return await this._page.locator("//div[@role='status']").textContent();
     }
 
     public async clickTab(buttonName: string) {
@@ -73,42 +73,26 @@ export class SavedExpenseCreation extends BaseHelper {
         if (partyStatus === 'Submitted' || partyStatus === 'Pending Approval') {
             await this.click({ role: 'button', name: 'Approve' });
         }
-        const title = await this._page
-            .getByRole('dialog')
-            .getByText('Warning')
-            .isVisible();
-        if (title === true) {
-            const buttons = this._page.getByRole('dialog').locator('button');
-            expect(await buttons.count()).toBe(3);
-            await expect(buttons.nth(0)).toContainText('Update');
-            await expect(buttons.nth(1)).toContainText('Ok');
+        for (let update of data) {
+            if (update.department)
+                await this.selectOption({
+                    input: update.department,
+                    name: 'department_id',
+                });
 
-            await this.click({ role: 'button', name: 'Update' });
-            for (let update of data) {
-                if (update.department)
-                    await this.selectOption({
-                        input: update.department,
-                        placeholder: 'Select Department',
-                    });
-
-                if (update.expense_head)
-                    await this.selectOption({
-                        input: update.expense_head,
-                        placeholder: 'Select Expense Head',
-                    });
-            }
-            await this.fillText('Approved', {
-                placeholder: 'Write a comment...',
-            });
-            await this.click({ role: 'button', name: 'Approve' });
-        } else {
-            await this.fillText('Approved', {
-                placeholder: 'Write a comment...',
-            });
-            await this.click({ role: 'button', name: 'Approve' });
+            if (update.expense_head)
+                await this.selectOption({
+                    input: update.expense_head,
+                    name: 'expense_head_id',
+                });
         }
-        await this._page.waitForTimeout(1000);
+        await this.fillText('Approved', {
+            placeholder: 'Write a comment...',
+        });
+        await this.click({ role: 'button', name: 'Approve' });
+        await this._page.waitForLoadState('networkidle');
     }
+
     public async logOut() {
         await this._page.locator('a').filter({ hasText: 'Logout' }).click();
     }
@@ -220,9 +204,9 @@ export class ApprovalWorkflowsTab extends BaseHelper {
 
     public async nextPendingFlows(flowsName) {
         await this._page.reload();
-
         await this._page.reload();
-        await this._page.waitForTimeout(1000);
+        // await this._page.waitForLoadState('load');
+        await this._page.waitForTimeout(2000);
         const flowsContainer = this._page
             .locator(`//div[@aria-label='${flowsName}']`)
             .locator('div.approval-status')

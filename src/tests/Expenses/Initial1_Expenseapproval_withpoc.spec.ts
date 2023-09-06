@@ -1,3 +1,4 @@
+import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
@@ -28,7 +29,7 @@ describe('TECF003', () => {
 
         await expense.init();
 
-        await expense.nextPage();
+        await expense.addDocument();
         await test.step('Fill Expense', async () => {
             await expense.fillExpenses([EXPENSEDETAILS]);
         });
@@ -70,8 +71,13 @@ describe('TECF003', () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-
+            await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(pocEmail, '1234567');
+            await page.waitForSelector('//div[@role="dialog"]', {
+                state: 'attached',
+            });
+            await page.getByText('New Test Auto').click();
+            await page.waitForURL(TEST_URL + '/e/e');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickApprove([
@@ -80,7 +86,12 @@ describe('TECF003', () => {
                     expense_head: 'Refund',
                 },
             ]);
-            await savedExpensePage.clickTab('Approval Workflows');
+            // await savedExpensePage.clickTab('Approval Workflows');
+            await page
+                .locator('//button[@role="tab"]')
+                .getByText('Approval Workflows')
+                .click();
+            await page.waitForTimeout(1000);
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'

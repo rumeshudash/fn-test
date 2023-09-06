@@ -14,7 +14,7 @@ describe('TECF002', () => {
 
         await expense.init();
 
-        await expense.nextPage();
+        await expense.addDocument();
         await test.step('Fill Expense', async () => {
             await expense.fillExpenses([
                 {

@@ -155,8 +155,17 @@ export class ExpenseHelper extends BaseHelper {
             if (expData.department)
                 await helper.selectOption({
                     input: expData.department,
-                    placeholder: 'Select Department',
+                    name: 'department',
                 });
+
+            // remove default poc
+            await this._page
+                .locator(
+                    "//input[@name='poc']/parent::div[contains(@class,'selectbox-container')]"
+                )
+                .locator('svg')
+                .first()
+                .click();
 
             if (expData.expense_head)
                 await helper.selectOption({
@@ -181,7 +190,9 @@ export class ExpenseHelper extends BaseHelper {
 
     public async addTaxesData(data: AddTaxesData[] = []) {
         await this._page.getByRole('button', { name: 'Add Taxes' }).click();
-        await this._page.waitForTimeout(1000);
+        await this._page.waitForSelector('//div[@role="dialog"]', {
+            state: 'attached',
+        });
         const helper = this.locate(ExpenseHelper.ADD_TAX_DOM_SELECTOR);
         for (let taxData of data) {
             if (taxData.gst) {
@@ -215,5 +226,13 @@ export class ExpenseHelper extends BaseHelper {
             }
             await this._page.getByRole('button', { name: 'Save' }).click();
         }
+    }
+
+    public async addDocument() {
+        await this._page
+            .locator("//div[@role='presentation']")
+            .locator("//input[@type='file']")
+            .setInputFiles('images/pan-card.jpg');
+        await this._page.waitForTimeout(1000);
     }
 }
