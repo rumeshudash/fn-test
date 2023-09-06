@@ -16,7 +16,7 @@ test.describe('Signin', () => {
         await signin.init();
         await signin.isValidEmail('');
         // await signin.clickButton('Next →');
-        expect(await signin.errorMessage()).toBe('Email Address  is required');
+        expect(await signin.errorMessage()).toBe('Email Address is required');
     });
     test('without Password Field', async ({ page }) => {
         const signin = new SignInHelper(page);
@@ -47,9 +47,7 @@ test.describe('Signin', () => {
             password: '123456',
         });
         // await signin.clickButton('Submit');
-        expect(await signin.errorMessage()).toBe(
-            `Invalid username or password`
-        );
+        expect(await signin.errorToast()).toBe(`Invalid username or password`);
     });
     test('with invalid password', async ({ page }) => {
         const signin = new SignInHelper(page);
@@ -93,5 +91,6 @@ test.describe('Signin', () => {
         // await signin.clickButton('Submit');
         await page.waitForTimeout(1000);
     });
+
     test('lockout duration', async ({ page }) => {});
 });
