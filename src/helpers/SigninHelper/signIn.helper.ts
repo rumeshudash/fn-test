@@ -61,11 +61,13 @@ export class SignInHelper extends BaseHelper {
         const errorMessage = await this._page
             .locator('//span[contains(@class, "label-text-alt text-error")]')
             .textContent();
+        return errorMessage;
+    }
 
-        const messageToDisplay = errorMessage
-            ? errorMessage
-            : 'Invalid username or password';
-        return messageToDisplay;
+    public async errorToast() {
+        return await this._page
+            .locator('//div[contains(@class, "error-toast")]')
+            .textContent();
     }
 
     public async checkSignUpLink() {
@@ -91,9 +93,6 @@ export class SignInHelper extends BaseHelper {
     public static genRandomEmail() {
         return `test-${uuidV4()}@gmail.com`;
     }
-    // public async errorMessagepass() {
-    //     this._page.locator("//span[@class='label-text-alt']").textContent();
-    // }
 
     public async CheckLogin(data: LoginDetailsInput) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
@@ -130,4 +129,6 @@ export class SignInHelper extends BaseHelper {
 
         await this._page.waitForTimeout(1000);
     }
+
+    public async maximumLoginAttempts(data: LoginDetailsInput) {}
 }
