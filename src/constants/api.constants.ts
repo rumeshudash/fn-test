@@ -32,6 +32,8 @@ export const TEST_URL = handleTestUrl(
     (process.env.TEST_ENV as PATH_TYPE) || 'development'
 );
 
+const number = '9876543210';
+
 export const LISTING_ROUTES = {
     EXPENSES: TEST_URL + '/e/f/expenses',
     RAISE_EXPENSES: TEST_URL + '/e/f/expense/c',
@@ -47,6 +49,7 @@ export const LISTING_ROUTES = {
     ADVANCE_APPROVAL: TEST_URL + '/e/f/advance-approval',
     SIGNUP: TEST_URL + '/signup',
     SIGNIN: TEST_URL + '/login',
+    VERIFYOTP: TEST_URL + '/login?mobile=',
     FORGOTPASSWORD: TEST_URL + '/forgot-password',
     VERIFYEMAIL: TEST_URL + '/verify-email',
 };

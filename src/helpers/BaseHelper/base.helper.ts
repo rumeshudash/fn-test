@@ -156,8 +156,16 @@ export class BaseHelper {
      * @param {keyof typeof LISTING_ROUTES} url - The URL to navigate to.
      * @return {Promise<void>} A promise that resolves when the navigation is complete.
      */
-    public async navigateTo(url: keyof typeof LISTING_ROUTES) {
-        await this._page.goto(LISTING_ROUTES[url], {
+    public async navigateTo(url: keyof typeof LISTING_ROUTES, Phone?: string) {
+        let finalUrl = LISTING_ROUTES[url];
+
+        // Check if Phone parameter is provided
+        if (Phone) {
+            // Append Phone to the URL if provided
+            finalUrl += `${Phone}`;
+        }
+
+        await this._page.goto(finalUrl, {
             waitUntil: 'networkidle',
         });
     }

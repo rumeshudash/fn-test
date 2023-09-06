@@ -121,4 +121,25 @@ test.describe('Signin', () => {
         const username = 'abc@test.com';
         await signin.checkForgotPasswordLink(username);
     });
+
+    test('with invalid phone number', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+
+        const mobile = 12345;
+        await signin.MobileNumber(mobile);
+
+        expect(await signin.errorMessage()).toBe(
+            'Mobile Number is not allowed'
+        );
+    });
+    test('with valid phone number', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const mobile = 9863627507;
+        await signin.MobileNumber(mobile);
+        await expect(
+            page.getByText('Mobile Number', { exact: true })
+        ).toBeVisible();
+    });
 });

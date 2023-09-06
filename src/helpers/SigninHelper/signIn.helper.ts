@@ -174,4 +174,11 @@ export class SignInHelper extends BaseHelper {
             }
         }
     }
+
+    public async MobileNumber(mobile: number) {
+        await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
+        await this.fillText(mobile.toString(), { id: 'username' });
+        await this.click({ role: 'button', name: ' Next → ' });
+        await this._page.waitForTimeout(1000);
+    }
 }
