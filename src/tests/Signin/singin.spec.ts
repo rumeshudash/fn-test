@@ -84,6 +84,20 @@ test.describe('Signin', () => {
         // await signin.clickButton('Submit');
         await page.waitForTimeout(1000);
     });
+    test('After locked', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'payiwav158@searpen.com';
+        const password = '123456';
+        await signin.CheckLogin({
+            username: username,
+            password: password,
+        });
+
+        expect(await signin.errorMessage()).toBe(
+            'Account locked for too many invalid attempts. Please try after 5 minutes'
+        );
+    });
 
     test('SignUp is Clickable link', async ({ page }) => {
         const signin = new SignInHelper(page);
