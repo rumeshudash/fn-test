@@ -1,5 +1,6 @@
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { expect, test } from '@playwright/test';
+import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 
 test.describe('Signin', () => {
     test('without details', async ({ page }) => {
@@ -63,13 +64,36 @@ test.describe('Signin', () => {
         );
     });
     test('with maximum login attempts', async ({ page }) => {
+        const signUp = new SignupHelper(page);
+        await signUp.init();
+        const username = SignupHelper.genRandomEmail();
+        await signUp.fillSignup({
+            name: 'test',
+            email: username,
+            password: '123456',
+            confirm_password: '123456',
+        });
+
+        // const username = 'abcdef@gmail.com';
+
         const signin = new SignInHelper(page);
         await signin.init();
-        const username = 'payiwav158@searpen.com';
 
         await signin.maximumLoginAttempts(username);
+        // expect(await signin.errorMessage()).toBe(
+        //     `Account locked for too many invalid attempts. Please try after 5 minutes`
+        // );
+
+        const checklogin = new SignInHelper(page);
+        await checklogin.init();
+
+        await signin.CheckLogin({
+            username: username,
+            password: '123456',
+        });
+
         expect(await signin.errorMessage()).toBe(
-            `Account locked for too many invalid attempts. Please try after 5 minutes`
+            'Account locked for too many invalid attempts. Please try after 5 minutes'
         );
     });
     test('with valid username and password', async ({ page }) => {
@@ -84,22 +108,8 @@ test.describe('Signin', () => {
         // await signin.clickButton('Submit');
         await page.waitForTimeout(1000);
     });
-    test('After locked', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'payiwav158@searpen.com';
-        const password = '123456';
-        await signin.CheckLogin({
-            username: username,
-            password: password,
-        });
 
-        expect(await signin.errorMessage()).toBe(
-            'Account locked for too many invalid attempts. Please try after 5 minutes'
-        );
-    });
-
-    test('SignUp is Clickable link', async ({ page }) => {
+    test('SignIn is Clickable link', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         await signin.checkSignUpLink();

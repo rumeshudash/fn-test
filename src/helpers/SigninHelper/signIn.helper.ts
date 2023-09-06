@@ -160,13 +160,18 @@ export class SignInHelper extends BaseHelper {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
         await this.fillText(username, { id: 'username' });
         await this.click({ role: 'button', name: ' Next → ' });
-        await this._page.waitForTimeout(1000);
 
-        for (let i = 0; i <= 5; i++) {
+        for (let i = 0; i <= 10; i++) {
             const password = SignInHelper.generateRandomPassword();
             await this.fillText(password, { id: 'password' });
             await this.click({ role: 'button', name: 'Submit' });
-            await this._page.waitForTimeout(1000);
+            if (
+                (await this.errorMessage()).includes(
+                    'Account locked for too many invalid attempts. Please try after 5 minutes'
+                )
+            ) {
+                break;
+            }
         }
     }
 }
