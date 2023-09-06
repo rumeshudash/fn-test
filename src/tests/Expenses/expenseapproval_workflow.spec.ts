@@ -1,3 +1,4 @@
+import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
@@ -33,7 +34,8 @@ describe('TECF007', () => {
 
         await expense.init();
 
-        await expense.nextPage();
+        await expense.addDocument();
+
         await test.step('Fill Expense', async () => {
             await expense.fillExpenses([EXPENSEDETAILS]);
         });
@@ -75,12 +77,15 @@ describe('TECF007', () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-
+            await page.waitForLoadState('load');
             await signIn.signInPage(pocEmail, '1234567');
+            await page.getByText('New Test Auto').click();
+            await page.waitForURL(TEST_URL + '/e/e');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickApprove();
             await savedExpensePage.clickTab('Approval Workflows');
+            await page.waitForTimeout(1000);
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'
@@ -90,6 +95,7 @@ describe('TECF007', () => {
         await test.step('Level Status in FinOps', async () => {
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
+            await page.waitForLoadState('load');
             await signIn.signInPage('newtestauto@company.com', '123456');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
@@ -127,6 +133,7 @@ describe('TECF007', () => {
             const finOpsEmail = await finOpsFlows.getFinopsEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
+            await page.waitForLoadState('load');
             await signIn.signInPage(finOpsEmail, '1234567');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
@@ -140,6 +147,7 @@ describe('TECF007', () => {
             const paymentEmail = await paymentFlows.getPaymentEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
+            await page.waitForLoadState('load');
             await signIn.signInPage(paymentEmail, '1234567');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));

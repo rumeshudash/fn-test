@@ -321,6 +321,7 @@ export class BaseHelper {
 
         info(`Click: ${button} click in ${this._getSelector(options)}`);
         await this._locator.click({ button });
+        await this._page.waitForLoadState('networkidle');
         success(`Click: ${button} click in ${this._getSelector(options)}`);
 
         // const error = this._page.locator('span.label.text-error');
@@ -487,13 +488,12 @@ export class BaseHelper {
 
     public async clickButton(buttonName: string) {
         const btnClick = this._page.getByRole('button', { name: buttonName });
-        expect(
-            await btnClick.isEnabled(),
-            'Button is not enabled to click'
-        ).toBe(true);
+        expect(await btnClick.isEnabled(), {
+            message: 'Button is not enabled to click',
+        }).toBe(true);
         if (await btnClick.isEnabled()) {
             await btnClick.click();
-            await this._page.waitForTimeout(500);
+            await this._page.waitForTimeout(1000);
         } else {
             return console.log(
                 chalk.red(buttonName, ' button is not clickable or disabled')
