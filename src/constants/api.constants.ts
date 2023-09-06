@@ -47,5 +47,6 @@ export const LISTING_ROUTES = {
     ADVANCE_APPROVAL: TEST_URL + '/e/f/advance-approval',
     SIGNUP: TEST_URL + '/signup',
     SIGNIN: TEST_URL + '/login',
+    FORGOTPASSWORD: TEST_URL + '/forgot-password',
     VERIFYEMAIL: TEST_URL + '/verify-email',
 };
