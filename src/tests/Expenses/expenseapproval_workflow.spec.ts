@@ -2,6 +2,7 @@ import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
+    ApprovalToggleHelper,
     ApprovalWorkflowsTab,
     FinOpsVerificationHelper,
     PaymentVerificationHelper,
@@ -31,6 +32,37 @@ describe('TECF007', () => {
         const verificationFlows = new ApprovalWorkflowsTab(page);
         const finOpsFlows = new FinOpsVerificationHelper(page);
         const paymentFlows = new PaymentVerificationHelper(page);
+
+        const toggleHelper = new ApprovalToggleHelper(page);
+
+        // toggle workflow options for expense approvals
+        await toggleHelper.gotoExpenseApproval();
+        await toggleHelper.toggleOption(
+            'Amount >1000 and Auto Approve',
+            'Active'
+        );
+        await toggleHelper.toggleOption(
+            'Category,Amount & Department Manager',
+            'Inactive'
+        );
+        await toggleHelper.gotoTab('Finops');
+        await toggleHelper.toggleOption(
+            'Department and auto Approve',
+            'Inactive'
+        );
+        await toggleHelper.toggleOption(
+            'Amount >1000 and Individual',
+            'Active'
+        );
+        await toggleHelper.gotoTab('Payment');
+        await toggleHelper.toggleOption(
+            'Amount >=5000 and Individual',
+            'Inactive'
+        );
+        await toggleHelper.toggleOption(
+            'Amount >1000 and Individual',
+            'Active'
+        );
 
         await expense.init();
 
@@ -77,7 +109,8 @@ describe('TECF007', () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-            await page.waitForLoadState('load');
+            await page.waitForLoadState('networkidle');
+            await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(pocEmail, '1234567');
             await page.getByText('New Test Auto').click();
             await page.waitForURL(TEST_URL + '/e/e');
@@ -92,33 +125,21 @@ describe('TECF007', () => {
                 )
             ).toBe('Approved');
         });
+
         await test.step('Level Status in FinOps', async () => {
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-            await page.waitForLoadState('load');
+            await page.waitForLoadState('networkidle');
+            await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage('newtestauto@company.com', '123456');
+            await page.waitForURL(TEST_URL + '/e/f');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickTab('Approval Workflows');
-            expect(
-                await verificationFlows.checkByFinOpsAdmin(
-                    'Verification Approvals'
-                )
-            ).toBe('Approved');
-
-            // expect(
-            //     await savedExpensePage.expenseStatus('verification')
-            // ).toBeTruthy();
+            await verificationFlows.checkApprovalByFinOps();
         });
         await test.step('Check pending flows and party status in finops', async () => {
-            expect(
-                await verificationFlows.nextPendingFlows(
-                    'Verification Approvals'
-                )
-            ).toBe('Pending Approval');
-            // expect(await savedExpensePage.checkPartyStatus()).toBe(
-            //     'Pending Approval'
-            // );
+            await verificationFlows.checkPendingFlows();
         });
 
         await test.step('Check finOpsFlows Details', async () => {
@@ -133,13 +154,17 @@ describe('TECF007', () => {
             const finOpsEmail = await finOpsFlows.getFinopsEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-            await page.waitForLoadState('load');
+            await page.waitForLoadState('networkidle');
+            await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(finOpsEmail, '1234567');
+            await page.getByText('New Test Auto').click();
+            await page.waitForURL(TEST_URL + '/e/e');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickApprove();
 
             await savedExpensePage.clickTab('Approval Workflows');
+            await page.waitForTimeout(1000);
             expect(await finOpsFlows.getLevelStatus()).toBe('Approved');
         });
 
@@ -147,14 +172,18 @@ describe('TECF007', () => {
             const paymentEmail = await paymentFlows.getPaymentEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-            await page.waitForLoadState('load');
+            await page.waitForLoadState('networkidle');
+            await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(paymentEmail, '1234567');
+            await page.getByText('New Test Auto').click();
+            await page.waitForURL(TEST_URL + '/e/e');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
 
             await savedExpensePage.clickApprove();
 
             await savedExpensePage.clickTab('Approval Workflows');
+            await page.waitForTimeout(1000);
             expect(await paymentFlows.getLevelStatus()).toBe('Approved');
         });
         await test.step('Check Business and Vendor', async () => {

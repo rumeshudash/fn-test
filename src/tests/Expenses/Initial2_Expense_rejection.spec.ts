@@ -2,6 +2,7 @@ import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
+    ApprovalToggleHelper,
     ApprovalWorkflowsTab,
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
@@ -16,10 +17,12 @@ describe('TECF006', () => {
         const signIn = new SignInHelper(page);
         const verificationFlows = new ApprovalWorkflowsTab(page);
 
+        const toggleHelper = new ApprovalToggleHelper(page);
+        await toggleHelper.gotoExpenseApproval();
+        await toggleHelper.allInactive();
+
         await expense.init();
-
         await expense.addDocument();
-
         await test.step('Fill Expense', async () => {
             await expense.fillExpenses([
                 {
@@ -75,6 +78,7 @@ describe('TECF006', () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
+            await page.waitForLoadState('networkidle');
             await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(pocEmail, '1234567');
             await page.waitForSelector('//div[@role="dialog"]', {
@@ -97,6 +101,7 @@ describe('TECF006', () => {
         await test.step('Level Status in FinOps', async () => {
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
+            await page.waitForLoadState('networkidle');
             await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage('newtestauto@company.com', '123456');
             await page.waitForURL(TEST_URL + '/e/f');

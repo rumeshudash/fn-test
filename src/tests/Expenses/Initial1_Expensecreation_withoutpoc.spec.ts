@@ -1,6 +1,7 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
+    ApprovalToggleHelper,
     ApprovalWorkflowsTab,
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
@@ -23,7 +24,9 @@ describe('TECF001', () => {
         'Raise Expense without poc, expense head and department',
         async ({ page }) => {
             const expense = new ExpenseHelper(page);
-
+            const toggleHelper = new ApprovalToggleHelper(page);
+            await toggleHelper.gotoExpenseApproval();
+            await toggleHelper.allInactive();
             await expense.init();
 
             await expense.addDocument();
