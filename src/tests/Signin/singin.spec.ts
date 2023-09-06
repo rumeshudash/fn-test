@@ -65,15 +65,14 @@ test.describe('Signin', () => {
     test('with maximum login attempts', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '1234567aaaaashsjh';
+        const username = 'payiwav158@searpen.com';
+
         for (let i = 0; i <= 5; i++) {
+            const password = SignInHelper.generateRandomPassword();
             await signin.CheckLogin({
                 username: username,
                 password: password,
             });
-            // await signin.clickButton('Submit');
-            await page.waitForTimeout(1000);
         }
         expect(await signin.errorMessage()).toBe(
             `Account locked for too many invalid attempts. Please try after 5 minutes`
@@ -92,5 +91,15 @@ test.describe('Signin', () => {
         await page.waitForTimeout(1000);
     });
 
-    test('lockout duration', async ({ page }) => {});
+    test('SignUp is Clickable link', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        await signin.checkSignUpLink();
+    });
+    test('Forgot Password is Clickable link', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'abc@test.com';
+        await signin.checkForgotPasswordLink(username);
+    });
 });
