@@ -2,6 +2,7 @@ import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
+    ApprovalToggleHelper,
     ApprovalWorkflowsTab,
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
@@ -18,6 +19,10 @@ describe('TECF005', () => {
             const expense = new ExpenseHelper(page);
             const verificationFlows = new ApprovalWorkflowsTab(page);
             const signIn = new SignInHelper(page);
+
+            const toggleHelper = new ApprovalToggleHelper(page);
+            await toggleHelper.gotoExpenseApproval();
+            await toggleHelper.allInactive();
 
             await expense.init();
 
@@ -79,8 +84,8 @@ describe('TECF005', () => {
                 const pocEmail = await verificationFlows.checkEmail();
                 const expData = await verificationFlows.getExpData();
                 await savedExpensePage.logOut();
+                await page.waitForLoadState('networkidle');
                 await page.waitForLoadState('domcontentloaded');
-
                 await signIn.signInPage(pocEmail, '1234567');
                 await page.getByText('New Test Auto').click();
                 await page.waitForURL(TEST_URL + '/e/e');
@@ -98,8 +103,8 @@ describe('TECF005', () => {
             await test.step('Level Status in FinOps', async () => {
                 const expData = await verificationFlows.getExpData();
                 await savedExpensePage.logOut();
+                await page.waitForLoadState('networkidle');
                 await page.waitForLoadState('domcontentloaded');
-
                 await signIn.signInPage('newtestauto@company.com', '123456');
                 await savedExpensePage.clickLink('Expenses');
                 await savedExpensePage.clickLink(expData.slice(1));

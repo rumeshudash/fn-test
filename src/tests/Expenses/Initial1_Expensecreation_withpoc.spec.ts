@@ -1,6 +1,7 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
+    ApprovalToggleHelper,
     ApprovalWorkflowsTab,
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
@@ -11,7 +12,9 @@ const { expect, describe } = PROCESS_TEST;
 describe('TECF002', () => {
     PROCESS_TEST('Raise Expense with POC', async ({ page }) => {
         const expense = new ExpenseHelper(page);
-
+        const toggleHelper = new ApprovalToggleHelper(page);
+        await toggleHelper.gotoExpenseApproval();
+        await toggleHelper.allInactive();
         await expense.init();
 
         await expense.addDocument();

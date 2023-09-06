@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
+import { TEST_URL } from '@/constants/api.constants';
 // import { firefox } from 'playwright';
 
 let pocEmail;
@@ -167,6 +168,24 @@ export class ApprovalWorkflowsTab extends BaseHelper {
         }
     }
 
+    public async checkApprovalByFinOps() {
+        const verificationApproval = this._page.getByLabel(
+            'Verification Approvals'
+        );
+        await expect(
+            verificationApproval.locator('.approval-status')
+        ).toContainText('Approved');
+    }
+
+    public async checkManagerApproval() {
+        const verificationApproval = this._page.getByLabel(
+            'Verification Approvals'
+        );
+        await expect(
+            verificationApproval.locator('.approval-status').nth(1)
+        ).toContainText('Approved');
+    }
+
     public async nextVerificationFlows() {
         await this._page.reload();
         await this._page.reload();
@@ -213,6 +232,17 @@ export class ApprovalWorkflowsTab extends BaseHelper {
             .nth(2);
         if (await flowsContainer.isVisible())
             return await flowsContainer.textContent();
+    }
+
+    public async checkPendingFlows() {
+        await this._page.reload();
+        await this._page.reload();
+        // await this._page.waitForLoadState('load');
+        await this._page.waitForTimeout(2000);
+        const verificationApproval = this._page.getByLabel('FinOps Approvals');
+        await expect(
+            verificationApproval.locator('.approval-status')
+        ).toContainText('Pending Approval');
     }
 
     public async clickApproveWithoutComment() {
@@ -291,5 +321,70 @@ export class PaymentVerificationHelper extends BaseHelper {
             .locator('p.approval-user-name')
             .first()
             .textContent();
+    }
+}
+
+export class ApprovalToggleHelper extends BaseHelper {
+    public async gotoExpenseApproval() {
+        // await this._page.goto(TEST_URL + '/e/f/expense-approval');
+        const isExpanded = await this._page
+            .locator('.hamburger_button.hamburger_button--active')
+            .isVisible();
+        if (!isExpanded) {
+            await this._page.locator('.hamburger_button').click();
+        }
+        await this._page
+            .locator('.sidebar-item-title')
+            .filter({ hasText: 'Work Flows' })
+            .click();
+        await this._page
+            .locator('.sidebar-item-title')
+            .filter({ hasText: 'Expense Approvals' })
+            .click();
+    }
+
+    public async gotoTab(tab: string) {
+        await this.click({
+            role: 'tab',
+            text: tab,
+        });
+    }
+
+    public async toggleOption(option: string, status: string) {
+        const toggleRow = this._page.locator('div.table-row.body-row').filter({
+            hasText: option,
+        });
+        const button = toggleRow.locator('button').first();
+        const text = await button.textContent();
+        if (
+            (text === 'Active' && status === 'Active') ||
+            (text === 'Inactive' && status === 'Inactive')
+        ) {
+            return;
+        }
+        await button.click();
+    }
+
+    public async allInactive() {
+        await this.toggleInactive();
+        await this.gotoTab('Finops');
+        await this.toggleInactive();
+        await this.gotoTab('Payment');
+        await this.toggleInactive();
+    }
+
+    public async toggleInactive() {
+        await this._page.waitForSelector('div.table-row.body-row');
+        const toggleRow = await this._page
+            .locator('div.table-row.body-row')
+            .all();
+        for (let i = 0; i < toggleRow.length; i++) {
+            const button = toggleRow[i].locator('button').first();
+            const text = await button.textContent();
+            if (text === 'Inactive') {
+                continue;
+            }
+            await button.click();
+        }
     }
 }
