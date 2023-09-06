@@ -67,13 +67,7 @@ test.describe('Signin', () => {
         await signin.init();
         const username = 'payiwav158@searpen.com';
 
-        for (let i = 0; i <= 5; i++) {
-            const password = SignInHelper.generateRandomPassword();
-            await signin.CheckLogin({
-                username: username,
-                password: password,
-            });
-        }
+        await signin.maximumLoginAttempts(username);
         expect(await signin.errorMessage()).toBe(
             `Account locked for too many invalid attempts. Please try after 5 minutes`
         );

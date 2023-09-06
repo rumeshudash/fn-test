@@ -156,5 +156,17 @@ export class SignInHelper extends BaseHelper {
         return `test-${uuidV4()}`;
     }
 
-    public async maximumLoginAttempts(data: LoginDetailsInput) {}
+    public async maximumLoginAttempts(username: string) {
+        await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
+        await this.fillText(username, { id: 'username' });
+        await this.click({ role: 'button', name: ' Next → ' });
+        await this._page.waitForTimeout(1000);
+
+        for (let i = 0; i <= 5; i++) {
+            const password = SignInHelper.generateRandomPassword();
+            await this.fillText(password, { id: 'password' });
+            await this.click({ role: 'button', name: 'Submit' });
+            await this._page.waitForTimeout(1000);
+        }
+    }
 }
