@@ -86,7 +86,7 @@ test.describe('Signin', () => {
         await signin.init();
         const username = 'newtestauto@company.com';
         const password = '123456';
-        await signin.CheckLogin({
+        await signin.checkDashboard({
             username: username,
             password: password,
         });

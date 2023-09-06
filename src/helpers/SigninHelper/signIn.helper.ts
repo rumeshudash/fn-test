@@ -104,16 +104,6 @@ export class SignInHelper extends BaseHelper {
 
         await this.fillText(data.password, { id: 'password' });
         await this.click({ role: 'button', name: 'Submit' });
-        await this._page.waitForTimeout(3000);
-
-        // await this._page.getByText('Select Portal');
-
-        // await this._page.waitForTimeout(1000);
-
-        // await this._page.getByText('FinOps Portal').click();
-
-        // await this._page.getByText('Dashboard');
-
         await this._page.waitForTimeout(1000);
     }
 
@@ -121,6 +111,23 @@ export class SignInHelper extends BaseHelper {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
         await this.fillText(username, { id: 'username' });
         await this.click({ role: 'button', name: ' Next → ' });
+        await this._page.waitForTimeout(1000);
+    }
+
+    public async checkDashboard(data: LoginDetailsInput) {
+        await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
+
+        await this.CheckLogin(data);
+        await this._page.waitForTimeout(1000);
+
+        await this._page.getByText('Select Portal');
+
+        await this._page.waitForTimeout(1000);
+
+        await this._page.getByText('FinOps Portal').click();
+
+        await this._page.getByText('Dashboard');
+
         await this._page.waitForTimeout(1000);
     }
 }
