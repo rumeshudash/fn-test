@@ -64,9 +64,30 @@ export const COI_NUMBER = '23332567';
 export const PICK_DATE = '20-06-2023';
 export const PAN_CODE_ADDRESS = 'New Delhi Central, Delhi';
 
-export const BusinessVendorDetails = {
-    businessName: 'Hidesign India',
-    gstin: '06AAEFH0313D1Z7',
-    vendorEmail: 'meatshop@shop.com',
+export const ClientBusinessDetails: gstinDataType = {
+    trade_name: 'Hidesign India Pvt Ltd',
+    value: '33AACCH0586R1Z6',
+    status: 'Active',
+    pan_number: '',
+    business_type: '',
+    address: '',
+};
+
+export const businessVendorGstin: gstinDataType = {
+    trade_name: 'Ujjivan Small Finance Bank Limited',
+    value: '10AABCU9603R1Z2',
+    pan_number: 'AABCU9603R',
+    business_type: 'Proprietorship',
+    address:
+        '3374, sheet no 31 Thana Kotwali New Dak Bunglaw road, Patna, Ward 2 Circle No 6, Patna, 800001, Bihar, NA',
+    status: 'Active',
+};
+
+//Data used in Business Managed Onboarding with GSTIN
+export const VendorClientInfo = {
+    trade_name: 'Hidesign India Pvt Ltd', //Client Business Name
+    displayName: businessVendorGstin.trade_name.slice(0, 5),
+    value: businessVendorGstin.value, //Vendor GSTIN
+    vendorEmail: 'meatshop@gmail.com',
     vendorNumber: '9876543210',
 };

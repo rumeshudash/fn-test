@@ -94,7 +94,7 @@ export default class GenericGstinCardHelper extends BaseHelper {
             await this.checkGstinNumber();
         if (!this.ignore_test_fields.includes('gstin_business_address'))
             await this.checkAddress();
-        if (!this.ignore_test_fields.includes('gstin_business_business_type'))
+        if (!this.ignore_test_fields.includes('gstin_business_type'))
             await this.checkBusinessType();
         if (!this.ignore_test_fields.includes('gstin_business_pan'))
             await this.checkPAN();
