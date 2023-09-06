@@ -71,7 +71,7 @@ describe('TECF003', () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-
+            await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(pocEmail, '1234567');
             await page.waitForSelector('//div[@role="dialog"]', {
                 state: 'attached',
@@ -91,6 +91,7 @@ describe('TECF003', () => {
                 .locator('//button[@role="tab"]')
                 .getByText('Approval Workflows')
                 .click();
+            await page.waitForTimeout(1000);
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'

@@ -158,9 +158,13 @@ export class ExpenseHelper extends BaseHelper {
                     name: 'department',
                 });
 
+            // remove default poc
             await this._page
-                .locator('//div[text()="Details"]/parent::div')
-                .locator("(//*[name()='svg'][@class='css-8mmkcg'])[4]")
+                .locator(
+                    "//input[@name='poc']/parent::div[contains(@class,'selectbox-container')]"
+                )
+                .locator('svg')
+                .first()
                 .click();
 
             if (expData.expense_head)

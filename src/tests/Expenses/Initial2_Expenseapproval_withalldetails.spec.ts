@@ -74,7 +74,7 @@ describe('TECF004', () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-
+            await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(pocEmail, '1234567');
             await page.waitForSelector('//div[@role="dialog"]', {
                 state: 'attached',
@@ -95,11 +95,13 @@ describe('TECF004', () => {
         await test.step('Level Status in FinOps', async () => {
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
-            await page.waitForLoadState('load');
+            await page.waitForLoadState('domcontentloaded');
+
             await signIn.signInPage('newtestauto@company.com', '123456');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickTab('Approval Workflows');
+            await page.waitForTimeout(1000);
             expect(
                 await verificationFlows.checkByFinOpsAdmin(
                     'Verification Approvals'
