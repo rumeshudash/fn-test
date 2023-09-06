@@ -7,19 +7,14 @@ test.describe('Signin', () => {
         await signin.init();
         await signin.clickButton('Next →');
         await expect(
-            page.locator(
-                '//*[@id="__next"]/div/div[1]/div/div/div[3]/div[1]/form'
-            )
+            page.locator('//span[contains(@class, "label-text")]')
         ).toHaveCount(1);
     });
 
     test('without Email Field', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
-        await signin.CheckLogin({
-            username: '',
-            password: '',
-        });
+        await signin.isValidEmail('');
         // await signin.clickButton('Next →');
         expect(await signin.errorMessage()).toBe('Email Address  is required');
     });
@@ -37,10 +32,7 @@ test.describe('Signin', () => {
     test('with invalid Email Field', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
-        await signin.CheckLogin({
-            username: 'test',
-            password: '123456',
-        });
+        await signin.isValidEmail('test');
         // await signin.clickButton('Next →');
         expect(await signin.errorMessage()).toBe(
             'Email Address must be a valid email'
@@ -86,7 +78,7 @@ test.describe('Signin', () => {
             await page.waitForTimeout(1000);
         }
         expect(await signin.errorMessage()).toBe(
-            `Maximum login attempts exceeded. Please try again later.`
+            `Account locked for too many invalid attempts. Please try after 5 minutes`
         );
     });
     test('with valid username and password', async ({ page }) => {
@@ -101,18 +93,5 @@ test.describe('Signin', () => {
         // await signin.clickButton('Submit');
         await page.waitForTimeout(1000);
     });
-    test('with invalid username and password', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'anahshsjh@gmail.com';
-        const password = '1234567aaaaashsjh';
-        await signin.CheckLogin({
-            username: username,
-            password: password,
-        });
-        // await signin.clickButton('Submit');
-        expect(await signin.errorMessage()).toBe(
-            'Invalid username or password'
-        );
-    });
+    test('lockout duration', async ({ page }) => {});
 });

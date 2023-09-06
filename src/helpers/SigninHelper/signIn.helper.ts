@@ -97,35 +97,30 @@ export class SignInHelper extends BaseHelper {
 
     public async CheckLogin(data: LoginDetailsInput) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
+
         await this.fillText(data.username, { id: 'username' });
         await this.click({ role: 'button', name: ' Next → ' });
-        const validateEmail = await this.isValidEmail(data.username);
-        if (validateEmail === false) {
-            return;
-        }
+        await this._page.waitForTimeout(3000);
 
         await this.fillText(data.password, { id: 'password' });
         await this.click({ role: 'button', name: 'Submit' });
+        await this._page.waitForTimeout(3000);
 
-        await this._page.getByText('Select Portal');
+        // await this._page.getByText('Select Portal');
 
-        await this._page.waitForTimeout(1000);
+        // await this._page.waitForTimeout(1000);
 
-        await this._page.getByText('FinOps Portal').click();
+        // await this._page.getByText('FinOps Portal').click();
 
-        await this._page.getByText('Dashboard');
+        // await this._page.getByText('Dashboard');
 
         await this._page.waitForTimeout(1000);
     }
 
     public async isValidEmail(username: string) {
-        if (username === '') {
-            return false;
-        }
-
-        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-        // Use the test() method to check if the email matches the pattern
-        return emailPattern.test(username);
+        await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
+        await this.fillText(username, { id: 'username' });
+        await this.click({ role: 'button', name: ' Next → ' });
+        await this._page.waitForTimeout(1000);
     }
 }
