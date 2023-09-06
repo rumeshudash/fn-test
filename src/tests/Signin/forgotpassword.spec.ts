@@ -14,7 +14,7 @@ test.describe('Forgot Password', () => {
         const forgotpassword = new ForgotPasswordHelper(page);
         await forgotpassword.init();
         await forgotpassword.forgotPasswordPage('');
-        await expect(forgotpassword.errorMessage()).toBe(
+        expect(await forgotpassword.errorMessage()).toBe(
             'Invalid Email Address'
         );
     });
@@ -22,7 +22,9 @@ test.describe('Forgot Password', () => {
         const forgotpassword = new ForgotPasswordHelper(page);
         await forgotpassword.init();
         await forgotpassword.forgotPasswordPage('test');
-        expect(forgotpassword.errorMessage()).toBe('Invalid Email Address');
+        expect(await forgotpassword.errorMessage()).toBe(
+            'Invalid Email Address'
+        );
     });
     test('with valid Email Field', async ({ page }) => {
         const forgotpassword = new ForgotPasswordHelper(page);

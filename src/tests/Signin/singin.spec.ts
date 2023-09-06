@@ -1,5 +1,6 @@
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { expect, test } from '@playwright/test';
+import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 
 test.describe('Signin', () => {
     test('without details', async ({ page }) => {
@@ -63,20 +64,37 @@ test.describe('Signin', () => {
         );
     });
     test('with maximum login attempts', async ({ page }) => {
+        const signUp = new SignupHelper(page);
+        await signUp.init();
+        const username = SignupHelper.genRandomEmail();
+        await signUp.fillSignup({
+            name: 'test',
+            email: username,
+            password: '123456',
+            confirm_password: '123456',
+        });
+        await signUp.clickButton('Next →');
+
+        // const username = 'abcdef@gmail.com';
+
         const signin = new SignInHelper(page);
         await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '1234567aaaaashsjh';
-        for (let i = 0; i <= 5; i++) {
-            await signin.CheckLogin({
-                username: username,
-                password: password,
-            });
-            // await signin.clickButton('Submit');
-            await page.waitForTimeout(1000);
-        }
+
+        await signin.maximumLoginAttempts(username);
+        // expect(await signin.errorMessage()).toBe(
+        //     `Account locked for too many invalid attempts. Please try after 5 minutes`
+        // );
+
+        const checklogin = new SignInHelper(page);
+        await checklogin.init();
+
+        await signin.CheckLogin({
+            username: username,
+            password: '123456',
+        });
+
         expect(await signin.errorMessage()).toBe(
-            `Account locked for too many invalid attempts. Please try after 5 minutes`
+            'Account locked for too many invalid attempts. Please try after 5 minutes'
         );
     });
     test('with valid username and password', async ({ page }) => {
@@ -92,5 +110,15 @@ test.describe('Signin', () => {
         await page.waitForTimeout(1000);
     });
 
-    test('lockout duration', async ({ page }) => {});
+    test('SignIn is Clickable link', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        await signin.checkSignUpLink();
+    });
+    test('Forgot Password is Clickable link', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'abc@test.com';
+        await signin.checkForgotPasswordLink(username);
+    });
 });
