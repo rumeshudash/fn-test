@@ -73,6 +73,7 @@ test.describe('Signin', () => {
             password: '123456',
             confirm_password: '123456',
         });
+        await signUp.clickButton('Next →');
 
         // const username = 'abcdef@gmail.com';
 

@@ -39,8 +39,6 @@ export class SignupHelper extends BaseHelper {
         await helper.fillInput(data.confirm_password, {
             name: 'confirmPassword',
         });
-
-        await helper.clickButton('Next →');
     }
     public async checkSignInLink() {
         const result = await this.locateByText('Sign In');
