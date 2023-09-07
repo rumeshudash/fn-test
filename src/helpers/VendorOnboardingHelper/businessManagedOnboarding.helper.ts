@@ -76,12 +76,18 @@ export class BusinessManagedOnboarding extends BaseHelper {
 
     async afterSaveAndCreateValidation() {
         // if (!this.ignore_next_page.includes('move_to_next_page')) {
-        const input_filed_locator = this.locate('input', {
-            name: 'gstin',
+        const email_field = this.locate('input', {
+            name: 'email',
+        })._locator;
+        expect(await email_field.inputValue(), 'Email field is not empty').toBe(
+            ''
+        );
+        const mobile_field = this.locate('input', {
+            name: 'mobile',
         })._locator;
         expect(
-            await input_filed_locator.inputValue(),
-            'GSTIN field is not empty'
+            await mobile_field.inputValue(),
+            'Mobile Number field is not empty'
         ).toBe('');
         // }
     }
@@ -100,6 +106,22 @@ export class BusinessManagedOnboarding extends BaseHelper {
             )._locator.innerText(),
             'Business Managed does not matched'
         ).toBe('Business Managed');
+    }
+
+    async verifyNonGstinStatus() {
+        expect(
+            await this.locate(
+                '(//div[contains(@class,"text-center rounded")])[2]'
+            )._locator.isVisible(),
+            'Non Gstin Status is not visible'
+        ).toBe(true);
+
+        expect(
+            await this.locate(
+                '(//div[contains(@class,"text-center rounded")])[2]'
+            )._locator.innerText(),
+            'Non Gstin Status does not matched'
+        ).toBe('Non GSTIN Registered');
     }
 }
 
@@ -156,36 +178,63 @@ export class GstinBusinessManagedOnboarding extends BaseHelper {
             .locator('#display_name')
             .fill(this.vendorBusiness.displayName);
     }
+}
 
-    // async gstinVerification() {
-    //     //trade name verification
-    //     await expect(
-    //         this._page.locator('#gstin_trade_name'),
-    //         'Trade Name not Visible'
-    //     ).toBeVisible();
-    //     expect(
-    //         await this._page.locator('#gstin_trade_name').innerText(),
-    //         'Trade name does not matched'
-    //     ).toBe(this.gstinInfo.trade_name);
+export class WithoutGstinBusinessManagedOnboarding extends BaseHelper {
+    public vendorBusiness;
+    constructor(vendorBusiness, page) {
+        super(page);
+        this.vendorBusiness = vendorBusiness;
+    }
 
-    //     //gstin verification
-    //     await expect(
-    //         this._page.locator('#gstin_number'),
-    //         'Gstin number not Visible'
-    //     ).toBeVisible();
-    //     expect(
-    //         await this._page.locator('#gstin_number').innerText(),
-    //         'Gstin number does not matched'
-    //     ).toBe(this.gstinInfo.value);
+    public async clickAddVendor(linkName: string) {
+        const partyHover = this._page.getByText('Partiesarrow_drop_down');
+        const partyClick = this._page
+            .locator('a')
+            .filter({ hasText: linkName })
+            .nth(1);
+        await partyHover.hover();
+        await partyClick.click();
+        await this._page.waitForTimeout(2000);
+    }
 
-    //     //status verification
-    //     await expect(
-    //         this._page.locator('#gstin_status'),
-    //         'Gstin status is not Visible'
-    //     ).toBeVisible();
-    //     expect(
-    //         await this._page.locator('#gstin_status').innerText(),
-    //         'Gstin status does not matched'
-    //     ).toBe(this.gstinInfo.status);
-    // }
+    async selectClientTradeName() {
+        await this.selectOption({
+            input: this.vendorBusiness.businessName,
+            name: 'business_account_id',
+        });
+    }
+
+    public async addVendorAccount() {
+        await this.fillText(this.vendorBusiness.vendorBusiness, {
+            name: 'name',
+        });
+        await this.fillText(this.vendorBusiness.pinCode, { name: 'pincode' });
+        await this._page.waitForTimeout(1000);
+        await this.fillText(this.vendorBusiness.address, { name: 'address' });
+        await this.selectOption({
+            input: this.vendorBusiness.businessType,
+            placeholder: 'Search...',
+        });
+        await this.fillText(this.vendorBusiness.vendorEmail, { name: 'email' });
+        await this.fillText(this.vendorBusiness.vendorNumber, {
+            name: 'mobile',
+        });
+    }
+
+    async searchVendor() {
+        await this.fillText(this.vendorBusiness.vendorBusiness, {
+            placeholder: 'Search ( min: 3 characters )',
+        });
+        await this._page.waitForTimeout(2000);
+    }
+
+    async verifyVendorInList() {
+        const vendorLocator = await this._page
+            .locator("(//a[contains(@class,'cursor-pointer link')]//span)[1]")
+            .textContent();
+        expect(vendorLocator, 'Vendor is not listed').toBe(
+            this.vendorBusiness.vendorBusiness
+        );
+    }
 }
