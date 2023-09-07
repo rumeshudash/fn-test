@@ -59,3 +59,35 @@ export function uuidV4() {
         }
     );
 }
+
+export const formatDate = (date: Date) => {
+    const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+    ];
+
+    const day = date.getDate().toString().padStart(2, '0'); // Add leading zero if needed
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    let hour = date.getHours();
+    const minute = date.getMinutes().toString().padStart(2, '0'); // Add leading zero if needed
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+
+    if (hour > 12) {
+        hour -= 12;
+    }
+
+    const formattedDate = `${day} ${month}, ${year} ${hour}:${minute} ${ampm}`;
+    return formattedDate;
+};
