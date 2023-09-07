@@ -14,7 +14,7 @@ import {
     BANKDETAILS,
     LOWER_TDS_DETAILS,
     IMAGE_NAME,
-    BusinessVendorDetails,
+    ClientBusinessDetails,
 } from '@/utils/required_data';
 
 //Vendor and Client Details
