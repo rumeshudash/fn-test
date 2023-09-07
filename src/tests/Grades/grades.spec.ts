@@ -70,4 +70,21 @@ test.describe('Grades', () => {
         await grades.checkPriority('test');
         await expect(await grades.errorMessage()).toBe('Priority is required');
     });
+
+    test('with duplicate Name feild', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const grades = new GradesHelper(page);
+        await grades.init();
+        await grades.AddGrades('E1', 1);
+
+        await expect(await grades.errorMessage()).toBe('Duplicate grade name');
+    });
 });
