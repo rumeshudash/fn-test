@@ -150,6 +150,11 @@ export class SignInHelper extends BaseHelper {
         }
     }
 
+    /**
+     * Check if Mobile number is valid or not if Mobile number is entered in login feild
+     *
+     * @param {number}mobile - Mobile number of user for login .
+     * */
     public async MobileNumber(mobile: number) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
         await this.fillText(mobile.toString(), { id: 'username' });
@@ -157,10 +162,14 @@ export class SignInHelper extends BaseHelper {
         await this._page.waitForTimeout(1000);
     }
 
+    /**
+     * Check if forgot password feild is clickable or not
+     *
+     * */
+
     public async checkForgotPasswordLink(username: string) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
-        await this.fillText(username, { id: 'username' });
-        await this.click({ role: 'button', name: ' Next → ' });
+        await this.isValidEmail(username);
         await this._page.waitForTimeout(1000);
         const result = await this.locateByText('Forgot Password?');
         expect(result, {
@@ -179,6 +188,10 @@ export class SignInHelper extends BaseHelper {
         }).toBe(true);
     }
 
+    /**
+     * Check if signup feild is clickable or not
+     *
+     * */
     public async checkSignUpLink() {
         const result = await this.locateByText('Sign Up');
 

@@ -10,6 +10,12 @@ export class VerifyPhone extends BaseHelper {
         await this.navigateTo(`VERIFYOTP`, number);
     }
 
+    /**
+     * Check the error message for invalid OTP.
+     * Check the next page after entering the valid OTP.
+     *
+     * */
+
     public async clickVerify() {
         await this.click({ role: 'button', name: 'Verify & Proceed' });
         await this._page.waitForTimeout(1000);
