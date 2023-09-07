@@ -118,7 +118,7 @@ export class DepartmentCreation extends BaseHelper {
         expect(manager).not.toBeNull();
         const statusButton = await department.locator('button').first();
         expect(await statusButton.textContent()).toBe(status);
-        const formattedDate = formatDate(data.date);
+        const formattedDate = formatDate(data.date, true);
         const date = await department.getByText(formattedDate);
         expect(date).not.toBeNull();
     }
