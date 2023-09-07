@@ -36,4 +36,23 @@ test.describe('Grades', () => {
             page.locator('//span[contains(text(),"Name")]')
         ).toHaveCount(1);
     });
+
+    test('with empty Name feild', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const grades = new GradesHelper(page);
+        await grades.init();
+
+        await grades.AddGrades('', 1);
+        await expect(await grades.errorMessage()).toBe('Name is required');
+    });
+
+    test('with empty Priority feild', async ({ page }) => {});
 });

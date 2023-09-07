@@ -8,4 +8,15 @@ export class GradesHelper extends BaseHelper {
     public async init() {
         await this.navigateTo('GRADES');
     }
+    public async AddGrades(name: string, priority: number) {
+        await this.click({ role: 'button', name: 'Add Grade' });
+        await this.fillText(name, {
+            name: 'name',
+        });
+        await this.fillText(priority, {
+            name: 'priority',
+        });
+
+        await this.click({ role: 'button', name: 'save' });
+    }
 }
