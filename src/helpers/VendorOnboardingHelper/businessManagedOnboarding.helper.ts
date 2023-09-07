@@ -68,12 +68,6 @@ export class BusinessManagedOnboarding extends BaseHelper {
         ).toBe(true);
     }
 
-    async saveAndCreateCheckbox() {
-        await this.validateCheckbox();
-        const checkbox = this.locate("//input[@type='checkbox']")._locator;
-        await checkbox.click();
-    }
-
     async afterSaveAndCreateValidation() {
         // if (!this.ignore_next_page.includes('move_to_next_page')) {
         const email_field = this.locate('input', {
