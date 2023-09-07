@@ -22,6 +22,7 @@ export const clientGstinInfo: gstinDataType = {
     status: 'Active',
 };
 
+//For Vendor Managed Onboarding GSTIN
 export const LOWER_TDS_DETAILS = {
     selectInput: 'Lower TDS',
     tdsCertNumber: '333333333',
@@ -106,4 +107,10 @@ export const VendorInfo_NonGstin = {
     businessType: 'Private Limited',
     vendorEmail: 'PineApple@PineApple.com',
     vendorNumber: '9876543210',
+};
+
+//For Designation Info
+export const designationInfo = {
+    name: 'testt nationLists',
+    updateName: 'tesst admin',
 };

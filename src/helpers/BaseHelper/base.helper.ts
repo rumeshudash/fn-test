@@ -704,6 +704,19 @@ export class BaseHelper {
         await partyClick.click();
         await this._page.waitForTimeout(2000);
     }
+    async validateCheckbox() {
+        const checkbox = await this.locate("//input[@type='checkbox']")
+            ._locator;
+        expect(
+            !(await checkbox.isChecked()),
+            'By default checkbox should be unchecked'
+        ).toBe(true);
+    }
+    async saveAndCreateCheckbox() {
+        await this.validateCheckbox();
+        const checkbox = this.locate("//input[@type='checkbox']")._locator;
+        await checkbox.click();
+    }
 
     /**
      * Fill the otpInput feild with otp.

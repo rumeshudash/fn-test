@@ -14,7 +14,7 @@ import { BANKDETAILS, LOWER_TDS_DETAILS } from '@/utils/required_data';
 //Vendor and Client Details
 const vendorGstinInfo: gstinDataType = {
     trade_name: 'Cloudtail India Private Limited',
-    value: '27AAQCS4259Q1ZA',
+    value: '27AAQCS4259Q1Z8',
     pan_number: 'AAQCS4259Q',
     business_type: 'Private Limited',
     address:
@@ -25,7 +25,7 @@ const vendorGstinInfo: gstinDataType = {
 const { expect, describe } = PROCESS_TEST;
 
 //Vendor Managed with Client Connect
-describe('TCCC001', () => {
+describe('test123', () => {
     PROCESS_TEST('Vendor Onboarding', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(BANKDETAILS, page);
         const vendorOnboarding = new VendorOnboarding(LOWER_TDS_DETAILS, page);
