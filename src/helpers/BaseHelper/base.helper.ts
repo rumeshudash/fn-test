@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { Locator, Page } from 'playwright-core';
 import { LISTING_ROUTES } from '../../constants/api.constants';
 import { expect } from '@playwright/test';
+import { uuidV4 } from '@/utils/common.utils';
 
 const error = (...text: unknown[]) => console.log(chalk.bold.red('⨯', text));
 const info = (...text: unknown[]) => console.log(chalk.blue('-', text));
@@ -64,7 +65,7 @@ export class BaseHelper {
         }
 
         if (!options.role && options.name) {
-            this._tempSelector += `[name=${options.name}]`;
+            this._tempSelector += `[name='${options.name}']`;
         }
 
         this._locator = this._page.locator(this._tempSelector);
@@ -620,5 +621,64 @@ export class BaseHelper {
         await partyHover.hover();
         await partyClick.click();
         await this._page.waitForTimeout(2000);
+    }
+
+    /**
+     * Fill the otpInput feild with otp.
+     *
+     * @param {string} data - The OTP data to be filled in the otpInput selector.
+     * @param {number} expectedLength - The expected length of the OTP 4|6.
+     
+     */
+
+    public async fillOtp(data: string, expectedLength: number) {
+        expect(data.length).toBe(expectedLength);
+
+        for (let i = 0; i < data.length; i++) {
+            // Locate the OTP input fields and fill them with the corresponding digit
+            await this._page.locator('.otpInput').nth(i).fill(data[i]);
+        }
+    }
+    /**
+     * Return Error Message.
+     *
+     * @return {string} - returns the error message in the feild if error text-error exist .
+     */
+
+    public async errorMessage() {
+        const errorMessage = await this._page
+            .locator('//span[contains(@class, "label-text-alt text-error")]')
+            .textContent();
+        return errorMessage;
+    }
+    /**
+     *
+     *
+     *  @return {string} -returns the Random email for testing purpose.
+     */
+
+    public static genRandomEmail() {
+        return `test-${uuidV4()}@gmail.com`;
+    }
+
+    /**
+     *
+     *
+     *  @return {string} -returns the Random password for testing purpose.
+     */
+
+    public static generateRandomPassword() {
+        return `test-${uuidV4()}`;
+    }
+    /**
+     *
+     *
+     *  @return {string} -returns error message contains on toast.
+     */
+
+    public async errorToast() {
+        return await this._page
+            .locator('//div[contains(@class, "error-toast")]')
+            .textContent();
     }
 }

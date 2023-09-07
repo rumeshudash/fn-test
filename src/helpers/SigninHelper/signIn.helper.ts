@@ -17,6 +17,14 @@ export class SignInHelper extends BaseHelper {
         await this.navigateTo('SIGNIN');
     }
 
+    /**
+     * Fill the input feild with username and password.
+     *
+     * @param {string} username - Username input for the login .
+     * @param {number} password - Password input feild for login.
+     
+     */
+
     public async signInPage(username: string, password: string) {
         const setPassword = '1234567';
         await this.fillText(username, { id: 'username' });
@@ -57,64 +65,13 @@ export class SignInHelper extends BaseHelper {
         }
     }
 
-    public async errorMessage() {
-        const errorMessage = await this._page
-            .locator('//span[contains(@class, "label-text-alt text-error")]')
-            .textContent();
-        return errorMessage;
-    }
-
-    public async errorToast() {
-        return await this._page
-            .locator('//div[contains(@class, "error-toast")]')
-            .textContent();
-    }
-
-    public async checkSignUpLink() {
-        const result = await this.locateByText('Sign Up');
-
-        // const element = await result.locator('[href="/login"]');
-        expect(result, {
-            message: 'signup link is not found !!',
-        }).toBeVisible();
-        await result.click();
-        await this._page.waitForURL('**/signup', {
-            waitUntil: 'commit',
-        });
-        const signInNode = await this.locateByText('Sign Up', {
-            role: 'heading',
-            exactText: true,
-        }).isVisible();
-        await expect(signInNode, {
-            message: 'Sign Up page not found !!',
-        }).toBe(true);
-    }
-
-    public async checkForgotPasswordLink(username: string) {
-        await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
-        await this.fillText(username, { id: 'username' });
-        await this.click({ role: 'button', name: ' Next → ' });
-        await this._page.waitForTimeout(1000);
-        const result = await this.locateByText('Forgot Password?');
-        expect(result, {
-            message: 'Forgot Password link is not found !!',
-        }).toBeVisible();
-        await result.click();
-        await this._page.waitForURL('**/forgot-password', {
-            waitUntil: 'commit',
-        });
-        const forgotPasswordNode = await this.locateByText('Forget Password', {
-            role: 'heading',
-            exactText: true,
-        }).isVisible();
-        await expect(forgotPasswordNode, {
-            message: 'Forgot Password page not found !!',
-        }).toBe(true);
-    }
-
-    public static genRandomEmail() {
-        return `test-${uuidV4()}@gmail.com`;
-    }
+    /**
+     * Check the Login after username and password feild is Filled.
+     *
+     * @param {string} data.username - Username input for the login .
+     * @param {number} data.password - Password input feild for login.
+     
+     */
 
     public async CheckLogin(data: LoginDetailsInput) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
@@ -128,6 +85,14 @@ export class SignInHelper extends BaseHelper {
         await this._page.waitForTimeout(1000);
     }
 
+    /**
+     * Check the email feild has appropiate email 
+     *
+     * @param {string}username - Username input for the login .
+    
+     
+     */
+
     public async isValidEmail(username: string) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
         await this.fillText(username, { id: 'username' });
@@ -140,6 +105,7 @@ export class SignInHelper extends BaseHelper {
 
         await this.CheckLogin(data);
         await this._page.waitForTimeout(1000);
+        await this._page.getByText('New Test Auto').click();
 
         await this._page.getByText('Select Portal');
 
@@ -150,10 +116,6 @@ export class SignInHelper extends BaseHelper {
         await this._page.getByText('Dashboard');
 
         await this._page.waitForTimeout(1000);
-    }
-
-    public static generateRandomPassword() {
-        return `test-${uuidV4()}`;
     }
 
     public async maximumLoginAttempts(username: string) {
@@ -180,5 +142,47 @@ export class SignInHelper extends BaseHelper {
         await this.fillText(mobile.toString(), { id: 'username' });
         await this.click({ role: 'button', name: ' Next → ' });
         await this._page.waitForTimeout(1000);
+    }
+
+    public async checkForgotPasswordLink(username: string) {
+        await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
+        await this.fillText(username, { id: 'username' });
+        await this.click({ role: 'button', name: ' Next → ' });
+        await this._page.waitForTimeout(1000);
+        const result = await this.locateByText('Forgot Password?');
+        expect(result, {
+            message: 'Forgot Password link is not found !!',
+        }).toBeVisible();
+        await result.click();
+        await this._page.waitForURL('**/forgot-password', {
+            waitUntil: 'commit',
+        });
+        const forgotPasswordNode = await this.locateByText('Forget Password', {
+            role: 'heading',
+            exactText: true,
+        }).isVisible();
+        await expect(forgotPasswordNode, {
+            message: 'Forgot Password page not found !!',
+        }).toBe(true);
+    }
+
+    public async checkSignUpLink() {
+        const result = await this.locateByText('Sign Up');
+
+        // const element = await result.locator('[href="/login"]');
+        expect(result, {
+            message: 'signup link is not found !!',
+        }).toBeVisible();
+        await result.click();
+        await this._page.waitForURL('**/signup', {
+            waitUntil: 'commit',
+        });
+        const signInNode = await this.locateByText('Sign Up', {
+            role: 'heading',
+            exactText: true,
+        }).isVisible();
+        await expect(signInNode, {
+            message: 'Sign Up page not found !!',
+        }).toBe(true);
     }
 }
