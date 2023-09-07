@@ -11,7 +11,7 @@ describe('TDC001', () => {
             name: 'Department' + generateRandomNumber(),
             parent: 'Sales',
             manager: 'newtestauto@company.com',
-            date: new Date(),
+            date: new Date().toDateString(),
         };
 
         const department = new DepartmentCreation(page);
@@ -34,7 +34,7 @@ describe('TDC001', () => {
                 parent: data.parent,
                 manager: data.manager,
             });
-            data.date = new Date();
+            data.date = new Date().toDateString();
         });
 
         await test.step('Check Department Addition', async () => {
