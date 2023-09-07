@@ -771,4 +771,10 @@ export class BaseHelper {
             .locator('//div[contains(@class, "error-toast")]')
             .textContent();
     }
+
+    public async successToast() {
+        return await this._page
+            .locator('//div[contains(@class, "success-toast")]')
+            .textContent();
+    }
 }
