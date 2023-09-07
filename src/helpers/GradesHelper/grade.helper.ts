@@ -19,4 +19,11 @@ export class GradesHelper extends BaseHelper {
 
         await this.click({ role: 'button', name: 'save' });
     }
+    public async checkPriority(name: string) {
+        await this.click({ role: 'button', name: 'Add Grade' });
+        await this.fillText(name, {
+            name: 'name',
+        });
+        await this.click({ role: 'button', name: 'save' });
+    }
 }

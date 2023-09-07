@@ -54,5 +54,20 @@ test.describe('Grades', () => {
         await expect(await grades.errorMessage()).toBe('Name is required');
     });
 
-    test('with empty Priority feild', async ({ page }) => {});
+    test('with empty Priority feild', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const grades = new GradesHelper(page);
+        await grades.init();
+
+        await grades.checkPriority('test');
+        await expect(await grades.errorMessage()).toBe('Priority is required');
+    });
 });
