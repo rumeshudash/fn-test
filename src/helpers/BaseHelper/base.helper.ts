@@ -1,10 +1,11 @@
+import { uuidV4 } from '@/utils/common.utils';
+import { expect } from '@playwright/test';
 import chalk from 'chalk';
 import { Locator, Page } from 'playwright-core';
 import { LISTING_ROUTES } from '../../constants/api.constants';
-import { expect } from '@playwright/test';
 
 const error = (...text: unknown[]) => console.log(chalk.bold.red('⨯', text));
-const info = (...text: unknown[]) => console.log(chalk.blue('-', text));
+const info = (...text: unknown[]) => console.log(chalk.dim('-', text));
 const success = (...text: unknown[]) => console.log(chalk.green('✔', text));
 const warning = (...text: unknown[]) =>
     console.log(chalk.hex('#FFA500')('!', text));
@@ -64,7 +65,7 @@ export class BaseHelper {
         }
 
         if (!options.role && options.name) {
-            this._tempSelector += `[name=${options.name}]`;
+            this._tempSelector += `[name='${options.name}']`;
         }
 
         this._locator = this._page.locator(this._tempSelector);
@@ -72,6 +73,7 @@ export class BaseHelper {
         if (options.role) {
             this._locator = this._locator.getByRole(options.role, {
                 name: options.name,
+                exact: options.exactText,
             });
         }
 
@@ -80,7 +82,9 @@ export class BaseHelper {
         }
 
         if (options.text) {
-            this._locator = this._locator.getByText(options.text);
+            this._locator = this._locator.getByText(options.text, {
+                exact: options.exactText,
+            });
         }
         if (options.label) {
             this._locator = this._locator.getByLabel(options.label);
@@ -103,10 +107,9 @@ export class BaseHelper {
         text: string | RegExp,
         options?: Omit<LocatorOptions, 'text'> & {
             selector?: string;
-            exactText?: boolean;
         }
     ) {
-        const { selector, exactText, ...rest } = options || {};
+        const { selector, ...rest } = options || {};
         return this.locate(selector, { ...rest, text }).getLocator();
     }
 
@@ -141,10 +144,9 @@ export class BaseHelper {
         role: LocatorRoles,
         options?: Omit<LocatorOptions, 'role'> & {
             selector?: string;
-            exactText?: boolean;
         }
     ) {
-        const { selector, exactText, ...rest } = options || {};
+        const { selector, ...rest } = options || {};
         return this.locate(selector, { ...rest, role }).getLocator();
     }
 
@@ -187,7 +189,7 @@ export class BaseHelper {
         const isVisibleElement = await this.isVisible();
         expect(isVisibleElement, {
             message: `${this._tempSelector} does not exist !!`,
-        }).toBe(true);
+        }).toBeTruthy();
 
         info(`Fill: ${text} in ${this._getSelector(options)}`);
         await this._locator.fill(text + '');
@@ -313,6 +315,87 @@ export class BaseHelper {
     }
 
     /**
+     * Retrieves the tab list element.
+     *
+     * @return {this} The tab list element.
+     */
+    public getTabListContainer(): this {
+        return this.locate('div', { role: 'tablist' });
+    }
+
+    /**
+     * Retrieves a list of tab items from the tab list container.
+     *
+     * @return {Promise<string[]>} An array of strings representing the text of each tab item.
+     */
+    public async getTabListItems(): Promise<string[]> {
+        return this.locateByRole('tab').allInnerTexts();
+    }
+
+    /**
+     * Checks if the given tab or tabs exist in the tab list.
+     *
+     * @param {string | string[]} tabName - The name or names of the tab(s) to check.
+     * @return {Promise<void>} No return value.
+     */
+    public async checkTabExists(tabName: string | string[]): Promise<void> {
+        let tabNames = tabName;
+        if (typeof tabNames === 'string') tabNames = [tabNames];
+
+        const tabList = await this.getTabListItems();
+
+        for (const tab of tabNames) {
+            expect(tabList, {
+                message: `Tab existence check: ${tab}`,
+            }).toContainEqual(tab);
+        }
+    }
+
+    /**
+     * Clicks on the specified tab. Also check if the tab is selected
+     *
+     * @param {string} tabName - The name of the tab to be clicked.
+     * @return {Promise<void>} - A Promise that resolves when the tab is clicked.
+     */
+    public async clickTab(tabName: string): Promise<void> {
+        await this.click({
+            role: 'tab',
+            text: tabName,
+            exactText: true,
+        });
+
+        await this.checkTabSelected(tabName);
+    }
+
+    /**
+     * Gives the value of the 'aria-selected' attribute of the specified tab.
+     *
+     * @param {string} tabName - The name of the tab to check.
+     * @return {Promise<string>} The value of the 'aria-selected' attribute of the tab.
+     */
+    public async isTabSelected(tabName: string): Promise<string> {
+        const container = this.getTabListContainer();
+        return await container
+            .locateByRole('tab', {
+                text: tabName,
+                exactText: true,
+            })
+            .getAttribute('aria-selected');
+    }
+
+    /**
+     * Checks if the specified tab is currently selected.
+     *
+     * @param {string} tabName - The name of the tab to check.
+     * @return {Promise<void>} - A Promise that resolves when the check is complete.
+     */
+    public async checkTabSelected(tabName: string): Promise<void> {
+        expect(await this.isTabSelected(tabName), {
+            message: `Tab selection check: ${tabName}`,
+        }).toBe('true');
+    }
+
+    /**
      * Clicks the specified element or coordinates with the specified button.
      *
      * @param {LocatorOptions & { selector?: string; button?: "left" | "right" | "middle" | undefined; }} options - The options for the click action.
@@ -323,7 +406,7 @@ export class BaseHelper {
             selector?: string;
             button?: 'left' | 'right' | 'middle' | undefined;
         }
-    ) {
+    ): Promise<void> {
         const { selector, button = 'left', ...rest } = options || {};
         if (options) this.locate(selector, rest);
 
@@ -633,5 +716,59 @@ export class BaseHelper {
         await this.validateCheckbox();
         const checkbox = this.locate("//input[@type='checkbox']")._locator;
         await checkbox.click();
+    }
+
+    /**
+     * Fill the otpInput feild with otp.
+     *
+     * @param {string} data - The OTP data to be filled in the otpInput selector.
+     * @param {number} expectedLength - The expected length of the OTP 4|6.
+     
+     */
+    public async fillOtp(data: string, expectedLength: number) {
+        expect(data.length).toBe(expectedLength);
+
+        for (let i = 0; i < data.length; i++) {
+            // Locate the OTP input fields and fill them with the corresponding digit
+            await this._page.locator('.otpInput').nth(i).fill(data[i]);
+        }
+    }
+    /**
+     * Return Error Message Conatains in the span tag
+     *
+     * @return {string} - returns the error message in the feild if error text-error exist .
+     */
+    public async errorMessage() {
+        const errorMessage = await this._page
+            .locator('//span[contains(@class, "label-text-alt text-error")]')
+            .textContent();
+        return errorMessage;
+    }
+    /**
+     * Function to return the random email after generating random emails
+     
+     *  @return {string} -returns the Random email for testing purpose.
+     */
+    public static genRandomEmail() {
+        return `test-${uuidV4()}@gmail.com`;
+    }
+
+    /**
+     * This function is used to generate random password for testing purpose.
+     *
+     *  @return {string} -returns the Random password for testing purpose.
+     */
+    public static generateRandomPassword() {
+        return `test-${uuidV4()}`;
+    }
+    /**
+     * This function error the error message contains in toast.
+     *
+     *  @return {string} -returns error message contains on toast.
+     */
+    public async errorToast() {
+        return await this._page
+            .locator('//div[contains(@class, "error-toast")]')
+            .textContent();
     }
 }

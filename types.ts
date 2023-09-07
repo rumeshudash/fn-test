@@ -6,6 +6,7 @@ interface LocatorOptions {
     text?: string | RegExp;
     label?: string;
     class?: string[];
+    exactText?: boolean;
 }
 
 type LocatorRoles =

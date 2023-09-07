@@ -17,12 +17,6 @@ export class SignupHelper extends BaseHelper {
         return this.locate('//button[text()="Next →"]');
     }
 
-    public async errorMessage() {
-        return this._page
-            .locator('//span[contains(@class, "label-text")]')
-            .textContent();
-    }
-
     public async isPolicyChecked() {
         return this._page.locator("//input[@type='checkbox']");
     }
