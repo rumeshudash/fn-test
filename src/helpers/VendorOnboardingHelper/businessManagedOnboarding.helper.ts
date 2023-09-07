@@ -5,6 +5,7 @@ import { vendorGstinInfo } from '@/utils/required_data';
 
 export class BusinessManagedOnboarding extends BaseHelper {
     public vendorBusiness;
+    public ignore_next_page: string[] = [];
     constructor(page) {
         super(page);
     }
@@ -57,6 +58,49 @@ export class BusinessManagedOnboarding extends BaseHelper {
     async clickNavigationTab(nav: string) {
         await this._page.locator(`//span[text()='${nav}']`).click();
     }
+
+    async validateCheckbox() {
+        const checkbox = await this.locate("//input[@type='checkbox']")
+            ._locator;
+        expect(
+            !(await checkbox.isChecked()),
+            'By default checkbox should be unchecked'
+        ).toBe(true);
+    }
+
+    async saveAndCreateCheckbox() {
+        await this.validateCheckbox();
+        const checkbox = this.locate("//input[@type='checkbox']")._locator;
+        await checkbox.click();
+    }
+
+    async afterSaveAndCreateValidation() {
+        // if (!this.ignore_next_page.includes('move_to_next_page')) {
+        const input_filed_locator = this.locate('input', {
+            name: 'gstin',
+        })._locator;
+        expect(
+            await input_filed_locator.inputValue(),
+            'GSTIN field is not empty'
+        ).toBe('');
+        // }
+    }
+
+    async verifyBusinessManaged() {
+        expect(
+            await this.locate(
+                '(//div[contains(@class,"text-center rounded")])[1]'
+            )._locator.isVisible(),
+            'Business Managed is not visible'
+        ).toBe(true);
+
+        expect(
+            await this.locate(
+                '(//div[contains(@class,"text-center rounded")])[1]'
+            )._locator.innerText(),
+            'Business Managed does not matched'
+        ).toBe('Business Managed');
+    }
 }
 
 export class GstinBusinessManagedOnboarding extends BaseHelper {
@@ -92,12 +136,10 @@ export class GstinBusinessManagedOnboarding extends BaseHelper {
         const VendorInfocard = this._page.locator(
             "(//div[contains(@class,'items-center justify-between')])[3]"
         );
-        expect
-            .soft(
-                await VendorInfocard.isVisible(),
-                'Vendor Info card is not visible'
-            )
-            .toBe(true);
+        expect(
+            await VendorInfocard.isVisible(),
+            'Vendor Info card is not visible'
+        ).toBe(true);
         if (await VendorInfocard.isVisible()) await VendorInfocard.click();
     }
     async verifyDisplayName() {

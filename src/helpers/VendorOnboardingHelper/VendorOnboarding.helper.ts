@@ -512,9 +512,8 @@ export class BankAccountDetails extends BaseHelper {
         ).toBe(true);
     }
     async vendorIfscDetailsValidation() {
-        const ifsc_details = await this._page.locator(
-            '(//div[contains(@class,"flex items-center")])[2]'
-        );
+        const ifsc_details = await this.locate('div', { id: 'bank_ifsc_info' })
+            ._locator;
         expect(
             await ifsc_details.isVisible(),
             'Bank Details is not visible'

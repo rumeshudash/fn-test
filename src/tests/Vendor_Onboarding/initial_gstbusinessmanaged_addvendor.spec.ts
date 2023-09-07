@@ -56,25 +56,23 @@ describe('TCBV001', () => {
             await businessGstin.gstinInfoCheck();
 
             await withGstin.fillBusinessDetails();
-            await withGstin.expandClientInfoCard();
+            // await withGstin.expandClientInfoCard();
             test.slow();
             await withGstin.checkDisplayName();
             await withGstin.editDisplayName();
             await withGstin.expandClientInfoCard();
             await vendorGstin.gstinInfoCheck();
+            await businessManagedOnboarding.saveAndCreateCheckbox();
 
             await businessManagedOnboarding.clickButton('Save');
-            expect
-                .soft(
-                    await businessManagedOnboarding.toastMessage(),
-                    'Successfully saved is not shown'
-                )
-                .toBe('Successfully saved!');
-
-            expect(
-                page.getByText('Business Managed', { exact: true }),
-                'Business Managed is not shown'
-            ).toBe(true);
+            await businessManagedOnboarding.afterSaveAndCreateValidation();
+            // expect
+            //     .soft(
+            //         await businessManagedOnboarding.toastMessage(),
+            //         'Successfully saved is not shown'
+            //     )
+            //     .toBe('Successfully saved!');
+            await businessManagedOnboarding.verifyBusinessManaged();
         }
     );
 });

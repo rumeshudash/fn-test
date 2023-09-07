@@ -74,12 +74,12 @@ export const ClientBusinessDetails: gstinDataType = {
 };
 
 export const businessVendorGstin: gstinDataType = {
-    trade_name: 'Ujjivan Small Finance Bank Limited',
-    value: '10AABCU9603R1Z2',
-    pan_number: 'AABCU9603R',
+    trade_name: 'D Mart',
+    value: '29AKAPD8772G1Z0',
+    pan_number: 'AKAPD8772G',
     business_type: 'Proprietorship',
     address:
-        '3374, sheet no 31 Thana Kotwali New Dak Bunglaw road, Patna, Ward 2 Circle No 6, Patna, 800001, Bihar, NA',
+        'CITY TOWER, SULTANPET MAIN ROAD, BENGALURU, SHOP NO. 204/15, Bengaluru Urban, 560053, Karnataka, NA, 1ST FLOOR',
     status: 'Active',
 };
 
