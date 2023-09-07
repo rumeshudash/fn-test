@@ -99,7 +99,14 @@ export class SignInHelper extends BaseHelper {
         await this.click({ role: 'button', name: ' Next → ' });
         await this._page.waitForTimeout(1000);
     }
-
+    /**
+     * Check if dashboard is displayed after login
+     *
+     * @param {string}username - Username input for the login .
+     * @param {string}password - Password input feild for login.
+    
+     
+     */
     public async checkDashboard(data: LoginDetailsInput) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
 
@@ -117,6 +124,12 @@ export class SignInHelper extends BaseHelper {
 
         await this._page.waitForTimeout(1000);
     }
+
+    /**
+     * Check if Maximum login attempts is valid or not
+     *
+     * @param {string}username - Username input for the login .
+     * */
 
     public async maximumLoginAttempts(username: string) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
