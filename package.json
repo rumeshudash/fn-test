@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "clipboardy": "^3.0.0",
+        "date-fns": "^2.30.0",
         "http-server": "^14.1.1"
     }
 }

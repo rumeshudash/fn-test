@@ -186,3 +186,10 @@ interface VENDORDOCUMENTDETAILS {
 //     bankAccount: string;
 //     ifsc: string;
 // }
+
+interface DepartmentCreationData {
+    name?: string;
+    parent?: string;
+    manager?: string;
+    date?: string;
+}
