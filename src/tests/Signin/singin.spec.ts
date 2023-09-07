@@ -76,14 +76,10 @@ test.describe('Signin', () => {
         await signUp.clickButton('Next →');
 
         // const username = 'abcdef@gmail.com';
-
         const signin = new SignInHelper(page);
         await signin.init();
 
         await signin.maximumLoginAttempts(username);
-        // expect(await signin.errorMessage()).toBe(
-        //     `Account locked for too many invalid attempts. Please try after 5 minutes`
-        // );
 
         const checklogin = new SignInHelper(page);
         await checklogin.init();
