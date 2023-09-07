@@ -139,4 +139,23 @@ test.describe('Grades', () => {
 
         // expect(await grades.successToast()).toBe('Status Changed');
     });
+    // test('EditIcon Click', async ({ page }) => {
+    //     const signin = new SignInHelper(page);
+    //     await signin.init();
+    //     const username = 'newtestauto@company.com';
+    //     const password = '123456';
+    //     await signin.checkDashboard({
+    //         username: username,
+    //         password: password,
+    //     });
+
+    //     const grades = new GradesHelper(page);
+    //     await grades.init();
+
+    //     await grades.EditGrdaes('E2', 1);
+
+    //     await expect(
+    //         page.locator('//span[contains(text(),"Name")]')
+    //     ).toHaveCount(1);
+    // });
 });

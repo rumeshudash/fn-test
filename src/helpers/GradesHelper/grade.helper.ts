@@ -47,22 +47,46 @@ export class GradesHelper extends BaseHelper {
         const table = await this._page.locator(
             '//div[contains(@class,"table finnoto__table__container ")]'
         );
-        const rows = await table.locator('//div[contains(@class,"table-row")]');
-
-        const cols = await rows.locator('//div[contains(@class,"table-cell")]');
+        const rows = await table.locator('//div[contains(@class,"table-row")]'); //select the row
 
         for (let i = 0; i < (await rows.count()); i++) {
-            const cell = await cols.nth(i).innerText();
-
-            if (cell === name) {
-                const button = await rows
-                    .nth(i)
-                    .locator('.//button[contains(text(),"Active")]'); // Add a dot at the beginning to scope to the current row
-
-                await button.click();
-                // await this.click({ role: 'button', name: 'Inactive' });
-                break;
+            const row = await rows.nth(i);
+            const tds = await row.locator(
+                '//div[contains(@class,"table-cell")]'
+            );
+            for (let j = 0; j < (await tds.count()); j++) {
+                const cell = await tds.nth(j).innerText();
+                if (cell === name) {
+                    const Button = await tds
+                        .nth(3)
+                        .locator('//button[contains(@class,"btn")]');
+                    await Button.click();
+                }
             }
         }
     }
+
+    // public async EditGrdaes(name: string, priority: number) {
+    //     const table = await this._page.locator(
+    //         '//div[contains(@class,"table finnoto__table__container ")]'
+    //     );
+    //     const rows = await table.locator('//div[contains(@class,"table-row")]');
+
+    //     const cols = await rows.locator('//div[contains(@class,"table-cell")]');
+    //     for (let i = 0; i < (await rows.count()); i++) {
+    //         const cell = await cols.nth(i).innerText();
+
+    //         if (cell === name) {
+    //             const EditBtn = await rows
+    //                 .nth(i)
+    //                 .locator('//button')
+    //                 .locator('//div[contains(@class,"icon-container")]')
+    //                 .locator('//svg');
+
+    //             await EditBtn.click();
+
+    //             // break;
+    //         }
+    //     }
+    // }
 }
