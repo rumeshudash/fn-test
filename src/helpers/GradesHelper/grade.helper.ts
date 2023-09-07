@@ -43,4 +43,26 @@ export class GradesHelper extends BaseHelper {
 
         await this.click({ role: 'button', name: 'save' });
     }
+    public async ActiveToInactive(name: string) {
+        const table = await this._page.locator(
+            '//div[contains(@class,"table finnoto__table__container ")]'
+        );
+        const rows = await table.locator('//div[contains(@class,"table-row")]');
+
+        const cols = await rows.locator('//div[contains(@class,"table-cell")]');
+
+        for (let i = 0; i < (await rows.count()); i++) {
+            const cell = await cols.nth(i).innerText();
+
+            if (cell === name) {
+                const button = await rows
+                    .nth(i)
+                    .locator('.//button[contains(text(),"Active")]'); // Add a dot at the beginning to scope to the current row
+
+                await button.click();
+                // await this.click({ role: 'button', name: 'Inactive' });
+                break;
+            }
+        }
+    }
 }
