@@ -100,10 +100,11 @@ test.describe('Grades', () => {
 
         const grades = new GradesHelper(page);
         await grades.init();
-        await grades.AddGrades('tes2SDSsss', 1);
+        const gradeName = await GradesHelper.generateRandomGradeName();
+        await grades.AddGrades(gradeName, 1);
 
         await expect(await grades.successToast()).toBe('Successfully saved ');
-        await expect(page.getByText('tes2SDSss')).toHaveCount(1);
+        await expect(page.getByText(gradeName)).toHaveCount(1);
     });
     test('With save and create another checked', async ({ page }) => {
         const signin = new SignInHelper(page);
@@ -117,7 +118,8 @@ test.describe('Grades', () => {
 
         const grades = new GradesHelper(page);
         await grades.init();
-        grades.checkWithCheckbox('SujanTest', 1);
+        const gradeName = await GradesHelper.generateRandomGradeName();
+        grades.checkWithCheckbox(gradeName, 1);
         await expect(
             page.locator('//span[contains(text(),"Name")]')
         ).toHaveCount(1);
@@ -135,9 +137,9 @@ test.describe('Grades', () => {
         const grades = new GradesHelper(page);
         await grades.init();
 
-        await grades.ActiveToInactive('tes2');
+        await grades.ActiveToInactive('E1');
 
-        // expect(await grades.successToast()).toBe('Status Changed');
+        expect(await grades.successToast()).toBe('Status Changed');
     });
     test('EditIcon Click', async ({ page }) => {
         const signin = new SignInHelper(page);
@@ -151,7 +153,44 @@ test.describe('Grades', () => {
 
         const grades = new GradesHelper(page);
         await grades.init();
+        const newGradeName = await GradesHelper.generateRandomGradeName();
 
-        await grades.EditGrdaes('tes2', 'NEWHAM');
+        await grades.EditGrdaes('NEWHAM', newGradeName, null);
+
+        expect(await grades.successToast()).toBe('Successfully saved ');
+        await expect(page.getByText(newGradeName)).toHaveCount(1);
+    });
+    test('EditIcon Click with empty Name feild', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const grades = new GradesHelper(page);
+        await grades.init();
+
+        await grades.EditGrdaes('NEWHAMsss', '', null);
+        expect(await grades.errorMessage()).toBe('Name is required');
+    });
+    test('EditIcon Click with  Priority feild', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const grades = new GradesHelper(page);
+        await grades.init();
+
+        await grades.EditGrdaes('NEWHAMsss', undefined, 19);
+
+        expect(await grades.successToast).toBe('Successfully saved');
     });
 });

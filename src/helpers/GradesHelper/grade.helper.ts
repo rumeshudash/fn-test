@@ -66,7 +66,7 @@ export class GradesHelper extends BaseHelper {
         }
     }
 
-    public async EditGrdaes(name: string, newname: string) {
+    public async EditGrdaes(name: string, newname: string, priority: number) {
         const table = await this._page.locator(
             '//div[contains(@class,"table finnoto__table__container ")]'
         );
@@ -84,9 +84,17 @@ export class GradesHelper extends BaseHelper {
                         .locator('//div[contains(@class,"flex items-center")]')
                         .locator('//button');
                     await Button.click();
-                    await this.fillText(newname, {
-                        name: 'name',
-                    });
+                    if (newname !== undefined) {
+                        await this.fillText(newname, {
+                            name: 'name',
+                        });
+                    }
+                    if (priority !== null) {
+                        await this.fillText(priority, {
+                            name: 'priority',
+                        });
+                    }
+
                     await this.click({ role: 'button', name: 'save' });
 
                     break;
@@ -94,12 +102,7 @@ export class GradesHelper extends BaseHelper {
             }
         }
     }
-    // public async EditGrdaesname(name: string) {
-    //     await this.click({ role: 'button', name: 'Add Grade' });
-    //     await this.fillText(name, {
-    //         name: 'name',
-    //     });
-
-    //     await this.click({ role: 'button', name: 'save' });
-    // }
+    static async generateRandomGradeName() {
+        return `Grade${Math.floor(Math.random() * 1000000)}`;
+    }
 }
