@@ -169,6 +169,7 @@ export class DepartmentCreation extends BaseHelper {
     // goto department details page
     public async openDepartmentDetailsPage(name: string) {
         console.log(chalk.blue('Opening department details'));
+        await this._page.waitForSelector('div.table-row.body-row');
         await this._page
             .locator('div.table-row.body-row')
             .getByText(name)
@@ -185,6 +186,7 @@ export class DepartmentCreation extends BaseHelper {
     // toggle department status from the row
     public async toggleStatus(name: string, status: string) {
         await this.navigateTo('DEPARTMENTS');
+        await this.toggleAll();
         await this.navigateToTab('All');
         console.log(chalk.blue('Toggling department status'));
         const department = await this.getDepartmentFromTable({ name: name });

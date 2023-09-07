@@ -69,6 +69,7 @@ describe('TDC001', () => {
         // check if page is redirected to department details page
         await test.step('Check Department Details Page', async () => {
             await department.navigateTo('DEPARTMENTS');
+            await department.toggleAll();
             await department.navigateToTab('All');
             await department.openDepartmentDetailsPage(data.name);
         });
