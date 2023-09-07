@@ -87,4 +87,21 @@ test.describe('Grades', () => {
 
         await expect(await grades.errorMessage()).toBe('Duplicate grade name');
     });
+
+    test('With valid Name and Priority', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const grades = new GradesHelper(page);
+        await grades.init();
+        await grades.AddGrades('tes2SDS', 1);
+
+        await expect(await grades.successToast()).toBe('Successfully saved ');
+    });
 });
