@@ -26,4 +26,21 @@ export class GradesHelper extends BaseHelper {
         });
         await this.click({ role: 'button', name: 'save' });
     }
+
+    public async clickPolicy() {
+        await this._page.locator("//input[@type='checkbox']").click();
+    }
+
+    public async checkWithCheckbox(name: string, priority: number) {
+        await this.click({ role: 'button', name: 'Add Grade' });
+        await this.fillText(name, {
+            name: 'name',
+        });
+        await this.fillText(priority, {
+            name: 'priority',
+        });
+        await this.clickPolicy();
+
+        await this.click({ role: 'button', name: 'save' });
+    }
 }

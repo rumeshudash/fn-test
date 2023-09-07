@@ -100,8 +100,26 @@ test.describe('Grades', () => {
 
         const grades = new GradesHelper(page);
         await grades.init();
-        await grades.AddGrades('tes2SDS', 1);
+        await grades.AddGrades('tes2SDSsss', 1);
 
         await expect(await grades.successToast()).toBe('Successfully saved ');
+        await expect(page.getByText('tes2SDSss')).toHaveCount(1);
+    });
+    test('With save and create another checked', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const grades = new GradesHelper(page);
+        await grades.init();
+        grades.checkWithCheckbox('SujanTest', 1);
+        await expect(
+            page.locator('//span[contains(text(),"Name")]')
+        ).toHaveCount(1);
     });
 });
