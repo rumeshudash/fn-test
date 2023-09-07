@@ -26,7 +26,7 @@ const { expect, describe } = PROCESS_TEST;
 
 //Vendor Managed with Client Connect
 describe('TCCC001', () => {
-    PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
+    PROCESS_TEST('Vendor Onboarding', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(BANKDETAILS, page);
         const vendorOnboarding = new VendorOnboarding(LOWER_TDS_DETAILS, page);
         const withgstin = new VendorOnboardingWithGSTIN(vendorGstinInfo, page);

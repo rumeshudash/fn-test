@@ -19,11 +19,25 @@ export default class GenericGstinCardHelper extends BaseHelper {
         this.gstin_data = gstin_data;
     }
 
+    // private static PARENT_LOCATOR =
+    //     `//div[@id="gstin_trade_name"][contains(text(), "${this.gstin_data.trade_name}")]/parent::div/parent::div`;
+
+    async gstinCardParentLocator() {
+        return this.locate(
+            `//div[@id="gstin_trade_name"][contains(text(), "${this.gstin_data.trade_name}")]/parent::div/parent::div`
+        );
+    }
+    async gstinCardParentLocatorHidden() {
+        return this.locate(
+            `//div[@id="gstin_trade_name"][contains(text(), "${this.gstin_data.trade_name}")]/parent::div/parent::div/parent::div`
+        );
+    }
     async checkBusinessName() {
-        const element = this.locate('div', {
-            id: 'gstin_trade_name',
-        })._locator;
-        expect(await element.isVisible(), 'Gstin Trade Name not found').toBe(
+        const parentLocator = this.gstinCardParentLocator();
+        const element = (await parentLocator)
+            .getLocator()
+            .locator('//div[@id="gstin_trade_name"]');
+        expect(await element.isVisible(), 'Gstin Trade Name not visible').toBe(
             true
         );
         await expect(element, 'Gstin Trade Name not matched !!').toHaveText(
@@ -31,32 +45,35 @@ export default class GenericGstinCardHelper extends BaseHelper {
         );
     }
     async checkGstinNumber() {
-        const element = this.locate('div', {
-            id: 'gstin_number',
-        })._locator;
-
+        const parentLocator = this.gstinCardParentLocator();
+        const element = (await parentLocator)
+            .getLocator()
+            .locator('//div[@id="gstin_number"]');
         expect(await element.isVisible(), 'Gstin Number not found').toBe(true);
         await expect(element, 'Gstin Number  not matched !!').toHaveText(
             this.gstin_data.value
         );
     }
     async checkAddress() {
-        const element = this.locate('span', {
-            id: 'gstin_address',
-        })._locator;
+        const parentLocator = this.gstinCardParentLocatorHidden();
+        const element = (await parentLocator)
+            .getLocator()
+            .locator('//span[@id="gstin_address"]');
 
-        expect
-            .soft(await element.isVisible(), 'Gstin  Address not found')
-            .toBe(true);
+        expect(await element.isVisible(), 'Gstin  Address not found').toBe(
+            true
+        );
 
-        await expect
-            .soft(element, 'Gstin Address  not matched !!')
-            .toHaveText(this.gstin_data.address);
+        await expect(element, 'Gstin Address  not matched !!').toHaveText(
+            this.gstin_data.address
+        );
     }
     async checkBusinessType() {
-        const element = this.locate('span', {
-            id: 'gstin_business_type',
-        })._locator;
+        const parentLocator = this.gstinCardParentLocatorHidden();
+        const element = (await parentLocator)
+            .getLocator()
+            .locator("//span[contains(@id, 'gstin_business_type')]");
+
         expect(
             await element.isVisible(),
             'Gstin  business type not found'
@@ -66,9 +83,11 @@ export default class GenericGstinCardHelper extends BaseHelper {
         );
     }
     async checkPAN() {
-        const element = this.locate('span', {
-            id: 'gstin_pan',
-        })._locator;
+        const parentLocator = this.gstinCardParentLocatorHidden();
+        const element = (await parentLocator)
+            .getLocator()
+            .locator('//span[contains(@id, "gstin_pan")]');
+
         expect(await element.isVisible(), 'Pan number  not found').toBe(true);
         await expect(element, 'Gstin pan number  not matched !!').toHaveText(
             this.gstin_data.pan_number
@@ -76,9 +95,10 @@ export default class GenericGstinCardHelper extends BaseHelper {
     }
 
     async checkGstinStatus() {
-        const element = this.locate('div', {
-            id: 'gstin_status',
-        })._locator;
+        const parentLocator = this.gstinCardParentLocator();
+        const element = (await parentLocator)
+            .getLocator()
+            .locator("//div[contains(@id, 'gstin_status')]");
 
         expect(await element.isVisible(), 'Gstin Status  not found').toBe(true);
         await expect(element, 'Gstin status  not matched !!').toHaveText(
@@ -94,7 +114,7 @@ export default class GenericGstinCardHelper extends BaseHelper {
             await this.checkGstinNumber();
         if (!this.ignore_test_fields.includes('gstin_business_address'))
             await this.checkAddress();
-        if (!this.ignore_test_fields.includes('gstin_business_business_type'))
+        if (!this.ignore_test_fields.includes('gstin_business_type'))
             await this.checkBusinessType();
         if (!this.ignore_test_fields.includes('gstin_business_pan'))
             await this.checkPAN();

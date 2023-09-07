@@ -17,12 +17,6 @@ export class SignupHelper extends BaseHelper {
         return this.locate('//button[text()="Next →"]');
     }
 
-    public async errorMessage() {
-        return this._page
-            .locator('//span[contains(@class, "label-text")]')
-            .textContent();
-    }
-
     public async isPolicyChecked() {
         return this._page.locator("//input[@type='checkbox']");
     }
@@ -34,10 +28,10 @@ export class SignupHelper extends BaseHelper {
         const helper = this.locate(SignupHelper.SIGNUP_DOM_SELECTOR);
 
         await helper.fillInput(data.name, { name: 'name' });
-        await helper.fillInput(data.email, { name: 'username' });
+        await helper.fillInput(data.email, { name: 'email' });
         await helper.fillInput(data.password, { name: 'password' });
         await helper.fillInput(data.confirm_password, {
-            name: 'confirmPassword',
+            name: 'confirm\\ password',
         });
     }
     public async checkSignInLink() {
