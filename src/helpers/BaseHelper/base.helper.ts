@@ -630,7 +630,6 @@ export class BaseHelper {
      * @param {number} expectedLength - The expected length of the OTP 4|6.
      
      */
-
     public async fillOtp(data: string, expectedLength: number) {
         expect(data.length).toBe(expectedLength);
 
@@ -640,11 +639,10 @@ export class BaseHelper {
         }
     }
     /**
-     * Return Error Message.
+     * Return Error Message Conatains in the span tag
      *
      * @return {string} - returns the error message in the feild if error text-error exist .
      */
-
     public async errorMessage() {
         const errorMessage = await this._page
             .locator('//span[contains(@class, "label-text-alt text-error")]')
@@ -652,30 +650,27 @@ export class BaseHelper {
         return errorMessage;
     }
     /**
-     *
-     *
+     * Function to return the random email after generating random emails
+     
      *  @return {string} -returns the Random email for testing purpose.
      */
-
     public static genRandomEmail() {
         return `test-${uuidV4()}@gmail.com`;
     }
 
     /**
-     *
+     * This function is used to generate random password for testing purpose.
      *
      *  @return {string} -returns the Random password for testing purpose.
      */
-
     public static generateRandomPassword() {
         return `test-${uuidV4()}`;
     }
     /**
-     *
+     * This function error the error message contains in toast.
      *
      *  @return {string} -returns error message contains on toast.
      */
-
     public async errorToast() {
         return await this._page
             .locator('//div[contains(@class, "error-toast")]')

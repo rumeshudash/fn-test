@@ -24,7 +24,6 @@ export class SignInHelper extends BaseHelper {
      * @param {number} password - Password input feild for login.
      
      */
-
     public async signInPage(username: string, password: string) {
         const setPassword = '1234567';
         await this.fillText(username, { id: 'username' });
@@ -72,7 +71,6 @@ export class SignInHelper extends BaseHelper {
      * @param {number} data.password - Password input feild for login.
      
      */
-
     public async CheckLogin(data: LoginDetailsInput) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
 
@@ -86,13 +84,10 @@ export class SignInHelper extends BaseHelper {
     }
 
     /**
-     * Check the email feild has appropiate email 
+     * Check the email feild has appropiate email
      *
      * @param {string}username - Username input for the login .
-    
-     
      */
-
     public async isValidEmail(username: string) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
         await this.fillText(username, { id: 'username' });
@@ -104,8 +99,6 @@ export class SignInHelper extends BaseHelper {
      *
      * @param {string}username - Username input for the login .
      * @param {string}password - Password input feild for login.
-    
-     
      */
     public async checkDashboard(data: LoginDetailsInput) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
@@ -129,8 +122,8 @@ export class SignInHelper extends BaseHelper {
      * Check if Maximum login attempts is valid or not
      *
      * @param {string}username - Username input for the login .
-     * */
-
+     *
+     */
     public async maximumLoginAttempts(username: string) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
         await this.fillText(username, { id: 'username' });
@@ -154,7 +147,8 @@ export class SignInHelper extends BaseHelper {
      * Check if Mobile number is valid or not if Mobile number is entered in login feild
      *
      * @param {number}mobile - Mobile number of user for login .
-     * */
+     *
+     */
     public async MobileNumber(mobile: number) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
         await this.fillText(mobile.toString(), { id: 'username' });
@@ -165,8 +159,8 @@ export class SignInHelper extends BaseHelper {
     /**
      * Check if forgot password feild is clickable or not
      *
-     * */
-
+     *@param {string}username - Username input for the logi
+     */
     public async checkForgotPasswordLink(username: string) {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
         await this.isValidEmail(username);
@@ -191,7 +185,8 @@ export class SignInHelper extends BaseHelper {
     /**
      * Check if signup feild is clickable or not
      *
-     * */
+     *
+     */
     public async checkSignUpLink() {
         const result = await this.locateByText('Sign Up');
 
