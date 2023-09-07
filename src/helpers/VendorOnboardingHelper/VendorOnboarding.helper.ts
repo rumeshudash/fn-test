@@ -16,7 +16,6 @@ import GenericNonGstinCardHelper, {
 } from '../CommonCardHelper/genericNonGstin.card.helper';
 
 let getDate: string;
-let clientBusinessName: string;
 export class VendorOnboarding extends BaseHelper {
     public lowerTDS;
     constructor(lowerTDS, page) {
@@ -525,28 +524,26 @@ export class BankAccountDetails extends BaseHelper {
         const accountName = await this._page
             .locator('//label[@for="account_name"]/following-sibling::div[1]')
             .textContent();
-        console.log('Bank Account Name: ', accountName);
         return accountName;
     }
     async bankAccountNumber() {
         const account_number = await this._page
-            .locator('//div[text()="Account Number"]/following-sibling::div')
+            .locator(
+                '//span[@class="text-sm font-medium"]/following-sibling::span[1]'
+            )
             .textContent();
-        console.log('Bank Account Number: ', account_number);
         return account_number;
     }
     async bankIFSCCode() {
         const ifsc_code = await this._page
             .locator("//img[@alt='bank']/following-sibling::p[1]")
             .textContent();
-        console.log('Bank Account Number: ', ifsc_code);
         return ifsc_code;
     }
     async businessDetailsIFSC() {
         const gstin = await this._page
             .locator('//div[text()="IFSC Code"]/following-sibling::div')
             .textContent();
-        console.log('Bank Number in Business Details: ', gstin);
         return gstin;
     }
 }

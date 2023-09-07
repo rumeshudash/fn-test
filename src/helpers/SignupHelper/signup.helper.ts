@@ -31,7 +31,7 @@ export class SignupHelper extends BaseHelper {
         await helper.fillInput(data.email, { name: 'email' });
         await helper.fillInput(data.password, { name: 'password' });
         await helper.fillInput(data.confirm_password, {
-            name: 'confirm password',
+            name: 'confirm\\ password',
         });
     }
     public async checkSignInLink() {

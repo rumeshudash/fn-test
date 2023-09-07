@@ -9,12 +9,8 @@ import {
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 import {
-    BANKDETAILS,
-    LOWER_TDS_DETAILS,
-    IMAGE_NAME,
     NON_GSTIN_LOWER_TDS_DETAILS,
     NON_GSTIN_BANK_DETAILS_ONE,
-    NON_GSTIN_BANK_DETAILS_TWO,
 } from '@/utils/required_data';
 import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { nonGstinDataType } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
