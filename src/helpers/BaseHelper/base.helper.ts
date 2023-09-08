@@ -87,11 +87,7 @@ export class BaseHelper {
 
         if (options.text) {
             this._locator = this._locator.getByText(options.text, {
-<<<<<<< HEAD
-                exact: exactText,
-=======
                 exact: options.exactText,
->>>>>>> c9e04d95428fe3e4a42950723c31890efa407fd8
             });
         }
         if (options.label) {
@@ -117,13 +113,8 @@ export class BaseHelper {
             selector?: string;
         }
     ) {
-<<<<<<< HEAD
-        const { selector, exactText, ...rest } = options || {};
-        return this.locate(selector, { ...rest, text }, exactText).getLocator();
-=======
         const { selector, ...rest } = options || {};
         return this.locate(selector, { ...rest, text }).getLocator();
->>>>>>> c9e04d95428fe3e4a42950723c31890efa407fd8
     }
 
     /**
@@ -442,12 +433,20 @@ export class BaseHelper {
         if (options && Object.keys(options).length)
             this.locate('input', options);
 
-        return this._locator
+        const errorElement = this._locator
             .locator('//ancestor::div[contains(@class,"form-control")]')
             .locator(
-                '//span[contains(@class," label label-text-alt text-error ")]'
+                '//span[contains(@class," label label-text-alt text-error")]'
+            );
+        const textError = await errorElement?.textContent();
+
+        console.log(
+            chalk.blue(
+                'Input Error Message:-->',
+                chalk.red(chalk.red(textError))
             )
-            .isVisible();
+        );
+        return errorElement;
     }
 
     public async checkDisplayName() {

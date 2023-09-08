@@ -13,10 +13,10 @@ const businessGstinInfo: gstinDataType = {
     status: 'Active',
 };
 
-const { expect, describe } = PROCESS_TEST;
+const { describe } = PROCESS_TEST;
 const businessInformation = {
     gstin: '27AAQCS4259Q1ZA',
-    mobile: '9816390320',
+    mobile: '9845612345',
     email: 'user@gmail.com',
 };
 const createInit = async (page: any) => {
@@ -39,10 +39,7 @@ describe(`TBA001`, () => {
 
         await helper.checkMandatoryFields();
         await gstin_helper.gstinInfoCheck();
-        // test('with all value filled', async () => {
-
-        //     // await helper.checkMandatoryFields();
-        // });
+        await helper.submitButton();
     });
 
     PROCESS_TEST(
@@ -57,6 +54,7 @@ describe(`TBA001`, () => {
             await helper.checkDisableSubmit();
         }
     );
+
     PROCESS_TEST(
         'without Mobile Number-submit button check',
         async ({ page }) => {
@@ -70,13 +68,48 @@ describe(`TBA001`, () => {
             await helper.checkDisableSubmit();
         }
     );
-    PROCESS_TEST('without Email -submit button check', async ({ page }) => {
+
+    PROCESS_TEST('without Email-submit button check', async ({ page }) => {
         const { helper } = await createInit(page);
         await helper.fillBusinessInputInformation({
             ...businessInformation,
             email: '',
         });
+
         await helper.checkEmailError();
+        await helper.checkDisableSubmit();
+    });
+
+    PROCESS_TEST('Verify Invalid Gstin', async ({ page }) => {
+        const { helper } = await createInit(page);
+        await helper.fillBusinessInputInformation({
+            ...businessInformation,
+            gstin: '27AAQCS4259Q1Z1',
+        });
+
+        await helper.checkGstinError('Invalid Gstin Number');
+        await helper.checkDisableSubmit();
+    });
+
+    PROCESS_TEST('Verify Invalid Mobile Number', async ({ page }) => {
+        const { helper } = await createInit(page);
+        await helper.fillBusinessInputInformation({
+            ...businessInformation,
+            mobile: '984561234',
+        });
+
+        await helper.checkMobileError('Please enter a valid 10-digit number.');
+        await helper.checkDisableSubmit();
+    });
+
+    PROCESS_TEST('Verify Invalid Email address', async ({ page }) => {
+        const { helper } = await createInit(page);
+        await helper.fillBusinessInputInformation({
+            ...businessInformation,
+            email: 'usergmail',
+        });
+
+        await helper.checkEmailError('Email must be a valid email');
         await helper.checkDisableSubmit();
     });
 });

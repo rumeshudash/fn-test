@@ -1,6 +1,7 @@
 import { LISTING_ROUTES } from '@/constants/api.constants';
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
+import chalk from 'chalk';
 interface gstinBusinessInformation {
     gstin: string;
     mobile: string;
@@ -60,38 +61,28 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
 
     async fillBusinessInputInformation(data: gstinBusinessInformation) {
         await this.fillGstin(data.gstin);
-        await this.fillMobile(data.mobile);
         await this.fillEmail(data.email);
-    }
-
-    async checkDisableSubmit() {
-        await this.locate('button', {
-            text: 'save',
+        await this.fillMobile(data.mobile);
+        await this.click({
+            selector: 'input',
+            name: 'email',
         });
-
-        expect(await this._locator.isVisible(), 'Save button is not found !!');
-        expect(await this._locator.isDisabled(), 'Save button is not disabled');
     }
+    async submitButton() {
+        const btnClick = this._page.getByRole('button', { name: 'Save' });
+        expect(await btnClick.isEnabled(), {
+            message: 'check save button enabled',
+        }).toBe(true);
 
-    // async checkWithoutGstinSubmitButtonDisabled(data: {
-    //     email: string;
-    //     mobile: string;
-    // }) {
-    //     await this.fillMobile(data.mobile);
-    //     await this.fillEmail(data.email);
-
-    //     await this.checkDisableSubmit();
-    // }
-
-    // async checkDisableSubmitWithoutEmail(data: {
-    //     gstin: string;
-    //     mobile: string;
-    // }) {
-    //     await this.fillGstin(data.gstin);
-    //     await this.fillMobile(data.mobile);
-
-    //     await this.checkDisableSubmit();
-    // }
+        await btnClick.click();
+        return btnClick;
+    }
+    async checkDisableSubmit() {
+        const submitButton = await this.submitButton();
+        expect(await submitButton.isEnabled(), {
+            message: 'check save button disabled',
+        }).toBe(false);
+    }
 
     async checkMandatoryFields() {
         expect(await this.isInputMandatory({ name: 'gstin' }), {
@@ -104,13 +95,46 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
             message: 'Email is required?',
         }).toBeTruthy();
     }
-    async checkEmailError() {
-        expect(await this.checkInputErrorMessage({ name: 'email' }));
+
+    async checkEmailError(message?: string) {
+        const errorMessage = await this.checkInputErrorMessage({
+            name: 'email',
+        });
+
+        await this.ErrorMessageHandle(message, errorMessage);
     }
-    async checkMobileError() {
-        expect(await this.checkInputErrorMessage({ name: 'mobile' }));
+    async checkMobileError(message?: string) {
+        const errorMessage = await this.checkInputErrorMessage({
+            name: 'mobile',
+        });
+
+        await this.ErrorMessageHandle(message, errorMessage);
     }
-    async checkGstinError() {
-        expect(await this.checkInputErrorMessage({ name: 'gstin' }));
+    async checkGstinError(message?: string) {
+        const errorMessage = await this.checkInputErrorMessage({
+            name: 'gstin',
+        });
+
+        await this.ErrorMessageHandle(message, errorMessage);
+    }
+
+    async ErrorMessageHandle(message: string, element: any) {
+        await this._page.waitForLoadState('networkidle');
+        expect(await element.isVisible()).toBe(true);
+
+        // for comparing two error message
+        if (!message || !element) return;
+
+        let textContent = await element.textContent();
+        textContent = textContent.trim();
+
+        if (textContent === message) return console.log(chalk.red(textContent));
+        throw console.log(
+            chalk.red(
+                `"${textContent}" is not a valid error !! valid valid error should be "${message}"`
+            )
+        );
+
+        // expect(textContent).toEqual(message);
     }
 }
