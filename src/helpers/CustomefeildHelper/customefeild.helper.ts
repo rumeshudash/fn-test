@@ -138,5 +138,33 @@ export class CustofeildHelper extends BaseHelper {
 
     public async ChangeStatus() {
         await this.clickExpenseTab();
+        async function performAction(element: any) {
+            await element.click();
+        }
+
+        const btnlocator = '//button';
+
+        await this.FindrowAndperformAction(
+            'Number1',
+            5,
+            btnlocator,
+            performAction
+        );
+    }
+
+    public async ChangeMendatory() {
+        await this.clickExpenseTab();
+        async function performAction(element: any) {
+            await element.click();
+        }
+
+        const btnlocator = '//button';
+
+        await this.FindrowAndperformAction(
+            'Number1',
+            6,
+            btnlocator,
+            performAction
+        );
     }
 }
