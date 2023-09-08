@@ -771,10 +771,50 @@ export class BaseHelper {
             .locator('//div[contains(@class, "error-toast")]')
             .textContent();
     }
-
+    /**
+     * This function returns the success message in data adding.
+     *
+     *  @return {string} -returns success message contains on toast.
+     */
     public async successToast() {
         return await this._page
             .locator('//div[contains(@class, "success-toast")]')
             .textContent();
+    }
+
+    /**
+     * This function error will find the row and clos in the table   from  and perfrom actions.
+     *
+     * @param {string} name - The unique text from which we need to find corresponding cell for that row ,i.e row identifier.
+     * @param {string} locator - The action to be performed on the row.When elementis found
+     * @param {cellno} number - The cell number of the row to be find.
+     * @param {function} actionCallback - The action to be performed on the row.When elementis found
+     */
+    public async FindrowAndperformAction(
+        name: string,
+        cellno: number,
+        locator: string,
+        actionCallback: (element: any) => Promise<void>
+    ) {
+        const table = await this._page.locator(
+            '//div[contains(@class,"table finnoto__table__container ")]'
+        );
+        const rows = await table.locator('//div[contains(@class,"table-row")]'); //select the row
+
+        for (let i = 0; i < (await rows.count()); i++) {
+            const row = await rows.nth(i);
+            const tds = await row.locator(
+                '//div[contains(@class,"table-cell")]'
+            );
+            for (let j = 0; j < (await tds.count()); j++) {
+                const cell = await tds.nth(j).innerText();
+                if (cell === name) {
+                    const Button = await tds.nth(cellno).locator(`${locator}`);
+                    await actionCallback(Button);
+
+                    break;
+                }
+            }
+        }
     }
 }
