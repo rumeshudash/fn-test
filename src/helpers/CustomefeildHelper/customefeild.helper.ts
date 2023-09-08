@@ -11,4 +11,24 @@ export class CustofeildHelper extends BaseHelper {
             .getByRole('tab', { name: 'Expense', exact: true })
             .click();
     }
+
+    public async AddExpenseCustomeFeild(
+        name: string,
+        type: string,
+        priority: number
+    ) {
+        await this.clickExpenseTab();
+        await this.clickButton('Add New');
+        await this.fillText(name, {
+            name: 'name',
+        });
+        await this.selectOption({
+            option: type,
+            hasText: 'Select Field Type',
+        });
+        await this.fillText(priority, {
+            name: 'priority',
+        });
+        await this.click({ role: 'button', name: 'save' });
+    }
 }
