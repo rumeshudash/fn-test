@@ -1,5 +1,6 @@
 import { VerifyPhone } from '@/helpers/SigninHelper/verifyPhone.helper';
 import { expect, test } from '@playwright/test';
+import chalk from 'chalk';
 
 test.describe('Verify Phone', () => {
     test('without details', async ({ page }) => {
@@ -7,7 +8,10 @@ test.describe('Verify Phone', () => {
         const number = '9840016500';
         await verifyPhone.init(number);
 
-        await expect(page.getByText('Mobile Number')).toHaveCount(1);
+        await expect(
+            page.getByText('Mobile Number'),
+            chalk.red('Error Message check ')
+        ).toHaveCount(1);
     });
 
     test('with invalid OTP', async ({ page }) => {
@@ -18,7 +22,10 @@ test.describe('Verify Phone', () => {
         await verifyPhone.fillOtp('12347', 4);
 
         await verifyPhone.clickVerify();
-        expect(await verifyPhone.errorMessage()).toBe('Invalid otp');
+        expect(
+            await verifyPhone.errorMessage(),
+            chalk.red('Error Message match ')
+        ).toBe('Invalid otp');
     });
 
     test('with valid OTP', async ({ page }) => {

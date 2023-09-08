@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { LISTING_ROUTES, TEST_URL } from '@/constants/api.constants';
 import { vendorGstinInfo } from '@/utils/required_data';
+import chalk from 'chalk';
 
 export class BusinessManagedOnboarding extends BaseHelper {
     public vendorBusiness;
@@ -21,10 +22,9 @@ export class BusinessManagedOnboarding extends BaseHelper {
         await this._page.waitForTimeout(2000);
     }
     async verifyVendorPageURL() {
-        await expect(
-            this._page,
-            'URL is not correct to Invite Vendor '
-        ).toHaveURL(LISTING_ROUTES.VENDORS);
+        await expect(this._page, chalk.red('Invite vendor URL')).toHaveURL(
+            LISTING_ROUTES.VENDORS
+        );
     }
     async verifyAddIcon() {
         const addIcon = this._page.locator(
@@ -33,7 +33,7 @@ export class BusinessManagedOnboarding extends BaseHelper {
 
         expect(
             await addIcon.isVisible(),
-            'Add Vendor Icon is not visible'
+            chalk.red('Add Vendor Icon visibility')
         ).toBe(true);
     }
     async clickAddIcon() {
@@ -51,7 +51,7 @@ export class BusinessManagedOnboarding extends BaseHelper {
             await this._page
                 .locator("//div[text()='Add Vendor Account']")
                 .isVisible(),
-            ' Add Vendor Account does not found'
+            chalk.red('Add vendor account visibility')
         ).toBe(true);
     }
 
@@ -60,11 +60,10 @@ export class BusinessManagedOnboarding extends BaseHelper {
     }
 
     async validateCheckbox() {
-        const checkbox = await this.locate("//input[@type='checkbox']")
-            ._locator;
+        const checkbox = this.locate("//input[@type='checkbox']")._locator;
         expect(
             !(await checkbox.isChecked()),
-            'By default checkbox should be unchecked'
+            chalk.red('default checkbox state')
         ).toBe(true);
     }
 
@@ -73,15 +72,16 @@ export class BusinessManagedOnboarding extends BaseHelper {
         const email_field = this.locate('input', {
             name: 'email',
         })._locator;
-        expect(await email_field.inputValue(), 'Email field is not empty').toBe(
-            ''
-        );
+        expect(
+            await email_field.inputValue(),
+            chalk.red('Email field value')
+        ).toBe('');
         const mobile_field = this.locate('input', {
             name: 'mobile',
         })._locator;
         expect(
             await mobile_field.inputValue(),
-            'Mobile Number field is not empty'
+            chalk.red('Mobile Number field input value')
         ).toBe('');
         // }
     }
@@ -91,14 +91,14 @@ export class BusinessManagedOnboarding extends BaseHelper {
             await this.locate(
                 '(//div[contains(@class,"text-center rounded")])[1]'
             )._locator.isVisible(),
-            'Business Managed is not visible'
+            chalk.red('Business Managed visibility')
         ).toBe(true);
 
         expect(
             await this.locate(
                 '(//div[contains(@class,"text-center rounded")])[1]'
             )._locator.innerText(),
-            'Business Managed does not matched'
+            chalk.red('Business Managed match')
         ).toBe('Business Managed');
     }
 
@@ -107,14 +107,14 @@ export class BusinessManagedOnboarding extends BaseHelper {
             await this.locate(
                 '(//div[contains(@class,"text-center rounded")])[2]'
             )._locator.isVisible(),
-            'Non Gstin Status is not visible'
+            chalk.red('Non Gstin Status visibility')
         ).toBe(true);
 
         expect(
             await this.locate(
                 '(//div[contains(@class,"text-center rounded")])[2]'
             )._locator.innerText(),
-            'Non Gstin Status does not matched'
+            chalk.red('Non Gstin Status match')
         ).toBe('Non GSTIN Registered');
     }
 }
@@ -154,7 +154,7 @@ export class GstinBusinessManagedOnboarding extends BaseHelper {
         );
         expect(
             await VendorInfocard.isVisible(),
-            'Vendor Info card is not visible'
+            chalk.red('Vendor Info card visibility')
         ).toBe(true);
         if (await VendorInfocard.isVisible()) await VendorInfocard.click();
     }
@@ -162,7 +162,7 @@ export class GstinBusinessManagedOnboarding extends BaseHelper {
         const displayName = await this._page
             .locator('#display_name')
             .inputValue();
-        expect(displayName, 'Display name is not matching').toBe(
+        expect(displayName, chalk.red('Display name match')).toBe(
             vendorGstinInfo.trade_name
         );
     }
@@ -227,7 +227,7 @@ export class WithoutGstinBusinessManagedOnboarding extends BaseHelper {
         const vendorLocator = await this._page
             .locator("(//a[contains(@class,'cursor-pointer link')]//span)[1]")
             .textContent();
-        expect(vendorLocator, 'Vendor is not listed').toBe(
+        expect(vendorLocator, chalk.red('Vendor match')).toBe(
             this.vendorBusiness.vendorBusiness
         );
     }

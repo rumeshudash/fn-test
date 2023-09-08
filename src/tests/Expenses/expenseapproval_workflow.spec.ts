@@ -11,6 +11,7 @@ import {
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
+import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 const EXPENSEDETAILS = {
@@ -86,10 +87,15 @@ describe('TECF007', () => {
         const savedExpensePage = new SavedExpenseCreation(page);
 
         await test.step('Check Saved and Party Status with poc', async () => {
-            expect(await savedExpensePage.toastMessage()).toBe(
-                'Invoice raised successfully.'
-            );
-            expect(await savedExpensePage.checkPartyStatus()).toBe('Submitted');
+            expect(
+                await savedExpensePage.toastMessage(),
+                chalk.red('Toast message match')
+            ).toBe('Invoice raised successfully.');
+
+            expect(
+                await savedExpensePage.checkPartyStatus(),
+                chalk.red('Check party status')
+            ).toBe('Submitted');
         });
 
         await test.step('Check Approval Flows', async () => {
@@ -101,7 +107,8 @@ describe('TECF007', () => {
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'
-                )
+                ),
+                chalk.red('Verification approval match')
             ).toBe('Pending Approval');
         });
 
@@ -122,7 +129,8 @@ describe('TECF007', () => {
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'
-                )
+                ),
+                chalk.red('Verification approval match')
             ).toBe('Approved');
         });
 
@@ -165,7 +173,10 @@ describe('TECF007', () => {
 
             await savedExpensePage.clickTab('Approval Workflows');
             await page.waitForTimeout(1000);
-            expect(await finOpsFlows.getLevelStatus()).toBe('Approved');
+            expect(
+                await finOpsFlows.getLevelStatus(),
+                chalk.red('FinOps level status match')
+            ).toBe('Approved');
         });
 
         await test.step('Payment Approval', async () => {
@@ -184,12 +195,16 @@ describe('TECF007', () => {
 
             await savedExpensePage.clickTab('Approval Workflows');
             await page.waitForTimeout(1000);
-            expect(await paymentFlows.getLevelStatus()).toBe('Approved');
+            expect(
+                await paymentFlows.getLevelStatus(),
+                chalk.red('Payment level status match')
+            ).toBe('Approved');
         });
         await test.step('Check Business and Vendor', async () => {
-            expect(await savedExpensePage.checkExpenseTo()).toBe(
-                EXPENSEDETAILS.to + '…'
-            );
+            expect(
+                await savedExpensePage.checkExpenseTo(),
+                chalk.red('Check To Expense Details match')
+            ).toBe(EXPENSEDETAILS.to + '…');
             await page.waitForTimeout(1000);
         });
     });

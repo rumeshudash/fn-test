@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
+import chalk from 'chalk';
 
 export type nonGstinDataType = {
     trade_name: string;
@@ -22,10 +23,11 @@ export default class GenericNonGstinCardHelper extends BaseHelper {
         const element = this.locate('div', {
             id: 'gstin_trade_name',
         })._locator;
-        expect(await element.isVisible(), 'Gstin Trade Name not found').toBe(
-            true
-        );
-        await expect(element, 'Gstin Trade Name not matched !!').toHaveText(
+        expect(
+            await element.isVisible(),
+            chalk.red('Gstin Trade Name visibility')
+        ).toBe(true);
+        await expect(element, chalk.red('Gstin Trade Name match')).toHaveText(
             this.gstin_data.trade_name
         );
     }
@@ -44,13 +46,14 @@ export default class GenericNonGstinCardHelper extends BaseHelper {
             id: 'gstin_address',
         })._locator;
 
-        expect
-            .soft(await element.isVisible(), 'Gstin  Address not found')
-            .toBe(true);
+        expect(
+            await element.isVisible(),
+            chalk.red('Gstin Address found')
+        ).toBe(true);
 
-        await expect
-            .soft(element, 'Gstin Address  not matched !!')
-            .toHaveText(this.gstin_data.address);
+        await expect(element, chalk.red('Gstin Address match')).toHaveText(
+            this.gstin_data.address
+        );
     }
     async checkBusinessType() {
         const element = this.locate('span', {
@@ -58,11 +61,12 @@ export default class GenericNonGstinCardHelper extends BaseHelper {
         })._locator;
         expect(
             await element.isVisible(),
-            'Gstin  business type not found'
+            chalk.red('Gstin business type visibility')
         ).toBe(true);
-        await expect(element, 'Gstin Business Type  not matched !!').toHaveText(
-            this.gstin_data.business_type
-        );
+        await expect(
+            element,
+            chalk.red('Gstin Business Type match')
+        ).toHaveText(this.gstin_data.business_type);
     }
     // async checkPAN() {
     //     const element = this.locate('span', {
