@@ -2,13 +2,8 @@ import { uuidV4 } from '@/utils/common.utils';
 import { expect } from '@playwright/test';
 import chalk from 'chalk';
 import { Locator, Page } from 'playwright-core';
-import { LISTING_ROUTES } from '../../constants/api.constants';
-
-const error = (...text: unknown[]) => console.log(chalk.bold.red('⨯', text));
-const info = (...text: unknown[]) => console.log(chalk.dim('-', text));
-const success = (...text: unknown[]) => console.log(chalk.green('✔', text));
-const warning = (...text: unknown[]) =>
-    console.log(chalk.hex('#FFA500')('!', text));
+import { LISTING_ROUTES, TEST_URL } from '../../constants/api.constants';
+import { Logger } from './log.helper';
 
 export class BaseHelper {
     protected _page: Page;
@@ -153,13 +148,16 @@ export class BaseHelper {
     // Actions
 
     /**
-     * Navigates to a specified URL.
+     * Navigates to a specified URL Identifier.
      *
-     * @param {keyof typeof LISTING_ROUTES} url - The URL to navigate to.
+     * @param {keyof typeof LISTING_ROUTES} identifier - The URL to navigate to.
      * @return {Promise<void>} A promise that resolves when the navigation is complete.
      */
-    public async navigateTo(url: keyof typeof LISTING_ROUTES, Phone?: string) {
-        let finalUrl = LISTING_ROUTES[url];
+    public async navigateTo(
+        identifier: keyof typeof LISTING_ROUTES,
+        Phone?: string
+    ) {
+        let finalUrl = LISTING_ROUTES[identifier];
 
         // Check if Phone parameter is provided
         if (Phone) {
@@ -168,6 +166,18 @@ export class BaseHelper {
         }
 
         await this._page.goto(finalUrl, {
+            waitUntil: 'networkidle',
+        });
+    }
+
+    /**
+     * Navigates to a specified URL.
+     *
+     * @param {keyof typeof LISTING_ROUTES} url - The URL to navigate to.
+     * @return {Promise<void>} A promise that resolves when the navigation is complete.
+     */
+    public async navigateToUrl(url: string) {
+        await this._page.goto(TEST_URL + url, {
             waitUntil: 'networkidle',
         });
     }
@@ -186,15 +196,14 @@ export class BaseHelper {
         const { selector, ...rest } = options || {};
         if (options) this.locate(selector, rest);
 
-        const isVisibleElement = await this.isVisible();
-        expect(isVisibleElement, {
-            message: `${this._tempSelector} does not exist !!`,
-        }).toBeTruthy();
+        expect(this._locator, {
+            message: `Checking ${this._tempSelector} does exist!!`,
+        }).toBeVisible();
 
-        info(`Fill: ${text} in ${this._getSelector(options)}`);
+        Logger.info(`Fill: ${text} in ${this._getSelector(options)}`);
         await this._locator.fill(text + '');
 
-        success(`Fill: ${text} in ${this._getSelector(options)}`);
+        Logger.success(`Fill: ${text} in ${this._getSelector(options)}`);
     }
 
     /**
@@ -327,6 +336,8 @@ export class BaseHelper {
      * Retrieves a list of tab items from the tab list container.
      *
      * @return {Promise<string[]>} An array of strings representing the text of each tab item.
+     *
+     * @deprecated Use `TabHelper.getTabListItems()` instead.
      */
     public async getTabListItems(): Promise<string[]> {
         return this.locateByRole('tab').allInnerTexts();
@@ -337,6 +348,8 @@ export class BaseHelper {
      *
      * @param {string | string[]} tabName - The name or names of the tab(s) to check.
      * @return {Promise<void>} No return value.
+     *
+     * @deprecated Use `TabHelper.checkTabExists()` instead.
      */
     public async checkTabExists(tabName: string | string[]): Promise<void> {
         let tabNames = tabName;
@@ -356,6 +369,8 @@ export class BaseHelper {
      *
      * @param {string} tabName - The name of the tab to be clicked.
      * @return {Promise<void>} - A Promise that resolves when the tab is clicked.
+     *
+     * @deprecated Use `TabHelper.clickTab()` instead.
      */
     public async clickTab(tabName: string): Promise<void> {
         await this.click({
@@ -372,6 +387,8 @@ export class BaseHelper {
      *
      * @param {string} tabName - The name of the tab to check.
      * @return {Promise<string>} The value of the 'aria-selected' attribute of the tab.
+     *
+     * @deprecated Use `TabHelper.isTabSelected()` instead.
      */
     public async isTabSelected(tabName: string): Promise<string> {
         const container = this.getTabListContainer();
@@ -388,6 +405,8 @@ export class BaseHelper {
      *
      * @param {string} tabName - The name of the tab to check.
      * @return {Promise<void>} - A Promise that resolves when the check is complete.
+     *
+     * @deprecated Use `TabHelper.checkTabSelected()` instead.
      */
     public async checkTabSelected(tabName: string): Promise<void> {
         expect(await this.isTabSelected(tabName), {
@@ -410,10 +429,12 @@ export class BaseHelper {
         const { selector, button = 'left', ...rest } = options || {};
         if (options) this.locate(selector, rest);
 
-        info(`Click: ${button} click in ${this._getSelector(options)}`);
+        Logger.info(`Click: ${button} click in ${this._getSelector(options)}`);
         await this._locator.click({ button });
         await this._page.waitForLoadState('networkidle');
-        success(`Click: ${button} click in ${this._getSelector(options)}`);
+        Logger.success(
+            `Click: ${button} click in ${this._getSelector(options)}`
+        );
 
         // const error = this._page.locator('span.label.text-error');
         // const errorCount = await error.count();

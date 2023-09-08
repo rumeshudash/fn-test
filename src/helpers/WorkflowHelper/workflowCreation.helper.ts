@@ -1,17 +1,21 @@
-import { BaseHelper } from '@/baseHelper';
 import { Page } from '@playwright/test';
-import { WorkflowListingHelper } from './workflowListing.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
 
-export class WorkflowCreationHelper extends BaseHelper {
-    private workflowListing: WorkflowListingHelper;
+export class WorkflowCreationHelper extends FormHelper {
+    protected workflowType: 'expense' | 'advance' = 'expense';
 
     constructor(page: Page) {
         super(page);
-        this.workflowListing = new WorkflowListingHelper(page);
     }
 
-    public async init(type: 'expense' | 'advance' = 'expense') {
-        await this.workflowListing.init(type);
-        // this.workflowListing;
+    public init(
+        type: typeof this.workflowType = this.workflowType,
+        approvalType: 'verification' | 'payment' | 'finops' = 'verification'
+    ) {
+        this.workflowType = type;
+
+        if (type === 'expense')
+            return this.navigateToUrl(`e/f/expense-approval/${approvalType}/c`);
+        return this.navigateToUrl(`e/f/advance-approval/${approvalType}/c`);
     }
 }

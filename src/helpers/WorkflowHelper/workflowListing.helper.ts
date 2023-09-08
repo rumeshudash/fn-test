@@ -1,7 +1,6 @@
-import { BaseHelper } from '@/baseHelper';
-import { expect } from '@playwright/test';
+import { ListingHelper } from '../BaseHelper/listing.helper';
 
-export class WorkflowListingHelper extends BaseHelper {
+export class WorkflowListingHelper extends ListingHelper {
     protected workflowType: 'expense' | 'advance' = 'expense';
 
     public init(type: typeof this.workflowType = this.workflowType) {
@@ -12,6 +11,9 @@ export class WorkflowListingHelper extends BaseHelper {
     }
 
     public async openApprovalCreationForm(tabName: string) {
-        await this.clickTab(tabName);
+        await this.tabHelper.clickTab(tabName);
+
+        await this.click({ role: 'button', text: 'Add Approval' });
+        await this._page.waitForTimeout(500);
     }
 }
