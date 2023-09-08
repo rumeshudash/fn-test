@@ -1,6 +1,7 @@
 import { uuidV4 } from '@/utils/common.utils';
 import { BaseHelper } from '.././BaseHelper/base.helper';
 import { expect } from '@playwright/test';
+import chalk from 'chalk';
 
 export class SignupHelper extends BaseHelper {
     private static SIGNUP_DOM_SELECTOR = '//form/parent::div';
@@ -35,12 +36,10 @@ export class SignupHelper extends BaseHelper {
         });
     }
     public async checkSignInLink() {
-        const result = await this.locateByText('Sign In');
+        const result = this.locateByText('Sign In');
 
         // const element = await result.locator('[href="/login"]');
-        expect(result, {
-            message: 'login link is not found !!',
-        }).toBeVisible();
+        expect(result, chalk.red('login link visibility')).toBeVisible();
         await result.click();
         await this._page.waitForURL('**/login', {
             waitUntil: 'commit',
@@ -49,8 +48,6 @@ export class SignupHelper extends BaseHelper {
             role: 'heading',
             exactText: true,
         }).isVisible();
-        await expect(signInNode, {
-            message: 'Sign In page not found !!',
-        }).toBe(true);
+        expect(signInNode, chalk.red('Signup page visibility')).toBe(true);
     }
 }

@@ -111,6 +111,9 @@ export const VendorInfo_NonGstin = {
 
 //For Designation Info
 export const designationInfo = {
-    name: 'testt nationLists',
-    updateName: 'tesst admin',
+    name: 'Test Status item',
+};
+
+export const designationUpdateInfo = {
+    name: 'stat',
 };

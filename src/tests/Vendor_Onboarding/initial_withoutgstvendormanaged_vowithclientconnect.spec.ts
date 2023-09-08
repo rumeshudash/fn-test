@@ -16,6 +16,7 @@ import {
 } from '@/utils/required_data';
 import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { nonGstinDataType } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
+import chalk from 'chalk';
 
 //Vendor and Client Details
 const vendorNonGstinInfo: nonGstinDataType = {
@@ -76,9 +77,10 @@ describe('TCVO004', () => {
             // const vendorOnboarding = new VendorOnboarding(vendorNonGstinInfo, page);
             await withnogstin.clickLinkInviteVendor('Vendor Invitations');
             await vendorOnboarding.clickCopyLink();
-            expect(await withnogstin.toastMessage()).toBe(
-                'Link Successfully Copied!!!'
-            );
+            expect(
+                await withnogstin.toastMessage(),
+                chalk.red('ToastMessage match')
+            ).toBe('Link Successfully Copied!!!');
 
             await test.step('Open Copied Link', async () => {
                 const URL = await vendorOnboarding.linkURL();
@@ -119,7 +121,7 @@ describe('TCVO004', () => {
                 await withnogstin.clickButton('Next');
                 expect(
                     await withnogstin.toastMessage(),
-                    'Toast message does not occured'
+                    chalk.red('Toast message does not occured')
                 ).toBe('Successfully saved');
             });
 
@@ -139,7 +141,7 @@ describe('TCVO004', () => {
             await test.step('Verify Bank Account Details', async () => {
                 const ifscBankDetails =
                     await getBankDetails.vendorIfscDetailsValidation();
-                expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
+                expect(ifscBankDetails, chalk.red('Bank IFSC Code match')).toBe(
                     getBankDetails.bankDetails.address
                 );
                 await getBankDetails.vendorIfscLogoVisibilityValidation();
@@ -153,7 +155,8 @@ describe('TCVO004', () => {
                 await withnogstin.clickButton('Next');
 
                 expect(
-                    await page.getByText('Onboarding Completed').isVisible()
+                    await page.getByText('Onboarding Completed').isVisible(),
+                    chalk.red('Onboarding Completed text visibility')
                 ).toBe(true);
                 await withnogstin.clickButton('Close');
             });
@@ -174,28 +177,29 @@ describe('TCVO004', () => {
 
                 //Adding custom Timeout
                 test.slow();
-                expect(await withnogstin.toastMessage()).toBe(
-                    'Successfully created'
-                );
+                expect(
+                    await withnogstin.toastMessage(),
+                    chalk.red('ToastMessage match')
+                ).toBe('Successfully created');
             });
 
             await test.step('Client Verify and Approve', async () => {
                 expect(
                     await invitationDetails.checkNonGstinFrom(),
-                    'Business Name does not matched'
+                    chalk.red('Business Name does not matched')
                 ).toBe(vendorNonGstinInfo.trade_name);
                 expect(
                     await invitationDetails.checkNonGstinClient(),
-                    'Client Name does not matched'
+                    chalk.red('Client Name does not matched')
                 ).toBe(clientGstinInfo.trade_name + ' ');
 
                 expect(
                     await invitationDetails.checkGstinFromNonGstin(),
-                    'GSTIN does not matched'
+                    chalk.red('GSTIN does not matched')
                 ).toBe('Not Registered Business');
                 expect(
                     await invitationDetails.checkNonGstinClientGSTIN(),
-                    'Client Gstin does not matched'
+                    chalk.red('Client Gstin does not matched')
                 ).toBe(clientGstinInfo.value);
             });
 

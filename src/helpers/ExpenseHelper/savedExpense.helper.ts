@@ -1,6 +1,7 @@
 import { Page, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { TEST_URL } from '@/constants/api.constants';
+import chalk from 'chalk';
 // import { firefox } from 'playwright';
 
 let pocEmail;
@@ -173,7 +174,8 @@ export class ApprovalWorkflowsTab extends BaseHelper {
             'Verification Approvals'
         );
         await expect(
-            verificationApproval.locator('.approval-status')
+            verificationApproval.locator('.approval-status'),
+            chalk.red('Approval status contains')
         ).toContainText('Approved');
     }
 

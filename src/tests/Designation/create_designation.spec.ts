@@ -1,8 +1,9 @@
 import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { DesignationHelper } from '@/helpers/DesignationHelper/designation.helper';
-import { designationInfo } from '@/utils/required_data';
+import { designationInfo, designationUpdateInfo } from '@/utils/required_data';
 import { test } from '@playwright/test';
+import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 
@@ -17,7 +18,7 @@ describe('TDE001', () => {
         await designation.clickButton('Save');
         expect(
             await designation.toastMessage(),
-            'Toast Message not shown'
+            chalk.red('Toast Message match')
         ).toBe('Successfully saved ');
         await designation.verifyEmptyField();
     });
@@ -31,7 +32,7 @@ describe('TDE001', () => {
         await designation.clickButton('Save');
         expect(
             await designation.toastMessage(),
-            'Toast Message not shown'
+            chalk.red('Toast Message match')
         ).toBe('Successfully saved ');
         await designation.searchDesignation();
         await designation.verifyItemInList();
@@ -59,25 +60,30 @@ describe('TDE001', () => {
                     name: designationInfo.name,
                     exact: true,
                 }),
-                'Designation Name does not found'
+                chalk.red('Designation Name visibility')
             ).toBeVisible();
         });
     });
 
     PROCESS_TEST('Test Action Designation', async ({ page }) => {
         const designation = new DesignationHelper(designationInfo, page);
+        const updateDesignation = new DesignationHelper(
+            designationUpdateInfo,
+            page
+        );
         await designation.init();
         await designation.searchDesignation();
+        await designation.changeTab('All');
         await designation.clickAction();
-        await designation.designationInfo(designationInfo.updateName);
-        await designation.fillNameField();
+
+        await updateDesignation.fillNameField();
         await designation.clickButton('Save');
         expect(
             await designation.toastMessage(),
-            'Toast Message not shown'
+            chalk.red('Toast Message match')
         ).toBe('Successfully saved ');
         await designation.changeTab('All');
-        await designation.searchDesignation();
-        await designation.verifyItemInList();
+        await updateDesignation.searchDesignation();
+        await updateDesignation.verifyItemInList();
     });
 });
