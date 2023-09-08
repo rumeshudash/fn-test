@@ -6,9 +6,9 @@ export class CustofeildHelper extends BaseHelper {
         await this.navigateTo('CUSTOMEFEILDS');
     }
 
-    public async clickExpenseTab() {
+    public async clickExpenseTab(TabName: string) {
         await this._page
-            .getByRole('tab', { name: 'Expense', exact: true })
+            .getByRole('tab', { name: `${TabName}`, exact: true })
             .click();
     }
 
@@ -17,7 +17,6 @@ export class CustofeildHelper extends BaseHelper {
         type: string,
         priority: number
     ) {
-        await this.clickExpenseTab();
         await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
@@ -62,7 +61,6 @@ export class CustofeildHelper extends BaseHelper {
         priority: number,
         defaultValue?: string
     ) {
-        await this.clickExpenseTab();
         await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
@@ -85,7 +83,6 @@ export class CustofeildHelper extends BaseHelper {
         priority: number,
         defaultValue?: Date
     ) {
-        await this.clickExpenseTab();
         await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
@@ -137,7 +134,6 @@ export class CustofeildHelper extends BaseHelper {
     // }
 
     public async ChangeStatus() {
-        await this.clickExpenseTab();
         async function performAction(element: any) {
             await element.click();
         }
@@ -153,7 +149,6 @@ export class CustofeildHelper extends BaseHelper {
     }
 
     public async ChangeMendatory() {
-        await this.clickExpenseTab();
         async function performAction(element: any) {
             await element.click();
         }
@@ -187,7 +182,6 @@ export class CustofeildHelper extends BaseHelper {
         newname?: string,
         newpriority?: number
     ) {
-        await this.clickExpenseTab();
         await this.CheckEdit();
 
         await this._page.getByText(`${name}`);

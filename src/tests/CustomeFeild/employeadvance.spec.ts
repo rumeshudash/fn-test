@@ -30,7 +30,7 @@ test.describe('CustomeFeild', () => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
-        await customefeild.clickExpenseTab();
+        await customefeild.clickExpenseTab('Expense');
         await expect(
             page.getByRole('tab', { name: 'Expense', exact: true })
         ).toHaveCount(1);
@@ -49,7 +49,7 @@ test.describe('CustomeFeild', () => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
-        await customefeild.clickExpenseTab();
+        await customefeild.clickExpenseTab('Expense');
         await customefeild.clickButton('Add New');
         await expect(page.getByText('Add Expense Custom Field')).toHaveCount(1);
     });
@@ -65,7 +65,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab();
+        await customefeild.clickExpenseTab('Expense');
         await customefeild.clickButton('Add New');
 
         await customefeild.clickButton('Save');
@@ -85,6 +85,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Expense');
 
         await customefeild.AddExpenseCustomeFeild('', 'Text', 1);
 
@@ -104,6 +105,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Expense');
         await customefeild.AddExpenseCustomeFeild('Test1', '', 1);
 
         expect(await customefeild.errorMessage()).toBe(
@@ -122,6 +124,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Expense');
         await customefeild.AddExpenseWithTextType('Test1', 'Text', 1, 'Test1');
         await customefeild.AddExpenseWithTextType('Test2', 'Text', 1);
         await expect(page.getByText('Test1')).toHaveCount(3);
@@ -138,6 +141,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Expense');
         await customefeild.AddExpenseWitBooleanType(
             'Test1',
             'Boolean',
@@ -158,8 +162,9 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Expense');
         await customefeild.AddExpenseWithTextType('Number1', 'Number', 1, 123);
-        await customefeild.AddExpenseWithTextType('Number2', 'Text', 1);
+
         await expect(page.getByText('Number1')).toHaveCount(1);
     });
     test('Add Expense With TextArea', async ({ page }) => {
@@ -174,6 +179,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Expense');
         await customefeild.AddExpenseWithTextType(
             'TextArea1',
             'TextArea',
@@ -195,6 +201,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Expense');
 
         await customefeild.AddExpenseWithDateType('Date1', 'Date', 1);
     });
@@ -234,6 +241,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Expense');
 
         await customefeild.ChangeStatus();
     });
@@ -250,6 +258,8 @@ test.describe('CustomeFeild', () => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
+        await customefeild.clickExpenseTab('Employee Advance');
+
         await customefeild.ChangeMendatory();
     });
     test('Check Edit Link', async ({ page }) => {
@@ -264,6 +274,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Employee Advance');
 
         await customefeild.CheckEdit();
 
@@ -283,6 +294,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
+        await customefeild.clickExpenseTab('Employee Advance');
 
         await customefeild.changeNameORPriority(
             'Number1',
