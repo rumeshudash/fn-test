@@ -53,7 +53,9 @@ test.describe('CustomeFeild', () => {
 
         await customefeild.clickExpenseTab('Employee Advance');
         await customefeild.clickButton('Add New');
-        await expect(page.getByText('Add Expense Custom Field')).toHaveCount(1);
+        await expect(
+            page.getByText('Add Employee Advance Custom Field')
+        ).toHaveCount(1);
     });
     test('Add Employee Advance With Empty Feilds', async ({ page }) => {
         const signin = new SignInHelper(page);

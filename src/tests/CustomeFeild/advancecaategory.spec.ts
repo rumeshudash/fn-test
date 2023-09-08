@@ -36,7 +36,7 @@ test.describe('CustomeFeild', () => {
         ).toHaveCount(1);
     });
 
-    test('Check Expense Tab and Click Add New', async ({ page }) => {
+    test('Check Advance Categories Tab and Click Add New', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -49,9 +49,11 @@ test.describe('CustomeFeild', () => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
-        await customefeild.clickExpenseTab('Expense');
+        await customefeild.clickExpenseTab('Advance Category');
         await customefeild.clickButton('Add New');
-        await expect(page.getByText('Add Expense Custom Field')).toHaveCount(1);
+        await expect(
+            page.getByText('Add Advance Category Custom Field')
+        ).toHaveCount(1);
     });
     test('Add Expense With Empty Feilds', async ({ page }) => {
         const signin = new SignInHelper(page);
