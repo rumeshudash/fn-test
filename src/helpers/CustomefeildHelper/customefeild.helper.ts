@@ -35,7 +35,7 @@ export class CustofeildHelper extends BaseHelper {
         name: string,
         type: string,
         priority: number,
-        defaultValue?: string
+        defaultValue?: string | number
     ) {
         await this.clickButton('Add New');
         await this.fillText(name, {

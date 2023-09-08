@@ -158,13 +158,29 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.AddExpenseWithTextType(
-            'Number1',
-            'Number',
-            1,
-            'Number1'
-        );
+        await customefeild.AddExpenseWithTextType('Number1', 'Number', 1, 123);
         await customefeild.AddExpenseWithTextType('Number2', 'Text', 1);
         await expect(page.getByText('Number1')).toHaveCount(1);
+    });
+    test('Add Expense With TextArea', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const customefeild = new CustofeildHelper(page);
+        await customefeild.init();
+        await customefeild.AddExpenseWithTextType(
+            'TextArea1',
+            'TextArea',
+            1,
+            'Finops Protol'
+        );
+
+        await expect(page.getByText('TextArea1')).toHaveCount(1);
     });
 });
