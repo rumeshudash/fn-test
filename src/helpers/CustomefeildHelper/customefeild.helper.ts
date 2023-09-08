@@ -5,4 +5,10 @@ export class CustofeildHelper extends BaseHelper {
     public async init() {
         await this.navigateTo('CUSTOMEFEILDS');
     }
+
+    public async clickExpenseTab() {
+        await this._page
+            .getByRole('tab', { name: 'Expense', exact: true })
+            .click();
+    }
 }

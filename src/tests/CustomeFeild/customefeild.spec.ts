@@ -15,6 +15,26 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await expect(page.getByText('Custome Feilds')).toHaveCount(1);
+        await expect(page.getByText('Custom')).toHaveCount(2);
     });
+    test('Check Expense Tab and Click Expense Tab', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const customefeild = new CustofeildHelper(page);
+        await customefeild.init();
+
+        await customefeild.clickExpenseTab();
+        await expect(
+            page.getByRole('tab', { name: 'Expense', exact: true })
+        ).toHaveCount(1);
+    });
+
+    test('Check Expense Tab and Click Expense Tab', async ({ page }) => {});
 });
