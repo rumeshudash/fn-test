@@ -252,4 +252,28 @@ test.describe('CustomeFeild', () => {
 
         await customefeild.ChangeMendatory();
     });
+    test('Check Edit Link', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const customefeild = new CustofeildHelper(page);
+        await customefeild.init();
+        await customefeild.FindrowAndperformAction(
+            'Number1',
+            7,
+            '//button',
+            async (element: any) => {
+                await element.click();
+            }
+        );
+        await expect(page.getByText('Edit Expense Custom Field')).toHaveCount(
+            1
+        );
+    });
 });
