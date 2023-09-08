@@ -17,7 +17,7 @@ test.describe('CustomeFeild', () => {
         await customefeild.init();
         await expect(page.getByText('Custom')).toHaveCount(2);
     });
-    test('Check Designation Advance Tab and Click Designation Advance Tab', async ({
+    test('Check Designation  Tab and Click Designation  Tab', async ({
         page,
     }) => {
         const signin = new SignInHelper(page);
