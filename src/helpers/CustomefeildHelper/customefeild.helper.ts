@@ -31,4 +31,52 @@ export class CustofeildHelper extends BaseHelper {
         });
         await this.click({ role: 'button', name: 'save' });
     }
+    public async AddExpenseWithTextType(
+        name: string,
+        type: string,
+        priority: number,
+        defaultValue?: string
+    ) {
+        await this.clickButton('Add New');
+        await this.fillText(name, {
+            name: 'name',
+        });
+        await this.selectOption({
+            option: type,
+            hasText: 'Select Field Type',
+        });
+        await this.fillText(priority, {
+            name: 'priority',
+        });
+        if (defaultValue) {
+            await this.fillText(defaultValue, {
+                text: 'Default Value',
+            });
+        }
+
+        await this.click({ role: 'button', name: 'save' });
+    }
+    public async AddExpenseWitBooleanType(
+        name: string,
+        type: string,
+        priority: number,
+        defaultValue?: string
+    ) {
+        await this.clickExpenseTab();
+        await this.clickButton('Add New');
+        await this.fillText(name, {
+            name: 'name',
+        });
+        await this.selectOption({
+            option: type,
+            hasText: 'Select Field Type',
+        });
+        await this.fillText(priority, {
+            name: 'priority',
+        });
+        if (defaultValue) {
+            await this.click({ role: 'radio', name: defaultValue });
+        }
+        await this.click({ role: 'button', name: 'save' });
+    }
 }
