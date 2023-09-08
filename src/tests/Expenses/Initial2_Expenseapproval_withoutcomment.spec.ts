@@ -1,12 +1,15 @@
+import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
+    ApprovalToggleHelper,
     ApprovalWorkflowsTab,
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
+import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
@@ -18,9 +21,14 @@ describe('TECF005', () => {
             const verificationFlows = new ApprovalWorkflowsTab(page);
             const signIn = new SignInHelper(page);
 
+            const toggleHelper = new ApprovalToggleHelper(page);
+            await toggleHelper.gotoExpenseApproval();
+            await toggleHelper.allInactive();
+
             await expense.init();
 
-            await expense.nextPage();
+            await expense.addDocument();
+
             await test.step('Fill Expense', async () => {
                 await expense.fillExpenses([
                     {
@@ -52,12 +60,14 @@ describe('TECF005', () => {
             const savedExpensePage = new SavedExpenseCreation(page);
 
             await test.step('Check Saved and Party Status with poc', async () => {
-                expect(await savedExpensePage.toastMessage()).toBe(
-                    'Invoice raised successfully.'
-                );
-                expect(await savedExpensePage.checkPartyStatus()).toBe(
-                    'Submitted'
-                );
+                expect(
+                    await savedExpensePage.toastMessage(),
+                    chalk.red('ToastMessage match')
+                ).toBe('Invoice raised successfully.');
+                expect(
+                    await savedExpensePage.checkPartyStatus(),
+                    chalk.red('ToastMessage match')
+                ).toBe('Submitted');
             });
 
             await test.step('Check Approval Flows', async () => {
@@ -69,7 +79,8 @@ describe('TECF005', () => {
                 expect(
                     await verificationFlows.checkApprovalStatus(
                         'Verification Approvals'
-                    )
+                    ),
+                    chalk.red('Verification Approval match')
                 ).toBe('Pending Approval');
             });
 
@@ -77,8 +88,11 @@ describe('TECF005', () => {
                 const pocEmail = await verificationFlows.checkEmail();
                 const expData = await verificationFlows.getExpData();
                 await savedExpensePage.logOut();
-
+                await page.waitForLoadState('networkidle');
+                await page.waitForLoadState('domcontentloaded');
                 await signIn.signInPage(pocEmail, '1234567');
+                await page.getByText('New Test Auto').click();
+                await page.waitForURL(TEST_URL + '/e/e');
                 await savedExpensePage.clickLink('Expenses');
                 await savedExpensePage.clickLink(expData.slice(1));
                 await verificationFlows.clickApproveWithoutComment();
@@ -86,13 +100,16 @@ describe('TECF005', () => {
                 expect(
                     await verificationFlows.checkApprovalStatus(
                         'Verification Approvals'
-                    )
+                    ),
+                    chalk.red('Verification Approval match')
                 ).toBe('Approved');
             });
 
             await test.step('Level Status in FinOps', async () => {
                 const expData = await verificationFlows.getExpData();
                 await savedExpensePage.logOut();
+                await page.waitForLoadState('networkidle');
+                await page.waitForLoadState('domcontentloaded');
                 await signIn.signInPage('newtestauto@company.com', '123456');
                 await savedExpensePage.clickLink('Expenses');
                 await savedExpensePage.clickLink(expData.slice(1));
@@ -100,18 +117,22 @@ describe('TECF005', () => {
                 expect(
                     await verificationFlows.checkByFinOpsAdmin(
                         'Verification Approvals'
-                    )
+                    ),
+                    chalk.red('Verification Approval match')
                 ).toBe('Approved');
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('verification')
+                    await savedExpensePage.expenseStatusSuccess('verification'),
+                    chalk.red('Verification Status check')
                 ).toBe(true);
 
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('finops')
-                ).toBe(false);
+                    await savedExpensePage.expenseStatusSuccess('finops'),
+                    chalk.red('Verification Status check')
+                ).toBe(true);
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('payment')
-                ).toBe(false);
+                    await savedExpensePage.expenseStatusSuccess('payment'),
+                    chalk.red('Payment Approval match')
+                ).toBe(true);
             });
         }
     );

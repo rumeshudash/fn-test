@@ -1,6 +1,8 @@
 import { Page, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
-import { firefox } from 'playwright';
+import { TEST_URL } from '@/constants/api.constants';
+import chalk from 'chalk';
+// import { firefox } from 'playwright';
 
 let pocEmail;
 let finopsEmail;
@@ -12,13 +14,13 @@ export class SavedExpenseCreation extends BaseHelper {
         this.locate(SavedExpenseCreation.SAVED_EXPENSE_DOM_SELECTOR);
     }
     public async checkPartyStatus() {
-        return this._page
+        return await this._page
             .locator("//div[@id='party-status']/div[1]/div[1]")
             .textContent();
     }
 
     public async toastMessage() {
-        return this._page.locator("//div[@role='status']").textContent();
+        return await this._page.locator("//div[@role='status']").textContent();
     }
 
     public async clickTab(buttonName: string) {
@@ -73,42 +75,26 @@ export class SavedExpenseCreation extends BaseHelper {
         if (partyStatus === 'Submitted' || partyStatus === 'Pending Approval') {
             await this.click({ role: 'button', name: 'Approve' });
         }
-        const title = await this._page
-            .getByRole('dialog')
-            .getByText('Warning')
-            .isVisible();
-        if (title === true) {
-            const buttons = this._page.getByRole('dialog').locator('button');
-            expect(await buttons.count()).toBe(3);
-            await expect(buttons.nth(0)).toContainText('Update');
-            await expect(buttons.nth(1)).toContainText('Ok');
+        for (let update of data) {
+            if (update.department)
+                await this.selectOption({
+                    input: update.department,
+                    name: 'department_id',
+                });
 
-            await this.click({ role: 'button', name: 'Update' });
-            for (let update of data) {
-                if (update.department)
-                    await this.selectOption({
-                        input: update.department,
-                        placeholder: 'Select Department',
-                    });
-
-                if (update.expense_head)
-                    await this.selectOption({
-                        input: update.expense_head,
-                        placeholder: 'Select Expense Head',
-                    });
-            }
-            await this.fillText('Approved', {
-                placeholder: 'Write a comment...',
-            });
-            await this.click({ role: 'button', name: 'Approve' });
-        } else {
-            await this.fillText('Approved', {
-                placeholder: 'Write a comment...',
-            });
-            await this.click({ role: 'button', name: 'Approve' });
+            if (update.expense_head)
+                await this.selectOption({
+                    input: update.expense_head,
+                    name: 'expense_head_id',
+                });
         }
-        await this._page.waitForTimeout(1000);
+        await this.fillText('Approved', {
+            placeholder: 'Write a comment...',
+        });
+        await this.click({ role: 'button', name: 'Approve' });
+        await this._page.waitForLoadState('networkidle');
     }
+
     public async logOut() {
         await this._page.locator('a').filter({ hasText: 'Logout' }).click();
     }
@@ -183,6 +169,25 @@ export class ApprovalWorkflowsTab extends BaseHelper {
         }
     }
 
+    public async checkApprovalByFinOps() {
+        const verificationApproval = this._page.getByLabel(
+            'Verification Approvals'
+        );
+        await expect(
+            verificationApproval.locator('.approval-status'),
+            chalk.red('Approval status contains')
+        ).toContainText('Approved');
+    }
+
+    public async checkManagerApproval() {
+        const verificationApproval = this._page.getByLabel(
+            'Verification Approvals'
+        );
+        await expect(
+            verificationApproval.locator('.approval-status').nth(1)
+        ).toContainText('Approved');
+    }
+
     public async nextVerificationFlows() {
         await this._page.reload();
         await this._page.reload();
@@ -220,15 +225,26 @@ export class ApprovalWorkflowsTab extends BaseHelper {
 
     public async nextPendingFlows(flowsName) {
         await this._page.reload();
-
         await this._page.reload();
-        await this._page.waitForTimeout(1000);
+        // await this._page.waitForLoadState('load');
+        await this._page.waitForTimeout(2000);
         const flowsContainer = this._page
             .locator(`//div[@aria-label='${flowsName}']`)
             .locator('div.approval-status')
             .nth(2);
         if (await flowsContainer.isVisible())
             return await flowsContainer.textContent();
+    }
+
+    public async checkPendingFlows() {
+        await this._page.reload();
+        await this._page.reload();
+        // await this._page.waitForLoadState('load');
+        await this._page.waitForTimeout(2000);
+        const verificationApproval = this._page.getByLabel('FinOps Approvals');
+        await expect(
+            verificationApproval.locator('.approval-status')
+        ).toContainText('Pending Approval');
     }
 
     public async clickApproveWithoutComment() {
@@ -307,5 +323,70 @@ export class PaymentVerificationHelper extends BaseHelper {
             .locator('p.approval-user-name')
             .first()
             .textContent();
+    }
+}
+
+export class ApprovalToggleHelper extends BaseHelper {
+    public async gotoExpenseApproval() {
+        // await this._page.goto(TEST_URL + '/e/f/expense-approval');
+        const isExpanded = await this._page
+            .locator('.hamburger_button.hamburger_button--active')
+            .isVisible();
+        if (!isExpanded) {
+            await this._page.locator('.hamburger_button').click();
+        }
+        await this._page
+            .locator('.sidebar-item-title')
+            .filter({ hasText: 'Work Flows' })
+            .click();
+        await this._page
+            .locator('.sidebar-item-title')
+            .filter({ hasText: 'Expense Approvals' })
+            .click();
+    }
+
+    public async gotoTab(tab: string) {
+        await this.click({
+            role: 'tab',
+            text: tab,
+        });
+    }
+
+    public async toggleOption(option: string, status: string) {
+        const toggleRow = this._page.locator('div.table-row.body-row').filter({
+            hasText: option,
+        });
+        const button = toggleRow.locator('button').first();
+        const text = await button.textContent();
+        if (
+            (text === 'Active' && status === 'Active') ||
+            (text === 'Inactive' && status === 'Inactive')
+        ) {
+            return;
+        }
+        await button.click();
+    }
+
+    public async allInactive() {
+        await this.toggleInactive();
+        await this.gotoTab('Finops');
+        await this.toggleInactive();
+        await this.gotoTab('Payment');
+        await this.toggleInactive();
+    }
+
+    public async toggleInactive() {
+        await this._page.waitForSelector('div.table-row.body-row');
+        const toggleRow = await this._page
+            .locator('div.table-row.body-row')
+            .all();
+        for (let i = 0; i < toggleRow.length; i++) {
+            const button = toggleRow[i].locator('button').first();
+            const text = await button.textContent();
+            if (text === 'Inactive') {
+                continue;
+            }
+            await button.click();
+        }
     }
 }

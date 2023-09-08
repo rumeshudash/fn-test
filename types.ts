@@ -6,6 +6,7 @@ interface LocatorOptions {
     text?: string | RegExp;
     label?: string;
     class?: string[];
+    exactText?: boolean;
 }
 
 interface InputFieldLocatorOptions {
@@ -193,3 +194,10 @@ interface VENDORDOCUMENTDETAILS {
 //     bankAccount: string;
 //     ifsc: string;
 // }
+
+interface DepartmentCreationData {
+    name?: string;
+    parent?: string;
+    manager?: string;
+    date?: string;
+}
