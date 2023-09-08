@@ -198,4 +198,44 @@ test.describe('CustomeFeild', () => {
 
         await customefeild.AddExpenseWithDateType('Date1', 'Date', 1);
     });
+    // test('Add Expense with choice type without choice feild', async ({
+    //     page,
+    // }) => {
+    //     const signin = new SignInHelper(page);
+    //     await signin.init();
+    //     const username = 'newtestauto@company.com';
+    //     const password = '123456';
+    //     await signin.checkDashboard({
+    //         username: username,
+    //         password: password,
+    //     });
+
+    //     const customefeild = new CustofeildHelper(page);
+    //     await customefeild.init();
+    //     await customefeild.AddExpenseWithNumberCheckchoice(
+    //         'Choice1',
+    //         'Choice',
+    //         1,
+    //         ['', '']
+    //     );
+    //     expect(await customefeild.errorMessage()).toBe(
+    //         'Choice List is required'
+    //     );
+    // });
+    test('Change Status', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const customefeild = new CustofeildHelper(page);
+        await customefeild.init();
+
+        await customefeild.ChangeStatus();
+    });
+    test('Change Mendatory', async ({ page }) => {});
 });
