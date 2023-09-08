@@ -79,4 +79,39 @@ export class CustofeildHelper extends BaseHelper {
         }
         await this.click({ role: 'button', name: 'save' });
     }
+    public async AddExpenseWithDateType(
+        name: string,
+        type: string,
+        priority: number,
+        defaultValue?: Date
+    ) {
+        await this.clickExpenseTab();
+        await this.clickButton('Add New');
+        await this.fillText(name, {
+            name: 'name',
+        });
+        await this.selectOption({
+            option: type,
+            hasText: 'Select Field Type',
+        });
+        await this.fillText(priority, {
+            name: 'priority',
+        });
+
+        await this._page.locator(`//input[@id='date']`).click();
+        const dateFeild = await this._page.locator(
+            `//div[@class='rdrInfiniteMonths rdrMonthsVertical']//div[2]//div[2]`
+        );
+        const dateCheck = await dateFeild.getByRole('button', { name: '15' });
+        await dateCheck.click();
+
+        await this.click({ role: 'button', name: 'save' });
+    }
+
+    public async AddExpenseWithNumberCheckchoice(
+        name: string,
+        type: string,
+        priority: number,
+        choicelist: string
+    ) {}
 }
