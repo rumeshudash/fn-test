@@ -264,16 +264,34 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.FindrowAndperformAction(
-            'Number1',
-            7,
-            '//button',
-            async (element: any) => {
-                await element.click();
-            }
-        );
+
+        await customefeild.CheckEdit();
+
         await expect(page.getByText('Edit Expense Custom Field')).toHaveCount(
             1
         );
+    });
+    test('Change Name and Priority', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const username = 'newtestauto@company.com';
+        const password = '123456';
+        await signin.checkDashboard({
+            username: username,
+            password: password,
+        });
+
+        const customefeild = new CustofeildHelper(page);
+        await customefeild.init();
+
+        await customefeild.changeNameORPriority(
+            'Number1',
+            'Number',
+            1,
+            'Number4',
+            2
+        );
+
+        await expect(page.getByText('Number4')).toHaveCount(1);
     });
 });

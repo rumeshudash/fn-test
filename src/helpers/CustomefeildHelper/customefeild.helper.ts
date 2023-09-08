@@ -167,4 +167,44 @@ export class CustofeildHelper extends BaseHelper {
             performAction
         );
     }
+
+    public async CheckEdit() {
+        await this.FindrowAndperformAction(
+            'Number1',
+            7,
+            '//button',
+            async (element: any) => {
+                await element.click();
+            }
+        );
+    }
+
+    public async changeNameORPriority(
+        name: string,
+        type: string,
+        priority: number,
+
+        newname?: string,
+        newpriority?: number
+    ) {
+        await this.clickExpenseTab();
+        await this.CheckEdit();
+
+        await this._page.getByText(`${name}`);
+        await this._page.getByText(`${type}`);
+        await this._page.getByText(`${priority}`);
+
+        if (newname) {
+            await this.fillText(newname, {
+                name: 'name',
+            });
+        }
+        if (newpriority) {
+            await this.fillText(newpriority, {
+                name: 'priority',
+            });
+        }
+
+        await this.click({ role: 'button', name: 'save' });
+    }
 }
