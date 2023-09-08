@@ -19,6 +19,7 @@ export class DepartmentCreation extends BaseHelper {
             .locator('.sidebar-item-title')
             .filter({ hasText: 'Departments' })
             .click();
+        await this._page.waitForTimeout(1000);
     }
 
     // open add department form
@@ -26,7 +27,11 @@ export class DepartmentCreation extends BaseHelper {
         const container = this._page.locator(
             `//div[contains(@class,'breadcrumbs')]/ancestor::div[contains(@class,"justify-between")]`
         );
-        await container.locator('button').click();
+        await container
+            .getByRole('button', {
+                name: 'add_circle_outline Add Department',
+            })
+            .click();
         console.log(chalk.green('Add department button clicked'));
         await expect(this._page.locator('//button[text()="Save"]'), {
             message: 'Checking save button visibility',
@@ -44,7 +49,13 @@ export class DepartmentCreation extends BaseHelper {
     }
 
     // fill department values
-    public async fillDepartment(data: DepartmentCreationData) {
+    public async fillDepartment(
+        data: DepartmentCreationData,
+        update?: boolean
+    ) {
+        await this._page.waitForSelector(
+            '//div[@role="dialog"]/descendant::form'
+        );
         if (data.name) {
             await this.fillInput(data.name, {
                 name: 'name',
@@ -71,7 +82,7 @@ export class DepartmentCreation extends BaseHelper {
             console.log(chalk.green('Department toast message verified'));
         }
         // check err message if name empty
-        else {
+        if (!data.name && !update) {
             console.log(
                 chalk.blue('Checking error message and button disabled')
             );
@@ -88,8 +99,8 @@ export class DepartmentCreation extends BaseHelper {
         }
     }
 
-    // get department using name from the table rows
-    public async getDepartmentFromTable(data: DepartmentCreationData) {
+    // get department using a identifier from the table rows
+    public async getRowFromTable(identifier: string) {
         const toggleRow = this._page.locator('div.table-row.body-row');
         const toggleRowLength = await toggleRow.count();
         console.log(chalk.green('Department listing page loaded'));
@@ -97,7 +108,7 @@ export class DepartmentCreation extends BaseHelper {
         for (let i = 0; i < toggleRowLength; i++) {
             const row = toggleRow.nth(i);
             const rowText = await row.textContent();
-            if (rowText.includes(data.name)) {
+            if (rowText.includes(identifier)) {
                 addedRow = row;
                 break;
             }
@@ -146,7 +157,7 @@ export class DepartmentCreation extends BaseHelper {
         }
 
         await this._page.waitForSelector('div.table-row.body-row');
-        const addedDepartment = await this.getDepartmentFromTable(data);
+        const addedDepartment = await this.getRowFromTable(data.name);
 
         // if added department is not present
         if (!present) {
@@ -169,10 +180,10 @@ export class DepartmentCreation extends BaseHelper {
     // goto department details page
     public async openDepartmentDetailsPage(name: string) {
         console.log(chalk.blue('Opening department details'));
-        await this._page.waitForSelector('div.table-row.body-row');
+        // await this._page.waitForSelector('div.table-row.body-row');
         await this._page
             .locator('div.table-row.body-row')
-            .getByText(name)
+            .getByText(name, { exact: true })
             .click();
         await expect(
             this._page.getByText('Department Detail').first()
@@ -189,7 +200,7 @@ export class DepartmentCreation extends BaseHelper {
         await this.toggleAll();
         await this.navigateToTab('All');
         console.log(chalk.blue('Toggling department status'));
-        const department = await this.getDepartmentFromTable({ name: name });
+        const department = await this.getRowFromTable(name);
         const toggleButton = department.locator('button').first();
         if (
             (await toggleButton.textContent()) === 'Active' &&

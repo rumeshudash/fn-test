@@ -191,4 +191,16 @@ interface DepartmentCreationData {
     parent?: string;
     manager?: string;
     date?: string;
+    identifier?: string;
+}
+
+interface EmployeeCreationData {
+    name?: string;
+    email?: string;
+    department?: string;
+    designation?: string;
+    date?: string;
+    identifier?: string;
+    manager?: string;
+    parent?: string;
 }
