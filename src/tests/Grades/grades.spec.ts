@@ -155,7 +155,7 @@ test.describe('Grades', () => {
         await grades.init();
         const newGradeName = await GradesHelper.generateRandomGradeName();
 
-        await grades.EditGrdaes('NEWHAM', newGradeName, null);
+        await grades.EditGrdaes('E1', newGradeName, null);
 
         expect(await grades.successToast()).toBe('Successfully saved ');
         await expect(page.getByText(newGradeName)).toHaveCount(1);

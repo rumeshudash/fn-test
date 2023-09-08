@@ -44,63 +44,34 @@ export class GradesHelper extends BaseHelper {
         await this.click({ role: 'button', name: 'save' });
     }
     public async ActiveToInactive(name: string) {
-        const table = await this._page.locator(
-            '//div[contains(@class,"table finnoto__table__container ")]'
-        );
-        const rows = await table.locator('//div[contains(@class,"table-row")]'); //select the row
-
-        for (let i = 0; i < (await rows.count()); i++) {
-            const row = await rows.nth(i);
-            const tds = await row.locator(
-                '//div[contains(@class,"table-cell")]'
-            );
-            for (let j = 0; j < (await tds.count()); j++) {
-                const cell = await tds.nth(j).innerText();
-                if (cell === name) {
-                    const Button = await tds
-                        .nth(3)
-                        .locator('//button[contains(@class,"btn")]');
-                    await Button.click();
-                }
-            }
+        async function performAction(element: any) {
+            await element.click();
         }
+
+        const btnlocator = '//button';
+
+        await this.FindrowAndperformAction(name, 3, btnlocator, performAction);
     }
 
     public async EditGrdaes(name: string, newname: string, priority: number) {
-        const table = await this._page.locator(
-            '//div[contains(@class,"table finnoto__table__container ")]'
-        );
-        const rows = await table.locator('//div[contains(@class,"table-row")]');
-        for (let i = 0; i < (await rows.count()); i++) {
-            const row = await rows.nth(i);
-            const tds = await row.locator(
-                '//div[contains(@class,"table-cell")]'
-            );
-            for (let j = 0; j < (await tds.count()); j++) {
-                const cell = await tds.nth(j).innerText();
-                if (cell === name) {
-                    const Button = await tds
-                        .nth(4)
-                        .locator('//div[contains(@class,"flex items-center")]')
-                        .locator('//button');
-                    await Button.click();
-                    if (newname !== undefined) {
-                        await this.fillText(newname, {
-                            name: 'name',
-                        });
-                    }
-                    if (priority !== null) {
-                        await this.fillText(priority, {
-                            name: 'priority',
-                        });
-                    }
-
-                    await this.click({ role: 'button', name: 'save' });
-
-                    break;
-                }
-            }
+        async function performAction(element: any) {
+            await element.click();
         }
+
+        const btnlocator = '//button';
+
+        await this.FindrowAndperformAction(name, 4, btnlocator, performAction);
+        if (newname !== undefined) {
+            await this.fillText(newname, {
+                name: 'name',
+            });
+        }
+        if (priority !== null) {
+            await this.fillText(priority, {
+                name: 'priority',
+            });
+        }
+        await this.click({ role: 'button', name: 'save' });
     }
     static async generateRandomGradeName() {
         return `Grade${Math.floor(Math.random() * 1000000)}`;
