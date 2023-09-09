@@ -7,6 +7,7 @@ import {
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
+import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 const EXPENSEDETAILS = {
@@ -44,30 +45,36 @@ describe('TECF001', () => {
             const savedExpensePage = new SavedExpenseCreation(page);
 
             await test.step('Check Saved and Party Status', async () => {
-                expect(await savedExpensePage.toastMessage(), {
-                    message: 'Invoice not raised.',
-                }).toBe('Invoice raised successfully.');
-                expect(await savedExpensePage.checkPartyStatus(), {
-                    message: 'Party Status not open.',
-                }).toBe('Open');
+                expect(
+                    await savedExpensePage.toastMessage(),
+                    chalk.red('Invoice not raised.')
+                ).toBe('Invoice raised successfully.');
+                expect(
+                    await savedExpensePage.checkPartyStatus(),
+                    chalk.red('Party Status not open.')
+                ).toBe('Open');
             });
 
             await test.step('Expense Status', async () => {
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('verification')
+                    await savedExpensePage.expenseStatusSuccess('verification'),
+                    chalk.red('Verification Status check')
                 ).toBe(false);
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('finops')
+                    await savedExpensePage.expenseStatusSuccess('finops'),
+                    chalk.red('FinOps status check')
                 ).toBe(false);
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('payment')
+                    await savedExpensePage.expenseStatusSuccess('payment'),
+                    chalk.red('Payment Status check')
                 ).toBe(false);
             });
 
             await test.step('Check Business and Vendor', async () => {
-                expect(await savedExpensePage.checkExpenseTo()).toBe(
-                    EXPENSEDETAILS.to + '…'
-                );
+                expect(
+                    await savedExpensePage.checkExpenseTo(),
+                    chalk.red('Check To match')
+                ).toBe(EXPENSEDETAILS.to + '…');
             });
         }
     );

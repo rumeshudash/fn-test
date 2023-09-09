@@ -10,11 +10,12 @@ import {
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 import { BANKDETAILS, LOWER_TDS_DETAILS } from '@/utils/required_data';
+import chalk from 'chalk';
 
 //Vendor and Client Details
 const vendorGstinInfo: gstinDataType = {
     trade_name: 'Cloudtail India Private Limited',
-    value: '27AAQCS4259Q1ZA',
+    value: '27AAQCS4259Q1Z8',
     pan_number: 'AAQCS4259Q',
     business_type: 'Private Limited',
     address:
@@ -25,16 +26,17 @@ const vendorGstinInfo: gstinDataType = {
 const { expect, describe } = PROCESS_TEST;
 
 //Vendor Managed with Client Connect
-describe('TCCC001', () => {
-    PROCESS_TEST('Client Connect - Vendor Onboarding', async ({ page }) => {
+describe('TCVO001', () => {
+    PROCESS_TEST('Vendor Onboarding', async ({ page }) => {
         const getBankDetails = new BankAccountDetails(BANKDETAILS, page);
         const vendorOnboarding = new VendorOnboarding(LOWER_TDS_DETAILS, page);
         const withgstin = new VendorOnboardingWithGSTIN(vendorGstinInfo, page);
         await vendorOnboarding.clickLinkInviteVendor('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
-        expect(await vendorOnboarding.toastMessage()).toBe(
-            'Link Successfully Copied!!!'
-        );
+        expect(
+            await vendorOnboarding.toastMessage(),
+            chalk.red('ToastMessage match')
+        ).toBe('Link Successfully Copied!!!');
 
         await test.step('Open Copied Link', async () => {
             const URL = await vendorOnboarding.linkURL();
@@ -79,9 +81,10 @@ describe('TCCC001', () => {
             await withgstin.gstinInfoCheck();
             await withgstin.gstinDisplayName();
             await vendorOnboarding.clickButton('Next');
-            expect(await vendorOnboarding.toastMessage()).toBe(
-                'Successfully saved'
-            );
+            expect(
+                await vendorOnboarding.toastMessage(),
+                chalk.red('ToastMessage match')
+            ).toBe('Successfully saved');
         });
 
         await test.step('Documents - Vendor Onboarding', async () => {
@@ -105,7 +108,8 @@ describe('TCCC001', () => {
 
             await vendorOnboarding.clickButton('Next');
             expect(
-                await page.getByText('Onboarding Completed').isVisible()
+                await page.getByText('Onboarding Completed').isVisible(),
+                chalk.red('Onboarding text visibility')
             ).toBe(true);
         });
     });

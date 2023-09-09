@@ -16,7 +16,6 @@ import GenericNonGstinCardHelper, {
 } from '../CommonCardHelper/genericNonGstin.card.helper';
 
 let getDate: string;
-let clientBusinessName: string;
 export class VendorOnboarding extends BaseHelper {
     public lowerTDS;
     constructor(lowerTDS, page) {
@@ -32,9 +31,10 @@ export class VendorOnboarding extends BaseHelper {
             name: 'Invite Vendor',
         });
         const linkDialog = this._page.getByRole('dialog');
-        expect(await linkDialog.isVisible(), 'Link Dialog not found').toBe(
-            true
-        );
+        expect(
+            await linkDialog.isVisible(),
+            chalk.red('Link Dialog visibility')
+        ).toBe(true);
         if (await linkDialog.isVisible()) {
             await this._page
                 .locator(
@@ -48,7 +48,10 @@ export class VendorOnboarding extends BaseHelper {
         const linkInput = this._page.locator(
             "//span[contains(@class,'px-3 overflow-hidden')]"
         );
-        expect(await linkInput.isVisible(), 'Link Input not found').toBe(true);
+        expect(
+            await linkInput.isVisible(),
+            chalk.red('Link Input field visibility')
+        ).toBe(true);
         return await linkInput.textContent();
     }
 
@@ -123,8 +126,8 @@ export class VendorOnboarding extends BaseHelper {
         await this._page.waitForTimeout(1500);
 
         await expect(
-            await this._page.locator("//span[text()=' Add New Document']"),
-            'Add New Document is not Visible'
+            this._page.locator("//span[text()=' Add New Document']"),
+            chalk.red('Add New Document button visibility')
         ).toBeVisible();
         await this.clickButton('Add New Document');
 
@@ -205,7 +208,7 @@ export class VendorOnboarding extends BaseHelper {
             expect
                 .soft(
                     await dropdown.textContent(),
-                    'Business Information is not auto fetched'
+                    chalk.red('Business Information auto fetched')
                 )
                 .toBe(vendorGstinInfo.trade_name);
 
@@ -214,12 +217,10 @@ export class VendorOnboarding extends BaseHelper {
                 placeholder: 'Select Your Business',
             });
 
-            expect
-                .soft(
-                    await gstinDropdown.textContent(),
-                    'Client Information is not auto fetched'
-                )
-                .toBe(clientGstinInfo.trade_name);
+            expect(
+                await gstinDropdown.textContent(),
+                chalk.red('Client Information auto fetched')
+            ).toBe(clientGstinInfo.trade_name);
         }
         if (await gstinDropdown.isVisible()) {
             await this.selectOption({
@@ -335,7 +336,7 @@ export class VendorOnboardingWithGSTIN extends GenericGstinCardHelper {
     public async fillGstinInput() {
         await expect(
             this._page.getByPlaceholder('ENTER GSTIN NUMBER'),
-            'Gstin input field is not visible'
+            chalk.red('Gstin input field visibility')
         ).toBeVisible();
         await this.fillText(this.gstin_data.value, {
             placeholder: 'ENTER GSTIN NUMBER',
@@ -345,9 +346,9 @@ export class VendorOnboardingWithGSTIN extends GenericGstinCardHelper {
         const display_name = await this._page
             .locator('#display_name')
             .inputValue();
-        expect(display_name, {
-            message: 'Display name is not matching to vendor',
-        }).toBe(vendorGstinInfo.trade_name);
+        expect(display_name, chalk.red('Display name match with vendor')).toBe(
+            vendorGstinInfo.trade_name
+        );
     }
 }
 export class VendorManagedWithoutGSTIN extends GenericNonGstinCardHelper {
@@ -362,49 +363,45 @@ export class VendorManagedWithoutGSTIN extends GenericNonGstinCardHelper {
     public async fillVendorDetails(data: nonGstinDataType[] = []) {
         const helper = this.locate(this.VENDOR_MANAGED_ONBOARDING_DOM);
         for (let details of data) {
-            await expect(
+            expect(
                 await helper.locate('#name')._locator.isVisible(),
-                'Name field is not Visible'
+                chalk.red('Name field visibility')
             ).toBe(true);
 
             await helper.fillText(details.trade_name, {
                 name: 'name',
             });
-            await expect
-                .soft(
-                    await helper.locate('#display_name')._locator.isVisible(),
-                    'Display Name field is not Visible'
-                )
-                .toBe(true);
+            expect(
+                await helper.locate('#display_name')._locator.isVisible(),
+                chalk.red('Display Name field visibility')
+            ).toBe(true);
 
             await helper.fillText(details.display_name, {
                 name: 'display_name',
             });
 
-            expect
-                .soft(
-                    await helper
-                        .locate('input', { name: 'type_id' })
-                        ._locator.isVisible(),
-                    'Business Type field is not Visible'
-                )
-                .toBe(true);
+            expect(
+                await helper
+                    .locate('input', { name: 'type_id' })
+                    ._locator.isVisible(),
+                chalk.red('Business Type visibility')
+            ).toBe(true);
 
             await helper.selectOption({
                 input: details.business_type,
                 name: 'type_id',
             });
 
-            await expect(
+            expect(
                 await helper.locate('#pincode')._locator.isVisible(),
-                'Pincode field is not Visible'
+                chalk.red('Pincode field visibility')
             ).toBe(true);
 
             await helper.fillText(details.pin_code, { name: 'pincode' });
 
-            await expect(
+            expect(
                 await helper.locate('#address')._locator.isVisible(),
-                'Address field is not Visible'
+                chalk.red('Address field visibility')
             ).toBe(true);
 
             await helper.fillText(details.address, { name: 'address' });
@@ -412,18 +409,18 @@ export class VendorManagedWithoutGSTIN extends GenericNonGstinCardHelper {
             await this.checkWizardNavigationClickDocument('Documents');
             expect(
                 await helper.locate('#name')._locator.inputValue(),
-                'Name field is required'
+                chalk.red('Name field input value')
             ).not.toBeNull();
 
             expect(
                 await helper.locate('#name')._locator.inputValue(),
-                'Name field does not matched'
+                chalk.red('Name field value match')
             ).toBe(details.trade_name);
 
             expect
                 .soft(
                     await helper.locate('#display_name')._locator.inputValue(),
-                    'Display Name field is empty'
+                    chalk.red('Display Name input field')
                 )
                 .not.toBeNull();
 
@@ -438,23 +435,23 @@ export class VendorManagedWithoutGSTIN extends GenericNonGstinCardHelper {
                 await this._page
                     .locator('//div[contains(@class,"mt-2 text-sm")]')
                     .textContent(),
-                'Pin Code Address does not matched'
+                chalk.red('Pin Code Address match')
             ).toBe(PAN_CODE_ADDRESS);
             expect(
                 (await helper.locate('#pincode')._locator.inputValue()).length,
-                'Pincode field is must be 6 digits'
+                chalk.red('Pincode length check')
             ).toBeGreaterThan(5);
 
-            expect.soft(
+            expect(
                 await this._page
                     .locator('//div[contains(@class,"mt-2 text-sm")]')
                     .isVisible(),
-                'Pin Code Address  is not Visible'
+                chalk.red('Pin Code Address visibility')
             );
 
             expect(
                 (await helper.locate('#address')._locator.inputValue()).length,
-                'Address field is empty'
+                chalk.red('Address input field ')
             ).not.toBe(0);
         }
     }
@@ -470,13 +467,13 @@ export class BankAccountDetails extends BaseHelper {
     async validateBankAccountName() {
         expect(
             await this._page.locator('#account_name').isVisible(),
-            'Bank Name is not visible'
+            chalk.red('Bank Name visibility')
         ).toBe(true);
 
         const clientBusinessName = await this._page
             .locator('#account_name')
             .inputValue();
-        expect(clientBusinessName, 'Bank Name does not matched').toBe(
+        expect(clientBusinessName, chalk.red('Bank Name match')).toBe(
             this.bankDetails.bankName
         );
     }
@@ -485,7 +482,7 @@ export class BankAccountDetails extends BaseHelper {
     async isBtnVisible() {
         expect(
             await this._page.getByRole('button', { name: 'Next' }).isEnabled(),
-            'Next button is not clickable'
+            chalk.red('Next button enabled ')
         ).toBe(true);
     }
     async fillBankAccount() {
@@ -508,15 +505,16 @@ export class BankAccountDetails extends BaseHelper {
         const iconLocator = this.locate('//img[@alt="bank"]')._locator;
         expect(
             await iconLocator.isVisible(),
-            'IFSC Bank Logo is not visible'
+            chalk.red('IFSC Bank Logo visibility')
         ).toBe(true);
     }
     async vendorIfscDetailsValidation() {
-        const ifsc_details = await this.locate('div', { id: 'bank_ifsc_info' })
-            ._locator;
+        const ifsc_details = this.locate('div', {
+            id: 'bank_ifsc_info',
+        })._locator;
         expect(
             await ifsc_details.isVisible(),
-            'Bank Details is not visible'
+            chalk.red('Bank Details visibility')
         ).toBe(true);
 
         return await ifsc_details.textContent();
@@ -525,28 +523,26 @@ export class BankAccountDetails extends BaseHelper {
         const accountName = await this._page
             .locator('//label[@for="account_name"]/following-sibling::div[1]')
             .textContent();
-        console.log('Bank Account Name: ', accountName);
         return accountName;
     }
     async bankAccountNumber() {
         const account_number = await this._page
-            .locator('//div[text()="Account Number"]/following-sibling::div')
+            .locator(
+                '//span[@class="text-sm font-medium"]/following-sibling::span[1]'
+            )
             .textContent();
-        console.log('Bank Account Number: ', account_number);
         return account_number;
     }
     async bankIFSCCode() {
         const ifsc_code = await this._page
             .locator("//img[@alt='bank']/following-sibling::p[1]")
             .textContent();
-        console.log('Bank Account Number: ', ifsc_code);
         return ifsc_code;
     }
     async businessDetailsIFSC() {
         const gstin = await this._page
             .locator('//div[text()="IFSC Code"]/following-sibling::div')
             .textContent();
-        console.log('Bank Number in Business Details: ', gstin);
         return gstin;
     }
 }
@@ -574,7 +570,7 @@ export class VendorInvitationDetails extends BaseHelper {
             "//span[contains(@class,'text-xs text-base-tertiary')]"
         );
         await expect
-            .soft(businessGSTIN, 'GSTIN of Business is not visible')
+            .soft(businessGSTIN, chalk.red('GSTIN of Business visibility'))
             .toBeVisible();
         if (await businessGSTIN.isVisible())
             return await businessGSTIN.textContent();
@@ -606,7 +602,7 @@ export class VendorInvitationDetails extends BaseHelper {
             "(//div[contains(@class,'text-center rounded')])[1]"
         );
         await expect
-            .soft(businessGSTIN, 'GSTIN of Business is not visible')
+            .soft(businessGSTIN, chalk.red('GSTIN of Business visibility'))
             .toBeVisible();
         if (await businessGSTIN.isVisible())
             return await businessGSTIN.textContent();
@@ -645,17 +641,17 @@ export class VendorInvitationDetails extends BaseHelper {
 
                 expect(
                     await gstinStatus.isVisible(),
-                    'GSTIN Status is not visible'
+                    chalk.red('GSTIN Status visibility')
                 ).toBe(true);
                 expect(
                     await gstinStatus.textContent(),
-                    'GSTIN Status does not matched'
+                    chalk.red('GSTIN Status match')
                 ).toBe(vendorGstinInfo.status);
 
                 if (await imageName.isVisible()) {
                     expect(
                         await imageName.textContent(),
-                        'Image Name does not matched'
+                        chalk.red('Image Name match')
                     ).toBe(IMAGE_NAME);
                 }
             }
@@ -663,7 +659,7 @@ export class VendorInvitationDetails extends BaseHelper {
                 if (await imageName.isVisible()) {
                     expect(
                         await imageName.textContent(),
-                        'Image Name does not matched'
+                        chalk.red('Image Name match')
                     ).toBe(IMAGE_NAME);
                 }
             }
@@ -672,12 +668,20 @@ export class VendorInvitationDetails extends BaseHelper {
                 const msmeLocator = helper._page.locator(
                     "//div[text()='MSME number']/following-sibling::div"
                 );
-                expect(await msmeLocator.isVisible()).toBe(true);
-                expect(await msmeLocator.textContent()).toBe(MSME_NUMBER);
+                expect(
+                    await msmeLocator.isVisible(),
+                    chalk.red('MSME visibility')
+                ).toBe(true);
+
+                expect(
+                    await msmeLocator.textContent(),
+                    chalk.red('MSME match')
+                ).toBe(MSME_NUMBER);
+
                 if (await imageName.isVisible()) {
                     expect(
                         await imageName.textContent(),
-                        'Image Name does not matched'
+                        chalk.red('Image Name match')
                     ).toBe(IMAGE_NAME);
                 }
             }
@@ -698,25 +702,23 @@ export class VendorInvitationDetails extends BaseHelper {
 
                 expect(
                     await tdsCertNumber.textContent(),
-                    'TDS Certificate Number does not matched'
+                    chalk.red('TDS Certificate Number match')
                 ).toBe(this.lowerTDS.tdsCertNumber);
 
                 expect(
                     await tdsPercentage.textContent(),
-                    'TDS Percentage does not matched'
+                    chalk.red('TDS Percentage match')
                 ).toBe(this.lowerTDS.tdsPercentage + '%');
 
-                expect
-                    .soft(
-                        await expireDate.textContent(),
-                        'Expiry Date does not matched'
-                    )
-                    .toBe(getDate);
+                expect(
+                    await expireDate.textContent(),
+                    chalk.red('Expiry Date match')
+                ).toBe(getDate);
 
                 if (await imageName.isVisible()) {
                     expect(
                         await imageName.textContent(),
-                        'Image Name does not matched'
+                        chalk.red('Image Name match')
                     ).toBe(IMAGE_NAME);
                 }
             }
@@ -734,17 +736,17 @@ export class VendorInvitationDetails extends BaseHelper {
 
                 expect(
                     await bankName.textContent(),
-                    'Bank Name does not matched'
+                    chalk.red('Bank Name match')
                 ).toBe(this.bankDetails.bankName);
 
                 expect(
                     await accountNumber.textContent(),
-                    'Account Number does not matched'
+                    chalk.red('Account Number match')
                 ).toBe(this.bankDetails.accountNumber);
 
                 expect(
                     await ifscCode.textContent(),
-                    'IFSC Code does not matched'
+                    chalk.red('IFSC Code match')
                 ).toBe(this.bankDetails.ifsc);
             }
         }

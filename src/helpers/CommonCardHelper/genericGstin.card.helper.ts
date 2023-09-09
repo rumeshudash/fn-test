@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
+import chalk from 'chalk';
 
 export type gstinDataType = {
     trade_name: string;
@@ -13,6 +14,8 @@ export type gstinDataType = {
 export default class GenericGstinCardHelper extends BaseHelper {
     public gstin_data: gstinDataType;
     public ignore_test_fields: string[] = [];
+
+    public expand_card: boolean;
 
     constructor(gstin_data: gstinDataType, page: any) {
         super(page);
@@ -37,10 +40,10 @@ export default class GenericGstinCardHelper extends BaseHelper {
         const element = (await parentLocator)
             .getLocator()
             .locator('//div[@id="gstin_trade_name"]');
-        expect(await element.isVisible(), 'Gstin Trade Name not visible').toBe(
+        expect(await element.isVisible(), 'gstin trade name visibility').toBe(
             true
         );
-        await expect(element, 'Gstin Trade Name not matched !!').toHaveText(
+        await expect(element, 'gstin trade name match').toHaveText(
             this.gstin_data.trade_name
         );
     }
@@ -49,8 +52,11 @@ export default class GenericGstinCardHelper extends BaseHelper {
         const element = (await parentLocator)
             .getLocator()
             .locator('//div[@id="gstin_number"]');
-        expect(await element.isVisible(), 'Gstin Number not found').toBe(true);
-        await expect(element, 'Gstin Number  not matched !!').toHaveText(
+        expect(
+            await element.isVisible(),
+            chalk.red('gstin number visibility')
+        ).toBe(true);
+        await expect(element, chalk.red('gstin number match')).toHaveText(
             this.gstin_data.value
         );
     }
@@ -60,11 +66,12 @@ export default class GenericGstinCardHelper extends BaseHelper {
             .getLocator()
             .locator('//span[@id="gstin_address"]');
 
-        expect(await element.isVisible(), 'Gstin  Address not found').toBe(
-            true
-        );
+        expect(
+            await element.isVisible(),
+            chalk.red('Gstin address visibility')
+        ).toBe(true);
 
-        await expect(element, 'Gstin Address  not matched !!').toHaveText(
+        await expect(element, chalk.red('gstin address match')).toHaveText(
             this.gstin_data.address
         );
     }
@@ -78,9 +85,10 @@ export default class GenericGstinCardHelper extends BaseHelper {
             await element.isVisible(),
             'Gstin  business type not found'
         ).toBe(true);
-        await expect(element, 'Gstin Business Type  not matched !!').toHaveText(
-            this.gstin_data.business_type
-        );
+        await expect(
+            element,
+            chalk.red('Gstin Business Type matched')
+        ).toHaveText(this.gstin_data.business_type);
     }
     async checkPAN() {
         const parentLocator = this.gstinCardParentLocatorHidden();
@@ -88,8 +96,11 @@ export default class GenericGstinCardHelper extends BaseHelper {
             .getLocator()
             .locator('//span[contains(@id, "gstin_pan")]');
 
-        expect(await element.isVisible(), 'Pan number  not found').toBe(true);
-        await expect(element, 'Gstin pan number  not matched !!').toHaveText(
+        expect(
+            await element.isVisible(),
+            chalk.red('Pan number visibility')
+        ).toBe(true);
+        await expect(element, chalk.red('Gstin pan number match')).toHaveText(
             this.gstin_data.pan_number
         );
     }
@@ -100,24 +111,41 @@ export default class GenericGstinCardHelper extends BaseHelper {
             .getLocator()
             .locator("//div[contains(@id, 'gstin_status')]");
 
-        expect(await element.isVisible(), 'Gstin Status  not found').toBe(true);
-        await expect(element, 'Gstin status  not matched !!').toHaveText(
+        expect(
+            await element.isVisible(),
+            chalk.red('Gstin Status visibility')
+        ).toBe(true);
+        await expect(element, chalk.red('Gstin status match')).toHaveText(
             this.gstin_data.status
         );
     }
+    // it helps to expand gstin card
+    async expandGstinCard() {
+        const element = await this.locate('div', {
+            id: 'gstin_trade_name',
+        });
 
+        expect(await element.isVisible(), 'Gstin Trade name found').toBe(true);
+        await await element.click();
+    }
     async gstinInfoCheck() {
         await this._page.waitForTimeout(2000);
+        if (this.expand_card) await this.expandGstinCard();
+
         if (!this.ignore_test_fields.includes('gstin_business_name'))
             await this.checkBusinessName();
+
         if (!this.ignore_test_fields.includes('gstin_business_number'))
             await this.checkGstinNumber();
+
         if (!this.ignore_test_fields.includes('gstin_business_address'))
             await this.checkAddress();
         if (!this.ignore_test_fields.includes('gstin_business_type'))
             await this.checkBusinessType();
+
         if (!this.ignore_test_fields.includes('gstin_business_pan'))
             await this.checkPAN();
+
         if (!this.ignore_test_fields.includes('gstin_business_status'))
             await this.checkGstinStatus();
     }

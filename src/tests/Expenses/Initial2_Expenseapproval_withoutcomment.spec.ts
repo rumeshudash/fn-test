@@ -9,6 +9,7 @@ import {
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
+import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
@@ -59,12 +60,14 @@ describe('TECF005', () => {
             const savedExpensePage = new SavedExpenseCreation(page);
 
             await test.step('Check Saved and Party Status with poc', async () => {
-                expect(await savedExpensePage.toastMessage()).toBe(
-                    'Invoice raised successfully.'
-                );
-                expect(await savedExpensePage.checkPartyStatus()).toBe(
-                    'Submitted'
-                );
+                expect(
+                    await savedExpensePage.toastMessage(),
+                    chalk.red('ToastMessage match')
+                ).toBe('Invoice raised successfully.');
+                expect(
+                    await savedExpensePage.checkPartyStatus(),
+                    chalk.red('ToastMessage match')
+                ).toBe('Submitted');
             });
 
             await test.step('Check Approval Flows', async () => {
@@ -76,7 +79,8 @@ describe('TECF005', () => {
                 expect(
                     await verificationFlows.checkApprovalStatus(
                         'Verification Approvals'
-                    )
+                    ),
+                    chalk.red('Verification Approval match')
                 ).toBe('Pending Approval');
             });
 
@@ -96,7 +100,8 @@ describe('TECF005', () => {
                 expect(
                     await verificationFlows.checkApprovalStatus(
                         'Verification Approvals'
-                    )
+                    ),
+                    chalk.red('Verification Approval match')
                 ).toBe('Approved');
             });
 
@@ -112,17 +117,21 @@ describe('TECF005', () => {
                 expect(
                     await verificationFlows.checkByFinOpsAdmin(
                         'Verification Approvals'
-                    )
+                    ),
+                    chalk.red('Verification Approval match')
                 ).toBe('Approved');
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('verification')
+                    await savedExpensePage.expenseStatusSuccess('verification'),
+                    chalk.red('Verification Status check')
                 ).toBe(true);
 
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('finops')
+                    await savedExpensePage.expenseStatusSuccess('finops'),
+                    chalk.red('Verification Status check')
                 ).toBe(true);
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('payment')
+                    await savedExpensePage.expenseStatusSuccess('payment'),
+                    chalk.red('Payment Approval match')
                 ).toBe(true);
             });
         }

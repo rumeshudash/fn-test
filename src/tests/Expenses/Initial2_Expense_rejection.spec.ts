@@ -9,6 +9,7 @@ import {
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
+import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 describe('TECF006', () => {
@@ -54,10 +55,14 @@ describe('TECF006', () => {
         const savedExpensePage = new SavedExpenseCreation(page);
 
         await test.step('Check Saved and Party Status with poc', async () => {
-            expect(await savedExpensePage.toastMessage()).toBe(
-                'Invoice raised successfully.'
-            );
-            expect(await savedExpensePage.checkPartyStatus()).toBe('Submitted');
+            expect(
+                await savedExpensePage.toastMessage(),
+                chalk.red('ToastMessage match')
+            ).toBe('Invoice raised successfully.');
+            expect(
+                await savedExpensePage.checkPartyStatus(),
+                chalk.red('Check party status match')
+            ).toBe('Submitted');
         });
 
         await test.step('Check Approval Flows', async () => {
@@ -70,7 +75,8 @@ describe('TECF006', () => {
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'
-                )
+                ),
+                chalk.red('Verification approval match')
             ).toBe('Pending Approval');
         });
 
@@ -94,7 +100,8 @@ describe('TECF006', () => {
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'
-                )
+                ),
+                chalk.red('Verification Approval check')
             ).toBe('Rejected');
         });
 
@@ -112,18 +119,22 @@ describe('TECF006', () => {
             expect(
                 await verificationFlows.checkByFinOpsAdmin(
                     'Verification Approvals'
-                )
+                ),
+                chalk.red('Verification approval match')
             ).toBe('Rejected');
             await test.step('Check Expense Status', async () => {
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('verification')
+                    await savedExpensePage.expenseStatusSuccess('verification'),
+                    chalk.red('Verification Status check')
                 ).toBe(false);
 
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('finops')
+                    await savedExpensePage.expenseStatusSuccess('finops'),
+                    chalk.red('FinOps Status check')
                 ).toBe(false);
                 expect(
-                    await savedExpensePage.expenseStatusSuccess('payment')
+                    await savedExpensePage.expenseStatusSuccess('payment'),
+                    chalk.red('Payment Status check')
                 ).toBe(false);
             });
         });

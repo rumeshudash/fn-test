@@ -16,6 +16,7 @@ import {
     IMAGE_NAME,
     ClientBusinessDetails,
 } from '@/utils/required_data';
+import chalk from 'chalk';
 
 //Vendor and Client Details
 const vendorGstinInfo: gstinDataType = {
@@ -57,9 +58,10 @@ describe('TCCC002', () => {
         const withgstin = new VendorOnboardingWithGSTIN(vendorGstinInfo, page);
         await vendorOnboarding.clickLinkInviteVendor('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
-        expect(await vendorOnboarding.toastMessage()).toBe(
-            'Link Successfully Copied!!!'
-        );
+        expect(
+            await vendorOnboarding.toastMessage(),
+            chalk.red('ToastMessage match')
+        ).toBe('Link Successfully Copied!!!');
 
         await test.step('Open Copied Link', async () => {
             const URL = await vendorOnboarding.linkURL();
@@ -105,9 +107,10 @@ describe('TCCC002', () => {
             await withgstin.gstinInfoCheck();
             await withgstin.gstinDisplayName();
             await vendorOnboarding.clickButton('Next');
-            expect(await vendorOnboarding.toastMessage()).toBe(
-                'Successfully saved'
-            );
+            expect(
+                await vendorOnboarding.toastMessage(),
+                chalk.red('ToastMessage match')
+            ).toBe('Successfully saved');
         });
 
         await test.step('Documents - Vendor Onboarding', async () => {
@@ -126,7 +129,7 @@ describe('TCCC002', () => {
 
             const ifscBankDetails =
                 await getBankDetails.vendorIfscDetailsValidation();
-            expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
+            expect(ifscBankDetails, chalk.red('Bank IFSC Code match')).toBe(
                 getBankDetails.bankDetails.address
             );
             await getBankDetails.vendorIfscLogoVisibilityValidation();
@@ -138,7 +141,8 @@ describe('TCCC002', () => {
 
             await vendorOnboarding.clickButton('Next');
             expect(
-                await page.getByText('Onboarding Completed').isVisible()
+                await page.getByText('Onboarding Completed').isVisible(),
+                chalk.red('Onboarding Completed text visibility')
             ).toBe(true);
             await vendorOnboarding.clickButton('Close');
         });
@@ -169,20 +173,24 @@ describe('TCCC002', () => {
 
         await test.step('Upload Mandatory Documents - Client Connect', async () => {
             expect(
-                await vendorOnboarding.checkButtonVisibility('Submit')
+                await vendorOnboarding.checkButtonVisibility('Submit'),
+                chalk.red('Button visibility')
             ).not.toBe(true);
 
             await vendorOnboarding.uploadImageDocuments(IMAGE_NAME);
-            expect(await vendorOnboarding.toastMessage()).toBe(
-                'Successfully saved'
-            );
-            expect(await vendorOnboarding.checkButtonVisibility('Submit')).toBe(
-                true
-            );
+            expect(
+                await vendorOnboarding.toastMessage(),
+                chalk.red('ToastMessage match')
+            ).toBe('Successfully saved');
+            expect(
+                await vendorOnboarding.checkButtonVisibility('Submit'),
+                chalk.red('Submit Button visibility')
+            ).toBe(true);
             await vendorOnboarding.clickButton('Submit');
-            expect(await vendorOnboarding.toastMessage()).toBe(
-                'Successfully created'
-            );
+            expect(
+                await vendorOnboarding.toastMessage(),
+                chalk.red('ToastMessage match')
+            ).toBe('Successfully created');
         });
 
         //verifies vendor and client details with provided one
@@ -193,19 +201,23 @@ describe('TCCC002', () => {
                 page
             );
 
-            expect(await invitationDetails.checkFrom()).toBe(
-                vendorGstinInfo.trade_name + '…'
-            );
-            expect(await invitationDetails.checkFromGSTIN()).toBe(
-                vendorGstinInfo.value
-            );
+            expect(
+                await invitationDetails.checkFrom(),
+                chalk.red('From Vendor match')
+            ).toBe(vendorGstinInfo.trade_name + '…');
+            expect(
+                await invitationDetails.checkFromGSTIN(),
+                chalk.red('From Vendor Gstin match')
+            ).toBe(vendorGstinInfo.value);
 
-            expect(await invitationDetails.checkClient()).toBe(
-                clientGstinInfo.trade_name + ' '
-            );
-            expect(await invitationDetails.checkClientGSTIN()).toBe(
-                clientGstinInfo.value
-            );
+            expect(
+                await invitationDetails.checkClient(),
+                chalk.red('To client match')
+            ).toBe(clientGstinInfo.trade_name + ' ');
+            expect(
+                await invitationDetails.checkClientGSTIN(),
+                chalk.red('To client Gstin match')
+            ).toBe(clientGstinInfo.value);
         });
 
         await test.step('Check Uploaded Documents', async () => {

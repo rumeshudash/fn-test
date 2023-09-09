@@ -1,4 +1,10 @@
 {
-    "cSpell.words": ["Abhishek", "gstin", "networkidle", "selectbox"],
+    "cSpell.words": [
+        "Abhishek",
+        "Finops",
+        "gstin",
+        "networkidle",
+        "selectbox"
+    ],
     "cSpell.ignoreWords": ["TECF002"]
 }

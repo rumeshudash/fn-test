@@ -6,6 +6,15 @@ interface LocatorOptions {
     text?: string | RegExp;
     label?: string;
     class?: string[];
+    exactText?: boolean;
+}
+
+interface InputFieldLocatorOptions {
+    selector?: string;
+    placeholder?: string;
+    label?: string;
+    name?: string;
+    hasText?: string;
 }
 
 type LocatorRoles =

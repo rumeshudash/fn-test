@@ -11,6 +11,7 @@ import {
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
+import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 const EXPENSEDETAILS = {
@@ -87,10 +88,15 @@ describe('TECF008', () => {
         const savedExpensePage = new SavedExpenseCreation(page);
 
         await test.step('Check Saved and Party Status with poc', async () => {
-            expect(await savedExpensePage.toastMessage()).toBe(
-                'Invoice raised successfully.'
-            );
-            expect(await savedExpensePage.checkPartyStatus()).toBe('Submitted');
+            expect(
+                await savedExpensePage.toastMessage(),
+                chalk.red('Toast Message match')
+            ).toBe('Invoice raised successfully.');
+
+            expect(
+                await savedExpensePage.checkPartyStatus(),
+                chalk.red('Party Status match')
+            ).toBe('Submitted');
         });
 
         await test.step('Check Approval Flows', async () => {
@@ -102,7 +108,8 @@ describe('TECF008', () => {
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'
-                )
+                ),
+                chalk.red('Approval Status match')
             ).toBe('Pending Approval');
         });
 
@@ -123,7 +130,8 @@ describe('TECF008', () => {
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'
-                )
+                ),
+                chalk.red('Verification Approval match')
             ).toBe('Approved');
         });
 
@@ -140,7 +148,8 @@ describe('TECF008', () => {
             expect(
                 await verificationFlows.checkByFinOpsAdmin(
                     'Verification Approvals'
-                )
+                ),
+                chalk.red('Verification Approval match')
             ).toBe('Approved');
             // await verificationFlows.checkApprovalByFinOps();
         });
@@ -181,7 +190,10 @@ describe('TECF008', () => {
 
             await savedExpensePage.clickTab('Approval Workflows');
             await page.waitForTimeout(1000);
-            expect(await paymentFlows.getLevelStatus()).toBe('Approved');
+            expect(
+                await paymentFlows.getLevelStatus(),
+                chalk.red('Level status match')
+            ).toBe('Approved');
         });
     });
 });

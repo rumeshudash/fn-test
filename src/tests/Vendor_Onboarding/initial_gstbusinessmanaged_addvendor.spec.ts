@@ -5,7 +5,6 @@ import {
     GstinBusinessManagedOnboarding,
 } from '@/helpers/VendorOnboardingHelper/businessManagedOnboarding.helper';
 import {
-    ClientBusinessDetails,
     VendorClientInfo,
     businessVendorGstin,
     clientGstinInfo,

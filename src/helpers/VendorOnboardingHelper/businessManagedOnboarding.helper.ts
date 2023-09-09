@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { LISTING_ROUTES, TEST_URL } from '@/constants/api.constants';
 import { vendorGstinInfo } from '@/utils/required_data';
+import chalk from 'chalk';
 
 export class BusinessManagedOnboarding extends BaseHelper {
     public vendorBusiness;
@@ -21,10 +22,9 @@ export class BusinessManagedOnboarding extends BaseHelper {
         await this._page.waitForTimeout(2000);
     }
     async verifyVendorPageURL() {
-        await expect(
-            this._page,
-            'URL is not correct to Invite Vendor '
-        ).toHaveURL(LISTING_ROUTES.VENDORS);
+        await expect(this._page, chalk.red('Invite vendor URL')).toHaveURL(
+            LISTING_ROUTES.VENDORS
+        );
     }
     async verifyAddIcon() {
         const addIcon = this._page.locator(
@@ -33,7 +33,7 @@ export class BusinessManagedOnboarding extends BaseHelper {
 
         expect(
             await addIcon.isVisible(),
-            'Add Vendor Icon is not visible'
+            chalk.red('Add Vendor Icon visibility')
         ).toBe(true);
     }
     async clickAddIcon() {
@@ -51,7 +51,7 @@ export class BusinessManagedOnboarding extends BaseHelper {
             await this._page
                 .locator("//div[text()='Add Vendor Account']")
                 .isVisible(),
-            ' Add Vendor Account does not found'
+            chalk.red('Add vendor account visibility')
         ).toBe(true);
     }
 
@@ -60,28 +60,28 @@ export class BusinessManagedOnboarding extends BaseHelper {
     }
 
     async validateCheckbox() {
-        const checkbox = await this.locate("//input[@type='checkbox']")
-            ._locator;
+        const checkbox = this.locate("//input[@type='checkbox']")._locator;
         expect(
             !(await checkbox.isChecked()),
-            'By default checkbox should be unchecked'
+            chalk.red('default checkbox state')
         ).toBe(true);
-    }
-
-    async saveAndCreateCheckbox() {
-        await this.validateCheckbox();
-        const checkbox = this.locate("//input[@type='checkbox']")._locator;
-        await checkbox.click();
     }
 
     async afterSaveAndCreateValidation() {
         // if (!this.ignore_next_page.includes('move_to_next_page')) {
-        const input_filed_locator = this.locate('input', {
-            name: 'gstin',
+        const email_field = this.locate('input', {
+            name: 'email',
         })._locator;
         expect(
-            await input_filed_locator.inputValue(),
-            'GSTIN field is not empty'
+            await email_field.inputValue(),
+            chalk.red('Email field value')
+        ).toBe('');
+        const mobile_field = this.locate('input', {
+            name: 'mobile',
+        })._locator;
+        expect(
+            await mobile_field.inputValue(),
+            chalk.red('Mobile Number field input value')
         ).toBe('');
         // }
     }
@@ -91,15 +91,31 @@ export class BusinessManagedOnboarding extends BaseHelper {
             await this.locate(
                 '(//div[contains(@class,"text-center rounded")])[1]'
             )._locator.isVisible(),
-            'Business Managed is not visible'
+            chalk.red('Business Managed visibility')
         ).toBe(true);
 
         expect(
             await this.locate(
                 '(//div[contains(@class,"text-center rounded")])[1]'
             )._locator.innerText(),
-            'Business Managed does not matched'
+            chalk.red('Business Managed match')
         ).toBe('Business Managed');
+    }
+
+    async verifyNonGstinStatus() {
+        expect(
+            await this.locate(
+                '(//div[contains(@class,"text-center rounded")])[2]'
+            )._locator.isVisible(),
+            chalk.red('Non Gstin Status visibility')
+        ).toBe(true);
+
+        expect(
+            await this.locate(
+                '(//div[contains(@class,"text-center rounded")])[2]'
+            )._locator.innerText(),
+            chalk.red('Non Gstin Status match')
+        ).toBe('Non GSTIN Registered');
     }
 }
 
@@ -138,7 +154,7 @@ export class GstinBusinessManagedOnboarding extends BaseHelper {
         );
         expect(
             await VendorInfocard.isVisible(),
-            'Vendor Info card is not visible'
+            chalk.red('Vendor Info card visibility')
         ).toBe(true);
         if (await VendorInfocard.isVisible()) await VendorInfocard.click();
     }
@@ -146,7 +162,7 @@ export class GstinBusinessManagedOnboarding extends BaseHelper {
         const displayName = await this._page
             .locator('#display_name')
             .inputValue();
-        expect(displayName, 'Display name is not matching').toBe(
+        expect(displayName, chalk.red('Display name match')).toBe(
             vendorGstinInfo.trade_name
         );
     }
@@ -156,36 +172,63 @@ export class GstinBusinessManagedOnboarding extends BaseHelper {
             .locator('#display_name')
             .fill(this.vendorBusiness.displayName);
     }
+}
 
-    // async gstinVerification() {
-    //     //trade name verification
-    //     await expect(
-    //         this._page.locator('#gstin_trade_name'),
-    //         'Trade Name not Visible'
-    //     ).toBeVisible();
-    //     expect(
-    //         await this._page.locator('#gstin_trade_name').innerText(),
-    //         'Trade name does not matched'
-    //     ).toBe(this.gstinInfo.trade_name);
+export class WithoutGstinBusinessManagedOnboarding extends BaseHelper {
+    public vendorBusiness;
+    constructor(vendorBusiness, page) {
+        super(page);
+        this.vendorBusiness = vendorBusiness;
+    }
 
-    //     //gstin verification
-    //     await expect(
-    //         this._page.locator('#gstin_number'),
-    //         'Gstin number not Visible'
-    //     ).toBeVisible();
-    //     expect(
-    //         await this._page.locator('#gstin_number').innerText(),
-    //         'Gstin number does not matched'
-    //     ).toBe(this.gstinInfo.value);
+    public async clickAddVendor(linkName: string) {
+        const partyHover = this._page.getByText('Partiesarrow_drop_down');
+        const partyClick = this._page
+            .locator('a')
+            .filter({ hasText: linkName })
+            .nth(1);
+        await partyHover.hover();
+        await partyClick.click();
+        await this._page.waitForTimeout(2000);
+    }
 
-    //     //status verification
-    //     await expect(
-    //         this._page.locator('#gstin_status'),
-    //         'Gstin status is not Visible'
-    //     ).toBeVisible();
-    //     expect(
-    //         await this._page.locator('#gstin_status').innerText(),
-    //         'Gstin status does not matched'
-    //     ).toBe(this.gstinInfo.status);
-    // }
+    async selectClientTradeName() {
+        await this.selectOption({
+            input: this.vendorBusiness.businessName,
+            name: 'business_account_id',
+        });
+    }
+
+    public async addVendorAccount() {
+        await this.fillText(this.vendorBusiness.vendorBusiness, {
+            name: 'name',
+        });
+        await this.fillText(this.vendorBusiness.pinCode, { name: 'pincode' });
+        await this._page.waitForTimeout(1000);
+        await this.fillText(this.vendorBusiness.address, { name: 'address' });
+        await this.selectOption({
+            input: this.vendorBusiness.businessType,
+            placeholder: 'Search...',
+        });
+        await this.fillText(this.vendorBusiness.vendorEmail, { name: 'email' });
+        await this.fillText(this.vendorBusiness.vendorNumber, {
+            name: 'mobile',
+        });
+    }
+
+    async searchVendor() {
+        await this.fillText(this.vendorBusiness.vendorBusiness, {
+            placeholder: 'Search ( min: 3 characters )',
+        });
+        await this._page.waitForTimeout(2000);
+    }
+
+    async verifyVendorInList() {
+        const vendorLocator = await this._page
+            .locator("(//a[contains(@class,'cursor-pointer link')]//span)[1]")
+            .textContent();
+        expect(vendorLocator, chalk.red('Vendor match')).toBe(
+            this.vendorBusiness.vendorBusiness
+        );
+    }
 }

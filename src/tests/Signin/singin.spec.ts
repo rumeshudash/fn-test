@@ -1,6 +1,7 @@
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { expect, test } from '@playwright/test';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
+import chalk from 'chalk';
 
 test.describe('Signin', () => {
     test('without details', async ({ page }) => {
@@ -8,7 +9,8 @@ test.describe('Signin', () => {
         await signin.init();
         await signin.clickButton('Next →');
         await expect(
-            page.locator('//span[contains(@class, "label-text")]')
+            page.locator('//span[contains(@class, "label-text")]'),
+            chalk.red('Error Message check ')
         ).toHaveCount(1);
     });
 
@@ -17,7 +19,10 @@ test.describe('Signin', () => {
         await signin.init();
         await signin.isValidEmail('');
         // await signin.clickButton('Next →');
-        expect(await signin.errorMessage()).toBe('Email Address is required');
+        expect(
+            await signin.errorMessage(),
+            chalk.red('Error Message match ')
+        ).toBe('Email Address is required');
     });
     test('without Password Field', async ({ page }) => {
         const signin = new SignInHelper(page);
@@ -28,16 +33,20 @@ test.describe('Signin', () => {
             password: '',
         });
         // await signin.clickButton('Submit');
-        expect(await signin.errorMessage()).toBe('Password is required');
+        expect(
+            await signin.errorMessage(),
+            chalk.red('Error Message match ')
+        ).toBe('Password is required');
     });
     test('with invalid Email Field', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         await signin.isValidEmail('test');
         // await signin.clickButton('Next →');
-        expect(await signin.errorMessage()).toBe(
-            'Email Address must be a valid email'
-        );
+        expect(
+            await signin.errorMessage(),
+            chalk.red('Error Message match ')
+        ).toBe('Email Address must be a valid email');
     });
     test('with invalid username', async ({ page }) => {
         const signin = new SignInHelper(page);
@@ -48,7 +57,10 @@ test.describe('Signin', () => {
             password: '123456',
         });
         // await signin.clickButton('Submit');
-        expect(await signin.errorToast()).toBe(`Invalid username or password`);
+        expect(
+            await signin.errorToast(),
+            chalk.red('ToastMessage match ')
+        ).toBe(`Invalid username or password`);
     });
     test('with invalid password', async ({ page }) => {
         const signin = new SignInHelper(page);
@@ -59,9 +71,10 @@ test.describe('Signin', () => {
             password: '1234567aaaaashsjh',
         });
         // await signin.clickButton('Submit');
-        expect(await signin.errorMessage()).toBe(
-            `Invalid username or password..`
-        );
+        expect(
+            await signin.errorMessage(),
+            chalk.red('Error Message match ')
+        ).toBe(`Invalid username or password..`);
     });
     test('with maximum login attempts', async ({ page }) => {
         const signUp = new SignupHelper(page);
@@ -76,14 +89,10 @@ test.describe('Signin', () => {
         await signUp.clickButton('Next →');
 
         // const username = 'abcdef@gmail.com';
-
         const signin = new SignInHelper(page);
         await signin.init();
 
         await signin.maximumLoginAttempts(username);
-        // expect(await signin.errorMessage()).toBe(
-        //     `Account locked for too many invalid attempts. Please try after 5 minutes`
-        // );
 
         const checklogin = new SignInHelper(page);
         await checklogin.init();
@@ -93,7 +102,10 @@ test.describe('Signin', () => {
             password: '123456',
         });
 
-        expect(await signin.errorMessage()).toBe(
+        expect(
+            await signin.errorMessage(),
+            chalk.red('Error Message match ')
+        ).toBe(
             'Account locked for too many invalid attempts. Please try after 5 minutes'
         );
     });
@@ -129,9 +141,10 @@ test.describe('Signin', () => {
         const mobile = 12345;
         await signin.MobileNumber(mobile);
 
-        expect(await signin.errorMessage()).toBe(
-            'Mobile Number is not allowed'
-        );
+        expect(
+            await signin.errorMessage(),
+            chalk.red('Error Message match ')
+        ).toBe('Mobile Number is not allowed');
     });
     test('with valid phone number', async ({ page }) => {
         const signin = new SignInHelper(page);
@@ -139,7 +152,8 @@ test.describe('Signin', () => {
         const mobile = 9863627507;
         await signin.MobileNumber(mobile);
         await expect(
-            page.getByText('Mobile Number', { exact: true })
+            page.getByText('Mobile Number', { exact: true }),
+            chalk.red('Mobile number visibility')
         ).toBeVisible();
     });
 });
