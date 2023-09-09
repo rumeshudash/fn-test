@@ -147,3 +147,16 @@ export const employeeInfo = {
     IMAGE_NAME: 'pan-card.jpg',
     comments: 'Testing upload document comments',
 };
+
+//For Payment Modes in Configuration
+export const paymentMode_Save_And_Create = {
+    name: 'Test Payment SnC1',
+    type: 'Cheque',
+    bank: '111111',
+};
+export const paymentModeInfo = {
+    name: 'Test Payment0',
+    type: 'Cash',
+    bank: paymentMode_Save_And_Create.bank,
+    updateName: 'Test Mode Update',
+};
