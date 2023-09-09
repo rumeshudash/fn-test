@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
+import { IMAGE_NAME } from '@/utils/required_data';
 
 export class DesignationHelper extends BaseHelper {
     public designationInfo;
@@ -10,13 +11,6 @@ export class DesignationHelper extends BaseHelper {
     }
     async init() {
         await this.navigateTo('DESIGNATIONS');
-    }
-    async addDesignation() {
-        await this._page
-            .locator(
-                "//div[contains(@class,'flex-wrap justify-end')]//button[1]"
-            )
-            .click();
     }
 
     async verifyDialog() {
@@ -39,13 +33,6 @@ export class DesignationHelper extends BaseHelper {
         await this.fillText(this.designationInfo.name, { name: 'name' });
     }
 
-    async verifyEmptyField() {
-        const name_field = await this.locate('input', {
-            name: 'name',
-        })._locator.inputValue();
-        expect(name_field, chalk.red('Name field value')).toBe('');
-    }
-
     async searchDesignation() {
         await this.fillText(this.designationInfo.name, {
             placeholder: 'Search ( min: 3 characters )',
@@ -53,42 +40,53 @@ export class DesignationHelper extends BaseHelper {
         await this._page.waitForTimeout(2000);
     }
 
+    async parentTable() {
+        return this.locate(
+            `//a[text()="${this.designationInfo.name}"]/parent::div/parent::div`,
+            { exactText: true }
+        )._locator;
+    }
+
     async verifyItemInList() {
-        const designationList = this._page.getByRole('link', {
-            name: this.designationInfo.name,
-            exact: true,
-        });
-        const itemStatus = this._page
-            .getByRole('button', {
-                name: 'Active',
+        const parentTableLocator = await this.parentTable();
+        const designation_name = parentTableLocator.locator('//a');
+
+        const designation_status = parentTableLocator
+            .locator('//button', {
+                hasText: 'Active',
             })
             .first();
-        // .filter({ hasText: this.designationInfo.name });
-        const itemDate = this.locate(
-            '(//div[@class="table-cell align-middle"]/following-sibling::div)[2]'
-        )._locator;
-        const itemAction = this.locate(
-            '(//div[contains(@class,"icon-container transition-all")]//div)[1]'
-        );
-        expect(
-            await designationList.isVisible(),
+
+        const designation_date = parentTableLocator
+            .locator(
+                '//div[@class="table-cell align-middle"]/following-sibling::div'
+            )
+            .first();
+        const itemAction = parentTableLocator
+            .locator(
+                '//div[contains(@class,"icon-container transition-all")]//div'
+            )
+            .first();
+
+        await expect(
+            designation_name,
             chalk.red('Designation Name visibility')
-        ).toBe(true);
+        ).toBeVisible();
 
-        expect(
-            await itemStatus.isVisible(),
+        await expect(
+            designation_status,
             chalk.red('Designation Status visibility')
-        ).toBe(true);
+        ).toBeVisible();
 
-        expect(
-            await itemDate.isVisible(),
+        await expect(
+            designation_date,
             chalk.red('Designation date visibility')
-        ).toBe(true);
+        ).toBeVisible();
 
-        expect(
-            await itemAction.isVisible(),
+        await expect(
+            itemAction,
             chalk.red('Designation action visibility')
-        ).toBe(true);
+        ).toBeVisible();
     }
 
     async verifyDesignationPage() {
@@ -103,52 +101,31 @@ export class DesignationHelper extends BaseHelper {
             await designationListItem.textContent(),
             chalk.red('Designation Name match')
         ).toBe(this.designationInfo.name);
+
+        const identifier = this.locate('span', {
+            id: 'has-Identifier',
+        })._locator;
+        await expect(
+            identifier,
+            chalk.red('Identifier visibility')
+        ).toBeVisible();
     }
 
-    async clickDesignationList() {
-        const designationList = this._page.getByRole('link', {
-            name: this.designationInfo.name,
-            exact: true,
-        });
+    async clickDesignationName() {
+        await this.verifyItemInList();
+        const parentTableLocator = await this.parentTable();
+        const designationList = parentTableLocator.locator('//a');
+
         await designationList.click();
         await this._page.waitForTimeout(1000);
-    }
-
-    async changeStatus() {
-        // const parentLocator = this._page.locator('div', {
-        //     hasText: this.designationInfo.name,
-        // });
-        // console.log('parentLocator: ', parentLocator);
-        const itemStatus = this._page
-            .getByRole('button', {
-                name: 'Active',
-            })
-            .first();
-        // .filter({ hasText: this.designationInfo.name });
-
-        expect(
-            await itemStatus.isVisible(),
-            chalk.red('Designation button in list visibility')
-        ).toBe(true);
-        if (await itemStatus.isVisible()) await itemStatus.click();
-        await this.verifyChangeStatus();
-    }
-    async verifyChangeStatus() {
-        const itemStatus = this._page
-            .getByRole('button', {
-                name: 'Inactive',
-            })
-            .first();
-        expect(
-            await itemStatus.isVisible(),
-            chalk.red('Designation status visibility')
-        );
     }
 
     async changeTab(tabName: string) {
         await this._page
             .getByRole('tab', { name: tabName, exact: true })
             .click();
+
+        await this._page.waitForTimeout(2000);
     }
 
     async clickAction() {
@@ -157,15 +134,249 @@ export class DesignationHelper extends BaseHelper {
         );
         await itemAction.click();
     }
+}
 
-    // async updateNameField() {
-    //     await this.verifyNameField();
-    //     await this.fillText(this.designationInfo.updateName, { name: 'name' });
-    // }
-    // async searchUpdatedDesignation() {
-    //     await this.fillText(this.designationInfo.updateName, {
-    //         placeholder: 'Search ( min: 3 characters )',
-    //     });
-    //     await this._page.waitForTimeout(2000);
+export class CreateDesignationHelper extends BaseHelper {
+    public designationInfo;
+    constructor(designationInfo, page) {
+        super(page);
+        this.designationInfo = designationInfo;
+    }
+    async addDesignation() {
+        await this._page
+            .locator(
+                "//div[contains(@class,'flex-wrap justify-end')]//button[1]"
+            )
+            .click();
+    }
+
+    async verifyEmptyField() {
+        const name_field = await this.locate('input', {
+            name: 'name',
+        })._locator.inputValue();
+        expect(name_field, chalk.red('Name field value')).toBe('');
+    }
+
+    async changeStatus(status: string) {
+        const itemStatus = this._page
+            .getByRole('button', {
+                name: status,
+            })
+            .first();
+
+        expect(
+            await itemStatus.isVisible(),
+            chalk.red('Designation button in list visibility')
+        ).toBe(true);
+        if (await itemStatus.isVisible()) await itemStatus.click();
+        await this.verifyChangeStatus(status);
+    }
+    async verifyChangeStatus(status: string) {
+        const itemStatus = this._page
+            .getByRole('button', {
+                name: status,
+            })
+            .first();
+        expect(
+            await itemStatus.isVisible(),
+            chalk.red('Designation status visibility')
+        );
+    }
+}
+
+export class DesignationDetailsPageHelper extends BaseHelper {
+    public employeeInfo;
+    constructor(employeeInfo, page) {
+        super(page);
+        this.employeeInfo = employeeInfo;
+    }
+
+    async optionsParentLocator() {
+        return this._page.locator(
+            '//div[contains(@class,"breadcrumbs")]/parent::div'
+        );
+    }
+    async verifyOptions() {
+        const parentLocator = await this.optionsParentLocator();
+        await expect(
+            parentLocator.locator('.breadcrumbs'),
+            chalk.red('breadcrumbs visibility')
+        ).toBeVisible();
+
+        const editIconButton = parentLocator.locator('//button[1]');
+        await expect(
+            editIconButton,
+            chalk.red('Action button visibility')
+        ).toBeVisible();
+
+        const actionButton = parentLocator.locator(
+            '//button[text()="Actions"]'
+        );
+        await expect(
+            actionButton,
+            chalk.red('Action Button Visibility')
+        ).toBeVisible();
+    }
+
+    async clickEditIcon() {
+        const parentLocator = await this.optionsParentLocator();
+        const edit_button = parentLocator.locator('//button[1]');
+        if (await edit_button.isVisible()) await edit_button.click();
+    }
+
+    async clickActionButton() {
+        const parentLocator = await this.optionsParentLocator();
+        const actionButton = parentLocator.locator(
+            '//button[text()="Actions"]'
+        );
+        await actionButton.click();
+    }
+
+    async verifyActionOptions(options: string) {
+        const optionContainer = this.locate('div', { role: 'menu' })._locator;
+
+        const verifyOption = optionContainer.getByRole('menuitem', {
+            name: options,
+        });
+        await expect(verifyOption, `${options} visibility`).toBeVisible();
+    }
+
+    async clickActionOption(options: string) {
+        const optionContainer = this.locate('div', { role: 'menu' })._locator;
+        await optionContainer.getByRole('menuitem', { name: options }).click();
+    }
+
+    async verifyAddEmployeeForm(fieldName) {
+        await this._page.waitForTimeout(2000);
+        const parentLocator = this._page.locator(
+            `//div[@role="dialog"]//span[text()="${fieldName}"]/parent::label/parent::div`
+        );
+        await expect(
+            parentLocator,
+            chalk.red(`Dialog ${fieldName} visibility`)
+        ).toBeVisible();
+    }
+
+    async fillEmployeeForm() {
+        await this.fillText(this.employeeInfo.name, {
+            name: 'name',
+        });
+        await this.fillText(this.employeeInfo.email, {
+            name: 'email',
+        });
+        await this.fillText(this.employeeInfo.employee_code, {
+            name: 'identifier',
+        });
+        await this.selectOption({
+            input: this.employeeInfo.department,
+            placeholder: 'Select  Department',
+        });
+        await this.selectOption({
+            input: this.employeeInfo.grade,
+            placeholder: 'Select Grade',
+        });
+        await this.selectOption({
+            input: this.employeeInfo.reporting_manager,
+            placeholder: 'Select Manager',
+            exact: true,
+        });
+        // await this.selectOption({
+        //     input: this.employeeInfo.approval_mananger,
+        //     placeholder: 'Select approval Manager',
+        //     exact: true,
+        // });
+    }
+
+    async verifyEmployeeTabDetails() {
+        // await this.click({ role: 'button', text: 'Employee' });
+        await this.locate('//button[text()="Employee"]')._locator.click();
+        const parentHelper = this.locate(
+            `//a[text()="${this.employeeInfo.employee_code}"]/parent::div/parent::div`
+        )._locator;
+
+        const employee_name = parentHelper.locator(
+            `//p[text()="${this.employeeInfo.name}"]`
+        );
+        const employee_email = parentHelper.locator(
+            `//p[text()="${this.employeeInfo.email}"]`
+        );
+        const employee_department = parentHelper.locator(
+            `//a[text()="${this.employeeInfo.department}"]`
+        );
+
+        await expect(
+            employee_name,
+            chalk.red('Employee Name match check')
+        ).toBeVisible();
+        await expect(
+            employee_email,
+            chalk.red('Employee Email match check')
+        ).toBeVisible();
+        await expect(
+            employee_department,
+            chalk.red('Employee Department match check')
+        ).toBeVisible();
+    }
+
+    async addNotes() {
+        await this.fillText(this.employeeInfo.notes, { id: 'comments' });
+    }
+
+    async verifyNotesTabDetails() {
+        // await this.click({ role: 'button', text: 'Notes' });
+        await this.locate('//button[text()="Notes"]')._locator.click();
+        const parentHelper = this.locate(
+            `//div[text()="${this.employeeInfo.notes}"]/parent::div/parent::div`
+        )._locator;
+        const notes_authur = parentHelper.locator('//p[1]').first();
+        const notes_added_date = parentHelper.locator('//p[2]').first();
+
+        await expect(
+            notes_authur,
+            chalk.red('Notes Authur visibility')
+        ).toBeVisible();
+
+        await expect(
+            notes_added_date,
+            chalk.red('Notes Added Date visibility')
+        ).toBeVisible();
+    }
+
+    async uploadDocuments() {
+        await this._page.setInputFiles(
+            "//input[@type='file']",
+            `./images/${this.employeeInfo.IMAGE_NAME}`
+        );
+        await this.fillText(this.employeeInfo.comments, { id: 'comments' });
+
+        await this.click({ role: 'button', text: 'Save' });
+        await this.click({ role: 'button', text: 'Save' });
+    }
+
+    async verifyDocumentsTabDetails() {
+        // await this.click({ role: 'button', text: 'Documents' });
+        await this.locate('//button[text()="Documents"]')._locator.click();
+        const parentHelper = this.locate(
+            '//div[text()="Documents"]/parent::div/parent::div'
+        )._locator;
+
+        const imageName = parentHelper.locator(
+            `//div[text()="${this.employeeInfo.IMAGE_NAME}"]`
+        );
+
+        await expect(
+            imageName,
+            chalk.red('Image Name check visibility')
+        ).toBeVisible();
+    }
+
+    // async verifyEmployeeTab() {
+    //     const parentIdentifierLocator = this._page.locator(
+    //         `//a[text()="${this.employeeInfo.employee_code}"]/parent::div/parent::div`
+    //     );
+
+    //     const locateName = parentIdentifierLocator.locator('//p');
+    //     const locateDepartment = parentIdentifierLocator.locator('');
+    //     const locateEmail = parentIdentifierLocator.locator('');
     // }
 }

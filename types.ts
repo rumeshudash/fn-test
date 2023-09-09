@@ -9,6 +9,14 @@ interface LocatorOptions {
     exactText?: boolean;
 }
 
+interface InputFieldLocatorOptions {
+    selector?: string;
+    placeholder?: string;
+    label?: string;
+    name?: string;
+    hasText?: string;
+}
+
 type LocatorRoles =
     | 'alert'
     | 'alertdialog'
@@ -204,4 +212,10 @@ interface EmployeeCreationData {
     identifier?: string;
     manager?: string;
     parent?: string;
+}
+
+interface UserGroupData {
+    name?: string;
+    manager?: string;
+    description?: string;
 }

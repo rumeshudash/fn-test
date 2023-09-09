@@ -54,12 +54,43 @@ export class GradesHelper extends BaseHelper {
     }
 
     public async EditGrdaes(name: string, newname: string, priority: number) {
-        async function performAction(element: any) {
-            await element.click();
+        const table = this._page.locator(
+            '//div[contains(@class,"table finnoto__table__container ")]'
+        );
+        const rows = table.locator('//div[contains(@class,"table-row")]');
+        for (let i = 0; i < (await rows.count()); i++) {
+            const row = rows.nth(i);
+            const tds = row.locator('//div[contains(@class,"table-cell")]');
+            for (let j = 0; j < (await tds.count()); j++) {
+                const cell = await tds.nth(j).innerText();
+                if (cell === name) {
+                    const Button = tds
+                        .nth(4)
+                        .locator('//div[contains(@class,"flex items-center")]')
+                        .locator('//button');
+                    await Button.click();
+                    if (newname !== undefined) {
+                        await this.fillText(newname, {
+                            name: 'name',
+                        });
+                    }
+                    if (priority !== null) {
+                        await this.fillText(priority, {
+                            name: 'priority',
+                        });
+                    }
+
+                    await this.click({ role: 'button', name: 'save' });
+
+                    break;
+                }
+            }
         }
 
         const btnlocator = '//button';
-
+        async function performAction(element: any) {
+            await element.click();
+        }
         await this.FindrowAndperformAction(name, 4, btnlocator, performAction);
         if (newname !== undefined) {
             await this.fillText(newname, {

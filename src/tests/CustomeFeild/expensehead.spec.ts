@@ -280,9 +280,9 @@ test.describe('CustomeFeild', () => {
 
         await customefeild.CheckEdit();
 
-        await expect(page.getByText('Edit Expense Custom Field')).toHaveCount(
-            1
-        );
+        await expect(
+            page.getByText('Edit Expense Head Custom Field')
+        ).toHaveCount(1);
     });
     test('Change Name and Priority', async ({ page }) => {
         const signin = new SignInHelper(page);

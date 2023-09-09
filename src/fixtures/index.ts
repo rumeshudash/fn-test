@@ -34,6 +34,7 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
                     await helper.click({ text: orgName });
                 }
 
+                // await helper.click({ selector: '#org-1' });
                 await helper.click({ text: 'FinOps Portal' });
                 await page.waitForTimeout(1000);
 
