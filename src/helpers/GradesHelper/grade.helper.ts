@@ -73,7 +73,4 @@ export class GradesHelper extends BaseHelper {
         }
         await this.click({ role: 'button', name: 'save' });
     }
-    static async generateRandomGradeName() {
-        return `Grade${Math.floor(Math.random() * 1000000)}`;
-    }
 }

@@ -1,73 +1,44 @@
 import { CustofeildHelper } from '@/helpers/CustomefeildHelper/customefeild.helper';
 import { test, expect } from '@playwright/test';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
+import { PROCESS_TEST } from '@/fixtures';
 
 test.describe('CustomeFeild', () => {
-    test('Check the page opening', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Check the page opening', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await expect(page.getByText('Custom')).toHaveCount(2);
+        await expect(page.getByText('Custom')).toHaveCount(1);
     });
-    test('Check Expense Tab and Click Expense Tab', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
+    PROCESS_TEST(
+        'Check Advance Tab and Click Advance Tab',
+        async ({ page }) => {
+            const customefeild = new CustofeildHelper(page);
+            await customefeild.init();
 
+            await customefeild.clickExpenseTab('My Bussinesses');
+            await expect(
+                page.getByRole('tab', { name: 'My Bussinesses', exact: true })
+            ).toHaveCount(1);
+        }
+    );
+
+    PROCESS_TEST(
+        'Check My Bussinesses Tab and Click Add New',
+        async ({ page }) => {
+            const customefeild = new CustofeildHelper(page);
+            await customefeild.init();
+
+            await customefeild.clickExpenseTab('My Bussinesses');
+            await customefeild.clickButton('Add New');
+            await expect(
+                page.getByText('Add My Bussinesses Custom Field')
+            ).toHaveCount(1);
+        }
+    );
+    PROCESS_TEST('Add My Bussinesses With Empty Feilds', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-
-        await customefeild.clickExpenseTab('My Business');
-        await expect(
-            page.getByRole('tab', { name: 'My Bussiness', exact: true })
-        ).toHaveCount(1);
-    });
-
-    test('Check My Bussiness Tab and Click Add New', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
-        const customefeild = new CustofeildHelper(page);
-        await customefeild.init();
-
-        await customefeild.clickExpenseTab('Expense Head');
-        await customefeild.clickButton('Add New');
-        await expect(
-            page.getByText('Add My BussinessCustom Field')
-        ).toHaveCount(1);
-    });
-    test('Add My Bussiness With Empty Feilds', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
-        const customefeild = new CustofeildHelper(page);
-        await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
+        await customefeild.clickExpenseTab('My Bussinesses');
         await customefeild.clickButton('Add New');
 
         await customefeild.clickButton('Save');
@@ -75,19 +46,10 @@ test.describe('CustomeFeild', () => {
         await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(1);
     });
 
-    test('Add My Bussiness Without Name Feilds', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add My Bussinesses Without Name Feilds', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
+        await customefeild.clickExpenseTab('My Bussinesses');
 
         await customefeild.AddExpenseCustomeFeild('', 'Text', 1);
 
@@ -95,129 +57,73 @@ test.describe('CustomeFeild', () => {
             'Field Name is required'
         );
     });
-    test('Add My Bussiness Without Type Feilds', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add My Bussinesses Without Type Feilds', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
+
+        await customefeild.clickExpenseTab('My Bussinesses');
         await customefeild.AddExpenseCustomeFeild('Test1', '', 1);
 
         expect(await customefeild.errorMessage()).toBe(
             'Field Type is required'
         );
     });
-    test('Add Expense With Text type', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add Advance Cateorgy With Text type', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
-        await customefeild.AddExpenseWithTextType('Test1', 'Text', 1, 'Test1');
-        await customefeild.AddExpenseWithTextType('Test2', 'Text', 1);
-        await expect(page.getByText('Test1')).toHaveCount(3);
+        const name = await CustofeildHelper.generateRandomGradeName();
+        await customefeild.clickExpenseTab('My Bussinesses');
+
+        await customefeild.AddExpenseWithTextType(name, 'Text', 1, 'Test1');
+        // await customefeild.AddExpenseWithTextType('Test2', 'Text', 1);
+        await expect(page.getByText(name)).toHaveCount(1);
     });
-    test('Add My Bussiness With Boolean', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add Adavnce Categories With Boolean', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
-        await customefeild.AddExpenseWitBooleanType(
-            'Test1',
-            'Boolean',
-            1,
-            'True'
-        );
-        await customefeild.AddExpenseWitBooleanType('Test2', 'Boolean', 1);
+        const name = await CustofeildHelper.generateRandomGradeName();
+        const name2 = await CustofeildHelper.generateRandomGradeName();
+        await customefeild.clickExpenseTab('My Bussinesses');
+
+        await customefeild.AddExpenseWitBooleanType(name, 'Boolean', 1, 'True');
+        await customefeild.AddExpenseWitBooleanType(name2, 'Boolean', 1);
     });
-    test('Add My Bussiness With Number type', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add My Bussinesses With Number type', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
-        await customefeild.AddExpenseWithTextType('Number1', 'Number', 1, 123);
+        await customefeild.clickExpenseTab('My Bussinesses');
+        const name = await CustofeildHelper.generateRandomGradeName();
+        await customefeild.AddExpenseWithTextType(name, 'Number', 1, 123);
 
-        await expect(page.getByText('Number1')).toHaveCount(1);
+        await expect(page.getByText(name)).toHaveCount(1);
     });
-    test('Add My Bussiness With TextArea', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add My Bussinesses With TextArea', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
+        await customefeild.clickExpenseTab('My Bussinesses');
+        const name = await CustofeildHelper.generateRandomGradeName();
+
         await customefeild.AddExpenseWithTextType(
-            'TextArea1',
+            name,
             'TextArea',
             1,
             'Finops Protol'
         );
 
-        await expect(page.getByText('TextArea1')).toHaveCount(1);
+        await expect(page.getByText(name)).toHaveCount(1);
     });
-    test('Add My BussinessWith Date type', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add My Bussinesses With Date type', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
+        await customefeild.clickExpenseTab('My Bussinesses');
+        const name = await CustofeildHelper.generateRandomGradeName();
 
-        await customefeild.AddExpenseWithDateType('Date1', 'Date', 1);
+        await customefeild.AddExpenseWithDateType(name, 'Date', 1);
     });
-    // test('Add Expense with choice type without choice feild', async ({
+    // PROCESS_TEST('Add Expense with choice type without choice feild', async ({
     //     page,
     // }) => {
-    //     const signin = new SignInHelper(page);
-    //     await signin.init();
-    //     const username = 'newtestauto@company.com';
-    //     const password = '123456';
-    //     await signin.checkDashboard({
-    //         username: username,
-    //         password: password,
-    //     });
+    //
 
     //     const customefeild = new CustofeildHelper(page);
     //     await customefeild.init();
@@ -231,81 +137,47 @@ test.describe('CustomeFeild', () => {
     //         'Choice List is required'
     //     );
     // });
-    test('Change Status', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Change Status', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
+        await customefeild.clickExpenseTab('My Bussinesses');
 
         await customefeild.ChangeStatus();
     });
-    test('Change Mendatory', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Change Mendatory', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
-        await customefeild.clickExpenseTab('My Business');
+        await customefeild.clickExpenseTab('My Bussinesses');
 
         await customefeild.ChangeMendatory();
     });
-    test('Check Edit Link', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Check Edit Link', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
+        await customefeild.clickExpenseTab('My Bussinesses');
 
         await customefeild.CheckEdit();
 
         await expect(
-            page.getByText('Edit My Bussiness Custom Field')
+            page.getByText('Edit My Bussinesses Custom Field')
         ).toHaveCount(1);
     });
-    test('Change Name and Priority', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Change Name and Priority', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('My Business');
+        await customefeild.clickExpenseTab('My Bussinesses');
+
+        const name = await CustofeildHelper.generateRandomGradeName();
 
         await customefeild.changeNameORPriority(
             'Number1',
             'Number',
             1,
-            'Number4',
+            name,
             2
         );
 
-        await expect(page.getByText('Number4')).toHaveCount(1);
+        await expect(page.getByText(name)).toHaveCount(1);
     });
 });

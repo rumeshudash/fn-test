@@ -722,4 +722,12 @@ export class BaseHelper {
             }
         }
     }
+    /**
+     * This Function will returns Random Name for testing purpose.
+     * @return {string} -returns the Random Name for testing purpose.
+     *
+     */
+    static async generateRandomGradeName() {
+        return `Test${Math.floor(Math.random() * 1000000)}`;
+    }
 }

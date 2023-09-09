@@ -16,12 +16,12 @@ export class ExpenseHeadHelper extends BaseHelper {
         await this.fillText(name, {
             name: 'name',
         });
-        // if(parent){
-        //     await this.selectOption({
-        //         option: parent,
-        //         hasText: 'Select Parent',
-        //     });
-        // }
+        if (parent) {
+            await this.selectOption({
+                option: parent,
+                hasText: 'Select a Parent',
+            });
+        }
         // if(manager){
         //     await this.selectOption({
         //         option: manager,
@@ -34,6 +34,7 @@ export class ExpenseHeadHelper extends BaseHelper {
         //         hasText: 'Select ABC',
         //     });
         // }
+        await this._page.waitForTimeout(1000);
         await this.click({ role: 'button', name: 'save' });
     }
 }

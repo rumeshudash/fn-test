@@ -1,107 +1,71 @@
 import { ResetPasswordHelper } from '@/helpers/SigninHelper/resetpassword.helper';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { test, expect } from '@playwright/test';
+import { PROCESS_TEST } from '@/fixtures';
 
 test.describe('Reset Password', () => {
-    test('Reset Password page is open', async ({ page }) => {
-        const signIn = new SignInHelper(page);
-        await signIn.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signIn.checkDashboard({
-            username: username,
-            password: password,
-        });
+    PROCESS_TEST('Reset Password page is open', async ({ page }) => {
         const resetPassword = new ResetPasswordHelper(page);
         await resetPassword.init();
         await resetPassword.resetPasswordPage();
 
         await expect(page.getByText('Change Password')).toHaveCount(1);
     });
-    test('Reset Password with empty password', async ({ page }) => {
-        const signIn = new SignInHelper(page);
-        await signIn.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signIn.checkDashboard({
-            username: username,
-            password: password,
-        });
+    PROCESS_TEST('Reset Password with empty password', async ({ page }) => {
         const resetPassword = new ResetPasswordHelper(page);
         await resetPassword.init();
 
         await resetPassword.resetPassword('', '1234567', '1234567');
-        expect(await signIn.errorMessage()).toBe('Old Password is required');
-    });
-    test('Reset Password with Incorrect  new password', async ({ page }) => {
-        const signIn = new SignInHelper(page);
-        await signIn.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signIn.checkDashboard({
-            username: username,
-            password: password,
-        });
-        const resetPassword = new ResetPasswordHelper(page);
-        await resetPassword.init();
-
-        await resetPassword.resetPassword('1234544', '12', '12345678');
-
-        expect(await signIn.errorMessage()).toBe(
-            'Confirm New Password does not match'
+        expect(await resetPassword.errorMessage()).toBe(
+            'Old Password is required'
         );
     });
-    test('Reset Password with Without confirm password', async ({ page }) => {
-        const signIn = new SignInHelper(page);
-        await signIn.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signIn.checkDashboard({
-            username: username,
-            password: password,
-        });
-        const resetPassword = new ResetPasswordHelper(page);
-        await resetPassword.init();
-        await resetPassword.resetPassword('1234544', '121234544', '');
+    PROCESS_TEST(
+        'Reset Password with Incorrect  new password',
+        async ({ page }) => {
+            const resetPassword = new ResetPasswordHelper(page);
+            await resetPassword.init();
 
-        expect(await signIn.errorMessage()).toBe(
-            'Confirm New Password is required'
-        );
-    });
-    test('Reset Password with same old and  new password', async ({ page }) => {
-        const signIn = new SignInHelper(page);
-        await signIn.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signIn.checkDashboard({
-            username: username,
-            password: password,
-        });
-        const resetPassword = new ResetPasswordHelper(page);
-        await resetPassword.init();
-        await resetPassword.resetPassword('1234544', '1234544', '1234544');
+            await resetPassword.resetPassword('1234544', '12', '12345678');
 
-        expect(await signIn.errorMessage()).toBe(
-            "Your old password can't be same as your New password"
-        );
-    });
-    test('test with valid old password and  valid new password', async ({
-        page,
-    }) => {
-        const signIn = new SignInHelper(page);
-        await signIn.init();
-        const username = 'newtestauto@company.com';
+            expect(await resetPassword.errorMessage()).toBe(
+                'Confirm New Password does not match'
+            );
+        }
+    );
+    PROCESS_TEST(
+        'Reset Password with Without confirm password',
+        async ({ page }) => {
+            const resetPassword = new ResetPasswordHelper(page);
+            await resetPassword.init();
+            await resetPassword.resetPassword('1234544', '121234544', '');
 
-        const password = '123456';
-        await signIn.checkDashboard({
-            username: username,
-            password: password,
-        });
-        const resetPassword = new ResetPasswordHelper(page);
-        await resetPassword.init();
-        await resetPassword.resetPassword('123456', '1234567', '1234567');
-        expect(await resetPassword.successToast()).toBe(
-            'Successfully changed password'
-        );
-    });
+            expect(await resetPassword.errorMessage()).toBe(
+                'Confirm New Password is required'
+            );
+        }
+    );
+    PROCESS_TEST(
+        'Reset Password with same old and  new password',
+        async ({ page }) => {
+            const resetPassword = new ResetPasswordHelper(page);
+            await resetPassword.init();
+            await resetPassword.resetPassword('1234544', '1234544', '1234544');
+
+            expect(await resetPassword.errorMessage()).toBe(
+                "Your old password can't be same as your New password"
+            );
+        }
+    );
+    PROCESS_TEST(
+        'PROCESS_TEST with valid old password and  valid new password',
+        async ({ page }) => {
+            const resetPassword = new ResetPasswordHelper(page);
+            await resetPassword.init();
+            await resetPassword.resetPassword('123456', '1234567', '1234567');
+            expect(await resetPassword.successToast()).toBe(
+                'Successfully changed password'
+            );
+        }
+    );
 });
