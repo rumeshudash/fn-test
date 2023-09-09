@@ -35,7 +35,7 @@ describe('TWE001', () => {
         );
 
         await PROCESS_TEST.step('Open Approval Creation', async () => {
-            await helper.openApprovalCreationForm('Verifications');
+            await creationHelper.openApprovalCreationForm('Verifications');
         });
 
         await PROCESS_TEST.step('Verify New Approval form Opened', async () => {

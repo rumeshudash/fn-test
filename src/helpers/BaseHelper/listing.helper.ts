@@ -1,19 +1,17 @@
-import { BaseHelper } from '@/baseHelper';
-import { TabHelper } from './tab.helper';
 import { Page } from '@playwright/test';
-import { BreadCrumbHelper } from './breadCrumb.helper';
+import { PageHelper } from './page.helper';
+import { TabHelper } from './tab.helper';
 
-export class ListingHelper extends BaseHelper {
+export class ListingHelper extends PageHelper {
     public tabHelper: TabHelper;
-    public breadcrumbHelper: BreadCrumbHelper;
 
     public constructor(page: Page) {
         super(page);
         this.tabHelper = new TabHelper(page);
-        this.breadcrumbHelper = new BreadCrumbHelper(page);
     }
 
-    public async checkPageTitle(title: string) {
-        await this.breadcrumbHelper.checkBreadCrumbTitle(title);
+    public async searchInList(query: string | number) {
+        await this.fillInput(query, { type: 'search' });
+        await this._page.waitForLoadState('networkidle');
     }
 }

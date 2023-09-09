@@ -1,16 +1,16 @@
 import { ForgotPasswordHelper } from '@/helpers/SigninHelper/forgotpassword.helper';
 import { expect, test } from '@playwright/test';
 import chalk from 'chalk';
+
 test.describe('Forgot Password', () => {
     test('without details', async ({ page }) => {
         const forgotpassword = new ForgotPasswordHelper(page);
         await forgotpassword.init();
-        await forgotpassword.clickButton('Next →');
+        await forgotpassword.click({ role: 'button', name: 'Next →' });
 
-        await expect(
-            page.locator('//span[contains(@class, "label-text")]'),
-            chalk.red('Error Message count check')
-        ).toHaveCount(1);
+        await forgotpassword.checkIsInputHasError('Invalid Email Address', {
+            name: 'email',
+        });
     });
     test('without Email Field', async ({ page }) => {
         const forgotpassword = new ForgotPasswordHelper(page);

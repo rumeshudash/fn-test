@@ -67,6 +67,10 @@ export class BaseHelper {
             this._tempSelector += `[name='${options.name}']`;
         }
 
+        if (options.type) {
+            this._tempSelector += `[type='${options.type}']`;
+        }
+
         this._locator = this._page.locator(this._tempSelector);
 
         if (options.role) {
@@ -200,9 +204,10 @@ export class BaseHelper {
         const { selector, ...rest } = options || {};
         if (options && Object.keys(options).length) this.locate(selector, rest);
 
-        expect(this._locator, {
-            message: `Checking ${this._tempSelector} does exist!!`,
-        }).toBeVisible();
+        expect(
+            this._locator,
+            `Checking ${this._tempSelector} does exist!!`
+        ).toBeVisible();
 
         Logger.info(`Fill: ${text} in ${this._getSelector(options)}`);
         await this._locator.fill(text + '');
@@ -224,13 +229,15 @@ export class BaseHelper {
         text: string | number,
         options?: InputFieldLocatorOptions
     ) {
-        const { selector, placeholder, name, label, hasText } = options || {};
+        const { selector, placeholder, name, label, type, hasText } =
+            options || {};
         if (options && Object.keys(options).length) {
             await this.fillText(text + '', {
                 selector: selector || 'input',
                 placeholder,
                 name,
                 label,
+                type,
             });
             return;
         }
@@ -764,6 +771,7 @@ export class BaseHelper {
     public static generateRandomPassword() {
         return `test-${uuidV4()}`;
     }
+
     /**
      * This function error the error message contains in toast.
      *
