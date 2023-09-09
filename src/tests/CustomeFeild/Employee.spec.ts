@@ -22,13 +22,15 @@ test.describe('CustomeFeild', () => {
         }
     );
 
-    PROCESS_TEST('Check EmployeeTab and Click Add New', async ({ page }) => {
+    PROCESS_TEST('Check Employee Tab and Click Add New', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
         await customefeild.clickExpenseTab('Employee');
         await customefeild.clickButton('Add New');
-        await expect(page.getByText('Add EmployeeCustom Field')).toHaveCount(1);
+        await expect(page.getByText('Add Employee Custom Field')).toHaveCount(
+            1
+        );
     });
     PROCESS_TEST('Add EmployeeWith Empty Feilds', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
@@ -154,7 +156,7 @@ test.describe('CustomeFeild', () => {
 
         await customefeild.CheckEdit();
 
-        await expect(page.getByText('Edit EmployeeCustom Field')).toHaveCount(
+        await expect(page.getByText('Edit Employee Custom Field')).toHaveCount(
             1
         );
     });

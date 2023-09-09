@@ -156,7 +156,7 @@ export class CustofeildHelper extends BaseHelper {
         const btnlocator = '//button';
 
         await this.FindrowAndperformAction(
-            'Number1',
+            'Number2',
             6,
             btnlocator,
             performAction
@@ -165,7 +165,7 @@ export class CustofeildHelper extends BaseHelper {
 
     public async CheckEdit() {
         await this.FindrowAndperformAction(
-            'Number1',
+            'Number2',
             7,
             '//button',
             async (element: any) => {
@@ -184,9 +184,9 @@ export class CustofeildHelper extends BaseHelper {
     ) {
         await this.CheckEdit();
 
-        await this._page.getByText(`${name}`);
-        await this._page.getByText(`${type}`);
-        await this._page.getByText(`${priority}`);
+        // await this._page.getByText(`${name}`);
+        // await this._page.getByText(`${type}`);
+        // await this._page.getByText(`${priority}`);
 
         if (newname) {
             await this.fillText(newname, {

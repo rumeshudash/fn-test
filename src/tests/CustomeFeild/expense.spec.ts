@@ -28,7 +28,7 @@ test.describe('CustomeFeild', () => {
 
         await customefeild.clickExpenseTab('Expense');
         await customefeild.clickButton('Add New');
-        await expect(page.getByText('Add ExpenseCustom Field')).toHaveCount(1);
+        await expect(page.getByText('Add Expense Custom Field')).toHaveCount(1);
     });
     PROCESS_TEST('Add ExpenseWith Empty Feilds', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
@@ -154,7 +154,9 @@ test.describe('CustomeFeild', () => {
 
         await customefeild.CheckEdit();
 
-        await expect(page.getByText('Edit ExpenseCustom Field')).toHaveCount(1);
+        await expect(page.getByText('Edit Expense Custom Field')).toHaveCount(
+            1
+        );
     });
     PROCESS_TEST('Change Name and Priority', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
