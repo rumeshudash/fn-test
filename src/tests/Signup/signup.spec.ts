@@ -2,6 +2,7 @@ import { CreateBusinessHelper } from '@/helpers/SignupHelper/createBusiness.help
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import { expect, test } from '@playwright/test';
+import chalk from 'chalk';
 
 test.describe('Signup', () => {
     test('without details', async ({ page }) => {
@@ -9,7 +10,8 @@ test.describe('Signup', () => {
         await signup.init();
         await signup.clickButton('Next →');
         await expect(
-            page.locator('//span[contains(@class, "label-text")]')
+            page.locator('//span[contains(@class, "label-text")]'),
+            chalk.red('Error Message count')
         ).toHaveCount(4);
     });
 
@@ -23,7 +25,9 @@ test.describe('Signup', () => {
             confirm_password: '123456',
         });
         await signup.clickButton('Next →');
-        expect(await signup.errorMessage()).toBe('Name is required');
+        expect(await signup.errorMessage(), chalk.red('Name field match')).toBe(
+            'Name is required'
+        );
     });
 
     test('without Email Field', async ({ page }) => {
@@ -36,7 +40,10 @@ test.describe('Signup', () => {
             confirm_password: '123456',
         });
         await signup.clickButton('Next →');
-        expect(await signup.errorMessage()).toBe('Email is required');
+        expect(
+            await signup.errorMessage(),
+            chalk.red('Email field match')
+        ).toBe('Email is required');
     });
 
     test('without Password Field', async ({ page }) => {
@@ -49,7 +56,10 @@ test.describe('Signup', () => {
             confirm_password: '123456',
         });
         await page.waitForTimeout(2000);
-        expect(await signup.errorMessage()).toBe('Password is required');
+        expect(
+            await signup.errorMessage(),
+            chalk.red('Password field match')
+        ).toBe('Password is required');
     });
 
     test('without Confirm Password Field', async ({ page }) => {
@@ -62,9 +72,10 @@ test.describe('Signup', () => {
             confirm_password: '',
         });
         await signup.clickButton('Next →');
-        expect(await signup.errorMessage()).toBe(
-            'Confirm Password is required'
-        );
+        expect(
+            await signup.errorMessage(),
+            chalk.red('Confirm Password match')
+        ).toBe('Confirm Password is required');
     });
 
     test('terms and condition check', async ({ page }) => {
@@ -76,7 +87,10 @@ test.describe('Signup', () => {
             password: '123456',
             confirm_password: '123456',
         });
-        expect(await signup.isPolicyChecked()).toBeChecked();
+        expect(
+            await signup.isPolicyChecked(),
+            chalk.red('Checkbox state check')
+        ).toBeChecked();
         await signup.clickButton('Next →');
     });
 
@@ -90,7 +104,10 @@ test.describe('Signup', () => {
             confirm_password: '123456',
         });
         await signup.clickPolicy();
-        expect(await signup.isPolicyChecked()).not.toBeChecked();
+        expect(
+            await signup.isPolicyChecked(),
+            chalk.red('Checkbox state check')
+        ).not.toBeChecked();
         await page.waitForTimeout(1000);
     });
 
@@ -106,7 +123,8 @@ test.describe('Signup', () => {
         });
         await signup.clickButton('Next →');
         await expect(
-            page.getByText('Verify Your Email', { exact: true })
+            page.getByText('Verify Your Email', { exact: true }),
+            chalk.red('Verify Email page visibility')
         ).toBeVisible();
     });
 
@@ -126,7 +144,10 @@ test.describe('Signup', () => {
 
         await test.step('without OTP', async () => {
             await verifyEmail.clickButton('Verify →');
-            expect(await verifyEmail.toastMessage()).toBe('Invalid code!');
+            expect(
+                await verifyEmail.toastMessage(),
+                chalk.red('ToastMessage match')
+            ).toBe('Invalid code!');
         });
 
         await test.step('with valid OTP', async () => {
@@ -141,7 +162,9 @@ test.describe('Signup', () => {
         await test.step('Create Business after Email Verification', async () => {
             await business.fillBusiness({ business_name: 'ABCD Company LTD' });
             await business.clickContinue();
-            await expect(page).toHaveTitle('Finnoto - Analytical Dashboard');
+            await expect(page, chalk.red('Title match')).toHaveTitle(
+                'Finnoto - Analytical Dashboard'
+            );
         });
     });
     test('Verify Sign In clickable link', async ({ page }) => {

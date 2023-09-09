@@ -1,17 +1,21 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
+    ApprovalToggleHelper,
     ApprovalWorkflowsTab,
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
+import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 describe('TECF002', () => {
     PROCESS_TEST('Raise Expense with POC', async ({ page }) => {
         const expense = new ExpenseHelper(page);
-
+        const toggleHelper = new ApprovalToggleHelper(page);
+        await toggleHelper.gotoExpenseApproval();
+        await toggleHelper.allInactive();
         await expense.init();
 
         await expense.addDocument();
@@ -46,10 +50,14 @@ describe('TECF002', () => {
         const savedExpensePage = new SavedExpenseCreation(page);
 
         await test.step('Check Saved and Party Status with poc', async () => {
-            expect(await savedExpensePage.toastMessage()).toBe(
-                'Invoice raised successfully.'
-            );
-            expect(await savedExpensePage.checkPartyStatus()).toBe('Submitted');
+            expect(
+                await savedExpensePage.toastMessage(),
+                chalk.red('Toast message match')
+            ).toBe('Invoice raised successfully.');
+            expect(
+                await savedExpensePage.checkPartyStatus(),
+                chalk.red('Check party status match')
+            ).toBe('Submitted');
         });
 
         await test.step('Check Approval Flows', async () => {
@@ -62,7 +70,8 @@ describe('TECF002', () => {
             expect(
                 await verificationFlows.checkApprovalStatus(
                     'Verification Approvals'
-                )
+                ),
+                chalk.red('Verification Approvals match')
             ).toBe('Pending Approval');
         });
     });

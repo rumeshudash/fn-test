@@ -5,7 +5,18 @@ interface LocatorOptions {
     name?: string;
     text?: string | RegExp;
     label?: string;
+    type?: string;
     class?: string[];
+    exactText?: boolean;
+}
+
+interface InputFieldLocatorOptions {
+    selector?: string;
+    placeholder?: string;
+    label?: string;
+    name?: string;
+    type?: string;
+    hasText?: string;
 }
 
 type LocatorRoles =
@@ -185,3 +196,28 @@ interface VENDORDOCUMENTDETAILS {
 //     bankAccount: string;
 //     ifsc: string;
 // }
+
+interface DepartmentCreationData {
+    name?: string;
+    parent?: string;
+    manager?: string;
+    date?: string;
+    identifier?: string;
+}
+
+interface EmployeeCreationData {
+    name?: string;
+    email?: string;
+    department?: string;
+    designation?: string;
+    date?: string;
+    identifier?: string;
+    manager?: string;
+    parent?: string;
+}
+
+interface UserGroupData {
+    name?: string;
+    manager?: string;
+    description?: string;
+}

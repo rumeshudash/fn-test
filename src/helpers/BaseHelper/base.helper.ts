@@ -1,14 +1,9 @@
+import { uuidV4 } from '@/utils/common.utils';
+import { expect } from '@playwright/test';
 import chalk from 'chalk';
 import { Locator, Page } from 'playwright-core';
-import { LISTING_ROUTES } from '../../constants/api.constants';
-import { expect } from '@playwright/test';
-import { uuidV4 } from '@/utils/common.utils';
-
-const error = (...text: unknown[]) => console.log(chalk.bold.red('⨯', text));
-const info = (...text: unknown[]) => console.log(chalk.blue('-', text));
-const success = (...text: unknown[]) => console.log(chalk.green('✔', text));
-const warning = (...text: unknown[]) =>
-    console.log(chalk.hex('#FFA500')('!', text));
+import { LISTING_ROUTES, TEST_URL } from '../../constants/api.constants';
+import { Logger } from './log.helper';
 
 export class BaseHelper {
     protected _page: Page;
@@ -54,7 +49,11 @@ export class BaseHelper {
      * @param {LocatorOptions} [options={}] - The options for locating the element.
      * @return {this} - Returns the current instance of the class.
      */
-    public locate(selector?: string, options: LocatorOptions = {}) {
+    public locate(
+        selector?: string,
+        options: LocatorOptions = {},
+        exactText: boolean = false
+    ) {
         this._tempSelector = selector || 'html ';
 
         if (options.id) {
@@ -68,11 +67,16 @@ export class BaseHelper {
             this._tempSelector += `[name='${options.name}']`;
         }
 
+        if (options.type) {
+            this._tempSelector += `[type='${options.type}']`;
+        }
+
         this._locator = this._page.locator(this._tempSelector);
 
         if (options.role) {
             this._locator = this._locator.getByRole(options.role, {
                 name: options.name,
+                exact: options.exactText,
             });
         }
 
@@ -81,7 +85,9 @@ export class BaseHelper {
         }
 
         if (options.text) {
-            this._locator = this._locator.getByText(options.text);
+            this._locator = this._locator.getByText(options.text, {
+                exact: options.exactText,
+            });
         }
         if (options.label) {
             this._locator = this._locator.getByLabel(options.label);
@@ -104,10 +110,9 @@ export class BaseHelper {
         text: string | RegExp,
         options?: Omit<LocatorOptions, 'text'> & {
             selector?: string;
-            exactText?: boolean;
         }
     ) {
-        const { selector, exactText, ...rest } = options || {};
+        const { selector, ...rest } = options || {};
         return this.locate(selector, { ...rest, text }).getLocator();
     }
 
@@ -142,23 +147,25 @@ export class BaseHelper {
         role: LocatorRoles,
         options?: Omit<LocatorOptions, 'role'> & {
             selector?: string;
-            exactText?: boolean;
         }
     ) {
-        const { selector, exactText, ...rest } = options || {};
+        const { selector, ...rest } = options || {};
         return this.locate(selector, { ...rest, role }).getLocator();
     }
 
     // Actions
 
     /**
-     * Navigates to a specified URL.
+     * Navigates to a specified URL Identifier.
      *
-     * @param {keyof typeof LISTING_ROUTES} url - The URL to navigate to.
+     * @param {keyof typeof LISTING_ROUTES} identifier - The URL to navigate to.
      * @return {Promise<void>} A promise that resolves when the navigation is complete.
      */
-    public async navigateTo(url: keyof typeof LISTING_ROUTES, Phone?: string) {
-        let finalUrl = LISTING_ROUTES[url];
+    public async navigateTo(
+        identifier: keyof typeof LISTING_ROUTES,
+        Phone?: string
+    ) {
+        let finalUrl = LISTING_ROUTES[identifier];
 
         // Check if Phone parameter is provided
         if (Phone) {
@@ -167,6 +174,18 @@ export class BaseHelper {
         }
 
         await this._page.goto(finalUrl, {
+            waitUntil: 'networkidle',
+        });
+    }
+
+    /**
+     * Navigates to a specified URL.
+     *
+     * @param {keyof typeof LISTING_ROUTES} url - The URL to navigate to.
+     * @return {Promise<void>} A promise that resolves when the navigation is complete.
+     */
+    public async navigateToUrl(url: string) {
+        await this._page.goto(TEST_URL + url, {
             waitUntil: 'networkidle',
         });
     }
@@ -183,17 +202,17 @@ export class BaseHelper {
         options?: LocatorOptions & { selector?: string }
     ) {
         const { selector, ...rest } = options || {};
-        if (options) this.locate(selector, rest);
+        if (options && Object.keys(options).length) this.locate(selector, rest);
 
-        const isVisibleElement = await this.isVisible();
-        expect(isVisibleElement, {
-            message: `${this._tempSelector} does not exist !!`,
-        }).toBe(true);
+        expect(
+            this._locator,
+            `Checking ${this._tempSelector} does exist!!`
+        ).toBeVisible();
 
-        info(`Fill: ${text} in ${this._getSelector(options)}`);
+        Logger.info(`Fill: ${text} in ${this._getSelector(options)}`);
         await this._locator.fill(text + '');
 
-        success(`Fill: ${text} in ${this._getSelector(options)}`);
+        Logger.success(`Fill: ${text} in ${this._getSelector(options)}`);
     }
 
     /**
@@ -208,21 +227,21 @@ export class BaseHelper {
      */
     public async fillInput(
         text: string | number,
-        options?: {
-            selector?: string;
-            placeholder?: string;
-            label?: string;
-            name?: string;
-            hasText?: string;
-        }
+        options?: InputFieldLocatorOptions
     ) {
-        const { selector, placeholder, name, label, hasText } = options || {};
-        await this.fillText(text + '', {
-            selector: selector || 'input',
-            placeholder,
-            name,
-            label,
-        });
+        const { selector, placeholder, name, label, type, hasText } =
+            options || {};
+        if (options && Object.keys(options).length) {
+            await this.fillText(text + '', {
+                selector: selector || 'input',
+                placeholder,
+                name,
+                label,
+                type,
+            });
+            return;
+        }
+        await this.fillText(text + '');
     }
 
     // public async errorMessage(text: string, selector: string) {
@@ -314,6 +333,97 @@ export class BaseHelper {
     }
 
     /**
+     * Retrieves the tab list element.
+     *
+     * @return {this} The tab list element.
+     */
+    public getTabListContainer(): this {
+        return this.locate('div', { role: 'tablist' });
+    }
+
+    /**
+     * Retrieves a list of tab items from the tab list container.
+     *
+     * @return {Promise<string[]>} An array of strings representing the text of each tab item.
+     *
+     * @deprecated Use `TabHelper.getTabListItems()` instead.
+     */
+    public async getTabListItems(): Promise<string[]> {
+        return this.locateByRole('tab').allInnerTexts();
+    }
+
+    /**
+     * Checks if the given tab or tabs exist in the tab list.
+     *
+     * @param {string | string[]} tabName - The name or names of the tab(s) to check.
+     * @return {Promise<void>} No return value.
+     *
+     * @deprecated Use `TabHelper.checkTabExists()` instead.
+     */
+    public async checkTabExists(tabName: string | string[]): Promise<void> {
+        let tabNames = tabName;
+        if (typeof tabNames === 'string') tabNames = [tabNames];
+
+        const tabList = await this.getTabListItems();
+
+        for (const tab of tabNames) {
+            expect(tabList, {
+                message: `Tab existence check: ${tab}`,
+            }).toContainEqual(tab);
+        }
+    }
+
+    /**
+     * Clicks on the specified tab. Also check if the tab is selected
+     *
+     * @param {string} tabName - The name of the tab to be clicked.
+     * @return {Promise<void>} - A Promise that resolves when the tab is clicked.
+     *
+     * @deprecated Use `TabHelper.clickTab()` instead.
+     */
+    public async clickTab(tabName: string): Promise<void> {
+        await this.click({
+            role: 'tab',
+            text: tabName,
+            exactText: true,
+        });
+
+        await this.checkTabSelected(tabName);
+    }
+
+    /**
+     * Gives the value of the 'aria-selected' attribute of the specified tab.
+     *
+     * @param {string} tabName - The name of the tab to check.
+     * @return {Promise<string>} The value of the 'aria-selected' attribute of the tab.
+     *
+     * @deprecated Use `TabHelper.isTabSelected()` instead.
+     */
+    public async isTabSelected(tabName: string): Promise<string> {
+        const container = this.getTabListContainer();
+        return await container
+            .locateByRole('tab', {
+                text: tabName,
+                exactText: true,
+            })
+            .getAttribute('aria-selected');
+    }
+
+    /**
+     * Checks if the specified tab is currently selected.
+     *
+     * @param {string} tabName - The name of the tab to check.
+     * @return {Promise<void>} - A Promise that resolves when the check is complete.
+     *
+     * @deprecated Use `TabHelper.checkTabSelected()` instead.
+     */
+    public async checkTabSelected(tabName: string): Promise<void> {
+        expect(await this.isTabSelected(tabName), {
+            message: `Tab selection check: ${tabName}`,
+        }).toBe('true');
+    }
+
+    /**
      * Clicks the specified element or coordinates with the specified button.
      *
      * @param {LocatorOptions & { selector?: string; button?: "left" | "right" | "middle" | undefined; }} options - The options for the click action.
@@ -324,65 +434,47 @@ export class BaseHelper {
             selector?: string;
             button?: 'left' | 'right' | 'middle' | undefined;
         }
-    ) {
+    ): Promise<void> {
         const { selector, button = 'left', ...rest } = options || {};
         if (options) this.locate(selector, rest);
 
-        info(`Click: ${button} click in ${this._getSelector(options)}`);
+        Logger.info(`Click: ${button} click in ${this._getSelector(options)}`);
         await this._locator.click({ button });
         await this._page.waitForLoadState('networkidle');
-        success(`Click: ${button} click in ${this._getSelector(options)}`);
+        Logger.success(
+            `Click: ${button} click in ${this._getSelector(options)}`
+        );
+    }
 
-        // const error = this._page.locator('span.label.text-error');
-        // const errorCount = await error.count();
-        // if (errorCount > 0) {
-        //     console.log(chalk.red(`Error ocurred: ${errorCount}`));
-        //     for (let i = 0; i < errorCount; i++) {
-        //         const errorMsg = await error.nth(i).textContent();
-        //         console.log(`Error (error ${i}): `, chalk.red(errorMsg));
-        //     }
-        // }
-        // const toast = this._page.locator('div.ct-toast-success');
-        // const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-        // const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+    public async isInputMandatory(options?: InputFieldLocatorOptions) {
+        if (options && Object.keys(options).length)
+            this.locate('input', options);
 
-        // const toastErrorCount = await toastError.count();
-        // const toastWarnCount = await toastWarn.count();
-        // const toastCount = await toast.count();
-        // if (toastCount > 0) {
-        //     console.log(chalk.green(`toastMessage (success): ${toastCount}:`));
-        //     for (let i = 0; i < toastCount; i++) {
-        //         const successMsg = await toast.nth(i).textContent();
-        //         console.log(
-        //             `toastMessage (success ${i}): `,
-        //             chalk.green(successMsg)
-        //         );
-        //     }
-        // }
-        // if (toastWarnCount > 0) {
-        //     console.log(
-        //         chalk.red(
-        //             `Multiple toastMessage ocurred \n ${toastWarn}:`,
-        //             toastWarnCount
-        //         )
-        //     );
-        //     for (let i = 0; i < toastWarnCount; i++) {
-        //         const errorMsg = await toastWarn.nth(i).textContent();
-        //         console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-        //     }
-        // }
-        // if (toastErrorCount > 0) {
-        //     console.log(
-        //         chalk.red(
-        //             `Multiple toastMessage ocurred \n ${toastError}:`,
-        //             toastErrorCount
-        //         )
-        //     );
-        //     for (let i = 0; i < toastErrorCount; i++) {
-        //         const errorMsg = await toastError.nth(i).textContent();
-        //         console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-        //     }
-        // }
+        return this._locator
+            .locator('//ancestor::div[contains(@class,"form-control")]/label')
+            .locator('//span/span[contains(@class,"text-error")]', {
+                hasText: '*',
+            })
+            .isVisible();
+    }
+    public async checkInputErrorMessage(options?: InputFieldLocatorOptions) {
+        if (options && Object.keys(options).length)
+            this.locate('input', options);
+
+        const errorElement = this._locator
+            .locator('//ancestor::div[contains(@class,"form-control")]')
+            .locator(
+                '//span[contains(@class," label label-text-alt text-error")]'
+            );
+        const textError = await errorElement?.textContent();
+
+        console.log(
+            chalk.blue(
+                'Input Error Message:-->',
+                chalk.red(chalk.red(textError))
+            )
+        );
+        return errorElement;
     }
 
     public async checkDisplayName() {
@@ -622,6 +714,19 @@ export class BaseHelper {
         await partyClick.click();
         await this._page.waitForTimeout(2000);
     }
+    async validateCheckbox() {
+        const checkbox = await this.locate("//input[@type='checkbox']")
+            ._locator;
+        expect(
+            !(await checkbox.isChecked()),
+            'By default checkbox should be unchecked'
+        ).toBe(true);
+    }
+    async saveAndCreateCheckbox() {
+        await this.validateCheckbox();
+        const checkbox = this.locate("//input[@type='checkbox']")._locator;
+        await checkbox.click();
+    }
 
     /**
      * Fill the otpInput feild with otp.
@@ -666,6 +771,7 @@ export class BaseHelper {
     public static generateRandomPassword() {
         return `test-${uuidV4()}`;
     }
+
     /**
      * This function error the error message contains in toast.
      *

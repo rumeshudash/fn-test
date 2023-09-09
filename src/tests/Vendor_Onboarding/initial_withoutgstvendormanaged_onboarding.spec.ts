@@ -9,15 +9,12 @@ import {
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 import {
-    BANKDETAILS,
-    LOWER_TDS_DETAILS,
-    IMAGE_NAME,
     NON_GSTIN_LOWER_TDS_DETAILS,
     NON_GSTIN_BANK_DETAILS_ONE,
-    NON_GSTIN_BANK_DETAILS_TWO,
 } from '@/utils/required_data';
 import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { nonGstinDataType } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
+import chalk from 'chalk';
 
 //Vendor and Client Details
 const vendorNonGstinInfo: nonGstinDataType = {
@@ -61,9 +58,10 @@ describe('TCVO003', () => {
         // const vendorOnboarding = new VendorOnboarding(vendorNonGstinInfo, page);
         await withnogstin.clickLinkInviteVendor('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
-        expect(await withnogstin.toastMessage()).toBe(
-            'Link Successfully Copied!!!'
-        );
+        expect(
+            await withnogstin.toastMessage(),
+            chalk.red('ToastMessage match')
+        ).toBe('Link Successfully Copied!!!');
 
         await test.step('Open Copied Link', async () => {
             const URL = await vendorOnboarding.linkURL();
@@ -103,7 +101,7 @@ describe('TCVO003', () => {
             await withnogstin.clickButton('Next');
             expect(
                 await withnogstin.toastMessage(),
-                'Toast message does not occured'
+                chalk.red('Toast message does not occured')
             ).toBe('Successfully saved');
         });
 
@@ -123,7 +121,7 @@ describe('TCVO003', () => {
         await test.step('Verify Bank Account Details', async () => {
             const ifscBankDetails =
                 await getBankDetails.vendorIfscDetailsValidation();
-            expect(ifscBankDetails, 'Bank IFSC Code does not match').toBe(
+            expect(ifscBankDetails, chalk.red('Bank IFSC Code match')).toBe(
                 getBankDetails.bankDetails.address
             );
             await getBankDetails.vendorIfscLogoVisibilityValidation();
@@ -137,7 +135,8 @@ describe('TCVO003', () => {
             await withnogstin.clickButton('Next');
 
             expect(
-                await page.getByText('Onboarding Completed').isVisible()
+                await page.getByText('Onboarding Completed').isVisible(),
+                chalk.red('Onboarding Completed text visibility')
             ).toBe(true);
             await withnogstin.clickButton('Close');
         });

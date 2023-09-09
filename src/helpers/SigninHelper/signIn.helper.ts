@@ -1,6 +1,7 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 import { uuidV4 } from '@/utils/common.utils';
+import chalk from 'chalk';
 
 type LoginDetailsInput = {
     username: string;
@@ -107,13 +108,13 @@ export class SignInHelper extends BaseHelper {
         await this._page.waitForTimeout(1000);
         await this._page.getByText('New Test Auto').click();
 
-        await this._page.getByText('Select Portal');
+        this._page.getByText('Select Portal');
 
         await this._page.waitForTimeout(1000);
 
         await this._page.getByText('FinOps Portal').click();
 
-        await this._page.getByText('Dashboard');
+        this._page.getByText('Dashboard');
 
         await this._page.waitForTimeout(1000);
     }
@@ -165,10 +166,8 @@ export class SignInHelper extends BaseHelper {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
         await this.isValidEmail(username);
         await this._page.waitForTimeout(1000);
-        const result = await this.locateByText('Forgot Password?');
-        expect(result, {
-            message: 'Forgot Password link is not found !!',
-        }).toBeVisible();
+        const result = this.locateByText('Forgot Password?');
+        expect(result, chalk.red('Forgot Password visibility')).toBeVisible();
         await result.click();
         await this._page.waitForURL('**/forgot-password', {
             waitUntil: 'commit',
@@ -177,9 +176,10 @@ export class SignInHelper extends BaseHelper {
             role: 'heading',
             exactText: true,
         }).isVisible();
-        await expect(forgotPasswordNode, {
-            message: 'Forgot Password page not found !!',
-        }).toBe(true);
+        expect(
+            forgotPasswordNode,
+            chalk.red('Forgot Password page visibility')
+        ).toBe(true);
     }
 
     /**
@@ -188,12 +188,10 @@ export class SignInHelper extends BaseHelper {
      *
      */
     public async checkSignUpLink() {
-        const result = await this.locateByText('Sign Up');
+        const result = this.locateByText('Sign Up');
 
         // const element = await result.locator('[href="/login"]');
-        expect(result, {
-            message: 'signup link is not found !!',
-        }).toBeVisible();
+        expect(result, chalk.red('Signup visibility')).toBeVisible();
         await result.click();
         await this._page.waitForURL('**/signup', {
             waitUntil: 'commit',
@@ -202,8 +200,6 @@ export class SignInHelper extends BaseHelper {
             role: 'heading',
             exactText: true,
         }).isVisible();
-        await expect(signInNode, {
-            message: 'Sign Up page not found !!',
-        }).toBe(true);
+        expect(signInNode, chalk.red('Signup page visibility')).toBe(true);
     }
 }
