@@ -17,9 +17,7 @@ test.describe('CustomeFeild', () => {
         await customefeild.init();
         await expect(page.getByText('Custom')).toHaveCount(2);
     });
-    test('Check Employee Advance Tab and Click Employee Advance Tab', async ({
-        page,
-    }) => {
+    test('Check Employee  and Click Employee  Tab', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -32,13 +30,13 @@ test.describe('CustomeFeild', () => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
         await expect(
-            page.getByRole('tab', { name: 'Employee Advance', exact: true })
+            page.getByRole('tab', { name: 'Employee', exact: true })
         ).toHaveCount(1);
     });
 
-    test('Check Employee Advance Tab and Click Add New', async ({ page }) => {
+    test('Check Employee  Tab and Click Add New', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -51,13 +49,13 @@ test.describe('CustomeFeild', () => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
         await customefeild.clickButton('Add New');
-        await expect(
-            page.getByText('Add Employee Advance Custom Field')
-        ).toHaveCount(1);
+        await expect(page.getByText('Add Employee  Custom Field')).toHaveCount(
+            1
+        );
     });
-    test('Add Employee Advance With Empty Feilds', async ({ page }) => {
+    test('Add Employee  With Empty Feilds', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -69,7 +67,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
         await customefeild.clickButton('Add New');
 
         await customefeild.clickButton('Save');
@@ -77,7 +75,7 @@ test.describe('CustomeFeild', () => {
         await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(1);
     });
 
-    test('Add Employee Advance Without Name Feilds', async ({ page }) => {
+    test('Add Employee  Without Name Feilds', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -89,7 +87,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
 
         await customefeild.AddExpenseCustomeFeild('', 'Text', 1);
 
@@ -97,7 +95,7 @@ test.describe('CustomeFeild', () => {
             'Field Name is required'
         );
     });
-    test('Add Employee Advance Without Type Feilds', async ({ page }) => {
+    test('Add Employee  Without Type Feilds', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -109,14 +107,14 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee ');
         await customefeild.AddExpenseCustomeFeild('Test1', '', 1);
 
         expect(await customefeild.errorMessage()).toBe(
             'Field Type is required'
         );
     });
-    test('Add Employee Advance With Text type', async ({ page }) => {
+    test('Add Expense With Text type', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -128,12 +126,12 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
         await customefeild.AddExpenseWithTextType('Test1', 'Text', 1, 'Test1');
         await customefeild.AddExpenseWithTextType('Test2', 'Text', 1);
         await expect(page.getByText('Test1')).toHaveCount(3);
     });
-    test('Add Employee Advance With Boolean', async ({ page }) => {
+    test('Add Employee  With Boolean', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -145,7 +143,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
         await customefeild.AddExpenseWitBooleanType(
             'Test1',
             'Boolean',
@@ -154,7 +152,7 @@ test.describe('CustomeFeild', () => {
         );
         await customefeild.AddExpenseWitBooleanType('Test2', 'Boolean', 1);
     });
-    test('Add Employee Advance With Number type', async ({ page }) => {
+    test('Add Employee  With Number type', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -166,12 +164,12 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee ');
         await customefeild.AddExpenseWithTextType('Number1', 'Number', 1, 123);
 
         await expect(page.getByText('Number1')).toHaveCount(1);
     });
-    test('Add Employee Advance With TextArea', async ({ page }) => {
+    test('Add Employee  With TextArea', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -183,7 +181,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
         await customefeild.AddExpenseWithTextType(
             'TextArea1',
             'TextArea',
@@ -193,7 +191,7 @@ test.describe('CustomeFeild', () => {
 
         await expect(page.getByText('TextArea1')).toHaveCount(1);
     });
-    test('Add Employe Advance With Date type', async ({ page }) => {
+    test('Add Employee With Date type', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         const username = 'newtestauto@company.com';
@@ -205,7 +203,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
 
         await customefeild.AddExpenseWithDateType('Date1', 'Date', 1);
     });
@@ -245,7 +243,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
 
         await customefeild.ChangeStatus();
     });
@@ -262,7 +260,7 @@ test.describe('CustomeFeild', () => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
 
         await customefeild.ChangeMendatory();
     });
@@ -278,13 +276,13 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
 
         await customefeild.CheckEdit();
 
-        await expect(
-            page.getByText('Edit Employee Advance Custom Field')
-        ).toHaveCount(1);
+        await expect(page.getByText('Edit Employee  Custom Field')).toHaveCount(
+            1
+        );
     });
     test('Change Name and Priority', async ({ page }) => {
         const signin = new SignInHelper(page);
@@ -298,7 +296,7 @@ test.describe('CustomeFeild', () => {
 
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Employee Advance');
+        await customefeild.clickExpenseTab('Employee');
 
         await customefeild.changeNameORPriority(
             'Number1',
