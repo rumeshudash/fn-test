@@ -1,7 +1,6 @@
 import { Locator, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
-import { formatDate } from '@/utils/common.utils';
 
 export class UserCreation extends BaseHelper {
     public async init() {

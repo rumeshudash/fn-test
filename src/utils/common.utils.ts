@@ -1,5 +1,7 @@
 // import { format, isDate, parse } from 'date-fns';
 
+import { format, isDate, parse } from 'date-fns';
+
 // This will Generate Random Name
 export function generateRandomName() {
     var prefixes = ['John', 'Alice', 'Robert', 'Emily', 'Michael', 'Olivia'];
@@ -62,17 +64,17 @@ export function uuidV4() {
     );
 }
 
-// export const formatDate = (date: string | Date, showTime?: boolean) => {
-//     return format(
-//         GetDateValue(date),
-//         showTime ? 'dd MMM, yyyy hh:mm a' : 'dd MMM, yyyy'
-//     );
-// };
+export const formatDate = (date: string | Date, showTime?: boolean) => {
+    return format(
+        GetDateValue(date),
+        showTime ? 'dd MMM, yyyy hh:mm a' : 'dd MMM, yyyy'
+    );
+};
 
-// export const GetDateValue = (date: any, format?: string) => {
-//     if (!date || isDate(date)) return date;
-//     if (format) {
-//         return parse(date, format, new Date());
-//     }
-//     return new Date(date);
-// };
+export const GetDateValue = (date: any, format?: string) => {
+    if (!date || isDate(date)) return date;
+    if (format) {
+        return parse(date, format, new Date());
+    }
+    return new Date(date);
+};
