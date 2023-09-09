@@ -12,7 +12,36 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
     async init() {
         const URL = LISTING_ROUTES['BUSINESSESS'];
         await this._page.goto(URL); // go to business page
-        await this._page.waitForTimeout(1000);
+        await this._page.waitForLoadState('networkidle');
+    }
+
+    async clickNavigationTab(nav: string) {
+        await this._page.locator(`//span[text()='${nav}']`).click();
+    }
+
+    async clickModalCloseButton() {
+        await this._page
+            .locator(
+                `//div[contains(@class,'col-flex overflow-y-hidden')]/following-sibling::button[1]`
+            )
+            .click();
+    }
+
+    async clickConfirmDialogAction(string: 'Yes!' | 'No') {
+        await this._page.locator(`//span[text()='${string}']`).click();
+    }
+
+    async checkConfirmDialogOpenOrNot() {
+        await this.clickModalCloseButton();
+
+        const dialog = await this.locateByText(
+            'Do you want to exit? The details you have entered will be deleted.'
+        );
+        await this._page.waitForLoadState('domcontentloaded');
+
+        expect(await dialog.isVisible(), 'check confirm dialog open or not');
+
+        await this.clickConfirmDialogAction('Yes!');
     }
 
     async openBusinessForm() {
@@ -24,29 +53,28 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         ).toBe(true);
 
         await button.click();
-        await this._page.waitForTimeout(1000);
+        console.log(chalk.blue('Open Add Business Form'));
+        // await this._page.waitForTimeout(1000);
     }
 
-    async checkModalHeaderTitle(element: any) {
-        const header_element = await element.locateByText('Add Business', {
-            selector: 'div',
-        });
+    async checkModalHeaderTitle() {
+        await this.locateByRole('heading');
 
         expect(
-            await header_element.isVisible(),
-            'Add Business header not found in form  !!'
+            await this._locator.isVisible(),
+            'check modal header title '
         ).toBe(true);
+        const text = await this._locator.textContent();
+        console.log(chalk.blue('Business Form Header is '), chalk.yellow(text));
     }
     async checkFormIsOpen() {
         // const element = await this.locateByText('Add Business');
         const element = await this._page.getByRole('dialog');
         expect(await element.isVisible(), 'check form is open').toBe(true);
-        await this._page.waitForTimeout(1000);
-        // this.checkModalHeaderTitle(element);
-    }
+        // await this._page.waitForTimeout(1000);
+        await this.checkModalHeaderTitle();
 
-    async clickNavigationTab(nav: string) {
-        await this._page.locator(`//span[text()='${nav}']`).click();
+        console.log(chalk.blue('Checking Business Form Is Open Or Not'));
     }
 
     async fillGstin(gstin: string) {
@@ -61,13 +89,18 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         await this.fillInput(email, { name: 'email' });
     }
 
-    async fillBusinessInputInformation(data: gstinBusinessInformation) {
+    async fillBusinessInputInformation(
+        data: gstinBusinessInformation,
+        targetClick: 'email' | 'mobile' | 'gstin' = 'email'
+    ) {
+        console.log(chalk.blue('Filling gstin business information ....'));
         await this.fillGstin(data.gstin);
         await this.fillEmail(data.email);
         await this.fillMobile(data.mobile);
+        // if (targetClick === 'submit') return await this.submitButton();
         await this.click({
             selector: 'input',
-            name: 'email',
+            name: targetClick,
         });
     }
     async submitButton() {
@@ -78,7 +111,7 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
 
         await btnClick.click();
         await this._page.waitForLoadState('networkidle');
-        await this._page.waitForTimeout(1000);
+        // await this._page.waitForTimeout(1000);
         return btnClick;
     }
     async checkDisableSubmit() {
@@ -139,10 +172,15 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
             )
         );
     }
+    async verifyTableData() {
+        //@todo i will do after listing data check framework
+        console.log(chalk.blue('Verifying table data'));
+    }
     async checkToastMessage() {
+        await this._page.waitForTimeout(1000);
         const toast = await this._page.locator('div.ct-toast-success');
         expect(await toast.isVisible(), 'checking toast message').toBe(true);
         const textContent = await toast.textContent();
-        console.log('toast message is ', chalk.blue(textContent));
+        console.log(chalk.blue('toast message is '), chalk.green(textContent));
     }
 }

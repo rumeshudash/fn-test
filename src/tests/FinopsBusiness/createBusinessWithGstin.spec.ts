@@ -4,18 +4,18 @@ import GenericGstinCardHelper, {
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Rampura Industries',
-    value: '03ETXPS4950M1ZP',
+    trade_name: 'Reliance Retail Limited',
+    value: '27AABCR1718E1ZP',
     business_type: 'Proprietorship',
-    pan_number: 'ETXPS4950M',
+    pan_number: 'AABCR1718E',
     address:
-        'MEHRAJ ROAD, VPO MEHRAJ, RAMPURA ROAD, RAMPURA ROAD, Bathinda, 151103, Punjab, NA, VPO MEHRAJ',
+        'RCP, 5 TTC Industrial Area, Ghansoli, Thane Belapur Road, Navi Mumbai, Reliance Corporate Park, Thane, 400701, Maharashtra, NA, Gr',
     status: 'Active',
 };
 
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '03ETXPS4950M1ZP',
+    gstin: '27AABCR1718E1ZP',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
@@ -34,14 +34,17 @@ const createInit = async (page: any) => {
     };
 };
 describe(`TBA001`, () => {
-    PROCESS_TEST('Fill All Business Information.', async ({ page }) => {
-        const { helper, gstin_helper } = await createInit(page);
+    PROCESS_TEST(
+        'Fill All Business Information. and verify gstin information',
+        async ({ page }) => {
+            const { helper, gstin_helper } = await createInit(page);
 
-        await helper.fillBusinessInputInformation(businessInformation);
+            await helper.fillBusinessInputInformation(businessInformation);
 
-        await helper.checkMandatoryFields();
-        await gstin_helper.gstinInfoCheck();
-    });
+            await helper.checkMandatoryFields();
+            await gstin_helper.gstinInfoCheck();
+        }
+    );
 
     PROCESS_TEST(
         'without Gstin Number-submit button disabled check',
@@ -72,10 +75,13 @@ describe(`TBA001`, () => {
 
     PROCESS_TEST('without Email-submit button check', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.fillBusinessInputInformation({
-            ...businessInformation,
-            email: '',
-        });
+        await helper.fillBusinessInputInformation(
+            {
+                ...businessInformation,
+                email: '',
+            },
+            'mobile'
+        );
 
         await helper.checkEmailError();
         await helper.checkDisableSubmit();
@@ -105,13 +111,24 @@ describe(`TBA001`, () => {
 
     PROCESS_TEST('Verify Invalid Email address', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.fillBusinessInputInformation({
-            ...businessInformation,
-            email: 'usergmail',
-        });
+        await helper.fillBusinessInputInformation(
+            {
+                ...businessInformation,
+                email: 'usergmail',
+            },
+            'mobile'
+        );
 
         await helper.checkEmailError('Email must be a valid email');
         await helper.checkDisableSubmit();
+    });
+    PROCESS_TEST('Verify Confirm Dialog Open Or not', async ({ page }) => {
+        const { helper } = await createInit(page);
+        await helper.fillBusinessInputInformation({
+            ...businessInformation,
+        });
+
+        await helper.checkConfirmDialogOpenOrNot();
     });
 
     PROCESS_TEST('Create Business Account.', async ({ page }) => {
@@ -123,5 +140,19 @@ describe(`TBA001`, () => {
         await gstin_helper.gstinInfoCheck();
         await helper.submitButton();
         await helper.checkToastMessage();
+        await helper.verifyTableData();
     });
+    // PROCESS_TEST(
+    //     'Verify table data after creating business',
+    //     async ({ page }) => {
+    //         const { helper, gstin_helper } = await createInit(page);
+
+    //         await helper.fillBusinessInputInformation(businessInformation);
+
+    //         await helper.checkMandatoryFields();
+    //         await gstin_helper.gstinInfoCheck();
+    //         await helper.submitButton();
+    //         await helper.checkToastMessage();
+    //     }
+    // );
 });
