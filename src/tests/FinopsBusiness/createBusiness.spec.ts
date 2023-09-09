@@ -4,18 +4,18 @@ import GenericGstinCardHelper, {
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Cloudtail India Private Limited',
-    value: '27AAQCS4259Q1ZA',
-    pan_number: 'AAQCS4259Q',
-    business_type: 'Private Limited',
+    trade_name: 'Rampura Industries',
+    value: '03ETXPS4950M1ZP',
+    business_type: 'Proprietorship',
+    pan_number: 'ETXPS4950M',
     address:
-        'Sagar Tech Plaza, Andheri Kurla Road, Sakinaka, Unit No-117, Mumbai Suburban, 400072, Maharashtra, NA, 1st Floor',
+        'MEHRAJ ROAD, VPO MEHRAJ, RAMPURA ROAD, RAMPURA ROAD, Bathinda, 151103, Punjab, NA, VPO MEHRAJ',
     status: 'Active',
 };
 
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '27AAQCS4259Q1ZA',
+    gstin: '03ETXPS4950M1ZP',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
@@ -26,20 +26,21 @@ const createInit = async (page: any) => {
     await helper.init(); // got to business listing page
     await helper.openBusinessForm();
     await helper.checkFormIsOpen();
+    await helper.clickNavigationTab('GSTIN Registered');
+
     return {
         gstin_helper,
         helper,
     };
 };
 describe(`TBA001`, () => {
-    PROCESS_TEST('Create Business Account.', async ({ page }) => {
+    PROCESS_TEST('Fill All Business Information.', async ({ page }) => {
         const { helper, gstin_helper } = await createInit(page);
 
         await helper.fillBusinessInputInformation(businessInformation);
 
         await helper.checkMandatoryFields();
         await gstin_helper.gstinInfoCheck();
-        await helper.submitButton();
     });
 
     PROCESS_TEST(
@@ -111,5 +112,16 @@ describe(`TBA001`, () => {
 
         await helper.checkEmailError('Email must be a valid email');
         await helper.checkDisableSubmit();
+    });
+
+    PROCESS_TEST('Create Business Account.', async ({ page }) => {
+        const { helper, gstin_helper } = await createInit(page);
+
+        await helper.fillBusinessInputInformation(businessInformation);
+
+        await helper.checkMandatoryFields();
+        await gstin_helper.gstinInfoCheck();
+        await helper.submitButton();
+        await helper.checkToastMessage();
     });
 });

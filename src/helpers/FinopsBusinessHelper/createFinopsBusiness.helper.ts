@@ -39,12 +39,14 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
     }
     async checkFormIsOpen() {
         // const element = await this.locateByText('Add Business');
-        const element = await this.locate('div', {
-            role: 'dialog',
-        });
-        expect(await element.isVisible(), 'Form is not opened !!').toBe(true);
-
+        const element = await this._page.getByRole('dialog');
+        expect(await element.isVisible(), 'check form is open').toBe(true);
+        await this._page.waitForTimeout(1000);
         // this.checkModalHeaderTitle(element);
+    }
+
+    async clickNavigationTab(nav: string) {
+        await this._page.locator(`//span[text()='${nav}']`).click();
     }
 
     async fillGstin(gstin: string) {
@@ -75,6 +77,8 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         }).toBe(true);
 
         await btnClick.click();
+        await this._page.waitForLoadState('networkidle');
+        await this._page.waitForTimeout(1000);
         return btnClick;
     }
     async checkDisableSubmit() {
@@ -134,7 +138,11 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
                 `"${textContent}" is not a valid error !! valid valid error should be "${message}"`
             )
         );
-
-        // expect(textContent).toEqual(message);
+    }
+    async checkToastMessage() {
+        const toast = await this._page.locator('div.ct-toast-success');
+        expect(await toast.isVisible(), 'checking toast message').toBe(true);
+        const textContent = await toast.textContent();
+        console.log('toast message is ', chalk.blue(textContent));
     }
 }
