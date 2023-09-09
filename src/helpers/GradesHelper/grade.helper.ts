@@ -44,20 +44,18 @@ export class GradesHelper extends BaseHelper {
         await this.click({ role: 'button', name: 'save' });
     }
     public async ActiveToInactive(name: string) {
-        const table = await this._page.locator(
+        const table = this._page.locator(
             '//div[contains(@class,"table finnoto__table__container ")]'
         );
-        const rows = await table.locator('//div[contains(@class,"table-row")]'); //select the row
+        const rows = table.locator('//div[contains(@class,"table-row")]'); //select the row
 
         for (let i = 0; i < (await rows.count()); i++) {
-            const row = await rows.nth(i);
-            const tds = await row.locator(
-                '//div[contains(@class,"table-cell")]'
-            );
+            const row = rows.nth(i);
+            const tds = row.locator('//div[contains(@class,"table-cell")]');
             for (let j = 0; j < (await tds.count()); j++) {
                 const cell = await tds.nth(j).innerText();
                 if (cell === name) {
-                    const Button = await tds
+                    const Button = tds
                         .nth(3)
                         .locator('//button[contains(@class,"btn")]');
                     await Button.click();
@@ -67,19 +65,17 @@ export class GradesHelper extends BaseHelper {
     }
 
     public async EditGrdaes(name: string, newname: string, priority: number) {
-        const table = await this._page.locator(
+        const table = this._page.locator(
             '//div[contains(@class,"table finnoto__table__container ")]'
         );
-        const rows = await table.locator('//div[contains(@class,"table-row")]');
+        const rows = table.locator('//div[contains(@class,"table-row")]');
         for (let i = 0; i < (await rows.count()); i++) {
-            const row = await rows.nth(i);
-            const tds = await row.locator(
-                '//div[contains(@class,"table-cell")]'
-            );
+            const row = rows.nth(i);
+            const tds = row.locator('//div[contains(@class,"table-cell")]');
             for (let j = 0; j < (await tds.count()); j++) {
                 const cell = await tds.nth(j).innerText();
                 if (cell === name) {
-                    const Button = await tds
+                    const Button = tds
                         .nth(4)
                         .locator('//div[contains(@class,"flex items-center")]')
                         .locator('//button');

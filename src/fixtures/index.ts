@@ -24,7 +24,7 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
                 await helper.click({ role: 'button', name: 'Submit' });
 
                 // await (helper.locateByText("Select Portal")).toBeVisible();
-
+                await helper.click({ selector: '#org-1' });
                 await helper.click({ text: 'FinOps Portal' });
                 // await helper.click({
                 //   selector: "p.text-lg",

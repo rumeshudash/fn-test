@@ -1,7 +1,14 @@
 import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
-import { DesignationHelper } from '@/helpers/DesignationHelper/designation.helper';
-import { designationInfo, designationUpdateInfo } from '@/utils/required_data';
+import {
+    CreateDesignationHelper,
+    DesignationHelper,
+} from '@/helpers/DesignationHelper/designation.helper';
+import {
+    designationInfo,
+    designationInfo_Save_And_Create,
+    designationUpdateInfo,
+} from '@/utils/required_data';
 import { test } from '@playwright/test';
 import chalk from 'chalk';
 
@@ -9,24 +16,35 @@ const { expect, describe } = PROCESS_TEST;
 
 describe('TDE001', () => {
     PROCESS_TEST('Save and Create Designation', async ({ page }) => {
-        const designation = new DesignationHelper(designationInfo, page);
+        const designation = new DesignationHelper(
+            designationInfo_Save_And_Create,
+            page
+        );
+        const designationCreate = new CreateDesignationHelper(
+            designationInfo,
+            page
+        );
         await designation.init();
-        await designation.addDesignation();
+        await designationCreate.addDesignation();
         await designation.verifyDialog();
         await designation.fillNameField();
-        await designation.saveAndCreateCheckbox();
+        await designationCreate.saveAndCreateCheckbox();
         await designation.clickButton('Save');
         expect(
             await designation.toastMessage(),
             chalk.red('Toast Message match')
         ).toBe('Successfully saved ');
-        await designation.verifyEmptyField();
+        await designationCreate.verifyEmptyField();
     });
 
     PROCESS_TEST('Create Designation', async ({ page }) => {
         const designation = new DesignationHelper(designationInfo, page);
+        const designationCreate = new CreateDesignationHelper(
+            designationInfo,
+            page
+        );
         await designation.init();
-        await designation.addDesignation();
+        await designationCreate.addDesignation();
         await designation.verifyDialog();
         await designation.fillNameField();
         await designation.clickButton('Save');
@@ -36,26 +54,43 @@ describe('TDE001', () => {
         ).toBe('Successfully saved ');
         await designation.searchDesignation();
         await designation.verifyItemInList();
-        await designation.clickDesignationList();
+        await designation.clickDesignationName();
         await designation.verifyDesignationPage();
     });
 
     PROCESS_TEST('Change Designation Status', async ({ page }) => {
         const designation = new DesignationHelper(designationInfo, page);
+        const designationCreate = new CreateDesignationHelper(
+            designationInfo,
+            page
+        );
         await designation.init();
-        // await designation.changeTab('Inactive');
         await designation.searchDesignation();
-        await designation.changeStatus();
-        await designation.verifyChangeStatus();
-        await designation.changeTab('Active');
-        await designation.searchDesignation();
-        await designation.verifyChangeStatus();
+        //Change from Active to Inactive
+        await designationCreate.changeStatus('Active');
+
+        await test.step('Verify Inactive Tab', async () => {
+            //Change from Inactive to Active
+            await designation.changeTab('Inactive');
+            await designation.searchDesignation();
+            await designationCreate.verifyChangeStatus('Inactive');
+
+            // await designationCreate.changeStatus('Inactive');
+            // await designation.changeTab('Active');
+            // await designationCreate.verifyChangeStatus('Active');
+        });
+
+        await test.step('Verify Active Tab', async () => {
+            await designationCreate.changeStatus('Inactive');
+            await designation.changeTab('Active');
+            await designationCreate.verifyChangeStatus('Active');
+        });
 
         await test.step('Verifying All Tab', async () => {
             await designation.changeTab('All');
             await designation.searchDesignation();
 
-            expect(
+            await expect(
                 page.getByRole('link', {
                     name: designationInfo.name,
                     exact: true,
