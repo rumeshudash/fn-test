@@ -36,6 +36,7 @@ export class ResetPasswordHelper extends BaseHelper {
             id: 'confirm_password',
         });
         await this.click({ role: 'button', name: 'Save' });
+        await this.click({ role: 'button', name: 'Yes' });
     }
 
     public async resetPasswordsameoldAndNewPassword(

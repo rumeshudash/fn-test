@@ -85,5 +85,23 @@ test.describe('Reset Password', () => {
             "Your old password can't be same as your New password"
         );
     });
-    test('Validate The length of new password', async ({ page }) => {});
+    test('test with valid old password and  valid new password', async ({
+        page,
+    }) => {
+        const signIn = new SignInHelper(page);
+        await signIn.init();
+        const username = 'newtestauto@company.com';
+
+        const password = '123456';
+        await signIn.checkDashboard({
+            username: username,
+            password: password,
+        });
+        const resetPassword = new ResetPasswordHelper(page);
+        await resetPassword.init();
+        await resetPassword.resetPassword('123456', '1234567', '1234567');
+        expect(await resetPassword.successToast()).toBe(
+            'Successfully changed password'
+        );
+    });
 });
