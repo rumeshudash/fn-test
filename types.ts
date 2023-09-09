@@ -9,6 +9,14 @@ interface LocatorOptions {
     exactText?: boolean;
 }
 
+interface InputFieldLocatorOptions {
+    selector?: string;
+    placeholder?: string;
+    label?: string;
+    name?: string;
+    hasText?: string;
+}
+
 type LocatorRoles =
     | 'alert'
     | 'alertdialog'

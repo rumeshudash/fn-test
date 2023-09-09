@@ -54,7 +54,11 @@ export class BaseHelper {
      * @param {LocatorOptions} [options={}] - The options for locating the element.
      * @return {this} - Returns the current instance of the class.
      */
-    public locate(selector?: string, options: LocatorOptions = {}) {
+    public locate(
+        selector?: string,
+        options: LocatorOptions = {},
+        exactText: boolean = false
+    ) {
         this._tempSelector = selector || 'html ';
 
         if (options.id) {
@@ -184,7 +188,7 @@ export class BaseHelper {
         options?: LocatorOptions & { selector?: string }
     ) {
         const { selector, ...rest } = options || {};
-        if (options) this.locate(selector, rest);
+        if (options && Object.keys(options).length) this.locate(selector, rest);
 
         const isVisibleElement = await this.isVisible();
         expect(isVisibleElement, {
@@ -209,21 +213,19 @@ export class BaseHelper {
      */
     public async fillInput(
         text: string | number,
-        options?: {
-            selector?: string;
-            placeholder?: string;
-            label?: string;
-            name?: string;
-            hasText?: string;
-        }
+        options?: InputFieldLocatorOptions
     ) {
         const { selector, placeholder, name, label, hasText } = options || {};
-        await this.fillText(text + '', {
-            selector: selector || 'input',
-            placeholder,
-            name,
-            label,
-        });
+        if (options && Object.keys(options).length) {
+            await this.fillText(text + '', {
+                selector: selector || 'input',
+                placeholder,
+                name,
+                label,
+            });
+            return;
+        }
+        await this.fillText(text + '');
     }
 
     // public async errorMessage(text: string, selector: string) {
@@ -414,57 +416,37 @@ export class BaseHelper {
         await this._locator.click({ button });
         await this._page.waitForLoadState('networkidle');
         success(`Click: ${button} click in ${this._getSelector(options)}`);
+    }
 
-        // const error = this._page.locator('span.label.text-error');
-        // const errorCount = await error.count();
-        // if (errorCount > 0) {
-        //     console.log(chalk.red(`Error ocurred: ${errorCount}`));
-        //     for (let i = 0; i < errorCount; i++) {
-        //         const errorMsg = await error.nth(i).textContent();
-        //         console.log(`Error (error ${i}): `, chalk.red(errorMsg));
-        //     }
-        // }
-        // const toast = this._page.locator('div.ct-toast-success');
-        // const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-        // const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+    public async isInputMandatory(options?: InputFieldLocatorOptions) {
+        if (options && Object.keys(options).length)
+            this.locate('input', options);
 
-        // const toastErrorCount = await toastError.count();
-        // const toastWarnCount = await toastWarn.count();
-        // const toastCount = await toast.count();
-        // if (toastCount > 0) {
-        //     console.log(chalk.green(`toastMessage (success): ${toastCount}:`));
-        //     for (let i = 0; i < toastCount; i++) {
-        //         const successMsg = await toast.nth(i).textContent();
-        //         console.log(
-        //             `toastMessage (success ${i}): `,
-        //             chalk.green(successMsg)
-        //         );
-        //     }
-        // }
-        // if (toastWarnCount > 0) {
-        //     console.log(
-        //         chalk.red(
-        //             `Multiple toastMessage ocurred \n ${toastWarn}:`,
-        //             toastWarnCount
-        //         )
-        //     );
-        //     for (let i = 0; i < toastWarnCount; i++) {
-        //         const errorMsg = await toastWarn.nth(i).textContent();
-        //         console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-        //     }
-        // }
-        // if (toastErrorCount > 0) {
-        //     console.log(
-        //         chalk.red(
-        //             `Multiple toastMessage ocurred \n ${toastError}:`,
-        //             toastErrorCount
-        //         )
-        //     );
-        //     for (let i = 0; i < toastErrorCount; i++) {
-        //         const errorMsg = await toastError.nth(i).textContent();
-        //         console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-        //     }
-        // }
+        return this._locator
+            .locator('//ancestor::div[contains(@class,"form-control")]/label')
+            .locator('//span/span[contains(@class,"text-error")]', {
+                hasText: '*',
+            })
+            .isVisible();
+    }
+    public async checkInputErrorMessage(options?: InputFieldLocatorOptions) {
+        if (options && Object.keys(options).length)
+            this.locate('input', options);
+
+        const errorElement = this._locator
+            .locator('//ancestor::div[contains(@class,"form-control")]')
+            .locator(
+                '//span[contains(@class," label label-text-alt text-error")]'
+            );
+        const textError = await errorElement?.textContent();
+
+        console.log(
+            chalk.blue(
+                'Input Error Message:-->',
+                chalk.red(chalk.red(textError))
+            )
+        );
+        return errorElement;
     }
 
     public async checkDisplayName() {
