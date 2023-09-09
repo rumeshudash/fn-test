@@ -156,7 +156,7 @@ test.describe('CustomeFeild', () => {
         await customefeild.init();
         await customefeild.clickExpenseTab('Employee Advance');
 
-        await customefeild.ChangeStatus();
+        await customefeild.ChangeStatus('Number2');
     });
     PROCESS_TEST('Change Mendatory', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
@@ -164,14 +164,14 @@ test.describe('CustomeFeild', () => {
 
         await customefeild.clickExpenseTab('Employee Advance');
 
-        await customefeild.ChangeMendatory();
+        await customefeild.ChangeMendatory('Number2');
     });
     PROCESS_TEST('Check Edit Link', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         await customefeild.clickExpenseTab('Employee Advance');
 
-        await customefeild.CheckEdit();
+        await customefeild.CheckEdit('Number2');
 
         await expect(
             page.getByText('Edit Employee Advance  Custom Field')
@@ -185,7 +185,7 @@ test.describe('CustomeFeild', () => {
         const name = await CustofeildHelper.generateRandomGradeName();
 
         await customefeild.changeNameORPriority(
-            'Number1',
+            'Number2',
             'Number',
             1,
             name,
