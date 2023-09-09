@@ -1,3 +1,4 @@
+import { generateRandomNumber } from '@/utils/common.utils';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 
@@ -105,6 +106,6 @@ export class GradesHelper extends BaseHelper {
         await this.click({ role: 'button', name: 'save' });
     }
     static async generateRandomGradeName() {
-        return `Grade${Math.floor(Math.random() * 1000000)}`;
+        return `Grade${generateRandomNumber()}`;
     }
 }

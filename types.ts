@@ -5,6 +5,7 @@ interface LocatorOptions {
     name?: string;
     text?: string | RegExp;
     label?: string;
+    type?: string;
     class?: string[];
     exactText?: boolean;
 }
@@ -14,6 +15,7 @@ interface InputFieldLocatorOptions {
     placeholder?: string;
     label?: string;
     name?: string;
+    type?: string;
     hasText?: string;
 }
 
