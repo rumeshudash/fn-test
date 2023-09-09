@@ -52,4 +52,5 @@ export const LISTING_ROUTES = {
     VERIFYOTP: TEST_URL + '/login?mobile=',
     FORGOTPASSWORD: TEST_URL + '/forgot-password',
     VERIFYEMAIL: TEST_URL + '/verify-email',
+    USERGROUPS: TEST_URL + '/e/f/user-groups',
 };
