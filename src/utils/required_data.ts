@@ -110,10 +110,40 @@ export const VendorInfo_NonGstin = {
 };
 
 //For Designation Info
-export const designationInfo = {
-    name: 'Test Status item',
+//Click Checkout Create and Save Another Designation
+export const designationInfo_Save_And_Create = {
+    name: 'Testing Save_Create032',
+};
+
+//Create Designation Info
+export const Create_Designation_Info = {
+    name: 'Testing Designation021',
 };
 
 export const designationUpdateInfo = {
-    name: 'stat',
+    name: 'Updating Designation021',
+};
+
+//Update Designation Info from Details Page
+export const designationInfo = {
+    name: designationUpdateInfo.name,
+};
+
+//designationInfo must be valid to change in details page
+export const designation_details_page_Info = {
+    name: Create_Designation_Info.name,
+};
+
+//Add Employee in Designation field
+export const employeeInfo = {
+    name: 'CTO',
+    email: 'testemploye113@email.com',
+    employee_code: 'EMPP113',
+    department: 'Test',
+    grade: 'E2',
+    reporting_manager: 'Amit Raj',
+    approval_mananger: 'Ravi',
+    notes: 'Adding Notes for testing',
+    IMAGE_NAME: 'pan-card.jpg',
+    comments: 'Testing upload document comments',
 };
