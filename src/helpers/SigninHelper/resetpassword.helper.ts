@@ -6,10 +6,12 @@ export class ResetPasswordHelper extends BaseHelper {
         await this.navigateTo('MYPROFILE');
     }
     public async resetPasswordPage() {
-        this.clickButton('Actions');
-        this._page
-            .locator('//span[contains(text(),"Change Password")]')
-            .click();
-        this._page.waitForTimeout(1000);
+        this._page.getByRole('button', { name: 'Actions' }).click();
+        await this._page.waitForTimeout(1000);
+        this._page.getByRole('menuitem', { name: 'Change Password' }).click();
+
+        await this._page.waitForTimeout(1000);
+
+        await expect(this._page.getByText('Change Password')).toHaveCount(1);
     }
 }
