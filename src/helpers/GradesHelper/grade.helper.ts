@@ -105,7 +105,4 @@ export class GradesHelper extends BaseHelper {
         }
         await this.click({ role: 'button', name: 'save' });
     }
-    static async generateRandomGradeName() {
-        return `Grade${generateRandomNumber()}`;
-    }
 }

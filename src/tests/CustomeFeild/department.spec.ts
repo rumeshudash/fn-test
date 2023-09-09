@@ -1,70 +1,38 @@
 import { CustofeildHelper } from '@/helpers/CustomefeildHelper/customefeild.helper';
 import { test, expect } from '@playwright/test';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
+import { PROCESS_TEST } from '@/fixtures';
 
 test.describe('CustomeFeild', () => {
-    test('Check the page opening', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Check the page opening', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await expect(page.getByText('Custom')).toHaveCount(2);
+        await expect(page.getByText('Custom')).toHaveCount(1);
     });
-    test('Check Department  and Click Department  Tab', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
+    PROCESS_TEST(
+        'Check Advance Tab and Click Advance Tab',
+        async ({ page }) => {
+            const customefeild = new CustofeildHelper(page);
+            await customefeild.init();
 
-        const customefeild = new CustofeildHelper(page);
-        await customefeild.init();
+            await customefeild.clickExpenseTab('Department');
+            await expect(
+                page.getByRole('tab', { name: 'Department', exact: true })
+            ).toHaveCount(1);
+        }
+    );
 
-        await customefeild.clickExpenseTab('Department');
-        await expect(
-            page.getByRole('tab', { name: 'Department', exact: true })
-        ).toHaveCount(1);
-    });
-
-    test('Check Department  Tab and Click Add New', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Check Department Tab and Click Add New', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
         await customefeild.clickExpenseTab('Department');
         await customefeild.clickButton('Add New');
-        await expect(
-            page.getByText('Add Department  Custom Field')
-        ).toHaveCount(1);
+        await expect(page.getByText('Add Department Custom Field')).toHaveCount(
+            1
+        );
     });
-    test('Add Department  With Empty Feilds', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add Department With Empty Feilds', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         await customefeild.clickExpenseTab('Department');
@@ -75,16 +43,7 @@ test.describe('CustomeFeild', () => {
         await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(1);
     });
 
-    test('Add Department  Without Name Feilds', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add Department Without Name Feilds', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         await customefeild.clickExpenseTab('Department');
@@ -95,129 +54,73 @@ test.describe('CustomeFeild', () => {
             'Field Name is required'
         );
     });
-    test('Add Department  Without Type Feilds', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add Department Without Type Feilds', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
-        await customefeild.clickExpenseTab('Department ');
+
+        await customefeild.clickExpenseTab('Department');
         await customefeild.AddExpenseCustomeFeild('Test1', '', 1);
 
         expect(await customefeild.errorMessage()).toBe(
             'Field Type is required'
         );
     });
-    test('Add Expense With Text type', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
+    PROCESS_TEST('Add Advance Cateorgy With Text type', async ({ page }) => {
+        const customefeild = new CustofeildHelper(page);
+        await customefeild.init();
+        const name = await CustofeildHelper.generateRandomGradeName();
+        await customefeild.clickExpenseTab('Department');
 
+        await customefeild.AddExpenseWithTextType(name, 'Text', 1, 'Test1');
+        // await customefeild.AddExpenseWithTextType('Test2', 'Text', 1);
+        await expect(page.getByText(name)).toHaveCount(1);
+    });
+    PROCESS_TEST('Add Adavnce Categories With Boolean', async ({ page }) => {
+        const customefeild = new CustofeildHelper(page);
+        await customefeild.init();
+        const name = await CustofeildHelper.generateRandomGradeName();
+        const name2 = await CustofeildHelper.generateRandomGradeName();
+        await customefeild.clickExpenseTab('Department');
+
+        await customefeild.AddExpenseWitBooleanType(name, 'Boolean', 1, 'True');
+        await customefeild.AddExpenseWitBooleanType(name2, 'Boolean', 1);
+    });
+    PROCESS_TEST('Add Department With Number type', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         await customefeild.clickExpenseTab('Department');
-        await customefeild.AddExpenseWithTextType('Test1', 'Text', 1, 'Test1');
-        await customefeild.AddExpenseWithTextType('Test2', 'Text', 1);
-        await expect(page.getByText('Test1')).toHaveCount(3);
-    });
-    test('Add Department  With Boolean', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
+        const name = await CustofeildHelper.generateRandomGradeName();
+        await customefeild.AddExpenseWithTextType(name, 'Number', 1, 123);
 
+        await expect(page.getByText(name)).toHaveCount(1);
+    });
+    PROCESS_TEST('Add Department With TextArea', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         await customefeild.clickExpenseTab('Department');
-        await customefeild.AddExpenseWitBooleanType(
-            'Test1',
-            'Boolean',
-            1,
-            'True'
-        );
-        await customefeild.AddExpenseWitBooleanType('Test2', 'Boolean', 1);
-    });
-    test('Add Department  With Number type', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
+        const name = await CustofeildHelper.generateRandomGradeName();
 
-        const customefeild = new CustofeildHelper(page);
-        await customefeild.init();
-        await customefeild.clickExpenseTab('Department ');
-        await customefeild.AddExpenseWithTextType('Number1', 'Number', 1, 123);
-
-        await expect(page.getByText('Number1')).toHaveCount(1);
-    });
-    test('Add Department  With TextArea', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
-        const customefeild = new CustofeildHelper(page);
-        await customefeild.init();
-        await customefeild.clickExpenseTab('Department');
         await customefeild.AddExpenseWithTextType(
-            'TextArea1',
+            name,
             'TextArea',
             1,
             'Finops Protol'
         );
 
-        await expect(page.getByText('TextArea1')).toHaveCount(1);
+        await expect(page.getByText(name)).toHaveCount(1);
     });
-    test('Add Department With Date type', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Add Advance categories With Date type', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         await customefeild.clickExpenseTab('Department');
+        const name = await CustofeildHelper.generateRandomGradeName();
 
-        await customefeild.AddExpenseWithDateType('Date1', 'Date', 1);
+        await customefeild.AddExpenseWithDateType(name, 'Date', 1);
     });
-    // test('Add Expense with choice type without choice feild', async ({
+    // PROCESS_TEST('Add Expense with choice type without choice feild', async ({
     //     page,
     // }) => {
-    //     const signin = new SignInHelper(page);
-    //     await signin.init();
-    //     const username = 'newtestauto@company.com';
-    //     const password = '123456';
-    //     await signin.checkDashboard({
-    //         username: username,
-    //         password: password,
-    //     });
+    //
 
     //     const customefeild = new CustofeildHelper(page);
     //     await customefeild.init();
@@ -231,81 +134,47 @@ test.describe('CustomeFeild', () => {
     //         'Choice List is required'
     //     );
     // });
-    test('Change Status', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Change Status', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         await customefeild.clickExpenseTab('Department');
 
-        await customefeild.ChangeStatus();
+        await customefeild.ChangeStatus('Number2');
     });
-    test('Change Mendatory', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Change Mendatory', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
         await customefeild.clickExpenseTab('Department');
 
-        await customefeild.ChangeMendatory();
+        await customefeild.ChangeMendatory('Number2');
     });
-    test('Check Edit Link', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Check Edit Link', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         await customefeild.clickExpenseTab('Department');
 
-        await customefeild.CheckEdit();
+        await customefeild.CheckEdit('Number2');
 
         await expect(
-            page.getByText('Edit Department  Custom Field')
+            page.getByText('Edit Department Custom Field')
         ).toHaveCount(1);
     });
-    test('Change Name and Priority', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        const username = 'newtestauto@company.com';
-        const password = '123456';
-        await signin.checkDashboard({
-            username: username,
-            password: password,
-        });
-
+    PROCESS_TEST('Change Name and Priority', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         await customefeild.clickExpenseTab('Department');
 
+        const name = await CustofeildHelper.generateRandomGradeName();
+
         await customefeild.changeNameORPriority(
-            'Number1',
+            'Number2',
             'Number',
             1,
-            'Number4',
+            name,
             2
         );
 
-        await expect(page.getByText('Number4')).toHaveCount(1);
+        await expect(page.getByText(name)).toHaveCount(1);
     });
 });
