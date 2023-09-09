@@ -213,3 +213,9 @@ interface EmployeeCreationData {
     manager?: string;
     parent?: string;
 }
+
+interface UserGroupData {
+    name?: string;
+    manager?: string;
+    description?: string;
+}
