@@ -51,4 +51,39 @@ test.describe('Expense Head', () => {
             await expect(page.getByText(Name)).toHaveCount(1);
         }
     );
+    PROCESS_TEST('Create Expense Head with  All feild', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+        const Name = await ExpenseHeadHelper.generateRandomGradeName();
+        await expenseHead.AddExpenseHead(Name, 'Test10', 'Ravi');
+        await expect(await expenseHead.successToast()).toBe(
+            'Successfully saved '
+        );
+    });
+    PROCESS_TEST(
+        'Change Active to inactive and check in inactive',
+        async ({ page }) => {
+            const expenseHead = new ExpenseHeadHelper(page);
+            await expenseHead.init();
+            const Name = await ExpenseHeadHelper.generateRandomGradeName();
+            await expenseHead.changeActiveStatus('Test10');
+            await expect(await expenseHead.successToast()).toBe(
+                'Status Changed'
+            );
+
+            await page.getByText('Inactive').click();
+
+            await page.waitForTimeout(1000);
+            await page.getByText('Test10').click();
+        }
+    );
+
+    PROCESS_TEST('Change Inactive to active', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+
+        await expenseHead.changeInactiveStatus('Refund');
+
+        await expect(await expenseHead.successToast()).toBe('Status Changed');
+    });
 });
