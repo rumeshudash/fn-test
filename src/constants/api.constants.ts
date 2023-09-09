@@ -55,4 +55,5 @@ export const LISTING_ROUTES = {
     USERGROUPS: TEST_URL + '/e/f/user-groups',
     CUSTOMEFEILDS: TEST_URL + '/e/f/custom-fields',
     MYPROFILE: TEST_URL + '/e/f/settings/my-profile',
+    PAYMENTMODES: TEST_URL + '/e/f/payment-modes',
 };

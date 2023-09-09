@@ -150,13 +150,6 @@ export class CreateDesignationHelper extends BaseHelper {
             .click();
     }
 
-    async verifyEmptyField() {
-        const name_field = await this.locate('input', {
-            name: 'name',
-        })._locator.inputValue();
-        expect(name_field, chalk.red('Name field value')).toBe('');
-    }
-
     async changeStatus(status: string) {
         const itemStatus = this._page
             .getByRole('button', {
