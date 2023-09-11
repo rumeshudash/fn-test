@@ -5,6 +5,9 @@ export class ExpenseHeadHelper extends BaseHelper {
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
     }
+    public async clickPolicy() {
+        await this._page.locator("//input[@type='checkbox']").click();
+    }
 
     public async AddExpenseHead(
         name: string,
@@ -91,5 +94,16 @@ export class ExpenseHeadHelper extends BaseHelper {
         await this.click({ role: 'button', name: 'save' });
 
         this._page.waitForTimeout(1000);
+    }
+
+    public async AddandClickCheckbox(name: string) {
+        await this.clickButton('Add Expense Head');
+        await this.fillText(name, {
+            name: 'name',
+        });
+
+        await this.clickPolicy();
+
+        await this.click({ role: 'button', name: 'save' });
     }
 }

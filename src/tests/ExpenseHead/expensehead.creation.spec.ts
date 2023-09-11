@@ -116,4 +116,15 @@ test.describe('Expense Head', () => {
             'Successfully saved '
         );
     });
+
+    PROCESS_TEST('Check save and AddAnother ', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+
+        const name = await ExpenseHeadHelper.generateRandomGradeName();
+
+        await expenseHead.AddandClickCheckbox(name);
+
+        await expect(await page.getByText('Add Expense Head')).toHaveCount(2);
+    });
 });
