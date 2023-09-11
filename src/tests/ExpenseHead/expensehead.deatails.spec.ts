@@ -172,5 +172,24 @@ test.describe('Expense Head Details', () => {
         });
     });
 
-    PROCESS_TEST('Edit Notes', async ({ page }) => {});
+    PROCESS_TEST('Edit Notes', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Notes');
+
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.EditNotes(
+            {
+                title: 'First Notes',
+                date: new Date(),
+            },
+            'Edit Notes'
+        );
+
+        console.log(chalk.green('Notes Edited'));
+    });
 });
