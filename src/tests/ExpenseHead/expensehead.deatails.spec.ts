@@ -112,4 +112,12 @@ test.describe('Expense Head Details', () => {
 
         await expenseHeadDetails.clickOnTab('Notes');
     });
+    PROCESS_TEST('Click on Documents Tab', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Documents');
+    });
 });
