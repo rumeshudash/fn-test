@@ -4,18 +4,18 @@ import GenericGstinCardHelper, {
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Reliance Retail Limited',
-    value: '27AABCR1718E1ZP',
+    trade_name: 'Nitin And Company',
+    value: '07CFXPS9334F1ZN',
     business_type: 'Proprietorship',
-    pan_number: 'AABCR1718E',
+    pan_number: 'CFXPS9334F',
     address:
-        'RCP, 5 TTC Industrial Area, Ghansoli, Thane Belapur Road, Navi Mumbai, Reliance Corporate Park, Thane, 400701, Maharashtra, NA, Gr',
+        'GALI NO -3, KABUL NAGAR, NEAR OBC BANK SHAHDARA, 1/5952,3RD FLOOR, East Delhi, 110032, Delhi, NA',
     status: 'Active',
 };
 
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '27AABCR1718E1ZP',
+    gstin: '07CFXPS9334F1ZN',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
@@ -140,7 +140,8 @@ describe(`TBA001`, () => {
         await gstin_helper.gstinInfoCheck();
         await helper.submitButton();
         await helper.checkToastMessage();
-        await helper.verifyTableData();
+        // verifying list information
+        await helper.verifyTableData(businessGstinInfo);
     });
     // PROCESS_TEST(
     //     'Verify table data after creating business',
