@@ -82,8 +82,38 @@ test.describe('Expense Head', () => {
         const expenseHead = new ExpenseHeadHelper(page);
         await expenseHead.init();
 
-        await expenseHead.changeInactiveStatus('Refund');
+        await expenseHead.changeInactiveStatus('Salary');
 
         await expect(await expenseHead.successToast()).toBe('Status Changed');
+    });
+    PROCESS_TEST(
+        'Edit Expense Head with empty Name feild',
+        async ({ page }) => {
+            const expenseHead = new ExpenseHeadHelper(page);
+            await expenseHead.init();
+            await expenseHead.EditExpenseHead('Test10', '');
+            await expect(await expenseHead.errorMessage()).toBe(
+                'Name is required'
+            );
+        }
+    );
+
+    PROCESS_TEST('Edit Expense Head with duplicate name ', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+        await expenseHead.EditExpenseHead('Test10', 'Rent');
+        await expect(await expenseHead.errorMessage()).toBe(
+            'Duplicate expense head name'
+        );
+    });
+    PROCESS_TEST('Edit Expense Head with valid name ', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+
+        await expenseHead.EditExpenseHead('Test10', 'Time');
+
+        await expect(await expenseHead.successToast()).toBe(
+            'Successfully saved '
+        );
     });
 });

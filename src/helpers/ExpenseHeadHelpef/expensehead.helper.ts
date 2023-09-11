@@ -50,7 +50,7 @@ export class ExpenseHeadHelper extends BaseHelper {
         this._page.waitForTimeout(1000);
     }
     public async changeInactiveStatus(name: string) {
-        this._page.getByText('Inactive').click();
+        this._page.getByRole('tab', { name: 'Inactive', exact: true }).click();
 
         this._page.waitForTimeout(1000);
 
@@ -65,6 +65,30 @@ export class ExpenseHeadHelper extends BaseHelper {
         const btnlocator = '//button';
 
         this.FindrowAndperformAction(name, 3, btnlocator, performAction);
+
+        this._page.waitForTimeout(1000);
+    }
+
+    public async EditExpenseHead(name: string, newname: string) {
+        this._page.getByRole('tab', { name: 'All', exact: true }).click();
+
+        this._page.waitForTimeout(1000);
+
+        await this._page.getByText(name);
+
+        async function performAction(element: any) {
+            await element.click();
+        }
+
+        const btnlocator = '//button';
+
+        this.FindrowAndperformAction(name, 5, btnlocator, performAction);
+
+        this.fillText(newname, {
+            name: 'name',
+        });
+
+        await this.click({ role: 'button', name: 'save' });
 
         this._page.waitForTimeout(1000);
     }
