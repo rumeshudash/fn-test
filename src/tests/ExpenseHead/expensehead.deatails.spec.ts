@@ -43,4 +43,46 @@ test.describe('Expense Head Details', () => {
 
         await expect(page.getByText('Edit Expense Head')).toHaveCount(1);
     });
+    PROCESS_TEST(
+        'Click on Edit Icon And Edit name with empty feild',
+        async ({ page }) => {
+            const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+            await expenseHeadDetails.init();
+
+            await expenseHeadDetails.clickOnExpenseHead(
+                'Foods & Accommodations'
+            );
+
+            await expenseHeadDetails.clickOnEditIcon();
+
+            await page.waitForTimeout(1000);
+
+            await expenseHeadDetails.EditExpenseHead('');
+
+            await expect(await expenseHeadDetails.errorMessage()).toBe(
+                'Name is required'
+            );
+        }
+    );
+    PROCESS_TEST(
+        'Click on Edit Icon And Edit name with Duplicate Name feild',
+        async ({ page }) => {
+            const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+            await expenseHeadDetails.init();
+
+            await expenseHeadDetails.clickOnExpenseHead(
+                'Foods & Accommodations'
+            );
+
+            await expenseHeadDetails.clickOnEditIcon();
+
+            await page.waitForTimeout(1000);
+
+            await expenseHeadDetails.EditExpenseHead('Rent');
+
+            await expect(await expenseHeadDetails.errorMessage()).toBe(
+                'Duplicate expense head name'
+            );
+        }
+    );
 });

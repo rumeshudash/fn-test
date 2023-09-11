@@ -27,4 +27,29 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
 
         this._page.waitForTimeout(2000);
     }
+
+    public async EditExpenseHead(
+        name: string,
+        parent?: string,
+        manager?: string
+    ) {
+        await this._page.waitForTimeout(1000);
+        await this.fillText(name, {
+            name: 'name',
+        });
+        if (parent) {
+            await this.selectOption({
+                option: parent,
+                hasText: 'Select a Parent',
+            });
+        }
+        if (manager) {
+            await this.selectOption({
+                option: manager,
+                hasText: 'Select a manager',
+            });
+        }
+        await this._page.waitForTimeout(1000);
+        await this.click({ role: 'button', name: 'save' });
+    }
 }
