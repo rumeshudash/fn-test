@@ -155,4 +155,22 @@ test.describe('Expense Head Details', () => {
 
         console.log(chalk.green('Documents Addition Checked'));
     });
+
+    PROCESS_TEST('Verify Notes', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Notes');
+
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.verifyNoteAddition({
+            title: 'First Notes',
+            date: new Date(),
+        });
+    });
+
+    PROCESS_TEST('Edit Notes', async ({ page }) => {});
 });

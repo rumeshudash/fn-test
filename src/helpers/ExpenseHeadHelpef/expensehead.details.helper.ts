@@ -1,8 +1,12 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
-import { DepartmentDetails } from '../DepartmentHelper/DepartmentDetails.helper';
+
+import { NotesHelper } from '../BaseHelper/notes.helper';
+
+import { formatDate } from '@/utils/common.utils';
 
 export class ExpenseHeadDetailsHelper extends BaseHelper {
+    public noteHelper: NotesHelper;
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
     }
@@ -84,5 +88,46 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
 
         await this.fillText(document.comment, { name: 'comments' });
         await this.clickButton('Save');
+
+        this._page.waitForTimeout(1000);
+    }
+
+    public async verifyNoteAddition(note: { title: string; date: Date }) {
+        await this._page.getByRole('tab').getByText('Notes').click();
+        const notesTab = this._page.locator("//div[@role='tabpanel']").nth(2);
+        const notesRow = notesTab.locator('div.flex.gap-4').filter({
+            hasText: note.title,
+        });
+
+        this._page.waitForTimeout(1000);
+
+        await notesRow.click();
+
+        const btnlocator = '//button';
+
+        await notesRow.locator(btnlocator).click();
+
+        // await this._page.getByText('Edit').click();
+
+        await this._page.waitForTimeout(1000);
+    }
+
+    public async EditNotes(
+        note: { title: string; date: Date },
+        newNotes: string
+    ) {
+        await this.verifyNoteAddition({
+            title: note.title,
+            date: note.date,
+        });
+        await this._page.getByText('Edit').click();
+
+        await this.fillText(newNotes, {
+            name: 'comments',
+        });
+
+        await this.clickButton('Save');
+
+        await this._page.waitForTimeout(1000);
     }
 }
