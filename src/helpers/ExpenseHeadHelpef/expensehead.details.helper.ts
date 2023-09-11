@@ -57,4 +57,12 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
         this._page.getByRole('button', { name: 'Actions' }).click();
         this._page.waitForTimeout(1000);
     }
+
+    public async clickOnTab(tabName: string) {
+        await this._page
+            .getByRole('tab', { name: `${tabName}`, exact: true })
+            .click();
+
+        this._page.waitForTimeout(2000);
+    }
 }

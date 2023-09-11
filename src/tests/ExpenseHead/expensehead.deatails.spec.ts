@@ -96,4 +96,20 @@ test.describe('Expense Head Details', () => {
 
         await expect(page.getByText('Add Notes')).toHaveCount(1);
     });
+    PROCESS_TEST('Click on Expense Tab', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Expenses');
+    });
+    PROCESS_TEST('Click on Notes Tab', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Notes');
+    });
 });
