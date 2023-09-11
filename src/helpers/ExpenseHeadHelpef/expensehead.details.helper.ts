@@ -52,4 +52,9 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
         await this._page.waitForTimeout(1000);
         await this.click({ role: 'button', name: 'save' });
     }
+
+    public async clickOnActions() {
+        this._page.getByRole('button', { name: 'Actions' }).click();
+        this._page.waitForTimeout(1000);
+    }
 }

@@ -85,4 +85,15 @@ test.describe('Expense Head Details', () => {
             );
         }
     );
+    PROCESS_TEST('Click on Action Button', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.clickOnActions();
+
+        await expect(page.getByText('Add Notes')).toHaveCount(1);
+    });
 });
