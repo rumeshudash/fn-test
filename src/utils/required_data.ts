@@ -137,8 +137,8 @@ export const designation_details_page_Info = {
 //Add Employee in Designation field
 export const employeeInfo = {
     name: 'CTO',
-    email: 'testemploye113@email.com',
-    employee_code: 'EMPP113',
+    email: 'testemploye1213@email.com',
+    employee_code: 'EMPP1213',
     department: 'Test',
     grade: 'E2',
     reporting_manager: 'Amit Raj',
@@ -159,4 +159,31 @@ export const paymentModeInfo = {
     type: 'Cash',
     bank: paymentMode_Save_And_Create.bank,
     updateName: 'Test Mode Update',
+};
+
+//For Employee Creation in HR
+
+export const employeeCreationInfo_SaveAndCreate = {
+    name: 'Admin SnC7',
+    email: 'employeecreationSnc7@test.com',
+    employee_code: 'EC0037',
+    department: 'Test',
+    designation: 'Chief Marketing Officer',
+    grade: 'E3',
+    reporting_manager: 'Amit Raj',
+    approval_mananger: 'Ravi',
+    notes: 'Adding Notes for testing',
+};
+
+export const employeeCreationInfo = {
+    name: 'Admin Create8',
+    email: 'employeecreation8@test.com',
+    status: 'Active',
+    employee_code: 'EC08',
+    department: 'Test',
+    designation: 'Chief Marketing Officer',
+    grade: 'E3',
+    reporting_manager: 'Amit Raj',
+    approval_mananger: 'Ravi',
+    notes: 'Adding Notes for testing',
 };

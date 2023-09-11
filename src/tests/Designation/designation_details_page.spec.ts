@@ -1,8 +1,10 @@
 import { PROCESS_TEST } from '@/fixtures';
+import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/employeeCreation.helper';
 import {
     DesignationDetailsPageHelper,
     DesignationHelper,
 } from '@/helpers/DesignationHelper/designation.helper';
+import { EmployeeCreation } from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
 import {
     designationInfo,
     designation_details_page_Info,
@@ -89,6 +91,10 @@ describe('TDD001', () => {
             employeeInfo,
             page
         );
+        const employeeCreation = new FillEmployeeCreationForm(
+            employeeInfo,
+            page
+        );
         await designation.init();
         await designation.searchDesignation();
         await designation.changeTab('All');
@@ -97,19 +103,24 @@ describe('TDD001', () => {
 
         await test.step('Verify Employee Form Field', async () => {
             await detailsPage.clickActionOption('Add Employee');
-            await detailsPage.verifyAddEmployeeForm('Name');
-            await detailsPage.verifyAddEmployeeForm('Email');
-            await detailsPage.verifyAddEmployeeForm('Employee Code');
-            await detailsPage.verifyAddEmployeeForm('Department');
-            await detailsPage.verifyAddEmployeeForm('Designation');
-            await detailsPage.verifyAddEmployeeForm('Grade');
-            await detailsPage.verifyAddEmployeeForm('Reporting Manager');
-            await detailsPage.verifyAddEmployeeForm('Approval Manager');
+            await employeeCreation.verifyAddEmployeeForm('Name');
+            await employeeCreation.verifyAddEmployeeForm('Email');
+            await employeeCreation.verifyAddEmployeeForm('Employee Code');
+            await employeeCreation.verifyAddEmployeeForm('Department');
+            await employeeCreation.verifyAddEmployeeForm('Designation');
+            await employeeCreation.verifyAddEmployeeForm('Grade');
+            await employeeCreation.verifyAddEmployeeForm('Reporting Manager');
+            await employeeCreation.verifyAddEmployeeForm('Approval Manager');
         });
 
         await test.step('Fill Employee Form Field', async () => {
-            await detailsPage.fillEmployeeForm();
+            await employeeCreation.fillEmployeeForm();
+            // await detailsPage.fillEmployeeForm();
             await detailsPage.clickButton('Save');
+            expect(
+                await employeeCreation.toastMessage(),
+                'ToastMessage success check'
+            ).toBe('Successfully created');
         });
 
         await test.step('Verify Employee Tab Details', async () => {

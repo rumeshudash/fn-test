@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { IMAGE_NAME } from '@/utils/required_data';
+import { EmployeeCreation } from '../EmplyeeCreationHelper/employeeCreation.helper';
 
 export class DesignationHelper extends BaseHelper {
     public designationInfo;
@@ -150,6 +151,13 @@ export class CreateDesignationHelper extends BaseHelper {
             .click();
     }
 
+    async verifyEmptyField() {
+        const name_field = await this.locate('input', {
+            name: 'name',
+        })._locator.inputValue();
+        expect(name_field, chalk.red('Name field value')).toBe('');
+    }
+
     async changeStatus(status: string) {
         const itemStatus = this._page
             .getByRole('button', {
@@ -239,46 +247,46 @@ export class DesignationDetailsPageHelper extends BaseHelper {
         await optionContainer.getByRole('menuitem', { name: options }).click();
     }
 
-    async verifyAddEmployeeForm(fieldName) {
-        await this._page.waitForTimeout(2000);
-        const parentLocator = this._page.locator(
-            `//div[@role="dialog"]//span[text()="${fieldName}"]/parent::label/parent::div`
-        );
-        await expect(
-            parentLocator,
-            chalk.red(`Dialog ${fieldName} visibility`)
-        ).toBeVisible();
-    }
+    // async verifyAddEmployeeForm(fieldName) {
+    //     await this._page.waitForTimeout(2000);
+    //     const parentLocator = this._page.locator(
+    //         `//div[@role="dialog"]//span[text()="${fieldName}"]/parent::label/parent::div`
+    //     );
+    //     await expect(
+    //         parentLocator,
+    //         chalk.red(`Dialog ${fieldName} visibility`)
+    //     ).toBeVisible();
+    // }
 
-    async fillEmployeeForm() {
-        await this.fillText(this.employeeInfo.name, {
-            name: 'name',
-        });
-        await this.fillText(this.employeeInfo.email, {
-            name: 'email',
-        });
-        await this.fillText(this.employeeInfo.employee_code, {
-            name: 'identifier',
-        });
-        await this.selectOption({
-            input: this.employeeInfo.department,
-            placeholder: 'Select  Department',
-        });
-        await this.selectOption({
-            input: this.employeeInfo.grade,
-            placeholder: 'Select Grade',
-        });
-        await this.selectOption({
-            input: this.employeeInfo.reporting_manager,
-            placeholder: 'Select Manager',
-            exact: true,
-        });
-        // await this.selectOption({
-        //     input: this.employeeInfo.approval_mananger,
-        //     placeholder: 'Select approval Manager',
-        //     exact: true,
-        // });
-    }
+    // async fillEmployeeForm() {
+    //     await this.fillText(this.employeeInfo.name, {
+    //         name: 'name',
+    //     });
+    //     await this.fillText(this.employeeInfo.email, {
+    //         name: 'email',
+    //     });
+    //     await this.fillText(this.employeeInfo.employee_code, {
+    //         name: 'identifier',
+    //     });
+    //     await this.selectOption({
+    //         input: this.employeeInfo.department,
+    //         placeholder: 'Select  Department',
+    //     });
+    //     await this.selectOption({
+    //         input: this.employeeInfo.grade,
+    //         placeholder: 'Select Grade',
+    //     });
+    //     await this.selectOption({
+    //         input: this.employeeInfo.reporting_manager,
+    //         placeholder: 'Select Manager',
+    //         exact: true,
+    //     });
+    //     // await this.selectOption({
+    //     //     input: this.employeeInfo.approval_mananger,
+    //     //     placeholder: 'Select approval Manager',
+    //     //     exact: true,
+    //     // });
+    // }
 
     async verifyEmployeeTabDetails() {
         // await this.click({ role: 'button', text: 'Employee' });

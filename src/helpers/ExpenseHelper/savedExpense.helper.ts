@@ -19,9 +19,9 @@ export class SavedExpenseCreation extends BaseHelper {
             .textContent();
     }
 
-    public async toastMessage() {
-        return await this._page.locator("//div[@role='status']").textContent();
-    }
+    // public async toastMessage() {
+    //     return await this._page.locator("//div[@role='status']").textContent();
+    // }
 
     public async clickTab(buttonName: string) {
         await this.click({ role: 'tab', name: buttonName });

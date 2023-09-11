@@ -18,6 +18,7 @@ export class ListingHelper extends PageHelper {
      */
     public async searchInList(query: string | number): Promise<void> {
         await this.fillInput(query, { type: 'search' });
+        await this._page.waitForTimeout(300);
         await this._page.waitForLoadState('networkidle');
     }
 
