@@ -192,4 +192,22 @@ test.describe('Expense Head Details', () => {
 
         console.log(chalk.green('Notes Edited'));
     });
+
+    PROCESS_TEST('Delete Notes', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Notes');
+
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.DeleteNotes({
+            title: 'Second Notes',
+            date: new Date(),
+        });
+
+        console.log(chalk.green('Notes Deleted'));
+    });
 });

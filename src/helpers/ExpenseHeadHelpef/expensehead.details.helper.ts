@@ -130,4 +130,18 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
 
         await this._page.waitForTimeout(1000);
     }
+
+    public async DeleteNotes(note: { title: string; date: Date }) {
+        await this.verifyNoteAddition({
+            title: note.title,
+            date: note.date,
+        });
+        await this._page.getByText('Delete').click();
+
+        await this._page.waitForTimeout(1000);
+
+        await this.clickButton('Yes');
+
+        await this._page.waitForTimeout(1000);
+    }
 }
