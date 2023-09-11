@@ -1,8 +1,9 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 
 import { expect } from '@playwright/test';
+import { FormHelper } from '../BaseHelper/form.helper';
 
-export class ForgotPasswordHelper extends BaseHelper {
+export class ForgotPasswordHelper extends FormHelper {
     private FORGOT_PASSWORD_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
 

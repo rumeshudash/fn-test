@@ -133,39 +133,29 @@ export class CustofeildHelper extends BaseHelper {
     //     await this.click({ role: 'button', name: 'save' });
     // }
 
-    public async ChangeStatus() {
+    public async ChangeStatus(name: string) {
         async function performAction(element: any) {
             await element.click();
         }
 
         const btnlocator = '//button';
 
-        await this.FindrowAndperformAction(
-            'Number1',
-            5,
-            btnlocator,
-            performAction
-        );
+        await this.FindrowAndperformAction(name, 5, btnlocator, performAction);
     }
 
-    public async ChangeMendatory() {
+    public async ChangeMendatory(name: string) {
         async function performAction(element: any) {
             await element.click();
         }
 
         const btnlocator = '//button';
 
-        await this.FindrowAndperformAction(
-            'Number1',
-            6,
-            btnlocator,
-            performAction
-        );
+        await this.FindrowAndperformAction(name, 6, btnlocator, performAction);
     }
 
-    public async CheckEdit() {
+    public async CheckEdit(name: string) {
         await this.FindrowAndperformAction(
-            'Number1',
+            name,
             7,
             '//button',
             async (element: any) => {
@@ -182,11 +172,11 @@ export class CustofeildHelper extends BaseHelper {
         newname?: string,
         newpriority?: number
     ) {
-        await this.CheckEdit();
+        await this.CheckEdit(name);
 
-        await this._page.getByText(`${name}`);
-        await this._page.getByText(`${type}`);
-        await this._page.getByText(`${priority}`);
+        // await this._page.getByText(`${name}`);
+        // await this._page.getByText(`${type}`);
+        // await this._page.getByText(`${priority}`);
 
         if (newname) {
             await this.fillText(newname, {
