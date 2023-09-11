@@ -2,12 +2,21 @@ import { generateRandomNumber } from '@/utils/common.utils';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 
+import { ListingHelper } from '../BaseHelper/listing.helper';
+
 export class GradesHelper extends BaseHelper {
     private static GRADES_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
 
+    public listingHelper: ListingHelper;
+
     public async init() {
         await this.navigateTo('GRADES');
+    }
+
+    constructor(page: any) {
+        super(page);
+        this.listingHelper = new ListingHelper(page);
     }
     public async AddGrades(name: string, priority: number) {
         await this.click({ role: 'button', name: 'Add Grade' });

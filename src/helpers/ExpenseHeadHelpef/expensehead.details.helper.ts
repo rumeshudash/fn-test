@@ -1,5 +1,6 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
+import { DepartmentDetails } from '../DepartmentHelper/DepartmentDetails.helper';
 
 export class ExpenseHeadDetailsHelper extends BaseHelper {
     public async init() {
@@ -71,5 +72,17 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
             name: 'comments',
         });
         await this._page.waitForTimeout(1000);
+    }
+
+    public async addDocument(document: { comment: string; imagePath: string }) {
+        // await this.clickButton('Upload Documents');
+        await this._page
+            .locator("//div[@role='presentation']")
+            .locator("//input[@type='file']")
+            .setInputFiles(`images/${document.imagePath}`);
+        await this._page.waitForTimeout(1000);
+
+        await this.fillText(document.comment, { name: 'comments' });
+        await this.clickButton('Save');
     }
 }

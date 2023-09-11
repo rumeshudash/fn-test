@@ -1,5 +1,6 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHeadDetailsHelper } from '@/helpers/ExpenseHeadHelpef/expensehead.details.helper';
+import chalk from 'chalk';
 
 import { test, expect } from '@playwright/test';
 
@@ -131,5 +132,27 @@ test.describe('Expense Head Details', () => {
         await expenseHeadDetails.clickOnAddNotes('Test');
 
         await expect(page.getByText('Add Notes')).toHaveCount(2);
+    });
+
+    PROCESS_TEST('Click on Upload Document', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await expenseHeadDetails.clickOnTab('Documents');
+        await page.waitForTimeout(1000);
+
+        const randomnumber =
+            await ExpenseHeadDetailsHelper.generateRandomGradeName();
+
+        const document = {
+            imagePath: 'pan-card.jpg',
+            comment: 'test' + randomnumber,
+            date: new Date(),
+        };
+
+        await expenseHeadDetails.addDocument(document);
+
+        console.log(chalk.green('Documents Addition Checked'));
     });
 });
