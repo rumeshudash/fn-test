@@ -110,7 +110,7 @@ test.describe('Expense Head', () => {
         const expenseHead = new ExpenseHeadHelper(page);
         await expenseHead.init();
 
-        await expenseHead.EditExpenseHead('Test10', 'Time');
+        await expenseHead.EditExpenseHead('Time', 'Test10');
 
         await expect(await expenseHead.successToast()).toBe(
             'Successfully saved '
@@ -122,6 +122,7 @@ test.describe('Expense Head', () => {
         await expenseHead.init();
 
         const name = await ExpenseHeadHelper.generateRandomGradeName();
+        const name2 = await ExpenseHeadHelper.generateRandomGradeName();
 
         await expenseHead.AddandClickCheckbox(name);
 
