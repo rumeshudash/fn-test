@@ -120,4 +120,16 @@ test.describe('Expense Head Details', () => {
 
         await expenseHeadDetails.clickOnTab('Documents');
     });
+
+    PROCESS_TEST('Click ON Notes Tab and check add notes', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await expenseHeadDetails.clickOnTab('Notes');
+        await page.waitForTimeout(1000);
+        await expenseHeadDetails.clickOnAddNotes('Test');
+
+        await expect(page.getByText('Add Notes')).toHaveCount(2);
+    });
 });

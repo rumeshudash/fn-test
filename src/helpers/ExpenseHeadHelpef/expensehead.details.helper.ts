@@ -65,4 +65,11 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
 
         this._page.waitForTimeout(2000);
     }
+    public async clickOnAddNotes(notes: string) {
+        await this.clickButton('Add Notes');
+        await this.fillText(notes, {
+            name: 'comments',
+        });
+        await this._page.waitForTimeout(1000);
+    }
 }
