@@ -218,4 +218,6 @@ interface UserGroupData {
     name?: string;
     manager?: string;
     description?: string;
+    member?: string;
+    role?: string;
 }
