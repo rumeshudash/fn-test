@@ -1,4 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
+import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
 import { WorkflowCreationHelper } from '@/helpers/WorkflowHelper/workflowCreation.helper';
 import { WorkflowListingHelper } from '@/helpers/WorkflowHelper/workflowListing.helper';
 const { describe } = PROCESS_TEST;
