@@ -16,6 +16,8 @@ const DEVELOPMENT_URL = 'https://devfn.vercel.app';
 const LOCALHOST_URL = 'http://localhost:3000';
 
 export const handleTestUrl = (type: PATH_TYPE = 'development') => {
+    if (process.env.FRONTEND_URL) return process.env.FRONTEND_URL;
+
     switch (type) {
         case 'development':
             return DEVELOPMENT_URL;
