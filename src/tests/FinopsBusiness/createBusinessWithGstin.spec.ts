@@ -1,3 +1,7 @@
+import {
+    Invalid_Email_Error_Message,
+    Invalid_Mobile_Error_Message,
+} from '@/constants/errorMessage.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import GenericGstinCardHelper, {
     gstinDataType,
@@ -108,7 +112,7 @@ describe(`TBA001`, () => {
             mobile: '984561234',
         });
 
-        await helper.checkMobileError('Please enter a valid 10-digit number.');
+        await helper.checkMobileError(Invalid_Mobile_Error_Message);
         await helper.checkDisableSubmit();
     });
 
@@ -122,7 +126,7 @@ describe(`TBA001`, () => {
             'mobile'
         );
 
-        await helper.checkEmailError('Email must be a valid email');
+        await helper.checkEmailError(Invalid_Email_Error_Message);
         await helper.checkDisableSubmit();
     });
     PROCESS_TEST('Verify Confirm Dialog Open Or not', async ({ page }) => {

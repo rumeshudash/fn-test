@@ -28,8 +28,6 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
 
     public async clickNavigationTab(nav: string) {
         await this._page.locator(`//span[text()='${nav}']`).click();
-
-        // await this.listHelper.tabHelper.clickTab(nav);
     }
 
     public async clickConfirmDialogAction(string: 'Yes!' | 'No') {
@@ -59,18 +57,6 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         await button.click();
         console.log(chalk.blue('Open Add Business Form'));
     }
-
-    // public async fillGstin(gstin: string): Promise<void> {
-    //     await this.fillInput(gstin, { name: 'gstin' });
-    // }
-
-    // public async fillMobile(mobile: string): Promise<void> {
-    //     await this.fillInput(mobile, { name: 'mobile' });
-    // }
-
-    // public async fillEmail(email: string): Promise<void> {
-    //     await this.fillInput(email, { name: 'email' });
-    // }
 
     public async fillBusinessInputInformation(
         data: gstinBusinessInformation,
