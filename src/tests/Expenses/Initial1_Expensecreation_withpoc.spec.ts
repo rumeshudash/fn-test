@@ -1,4 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
+import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
     ApprovalToggleHelper,
@@ -12,6 +13,7 @@ import chalk from 'chalk';
 const { expect, describe } = PROCESS_TEST;
 describe('TECF002', () => {
     PROCESS_TEST('Raise Expense with POC', async ({ page }) => {
+        // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const toggleHelper = new ApprovalToggleHelper(page);
         await toggleHelper.gotoExpenseApproval();
@@ -50,10 +52,13 @@ describe('TECF002', () => {
         const savedExpensePage = new SavedExpenseCreation(page);
 
         await test.step('Check Saved and Party Status with poc', async () => {
-            expect(
-                await savedExpensePage.toastMessage(),
-                chalk.red('Toast message match')
-            ).toBe('Invoice raised successfully.');
+            await savedExpensePage.notification.checkToastSuccess(
+                'Invoice raised successfully.'
+            );
+            // expect(
+            //     await savedExpensePage.toastMessage(),
+            //     chalk.red('Toast message match')
+            // ).toBe('Invoice raised successfully.');
             expect(
                 await savedExpensePage.checkPartyStatus(),
                 chalk.red('Check party status match')
@@ -61,7 +66,7 @@ describe('TECF002', () => {
         });
 
         await test.step('Check Approval Flows', async () => {
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
             const verificationFlows = new ApprovalWorkflowsTab(page);
             await verificationFlows.checkLevel();

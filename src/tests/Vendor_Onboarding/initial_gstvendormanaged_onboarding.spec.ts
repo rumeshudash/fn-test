@@ -33,10 +33,13 @@ describe('TCVO001', () => {
         const withgstin = new VendorOnboardingWithGSTIN(vendorGstinInfo, page);
         await vendorOnboarding.clickLinkInviteVendor('Vendor Invitations');
         await vendorOnboarding.clickCopyLink();
-        expect(
-            await vendorOnboarding.toastMessage(),
-            chalk.red('ToastMessage match')
-        ).toBe('Link Successfully Copied!!!');
+        await vendorOnboarding.notification.checkToastSuccess(
+            'Link Successfully Copied!!!'
+        );
+        // expect(
+        //     await vendorOnboarding.toastMessage(),
+        //     chalk.red('ToastMessage match')
+        // ).toBe('Link Successfully Copied!!!');
 
         await test.step('Open Copied Link', async () => {
             const URL = await vendorOnboarding.linkURL();
@@ -81,10 +84,13 @@ describe('TCVO001', () => {
             await withgstin.gstinInfoCheck();
             await withgstin.gstinDisplayName();
             await vendorOnboarding.clickButton('Next');
-            expect(
-                await vendorOnboarding.toastMessage(),
-                chalk.red('ToastMessage match')
-            ).toBe('Successfully saved');
+            await vendorOnboarding.notification.checkToastSuccess(
+                'Successfully saved'
+            );
+            // expect(
+            //     await vendorOnboarding.toastMessage(),
+            //     chalk.red('ToastMessage match')
+            // ).toBe('Successfully saved');
         });
 
         await test.step('Documents - Vendor Onboarding', async () => {

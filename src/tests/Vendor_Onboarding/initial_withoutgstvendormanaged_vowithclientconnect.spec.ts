@@ -77,10 +77,13 @@ describe('TCVO004', () => {
             // const vendorOnboarding = new VendorOnboarding(vendorNonGstinInfo, page);
             await withnogstin.clickLinkInviteVendor('Vendor Invitations');
             await vendorOnboarding.clickCopyLink();
-            expect(
-                await withnogstin.toastMessage(),
-                chalk.red('ToastMessage match')
-            ).toBe('Link Successfully Copied!!!');
+            await vendorOnboarding.notification.checkToastSuccess(
+                'Link Successfully Copied!!!'
+            );
+            // expect(
+            //     await withnogstin.toastMessage(),
+            //     chalk.red('ToastMessage match')
+            // ).toBe('Link Successfully Copied!!!');
 
             await test.step('Open Copied Link', async () => {
                 const URL = await vendorOnboarding.linkURL();
@@ -119,10 +122,13 @@ describe('TCVO004', () => {
             await test.step('Fill Business Details', async () => {
                 await withnogstin.fillVendorDetails([vendorNonGstinInfo]);
                 await withnogstin.clickButton('Next');
-                expect(
-                    await withnogstin.toastMessage(),
-                    chalk.red('Toast message does not occured')
-                ).toBe('Successfully saved');
+                await vendorOnboarding.notification.checkToastSuccess(
+                    'Successfully saved'
+                );
+                // expect(
+                //     await withnogstin.toastMessage(),
+                //     chalk.red('Toast message does not occured')
+                // ).toBe('Successfully saved');
             });
 
             await test.step('Fill Document Details', async () => {
@@ -177,10 +183,13 @@ describe('TCVO004', () => {
 
                 //Adding custom Timeout
                 test.slow();
-                expect(
-                    await withnogstin.toastMessage(),
-                    chalk.red('ToastMessage match')
-                ).toBe('Successfully created');
+                await vendorOnboarding.notification.checkToastSuccess(
+                    'Successfully saved'
+                );
+                // expect(
+                //     await withnogstin.toastMessage(),
+                //     chalk.red('ToastMessage match')
+                // ).toBe('Successfully created');
             });
 
             await test.step('Client Verify and Approve', async () => {
