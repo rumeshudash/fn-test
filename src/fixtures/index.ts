@@ -36,7 +36,7 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
                 });
 
                 if (await helper.isVisible({ text: 'Select Organization' })) {
-                    await helper.click({ text: orgName });
+                    await helper.click({ id: 'org-1' });
                 }
 
                 // await helper.click({ selector: '#org-1' });

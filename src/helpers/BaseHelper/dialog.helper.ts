@@ -1,5 +1,6 @@
 import { BaseHelper } from '@/baseHelper';
 import { expect } from '@playwright/test';
+import chalk from 'chalk';
 
 export class DialogHelper extends BaseHelper {
     /**
@@ -57,6 +58,18 @@ export class DialogHelper extends BaseHelper {
             .click();
     }
 
+    async verifyInputField(fieldName): Promise<void> {
+        const dialogContainer = this.getDialogContainer();
+        const parentLocator = dialogContainer.locate(
+            `//span[text()="${fieldName}"]/parent::label/parent::div`
+        )._locator;
+
+        await expect(
+            parentLocator,
+            chalk.red(`Dialog ${fieldName} visibility`)
+        ).toBeVisible();
+    }
+    
     //they handle confirm dialog
     public async checkConfirmDialogOpenOrNot() {
         await this.closeDialog();
@@ -70,6 +83,7 @@ export class DialogHelper extends BaseHelper {
 
         // await this.clickConfirmDialogAction('Yes!');
     }
+  
     public async clickConfirmDialogAction(string: 'Yes!' | 'No') {
         await this._page.locator(`//span[text()='${string}']`).click();
     }

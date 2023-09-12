@@ -85,6 +85,14 @@ export class FormHelper extends BaseHelper {
             message
         );
     }
+
+    async isInputFieldEmpty(inputName: string): Promise<void> {
+        const name_field = await this.locate('input', {
+            name: inputName,
+        })._locator.inputValue();
+        expect(name_field, chalk.red('Name field value')).toBe('');
+    }
+    
     /**
      * fill form by passing object data. And key should be name of input.
      */

@@ -45,10 +45,13 @@ describe('TECF001', () => {
             const savedExpensePage = new SavedExpenseCreation(page);
 
             await test.step('Check Saved and Party Status', async () => {
-                expect(
-                    await savedExpensePage.toastMessage(),
-                    chalk.red('Invoice not raised.')
-                ).toBe('Invoice raised successfully.');
+                await savedExpensePage.notification.checkToastSuccess(
+                    'Invoice raised successfully.'
+                );
+                // expect(
+                //     await savedExpensePage.toastMessage(),
+                //     chalk.red('Invoice not raised.')
+                // ).toBe('Invoice raised successfully.');
                 expect(
                     await savedExpensePage.checkPartyStatus(),
                     chalk.red('Party Status not open.')
