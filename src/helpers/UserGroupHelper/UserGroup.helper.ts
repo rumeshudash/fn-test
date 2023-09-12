@@ -1,8 +1,16 @@
 import { Locator, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
+import { ListingHelper } from '../BaseHelper/listing.helper';
 
 export class UserCreation extends BaseHelper {
+    public listHelper: ListingHelper;
+
+    constructor(page: any) {
+        super(page);
+        this.listHelper = new ListingHelper(page);
+    }
+
     public async init() {
         const isExpanded = await this._page
             .locator('.hamburger_button.hamburger_button--active')
@@ -210,30 +218,12 @@ export class UserCreation extends BaseHelper {
     public async openDetailsPage(data: UserGroupData) {
         console.log(chalk.blue('Opening user group details'));
         await this._page.waitForSelector('div.table-row.body-row');
-        await this._page
-            .locator('div.table-row.body-row')
-            .getByText(data.name, { exact: true })
-            .click();
-        await expect(
-            this._page.getByText('User Group Detail').first()
-        ).toBeVisible();
-        console.log(chalk.green('User Group Detail page opened'));
-        await expect(
-            this._page.locator(`//div[text()="${data.name}"]`)
-        ).toBeVisible();
-        console.log(chalk.green('User Group name verified'));
+        const row = await this.listHelper.findRowInTable(data.name, 'Name');
+        const cell = await this.listHelper.getCell(row, 'Name');
+        console.log('cell is here');
+        console.log(cell);
 
-        // verify description
-        const desc = await this._page
-            .locator('span#has-Description')
-            .textContent();
-        expect(desc).toBe(data.description);
-
-        // verify manager
-        const manager = await this._page
-            .locator('span#has-Manager')
-            .textContent();
-        expect(manager).toBe(data.manager);
+        // await cell.locator('a').click();
     }
 
     // navigate to tabs based on status

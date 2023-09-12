@@ -2,6 +2,7 @@ import { BaseHelper } from '@/baseHelper';
 import { Locator, Page, expect } from '@playwright/test';
 import { FileHelper } from './file.helper';
 import { DocumentHelper } from './document.helper';
+import { BreadCrumbHelper } from './breadCrumb.helper';
 
 type DetailInfo = {
     selector: string;
@@ -9,11 +10,12 @@ type DetailInfo = {
 };
 
 export class DetailsPageHelper extends BaseHelper {
-    public _documentHelper: DocumentHelper;
+    public documentHelper: DocumentHelper;
+    public breadCrumbHelper: BreadCrumbHelper;
 
     constructor(page: Page) {
         super(page);
-        this._documentHelper = new DocumentHelper(page);
+        this.documentHelper = new DocumentHelper(page);
     }
 
     /**
@@ -88,7 +90,8 @@ export class DetailsPageHelper extends BaseHelper {
      * @param {string[]} options - Options to be checked inside action button.
      * @return {Promise<void>} Promise that resolves once the options are checked.
      */
-    public async validateDetailsPageInfo(details: DetailInfo[]) {
+    public async validateDetailsPageInfo(title: string, details: DetailInfo[]) {
+        await this.breadCrumbHelper.checkBreadCrumbTitle(title);
         for (const detail of details) {
             await this.validateDetailInfoItem(detail.selector, detail.text);
         }
