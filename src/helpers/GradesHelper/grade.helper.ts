@@ -18,7 +18,7 @@ export class GradesHelper extends BaseHelper {
         await this.navigateTo('GRADES');
     }
 
-    public async AddGrades(name: string, priority: number) {
+    public async addGrades(name: string, priority: number) {
         await this.click({ role: 'button', name: 'Add Grade' });
         await this.fillText(name, {
             name: 'name',
@@ -53,12 +53,12 @@ export class GradesHelper extends BaseHelper {
 
         await this.click({ role: 'button', name: 'save' });
     }
-    public async ActiveToInactive(name: string) {
+    public async activeToInactive(name: string) {
         const row = await this.listin.findRowInTable(name, 'NAME');
         await this.listin.clickButtonInTable(row, 'STATUS');
     }
 
-    public async EditGrdaes(name: string, newname: string, priority: number) {
+    public async editGrdaes(name: string, newname: string, priority: number) {
         const btnlocator = '//button';
         async function performAction(element: any) {
             await element.click();
