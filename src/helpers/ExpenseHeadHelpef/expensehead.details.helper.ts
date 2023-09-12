@@ -4,8 +4,9 @@ import { expect } from '@playwright/test';
 import { NotesHelper } from '../BaseHelper/notes.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { ListingHelper } from '../BaseHelper/listing.helper';
 
-export class ExpenseHeadDetailsHelper extends BaseHelper {
+export class ExpenseHeadDetailsHelper extends ListingHelper {
     public noteHelper: NotesHelper;
 
     public tabhelper: TabHelper;
@@ -23,13 +24,15 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
     }
 
     public async clickOnExpenseHead(name: string) {
-        this._page.getByRole('tab', { name: 'All', exact: true }).click();
+        await this._page.getByRole('tab', { name: 'All', exact: true }).click();
 
-        this._page.waitForTimeout(1000);
+        await this._page.waitForTimeout(1000);
 
-        await this._page.getByText(name).click();
+        const row = await this.findRowInTable(name, 'NAME');
 
-        this._page.waitForTimeout(2000);
+        await this.clickTextOnTable(row, 'NAME');
+
+        await this._page.waitForTimeout(3000);
     }
 
     public async clickOnManagerName(name: string) {
