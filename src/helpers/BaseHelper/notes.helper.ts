@@ -72,6 +72,17 @@ export class NotesHelper extends DialogHelper {
         const Notes = await this.getNotesRow(query);
         await Notes.click();
     }
+    /**
+     * @description This function will check if  Note is present or not
+     *
+     */
+
+    public async checkNoteExists(query: { title: string }) {
+        await this.clickNoteTab();
+        const Notes = await this.getNotesRow(query);
+
+        expect(Notes).toBeTruthy();
+    }
 
     /**
      * @description This function will Click on the Edit button of the notes

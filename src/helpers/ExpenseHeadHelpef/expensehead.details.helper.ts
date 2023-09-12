@@ -95,6 +95,12 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
         this._page.waitForTimeout(1000);
     }
 
+    public async verifyNoteAddition(note: { title: string; date: Date }) {
+        await this.noteHelper.checkNoteExists({
+            title: note.title,
+        });
+    }
+
     public async editNotes(
         note: { title: string; date: Date },
         newNotes: string

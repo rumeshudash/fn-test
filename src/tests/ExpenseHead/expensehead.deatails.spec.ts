@@ -165,6 +165,11 @@ test.describe('Expense Head Details', () => {
         await expenseHeadDetails.clickOnTab('Notes');
 
         await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.verifyNoteAddition({
+            title: 'Edit Notes',
+            date: new Date(),
+        });
     });
 
     PROCESS_TEST('Edit Notes', async ({ page }) => {
