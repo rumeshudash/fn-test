@@ -150,13 +150,53 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    public async checkExpense(expense_number: string) {
+    public async checkExpense(expense_number: string, columnName: string) {
         await this._page.waitForTimeout(1000);
 
         const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
 
-        await this.clickTextOnTable(row, 'EXPENSE NO.');
+        await this.clickTextOnTable(row, columnName);
 
         await this._page.waitForTimeout(3000);
+    }
+
+    public async checkExpenseStatus(expense_number: string, status: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        const statusText = await this.getCellText(row, 'STATUS');
+
+        expect(statusText).toBe(status);
+    }
+
+    public async checkBalance(expense_number: string, balance: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        const balanceText = await this.getCellText(row, 'BALANCE');
+
+        expect(balanceText).toBe(balance);
+    }
+
+    public async checkExpenseAmnt(expense_number: string, amnt: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        const amntText = await this.getCellText(row, 'EXPENSE AMOUNT');
+
+        expect(amntText).toBe(amnt);
+    }
+
+    public async checkDate(expense_number: string, date: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        const dateText = await this.getCellText(row, 'EXPENSE DATE');
+
+        expect(dateText).toBe(date);
     }
 }

@@ -163,6 +163,8 @@ export class ListingHelper extends PageHelper {
 
         const locator = await cell.locator('a');
 
+        console.log(chalk.blue('Get Text Locator', locator));
+
         return locator;
     }
 
