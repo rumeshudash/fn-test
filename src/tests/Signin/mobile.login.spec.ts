@@ -22,8 +22,9 @@ test.describe('Verify Phone', () => {
         await verifyPhone.fillOtp('12347', 4);
 
         await verifyPhone.clickVerify();
+
         expect(
-            await verifyPhone.errorMessage(),
+            await verifyPhone.getErrorMessage(),
             chalk.red('Error Message match ')
         ).toBe('Invalid otp');
     });

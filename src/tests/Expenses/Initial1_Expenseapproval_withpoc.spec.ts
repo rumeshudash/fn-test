@@ -1,5 +1,6 @@
 import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
+import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
     ApprovalToggleHelper,
@@ -25,6 +26,7 @@ const EXPENSEDETAILS = {
 
 describe('TECF003', () => {
     PROCESS_TEST('Expense Approval by POC', async ({ page, login }) => {
+        // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const signIn = new SignInHelper(page);
         const verificationFlows = new ApprovalWorkflowsTab(page);
@@ -52,10 +54,13 @@ describe('TECF003', () => {
         const savedExpensePage = new SavedExpenseCreation(page);
 
         await test.step('Check Saved and Party Status with poc', async () => {
-            expect(
-                await savedExpensePage.toastMessage(),
-                chalk.red('Toast message match')
-            ).toBe('Invoice raised successfully.');
+            await savedExpensePage.notification.checkToastSuccess(
+                'Invoice raised successfully.'
+            );
+            // expect(
+            //     await savedExpensePage.toastMessage(),
+            //     chalk.red('Toast message match')
+            // ).toBe('Invoice raised successfully.');
             expect(
                 await savedExpensePage.checkPartyStatus(),
                 chalk.red('Check party status')
@@ -63,7 +68,7 @@ describe('TECF003', () => {
         });
 
         await test.step('Check Approval Flows', async () => {
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
             await verificationFlows.checkLevel();
             await verificationFlows.checkUser();
@@ -95,7 +100,7 @@ describe('TECF003', () => {
                     expense_head: 'Refund',
                 },
             ]);
-            // await savedExpensePage.clickTab('Approval Workflows');
+            // await tabHelper.clickTab('Approval Workflows');
             await page
                 .locator('//button[@role="tab"]')
                 .getByText('Approval Workflows')
@@ -114,7 +119,7 @@ describe('TECF003', () => {
             await signIn.signInPage('newtestauto@company.com', '123456');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             expect(
                 await verificationFlows.checkByFinOpsAdmin(
                     'Verification Approvals'

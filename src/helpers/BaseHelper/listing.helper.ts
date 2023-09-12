@@ -1,6 +1,7 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 import { PageHelper } from './page.helper';
 import { TabHelper } from './tab.helper';
+import chalk from 'chalk';
 
 export class ListingHelper extends PageHelper {
     public tabHelper: TabHelper;
@@ -66,7 +67,7 @@ export class ListingHelper extends PageHelper {
                     titleIndex + 1
                 })`
             )
-            .getByText(query)
+            .getByText(query, { exact: true })
             .locator('//ancestor::div[contains(@class,"table-row")]');
     }
 
@@ -122,7 +123,7 @@ export class ListingHelper extends PageHelper {
         row: Locator,
         columnName: string
     ): Promise<void> {
-        (await this.getCellButton(row, columnName)).click();
+        await (await this.getCellButton(row, columnName)).click();
     }
 
     /**
@@ -134,5 +135,15 @@ export class ListingHelper extends PageHelper {
     private async _findColumnIndex(columnName: string): Promise<number> {
         const headingTitles = await this.getTableColumnNames();
         return headingTitles.indexOf(columnName);
+    }
+
+    public async openDialogFormByButtonText(text: string) {
+        const button = await this.locateByText(text);
+
+        expect(await button.isVisible(), {
+            message: `opening "${text}" dialog form`,
+        }).toBe(true);
+        await button.click();
+        console.log(chalk.blue('Open Add Business Form'));
     }
 }

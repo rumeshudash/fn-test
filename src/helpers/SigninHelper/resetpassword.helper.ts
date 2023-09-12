@@ -1,7 +1,8 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
-export class ResetPasswordHelper extends BaseHelper {
+export class ResetPasswordHelper extends NotificationHelper {
     public async init() {
         await this.navigateTo('MYPROFILE');
     }

@@ -5,11 +5,6 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { gstinDataType } from '../CommonCardHelper/genericGstin.card.helper';
 import { FormHelper } from '../BaseHelper/form.helper';
-interface gstinBusinessInformation {
-    gstin: string;
-    mobile: string;
-    email: string;
-}
 
 export default class CreateFinopsBusinessHelper extends BaseHelper {
     public listHelper: ListingHelper;
@@ -28,70 +23,6 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
 
     public async clickNavigationTab(nav: string) {
         await this._page.locator(`//span[text()='${nav}']`).click();
-    }
-
-    public async clickConfirmDialogAction(string: 'Yes!' | 'No') {
-        await this._page.locator(`//span[text()='${string}']`).click();
-    }
-
-    public async checkConfirmDialogOpenOrNot() {
-        await this.formHelper.dialogHelper.closeDialog();
-
-        const dialog = await this.locateByText(
-            'Do you want to exit? The details you have entered will be deleted.'
-        );
-        await this._page.waitForLoadState('domcontentloaded');
-
-        expect(await dialog.isVisible(), 'check confirm dialog open or not');
-
-        await this.clickConfirmDialogAction('Yes!');
-    }
-
-    public async openBusinessForm() {
-        const button = await this.locateByText('Add Business');
-
-        expect(
-            await button.isVisible(),
-            'Add Business button not found !! '
-        ).toBe(true);
-        await button.click();
-        console.log(chalk.blue('Open Add Business Form'));
-    }
-
-    public async fillBusinessInputInformation(
-        data: gstinBusinessInformation,
-        targetClick: 'email' | 'mobile' | 'gstin' = 'email'
-    ): Promise<void> {
-        console.log(chalk.blue('Filling gstin business information ....'));
-        for (const [key, value] of Object.entries(data)) {
-            await this.fillInput(value, {
-                name: key,
-            });
-        }
-
-        await this.click({
-            selector: 'input',
-            name: targetClick,
-        });
-    }
-
-    public async submitButton() {
-        const btnClick = this._page.getByRole('button', { name: 'Save' });
-        expect(await btnClick.isEnabled(), {
-            message: 'check save button enabled',
-        }).toBe(true);
-
-        await btnClick.click();
-        await this._page.waitForLoadState('networkidle');
-        // await this._page.waitForTimeout(1000);
-        return btnClick;
-    }
-
-    public async checkDisableSubmit(): Promise<void> {
-        const submitButton = await this.submitButton();
-        expect(await submitButton.isEnabled(), {
-            message: 'check save button disabled',
-        }).toBe(false);
     }
 
     public async checkMandatoryFields(fields: string[]): Promise<void> {

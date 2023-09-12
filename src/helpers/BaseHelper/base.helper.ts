@@ -582,11 +582,56 @@ export class BaseHelper {
         return this._locator.isVisible({ timeout });
     }
 
-    public async checkButtonVisibility(buttonName: string) {
-        const btnCheck = this._page.locator(`//button[text()='${buttonName}']`);
-        return await btnCheck.isEnabled();
-    }
+    // public async checkButtonVisibility(buttonName: string) {
+    //     const btnCheck = this._page.locator(`//button[text()='${buttonName}']`);
+    //     return await btnCheck.isEnabled();
+    // }
 
+    // public async errorMsg() {
+    //     const error = this.locate('span.label.text-error')._locator;
+    //     const errorCount = await error.count();
+    //     if (errorCount > 0) {
+    //         console.log(chalk.red(`Error ocurred: ${errorCount}`));
+    //         for (let i = 0; i < errorCount; i++) {
+    //             const errorMsg = await error.nth(i).textContent();
+    //             console.log(`Error (error ${i}): `, chalk.red(errorMsg));
+    //         }
+    //     }
+    // }
+
+    // public async toastSuccess() {
+    //     const toast = this._page.locator('div.ct-toast-success');
+    //     const toastCount = await toast.count();
+    //     if (toastCount > 0) {
+    //         for (let i = 0; i < toastCount; i++) {
+    //             const successMsg = await toast.last().textContent();
+    //             return successMsg;
+    //         }
+    //     }
+    // }
+    // public async toastWarn() {
+    //     const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+    //     const toastWarnCount = await toastWarn.count();
+    //     if (toastWarnCount > 0) {
+    //         for (let i = 0; i < toastWarnCount; i++) {
+    //             const successMsg = await toastWarn.last().textContent();
+    //             return successMsg;
+    //         }
+    //     }
+    // }
+
+    // public async toastError() {
+    //     const toastError = this._page.locator('div.ct-toast.ct-toast-error');
+    //     const toastErrorCount = await toastError.count();
+    //     if (toastErrorCount > 0) {
+    //         for (let i = 0; i < toastErrorCount; i++) {
+    //             const successMsg = await toastError.last().textContent();
+    //             return successMsg;
+    //         }
+    //     }
+    // }
+
+    // public async toastLoad() {}
     public async clickButton(buttonName: string) {
         const btnClick = this._page.getByRole('button', { name: buttonName });
         expect(await btnClick.isEnabled(), {
@@ -601,97 +646,53 @@ export class BaseHelper {
             );
         }
         // await this._page.waitForTimeout(1500);
-
-        const error = this.locate('span.label.text-error')._locator;
-        const errorCount = await error.count();
-        if (errorCount > 0) {
-            console.log(chalk.red(`Error ocurred: ${errorCount}`));
-            for (let i = 0; i < errorCount; i++) {
-                const errorMsg = await error.nth(i).textContent();
-                console.log(`Error (error ${i}): `, chalk.red(errorMsg));
-            }
-        }
-        const toast = this._page.locator('div.ct-toast-success');
-        const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-        const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
-
-        const toastErrorCount = await toastError.count();
-        const toastWarnCount = await toastWarn.count();
-        const toastCount = await toast.count();
-        if (toastCount > 0) {
-            console.log(chalk.green(`toastMessage (success): ${toastCount}:`));
-            for (let i = 0; i < toastCount; i++) {
-                const successMsg = toast.nth(i);
-                if (await successMsg.isVisible()) successMsg.textContent();
-                console.log(
-                    `toastMessage (success ${i}): `,
-                    chalk.green(successMsg)
-                );
-            }
-        }
-        if (toastWarnCount > 0) {
-            console.log(
-                chalk.red(
-                    `Multiple toastMessage ocurred \n ${toastWarn}:`,
-                    toastWarnCount
-                )
-            );
-            for (let i = 0; i < toastWarnCount; i++) {
-                const errorMsg = await toastWarn.nth(i).textContent();
-                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-            }
-        }
-        if (toastErrorCount > 0) {
-            console.log(
-                chalk.red(
-                    `Multiple toastMessage ocurred \n ${toastError}:`,
-                    toastErrorCount
-                )
-            );
-            for (let i = 0; i < toastErrorCount; i++) {
-                const errorMsg = await toastError.nth(i).textContent();
-                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-            }
-        }
-        await this._page.waitForTimeout(1000);
+        // await this.errorMsg();
+        // await this.toastSuccess();
+        // await this.toastError();
+        // await this.toastWarn();
+        // await this._page.waitForTimeout(1000);
     }
 
-    public async toastMessage() {
-        const error = this._page.locator('span.label.text-error');
-        const errorCount = await error.count();
-        if (errorCount > 0) {
-            console.log(chalk.red(`Error ocurred: ${errorCount}`));
-            for (let i = 0; i < errorCount; i++) {
-                const errorMsg = await error.nth(i).textContent();
-                return errorMsg;
-            }
-        }
-        const toast = this._page.locator('div.ct-toast-success');
-        const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-        const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+    // public async toastMessage() {
+    //     await this.errorMsg();
+    // await this.toastSuccess();
+    // await this.toastError();
+    // await this.toastWarn();
+    // const error = this._page.locator('span.label.text-error');
+    // const errorCount = await error.count();
+    // if (errorCount > 0) {
+    //     console.log(chalk.red(`Error ocurred: ${errorCount}`));
+    //     for (let i = 0; i < errorCount; i++) {
+    //         const errorMsg = await error.nth(i).textContent();
+    //         return errorMsg;
+    //     }
+    // }
+    // const toast = this._page.locator('div.ct-toast-success');
+    // const toastError = this._page.locator('div.ct-toast.ct-toast-error');
+    // const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+    // const toastErrorCount = await toastError.count();
+    // const toastWarnCount = await toastWarn.count();
+    // const toastCount = await toast.count();
+    // if (toastCount > 0) {
+    //     for (let i = 0; i < toastCount; i++) {
+    //         const successMsg = await toast.last().textContent();
+    //         return successMsg;
+    //     }
+    // }
+    // if (toastWarnCount > 0) {
+    //     for (let i = 0; i < toastWarnCount; i++) {
+    //         const errorMsg = await toastWarn.nth(i).textContent();
+    //         return errorMsg;
+    //     }
+    // }
+    // if (toastErrorCount > 0) {
+    //     for (let i = 0; i < toastErrorCount; i++) {
+    //         const errorMsg = await toastError.nth(i).textContent();
+    //         return errorMsg;
+    //     }
+    // }
+    // }
 
-        const toastErrorCount = await toastError.count();
-        const toastWarnCount = await toastWarn.count();
-        const toastCount = await toast.count();
-        if (toastCount > 0) {
-            for (let i = 0; i < toastCount; i++) {
-                const successMsg = await toast.last().textContent();
-                return successMsg;
-            }
-        }
-        if (toastWarnCount > 0) {
-            for (let i = 0; i < toastWarnCount; i++) {
-                const errorMsg = await toastWarn.nth(i).textContent();
-                return errorMsg;
-            }
-        }
-        if (toastErrorCount > 0) {
-            for (let i = 0; i < toastErrorCount; i++) {
-                const errorMsg = await toastError.nth(i).textContent();
-                return errorMsg;
-            }
-        }
-    }
     public async setCheckbox(choice: string) {
         const checkBox = this.locate(
             `//div[contains(text(),"${choice}")]`
@@ -715,16 +716,19 @@ export class BaseHelper {
         await this._page.waitForTimeout(2000);
     }
     async validateCheckbox() {
-        const checkbox = await this.locate("//input[@type='checkbox']")
-            ._locator;
-        expect(
-            !(await checkbox.isChecked()),
-            'By default checkbox should be unchecked'
-        ).toBe(true);
+        const checkbox = this.locate('label', {
+            text: 'save and create another',
+        })._locator;
+        expect(!(await checkbox.isChecked()), 'Checkbox default state').toBe(
+            true
+        );
     }
+
     async saveAndCreateCheckbox() {
         await this.validateCheckbox();
-        const checkbox = this.locate("//input[@type='checkbox']")._locator;
+        const checkbox = this.locate('label', {
+            text: 'save and create another',
+        })._locator;
         await checkbox.click();
     }
 
@@ -748,12 +752,12 @@ export class BaseHelper {
      *
      * @return {string} - returns the error message in the feild if error text-error exist .
      */
-    public async errorMessage() {
-        const errorMessage = await this._page
-            .locator('//span[contains(@class, "label-text-alt text-error")]')
-            .textContent();
-        return errorMessage;
-    }
+    // public async errorMessage() {
+    //     const errorMessage = await this._page
+    //         .locator('//span[contains(@class, "label-text-alt text-error")]')
+    //         .textContent();
+    //     return errorMessage;
+    // }
     /**
      * Function to return the random email after generating random emails
      
@@ -776,22 +780,22 @@ export class BaseHelper {
      * This function error the error message contains in toast.
      *
      *  @return {string} -returns error message contains on toast.
-     */
-    public async errorToast() {
-        return await this._page
-            .locator('//div[contains(@class, "error-toast")]')
-            .textContent();
-    }
+    //  */
+    // public async errorToast() {
+    //     return await this._page
+    //         .locator('//div[contains(@class, "error-toast")]')
+    //         .textContent();
+    // }
     /**
      * This function returns the success message in data adding.
      *
      *  @return {string} -returns success message contains on toast.
      */
-    public async successToast() {
-        return await this._page
-            .locator('//div[contains(@class, "success-toast")]')
-            .textContent();
-    }
+    // public async successToast() {
+    //     return await this._page
+    //         .locator('//div[contains(@class, "success-toast")]')
+    //         .textContent();
+    // }
 
     /**
      * This function error will find the row and clos in the table   from  and perfrom actions.
@@ -801,7 +805,7 @@ export class BaseHelper {
      * @param {cellno} number - The cell number of the row to be find.
      * @param {function} actionCallback - The action to be performed on the row.When elementis found
      */
-    public async FindrowAndperformAction(
+    public async findrowAndperformAction(
         name: string,
         cellno: number,
         locator: string,
@@ -835,5 +839,17 @@ export class BaseHelper {
      */
     static async generateRandomGradeName() {
         return `Test${Math.floor(Math.random() * 1000000)}`;
+    }
+
+    /**
+     * This function will click on checkbox based on the name provided.
+     * @param {string} name - The unique text from which we need to find checkbox
+     */
+
+    public async clickCheckbox(name?: string) {
+        let tempSelector = '//input[@type="checkbox"]';
+        if (name) tempSelector += `[@name="${name}"]`;
+
+        await this._page.locator(tempSelector).click();
     }
 }
