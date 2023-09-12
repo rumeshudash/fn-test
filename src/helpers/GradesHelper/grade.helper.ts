@@ -2,12 +2,18 @@ import { ListingHelper } from '../BaseHelper/listing.helper';
 
 import { DialogHelper } from '../BaseHelper/dialog.helper';
 
+import { NotificationHelper } from '../BaseHelper/notification.helper';
+
 export class GradesHelper extends ListingHelper {
     public dialogHelper: DialogHelper;
+
+    public notificationHelper: NotificationHelper;
 
     constructor(page: any) {
         super(page);
         this.dialogHelper = new DialogHelper(page);
+
+        this.notificationHelper = new NotificationHelper(page);
     }
     private static GRADES_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";

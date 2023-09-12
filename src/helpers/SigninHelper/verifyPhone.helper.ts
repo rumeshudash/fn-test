@@ -2,7 +2,9 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 import { VerifyEmailHelper } from '../SignupHelper/verifyEmail.helper';
 
-export class VerifyPhone extends BaseHelper {
+import { NotificationHelper } from '../BaseHelper/notification.helper';
+
+export class VerifyPhone extends NotificationHelper {
     private static VERIFY_EMAIL_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
 
