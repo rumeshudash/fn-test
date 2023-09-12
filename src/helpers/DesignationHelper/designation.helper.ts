@@ -3,12 +3,15 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { IMAGE_NAME } from '@/utils/required_data';
 import { EmployeeCreation } from '../EmplyeeCreationHelper/employeeCreation.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class DesignationHelper extends BaseHelper {
     public designationInfo;
+    public notification: NotificationHelper;
     constructor(designationInfo, page) {
         super(page);
         this.designationInfo = designationInfo;
+        this.notification = new NotificationHelper(page);
     }
     async init() {
         await this.navigateTo('DESIGNATIONS');
@@ -149,13 +152,6 @@ export class CreateDesignationHelper extends BaseHelper {
                 "//div[contains(@class,'flex-wrap justify-end')]//button[1]"
             )
             .click();
-    }
-
-    async verifyEmptyField() {
-        const name_field = await this.locate('input', {
-            name: 'name',
-        })._locator.inputValue();
-        expect(name_field, chalk.red('Name field value')).toBe('');
     }
 
     async changeStatus(status: string) {

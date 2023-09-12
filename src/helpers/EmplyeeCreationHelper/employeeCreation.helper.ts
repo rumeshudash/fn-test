@@ -4,10 +4,14 @@ import { addSeconds } from 'date-fns';
 import { PageHelper } from '../BaseHelper/page.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { employeeCreationInfo } from '@/utils/required_data';
+import { TabHelper } from '../BaseHelper/tab.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class EmployeeCreation extends ListingHelper {
+    public notification: NotificationHelper;
     constructor(page) {
         super(page);
+        this.notification = new NotificationHelper(page);
     }
 
     async init() {
@@ -50,7 +54,7 @@ export class AddEmployeeCreation extends BaseHelper {
 
     async getEmployeeStatus() {
         const parentLocator = await this.employeeCodeLocator();
-        return parentLocator
+        return await parentLocator
             .locator(`(//div[@class='centralize'])`)
             .first()
             .innerText();
@@ -198,11 +202,11 @@ export class AddEmployeeCreation extends BaseHelper {
         const optionContainer = this.locate('div', { role: 'menu' })._locator;
         await optionContainer.getByRole('menuitem', { name: options }).click();
     }
-    async changeTab(tabName: string) {
-        await this._page
-            .getByRole('tab', { name: tabName, exact: true })
-            .click();
+    // async changeTab(tabName: string) {
+    //     await this._page
+    //         .getByRole('tab', { name: tabName, exact: true })
+    //         .click();
 
-        await this._page.waitForTimeout(2000);
-    }
+    //     await this._page.waitForTimeout(2000);
+    // }
 }

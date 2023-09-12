@@ -1,5 +1,8 @@
 import { PROCESS_TEST } from '@/fixtures';
+import { BreadCrumbHelper } from '@/helpers/BaseHelper/breadCrumb.helper';
+import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
 import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/employeeCreation.helper';
+import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
 import {
     AddEmployeeCreation,
     EmployeeCreation,
@@ -21,6 +24,7 @@ PROCESS_TEST('Verify Employee Creation Page', async ({ page }) => {
 });
 
 PROCESS_TEST('Save and Create Another', async ({ page }) => {
+    const dialogForm = new DialogHelper(page);
     const addEmployeeCreationForm = new AddEmployeeCreation(page);
     const employeeCreationPage = new EmployeeCreation(page);
     const employeeCreation = new FillEmployeeCreationForm(page);
@@ -28,14 +32,14 @@ PROCESS_TEST('Save and Create Another', async ({ page }) => {
     await employeeCreationPage.clickButton('Add Employee');
 
     await test.step('Verify then Fill Employee Form', async () => {
-        await employeeCreation.verifyAddEmployeeForm('Name');
-        await employeeCreation.verifyAddEmployeeForm('Email');
-        await employeeCreation.verifyAddEmployeeForm('Employee Code');
-        await employeeCreation.verifyAddEmployeeForm('Department');
-        await employeeCreation.verifyAddEmployeeForm('Designation');
-        await employeeCreation.verifyAddEmployeeForm('Grade');
-        await employeeCreation.verifyAddEmployeeForm('Reporting Manager');
-        await employeeCreation.verifyAddEmployeeForm('Approval Manager');
+        await dialogForm.verifyInputField('Name');
+        await dialogForm.verifyInputField('Email');
+        await dialogForm.verifyInputField('Employee Code');
+        await dialogForm.verifyInputField('Department');
+        await dialogForm.verifyInputField('Designation');
+        await dialogForm.verifyInputField('Grade');
+        await dialogForm.verifyInputField('Reporting Manager');
+        await dialogForm.verifyInputField('Approval Manager');
     });
 
     await test.step('Fill Employee Form', async () => {
@@ -44,10 +48,13 @@ PROCESS_TEST('Save and Create Another', async ({ page }) => {
         );
         await employeeCreation.saveAndCreateCheckbox();
         await employeeCreation.clickButton('Save');
-        await expect(
-            await employeeCreation.toastSuccess(),
-            chalk.red('Toast Message match')
-        ).toBe('Successfully created');
+        await employeeCreationPage.notification.checkToastSuccess(
+            'Successfully created'
+        );
+        // await expect(
+        //     await employeeCreation.toastSuccess(),
+        //     chalk.red('Toast Message match')
+        // ).toBe('Successfully created');
         await addEmployeeCreationForm.verifyAfterSaveAndCreate();
     });
 });
@@ -72,10 +79,13 @@ PROCESS_TEST('Fill Employee Form', async ({ page }) => {
     await test.step('Fill Employee Form', async () => {
         await employeeCreation.fillEmployeeForm(employeeCreationInfo);
         await employeeCreation.clickButton('Save');
-        await expect(
-            await employeeCreation.toastSuccess(),
-            chalk.red('Toast Message match')
-        ).toBe('Successfully created');
+        await employeeCreationPage.notification.checkToastSuccess(
+            'Successfully created'
+        );
+        // await expect(
+        //     await employeeCreation.toastSuccess(),
+        //     chalk.red('Toast Message match')
+        // ).toBe('Successfully created');
     });
 });
 
@@ -152,6 +162,7 @@ PROCESS_TEST('Check Reporting Manager', async ({ page }) => {
 PROCESS_TEST('Change Employee Status', async ({ page }) => {
     const employeeCreationPage = new EmployeeCreation(page);
     const addEmployeeCreationForm = new AddEmployeeCreation(page);
+    const tabHelper = new TabHelper(page);
 
     await employeeCreationPage.init();
     await employeeCreationPage.searchInList(employeeCreationInfo.name);
@@ -159,28 +170,37 @@ PROCESS_TEST('Change Employee Status', async ({ page }) => {
     await addEmployeeCreationForm.clickButton('Actions');
 
     await PROCESS_TEST.step('Deactivate Status', async () => {
+        const breadcrumbHelper = new BreadCrumbHelper(page);
         await addEmployeeCreationForm.clickActionOption('Deactivate');
         await addEmployeeCreationForm.clickButton('Yes!');
-        await expect(await addEmployeeCreationForm.toastSuccess()).toBe(
+        await employeeCreationPage.notification.checkToastSuccess(
             'Status Changed'
         );
-        await addEmployeeCreationForm.clickBreadCrumbsLink('Employees');
-        await addEmployeeCreationForm.changeTab('Inactive');
+        // await expect(await addEmployeeCreationForm.toastSuccess()).toBe(
+        //     'Status Changed'
+        // );
+        await breadcrumbHelper.clickBreadCrumbsLink('Employees');
+        await tabHelper.clickTab('Inactive');
         await expect(await addEmployeeCreationForm.getEmployeeStatus()).toBe(
             'Inactive'
         );
     });
 
     await PROCESS_TEST.step('Activate Status', async () => {
+        const tabHelper = new TabHelper(page);
+        const breadcrumbHelper = new BreadCrumbHelper(page);
         await addEmployeeCreationForm.checkEmployeeNameLink();
         await addEmployeeCreationForm.clickButton('Actions');
         await addEmployeeCreationForm.clickActionOption('Activate');
         await addEmployeeCreationForm.clickButton('Yes!');
-        await expect(await addEmployeeCreationForm.toastSuccess()).toBe(
+        await employeeCreationPage.notification.checkToastSuccess(
             'Status Changed'
         );
-        await addEmployeeCreationForm.clickBreadCrumbsLink('Employees');
-        await addEmployeeCreationForm.changeTab('Active');
+        // await expect(await addEmployeeCreationForm.toastSuccess()).toBe(
+        //     'Status Changed'
+        // );
+        await breadcrumbHelper.clickBreadCrumbsLink('Employees');
+        await tabHelper.clickTab('Active');
         await expect(await addEmployeeCreationForm.getEmployeeStatus()).toBe(
             'Active'
         );

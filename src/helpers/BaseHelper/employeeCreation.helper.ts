@@ -6,16 +6,6 @@ export class FillEmployeeCreationForm extends BaseHelper {
     constructor(page) {
         super(page);
     }
-    async verifyAddEmployeeForm(fieldName) {
-        await this._page.waitForTimeout(2000);
-        const parentLocator = this._page.locator(
-            `//div[@role="dialog"]//span[text()="${fieldName}"]/parent::label/parent::div`
-        );
-        await expect(
-            parentLocator,
-            chalk.red(`Dialog ${fieldName} visibility`)
-        ).toBeVisible();
-    }
 
     async fillEmployeeForm(employeeInfo) {
         await this.fillText(employeeInfo.name, {

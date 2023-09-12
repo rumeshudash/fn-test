@@ -2,11 +2,20 @@ import { Page, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { TEST_URL } from '@/constants/api.constants';
 import chalk from 'chalk';
+import { TabHelper } from '../BaseHelper/tab.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 // import { firefox } from 'playwright';
 
 let pocEmail;
 let finopsEmail;
 export class SavedExpenseCreation extends BaseHelper {
+    public tabHelper: TabHelper;
+    public notification: NotificationHelper;
+    constructor(page: any) {
+        super(page);
+        this.tabHelper = new TabHelper(page);
+        this.notification = new NotificationHelper(page);
+    }
     private static SAVED_EXPENSE_DOM_SELECTOR =
         "//div[@dir='ltr']/following-sibling::div[1]";
 
@@ -23,9 +32,9 @@ export class SavedExpenseCreation extends BaseHelper {
     //     return await this._page.locator("//div[@role='status']").textContent();
     // }
 
-    public async clickTab(buttonName: string) {
-        await this.click({ role: 'tab', name: buttonName });
-    }
+    // public async clickTab(buttonName: string) {
+    //     await this.click({ role: 'tab', name: buttonName });
+    // }
     public async clickLink(linkName: string) {
         await this._page.locator('a').filter({ hasText: linkName }).click();
         await this._page.waitForTimeout(1000);

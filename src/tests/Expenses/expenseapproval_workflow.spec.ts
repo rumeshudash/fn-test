@@ -1,5 +1,6 @@
 import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
+import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
     ApprovalToggleHelper,
@@ -28,6 +29,7 @@ const EXPENSEDETAILS = {
 };
 describe('TECF007', () => {
     PROCESS_TEST('Expense Approval by FinOps', async ({ page }) => {
+        // const tabHelper = new TabHelper(page);
         const signIn = new SignInHelper(page);
         const expense = new ExpenseHelper(page);
         const verificationFlows = new ApprovalWorkflowsTab(page);
@@ -87,10 +89,13 @@ describe('TECF007', () => {
         const savedExpensePage = new SavedExpenseCreation(page);
 
         await test.step('Check Saved and Party Status with poc', async () => {
-            expect(
-                await savedExpensePage.toastMessage(),
-                chalk.red('Toast message match')
-            ).toBe('Invoice raised successfully.');
+            await savedExpensePage.notification.checkToastSuccess(
+                'Invoice raised successfully.'
+            );
+            // expect(
+            //     await savedExpensePage.toastMessage(),
+            //     chalk.red('Toast message match')
+            // ).toBe('Invoice raised successfully.');
 
             expect(
                 await savedExpensePage.checkPartyStatus(),
@@ -99,7 +104,7 @@ describe('TECF007', () => {
         });
 
         await test.step('Check Approval Flows', async () => {
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
             await verificationFlows.checkLevel();
             await verificationFlows.checkUser();
@@ -124,7 +129,7 @@ describe('TECF007', () => {
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickApprove();
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await page.waitForTimeout(1000);
             expect(
                 await verificationFlows.checkApprovalStatus(
@@ -143,7 +148,7 @@ describe('TECF007', () => {
             await page.waitForURL(TEST_URL + '/e/f');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await verificationFlows.checkApprovalByFinOps();
         });
         await test.step('Check pending flows and party status in finops', async () => {
@@ -151,7 +156,7 @@ describe('TECF007', () => {
         });
 
         await test.step('Check finOpsFlows Details', async () => {
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await finOpsFlows.getLevelName();
             await finOpsFlows.getLevelStatus();
             await finOpsFlows.getEmailName();
@@ -171,7 +176,7 @@ describe('TECF007', () => {
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickApprove();
 
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await page.waitForTimeout(1000);
             expect(
                 await finOpsFlows.getLevelStatus(),
@@ -193,7 +198,7 @@ describe('TECF007', () => {
 
             await savedExpensePage.clickApprove();
 
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await page.waitForTimeout(1000);
             expect(
                 await paymentFlows.getLevelStatus(),

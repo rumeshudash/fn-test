@@ -14,13 +14,16 @@ import {
 import GenericNonGstinCardHelper, {
     nonGstinDataType,
 } from '../CommonCardHelper/genericNonGstin.card.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 let getDate: string;
 export class VendorOnboarding extends BaseHelper {
     public lowerTDS;
+    public notification: NotificationHelper;
     constructor(lowerTDS, page) {
         super(page);
         this.lowerTDS = lowerTDS;
+        this.notification = new NotificationHelper(page);
     }
     private BUSINESS_DETAILS_DOM =
         "//div[@class='input-addon-group input-group-md']/following-sibling::div[1]";

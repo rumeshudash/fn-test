@@ -112,16 +112,16 @@ export const VendorInfo_NonGstin = {
 //For Designation Info
 //Click Checkout Create and Save Another Designation
 export const designationInfo_Save_And_Create = {
-    name: 'Testing Save_Create032',
+    name: 'Testing Save_Create039',
 };
 
 //Create Designation Info
 export const Create_Designation_Info = {
-    name: 'Testing Designation021',
+    name: 'Testing Designation022',
 };
 
 export const designationUpdateInfo = {
-    name: 'Updating Designation021',
+    name: 'Updating Designation023',
 };
 
 //Update Designation Info from Details Page
@@ -176,10 +176,10 @@ export const employeeCreationInfo_SaveAndCreate = {
 };
 
 export const employeeCreationInfo = {
-    name: 'Admin Create8',
-    email: 'employeecreation8@test.com',
+    name: 'Admin Create7',
+    email: 'employeecreation7@test.com',
     status: 'Active',
-    employee_code: 'EC08',
+    employee_code: 'EC07',
     department: 'Test',
     designation: 'Chief Marketing Officer',
     grade: 'E3',

@@ -2,6 +2,7 @@ import { BaseHelper } from '@/baseHelper';
 import { Locator, Page, expect } from '@playwright/test';
 import { BreadCrumbHelper } from './breadCrumb.helper';
 import { DialogHelper } from './dialog.helper';
+import chalk from 'chalk';
 
 export class FormHelper extends BaseHelper {
     public breadcrumbHelper: BreadCrumbHelper;
@@ -82,5 +83,12 @@ export class FormHelper extends BaseHelper {
         expect(inputError, `Check input has error message: ${message}`).toBe(
             message
         );
+    }
+
+    async isInputFieldEmpty(inputName: string): Promise<void> {
+        const name_field = await this.locate('input', {
+            name: inputName,
+        })._locator.inputValue();
+        expect(name_field, chalk.red('Name field value')).toBe('');
     }
 }

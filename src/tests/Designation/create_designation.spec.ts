@@ -1,5 +1,6 @@
 import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
+import { FormHelper } from '@/helpers/BaseHelper/form.helper';
 import {
     CreateDesignationHelper,
     DesignationHelper,
@@ -24,17 +25,18 @@ describe('TDE001', () => {
             designationInfo,
             page
         );
+        const formHelper = new FormHelper(page);
         await designation.init();
         await designationCreate.addDesignation();
         await designation.verifyDialog();
         await designation.fillNameField();
         await designationCreate.saveAndCreateCheckbox();
         await designation.clickButton('Save');
-        expect(
-            await designation.toastMessage(),
-            chalk.red('Toast Message match')
-        ).toBe('Successfully saved ');
-        await designationCreate.verifyEmptyField();
+        // expect(
+        await designation.notification.checkToastSuccess('Successfully saved');
+        //     chalk.red('Toast Message match')
+        // ).toBe('Successfully saved ');
+        await formHelper.isInputFieldEmpty('name');
     });
 
     PROCESS_TEST('Create Designation', async ({ page }) => {
@@ -48,10 +50,11 @@ describe('TDE001', () => {
         await designation.verifyDialog();
         await designation.fillNameField();
         await designation.clickButton('Save');
-        expect(
-            await designation.toastMessage(),
-            chalk.red('Toast Message match')
-        ).toBe('Successfully saved ');
+        await designation.notification.checkToastSuccess('Successfully saved');
+        // expect(
+        //     await designation.toastMessage(),
+        //     chalk.red('Toast Message match')
+        // ).toBe('Successfully saved ');
         await designation.searchDesignation();
         await designation.verifyItemInList();
         await designation.clickDesignationName();
@@ -113,10 +116,11 @@ describe('TDE001', () => {
 
         await updateDesignation.fillNameField();
         await designation.clickButton('Save');
-        expect(
-            await designation.toastMessage(),
-            chalk.red('Toast Message match')
-        ).toBe('Successfully saved ');
+        await designation.notification.checkToastSuccess('Successfully saved');
+        // expect(
+        //     await designation.toastMessage(),
+        //     chalk.red('Toast Message match')
+        // ).toBe('Successfully saved ');
         await designation.changeTab('All');
         await updateDesignation.searchDesignation();
         await updateDesignation.verifyItemInList();
