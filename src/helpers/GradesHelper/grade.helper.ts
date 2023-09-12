@@ -2,8 +2,6 @@ import { generateRandomNumber } from '@/utils/common.utils';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 
-import { ListingHelper } from '../BaseHelper/listing.helper';
-
 export class GradesHelper extends BaseHelper {
     private static GRADES_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
