@@ -1,10 +1,18 @@
 import { UserCreation } from './UserGroup.helper';
-import { Locator, expect } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { formatDate } from '@/utils/common.utils';
+import { FileHelper } from '../BaseHelper/file.helper';
 
 export class UserDetails extends UserCreation {
+    private fileHelper: FileHelper;
+
+    constructor(page: Page) {
+        super(page);
+        this.fileHelper = new FileHelper(page);
+    }
+
     public async checkGroupDetailsDisplay({
         name,
         manager,
@@ -46,10 +54,6 @@ export class UserDetails extends UserCreation {
             'Add Notes',
             'Add Documents',
         ]);
-        // await expect(dropdownItems).toContainText('Add member');
-        // await expect(dropdownItems).toContainText('Add Group Role');
-        // await expect(dropdownItems).toContainText('Add Notes');
-        // await expect(dropdownItems).toContainText('Add Documents');
     }
 
     public async openActionFormItem(option: string) {
@@ -76,21 +80,15 @@ export class UserDetails extends UserCreation {
         expect(addedEmployeeRow).not.toBeNull();
     }
 
-    public async addDocument(document: { comment: string; imagePath: string }) {
+    public async addDocument(document) {
         await this.openActionFormItem('Add Documents');
-        await this._page
-            .locator("//div[@role='presentation']")
-            .locator("//input[@type='file']")
-            .setInputFiles(`images/${document.imagePath}`);
-        await this._page.waitForTimeout(1000);
-
+        await this.fileHelper.setFileInput();
         await this.fillText(document.comment, { name: 'comments' });
         await this.clickButton('Save');
     }
 
     public async verifyDocumentAddition(document: {
         comment: string;
-        imagePath: string;
         date: Date;
     }) {
         await this._page.getByRole('tab').getByText('Documents').click();
@@ -171,5 +169,10 @@ export class UserDetails extends UserCreation {
         await this._page.getByRole('tab').getByText('Roles').click();
         const addedRole = await this.getRowFromTable(data.role);
         expect(addedRole).not.toBeNull();
+    }
+
+    public async verifyDocumentButtons() {
+        await this.navigateToTab('Documents');
+        await this._page.pause();
     }
 }
