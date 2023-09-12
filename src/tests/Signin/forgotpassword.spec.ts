@@ -16,8 +16,11 @@ test.describe('Forgot Password', () => {
         const forgotpassword = new ForgotPasswordHelper(page);
         await forgotpassword.init();
         await forgotpassword.forgotPasswordPage('');
+
+        const notification = await forgotpassword.notificationHelper;
+
         expect(
-            await forgotpassword.errorMessage(),
+            await notification.getErrorMessage(),
             chalk.red('Error Message match ')
         ).toBe('Invalid Email Address');
     });
@@ -25,8 +28,10 @@ test.describe('Forgot Password', () => {
         const forgotpassword = new ForgotPasswordHelper(page);
         await forgotpassword.init();
         await forgotpassword.forgotPasswordPage('test');
+        const notification = await forgotpassword.notificationHelper;
+
         expect(
-            await forgotpassword.errorMessage(),
+            await notification.getErrorMessage(),
             chalk.red('Error Message match ')
         ).toBe('Invalid Email Address');
     });

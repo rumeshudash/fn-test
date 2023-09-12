@@ -805,7 +805,7 @@ export class BaseHelper {
      * @param {cellno} number - The cell number of the row to be find.
      * @param {function} actionCallback - The action to be performed on the row.When elementis found
      */
-    public async FindrowAndperformAction(
+    public async findrowAndperformAction(
         name: string,
         cellno: number,
         locator: string,
@@ -839,5 +839,17 @@ export class BaseHelper {
      */
     static async generateRandomGradeName() {
         return `Test${Math.floor(Math.random() * 1000000)}`;
+    }
+
+    /**
+     * This function will click on checkbox based on the name provided.
+     * @param {string} name - The unique text from which we need to find checkbox
+     */
+
+    public async clickCheckbox(name?: string) {
+        let tempSelector = '//input[@type="checkbox"]';
+        if (name) tempSelector += `[@name="${name}"]`;
+
+        await this._page.locator(tempSelector).click();
     }
 }

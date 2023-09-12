@@ -22,8 +22,11 @@ test.describe('Expense Head', () => {
     PROCESS_TEST('Create Expense Head empty Name feild', async ({ page }) => {
         const expenseHead = new ExpenseHeadHelper(page);
         await expenseHead.init();
-        await expenseHead.AddExpenseHead('');
-        await expect(await expenseHead.errorMessage()).toBe('Name is required');
+        await expenseHead.addExpenseHead('');
+
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe('Name is required');
     });
 
     PROCESS_TEST(
@@ -31,8 +34,10 @@ test.describe('Expense Head', () => {
         async ({ page }) => {
             const expenseHead = new ExpenseHeadHelper(page);
             await expenseHead.init();
-            await expenseHead.AddExpenseHead('Rent');
-            await expect(await expenseHead.errorMessage()).toBe(
+            await expenseHead.addExpenseHead('Rent');
+            const notification = await expenseHead.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
                 'Duplicate expense head name'
             );
         }
@@ -43,8 +48,10 @@ test.describe('Expense Head', () => {
             const expenseHead = new ExpenseHeadHelper(page);
             await expenseHead.init();
             const Name = await ExpenseHeadHelper.generateRandomGradeName();
-            await expenseHead.AddExpenseHead(Name);
-            await expect(await expenseHead.successToast()).toBe(
+            await expenseHead.addExpenseHead(Name);
+            const notification = await expenseHead.notificationHelper;
+
+            expect(await notification.getToastSuccess()).toBe(
                 'Successfully saved '
             );
 
@@ -55,8 +62,10 @@ test.describe('Expense Head', () => {
         const expenseHead = new ExpenseHeadHelper(page);
         await expenseHead.init();
         const Name = await ExpenseHeadHelper.generateRandomGradeName();
-        await expenseHead.AddExpenseHead(Name, 'Test10', 'Ravi');
-        await expect(await expenseHead.successToast()).toBe(
+        await expenseHead.addExpenseHead(Name, 'Test10', 'Ravi');
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe(
             'Successfully saved '
         );
     });
@@ -67,9 +76,9 @@ test.describe('Expense Head', () => {
             await expenseHead.init();
             const Name = await ExpenseHeadHelper.generateRandomGradeName();
             await expenseHead.changeActiveStatus('Test10');
-            await expect(await expenseHead.successToast()).toBe(
-                'Status Changed'
-            );
+            const notification = await expenseHead.notificationHelper;
+
+            expect(await notification.getToastSuccess()).toBe('Status Changed');
 
             await page.getByText('Inactive').click();
 
@@ -82,8 +91,58 @@ test.describe('Expense Head', () => {
         const expenseHead = new ExpenseHeadHelper(page);
         await expenseHead.init();
 
-        await expenseHead.changeInactiveStatus('Refund');
+        await expenseHead.changeInactiveStatus('Salary');
 
-        await expect(await expenseHead.successToast()).toBe('Status Changed');
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe('Status Changed');
+    });
+    PROCESS_TEST(
+        'Edit Expense Head with empty Name feild',
+        async ({ page }) => {
+            const expenseHead = new ExpenseHeadHelper(page);
+            await expenseHead.init();
+            await expenseHead.editExpenseHead('Test10', '');
+            const notification = await expenseHead.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
+                'Name is required'
+            );
+        }
+    );
+
+    PROCESS_TEST('Edit Expense Head with duplicate name ', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+        await expenseHead.editExpenseHead('Test10', 'Rent');
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
+            'Duplicate expense head name'
+        );
+    });
+    PROCESS_TEST('Edit Expense Head with valid name ', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+
+        await expenseHead.editExpenseHead('Time', 'Test10');
+
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe(
+            'Successfully saved '
+        );
+    });
+
+    PROCESS_TEST('Check save and AddAnother ', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+
+        const name = await ExpenseHeadHelper.generateRandomGradeName();
+        const name2 = await ExpenseHeadHelper.generateRandomGradeName();
+
+        await expenseHead.addandClickCheckbox(name);
+
+        await expect(await page.getByText('Add Expense Head')).toHaveCount(2);
     });
 });

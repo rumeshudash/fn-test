@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test';
 import chalk from 'chalk';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { PortalSelectorHelper } from '../BaseHelper/portalSelector.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 type LoginDetailsInput = {
     username: string;
@@ -9,6 +10,8 @@ type LoginDetailsInput = {
 };
 
 export class SignInHelper extends BaseHelper {
+    public notificationHelper: NotificationHelper;
+
     private SIGNIN_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
     // private Dashboard_DOM_SELECTOR = '';
@@ -18,6 +21,7 @@ export class SignInHelper extends BaseHelper {
     constructor(page: Page) {
         super(page);
         this.portalSelectorHelper = new PortalSelectorHelper(page);
+        this.notificationHelper = new NotificationHelper(page);
     }
 
     public async init() {

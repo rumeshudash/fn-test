@@ -67,7 +67,7 @@ export class ListingHelper extends PageHelper {
                     titleIndex + 1
                 })`
             )
-            .getByText(query)
+            .getByText(query, { exact: true })
             .locator('//ancestor::div[contains(@class,"table-row")]');
     }
 
@@ -123,7 +123,7 @@ export class ListingHelper extends PageHelper {
         row: Locator,
         columnName: string
     ): Promise<void> {
-        (await this.getCellButton(row, columnName)).click();
+        await (await this.getCellButton(row, columnName)).click();
     }
 
     /**
