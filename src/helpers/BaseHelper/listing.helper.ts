@@ -1,6 +1,7 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 import { PageHelper } from './page.helper';
 import { TabHelper } from './tab.helper';
+import chalk from 'chalk';
 
 export class ListingHelper extends PageHelper {
     public tabHelper: TabHelper;
@@ -49,16 +50,16 @@ export class ListingHelper extends PageHelper {
      * Finds a row in the table based on a query and the column title to search by.
      *
      * @param {string} query - The query to search for in the table.
-     * @param {string} searchByTitle - The title of the column to search by.
+     * @param {string} columnName - The columnName of the column to search by.
      * @return {Promise<Locator>} - The element handle of the row that matches the query.
      */
     public async findRowInTable(
         query: string,
-        searchByTitle: string
+        columnName: string
     ): Promise<Locator> {
         await this._page.waitForLoadState('networkidle');
         const table = this.getTableContainer();
-        const titleIndex = await this._findColumnIndex(searchByTitle);
+        const titleIndex = await this._findColumnIndex(columnName);
 
         return table
             .locator(
@@ -74,43 +75,40 @@ export class ListingHelper extends PageHelper {
      * Retrieves the cell element in a table row based on the given title.
      *
      * @param {Locator} row - The table row locator.
-     * @param {string} searchByTitle - The title to search for in the table.
+     * @param {string} columnName - The columnName to search for in the table.
      * @return {Promise<Locator>} The locator of the cell element.
      */
-    public async getCell(
-        row: Locator,
-        searchByTitle: string
-    ): Promise<Locator> {
-        const titleIndex = await this._findColumnIndex(searchByTitle);
+    public async getCell(row: Locator, columnName: string): Promise<Locator> {
+        const titleIndex = await this._findColumnIndex(columnName);
         return row.locator(`> div.table-cell:nth-child(${titleIndex + 1})`);
     }
 
     /**
-     * Retrieves the value of a cell in a table based on the row and the title of the cell.
+     * Retrieves the text of a cell in a table based on the row and the title of the cell.
      *
      * @param {Locator} row - The locator of the row.
-     * @param {string} searchByTitle - The title of the cell to search for.
+     * @param {string} columnName - The columnName of the cell to search for.
      * @return {Promise<string>} The inner text of the cell.
      */
-    public async getCellValue(
+    public async getCellText(
         row: Locator,
-        searchByTitle: string
+        columnName: string
     ): Promise<string> {
-        return (await this.getCell(row, searchByTitle)).innerText();
+        return (await this.getCell(row, columnName)).innerText();
     }
 
     /**
      * Retrieves the button element within a cell based on the row and title.
      *
      * @param {Locator} row - The row locator of the cell.
-     * @param {string} searchByTitle - The title to search for within the cell.
+     * @param {string} columnName - The columnName to search for within the cell.
      * @return {Promise<Locator>} The locator of the button element in the cell.
      */
     public async getCellButton(
         row: Locator,
-        searchByTitle: string
+        columnName: string
     ): Promise<Locator> {
-        const cell = await this.getCell(row, searchByTitle);
+        const cell = await this.getCell(row, columnName);
         return cell.locator('button');
     }
 
@@ -118,24 +116,34 @@ export class ListingHelper extends PageHelper {
      * Clicks a button in a table row based on the provided locator and searchByTitle.
      *
      * @param {Locator} row - The locator of the table row.
-     * @param {string} searchByTitle - The title to search for in the table row.
+     * @param {string} columnName - The columnName to search for in the table row.
      * @return {Promise<void>} - A promise that resolves when the button is clicked.
      */
     public async clickButtonInTable(
         row: Locator,
-        searchByTitle: string
+        columnName: string
     ): Promise<void> {
-        (await this.getCellButton(row, searchByTitle)).click();
+        (await this.getCellButton(row, columnName)).click();
     }
 
     /**
      * Find the index of a column in the table based on its title.
      *
-     * @param {string} searchByTitle - The title of the column to search for.
+     * @param {string} columnName - The columnName of the column to search for.
      * @return {number} The index of the column, or -1 if it is not found.
      */
-    private async _findColumnIndex(searchByTitle: string): Promise<number> {
+    private async _findColumnIndex(columnName: string): Promise<number> {
         const headingTitles = await this.getTableColumnNames();
-        return headingTitles.indexOf(searchByTitle);
+        return headingTitles.indexOf(columnName);
+    }
+
+    public async openDialogFormByButtonText(text: string) {
+        const button = await this.locateByText(text);
+
+        expect(await button.isVisible(), {
+            message: `opening "${text}" dialog form`,
+        }).toBe(true);
+        await button.click();
+        console.log(chalk.blue('Open Add Business Form'));
     }
 }
