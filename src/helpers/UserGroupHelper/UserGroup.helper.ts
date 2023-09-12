@@ -207,6 +207,35 @@ export class UserCreation extends BaseHelper {
         expect(manager).toBe(data.manager);
     }
 
+    public async openDetailsPage(data: UserGroupData) {
+        console.log(chalk.blue('Opening user group details'));
+        await this._page.waitForSelector('div.table-row.body-row');
+        await this._page
+            .locator('div.table-row.body-row')
+            .getByText(data.name, { exact: true })
+            .click();
+        await expect(
+            this._page.getByText('User Group Detail').first()
+        ).toBeVisible();
+        console.log(chalk.green('User Group Detail page opened'));
+        await expect(
+            this._page.locator(`//div[text()="${data.name}"]`)
+        ).toBeVisible();
+        console.log(chalk.green('User Group name verified'));
+
+        // verify description
+        const desc = await this._page
+            .locator('span#has-Description')
+            .textContent();
+        expect(desc).toBe(data.description);
+
+        // verify manager
+        const manager = await this._page
+            .locator('span#has-Manager')
+            .textContent();
+        expect(manager).toBe(data.manager);
+    }
+
     // navigate to tabs based on status
     public async navigateToTab(status: string) {
         console.log(chalk.blue('Navigating to tab:' + status));

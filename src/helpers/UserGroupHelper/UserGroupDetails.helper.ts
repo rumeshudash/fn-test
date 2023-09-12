@@ -4,13 +4,19 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { formatDate } from '@/utils/common.utils';
 import { FileHelper } from '../BaseHelper/file.helper';
+import { DetailsPageHelper } from '../BaseHelper/details.helper';
+import { DocumentHelper } from '../BaseHelper/document.helper';
 
 export class UserDetails extends UserCreation {
-    private fileHelper: FileHelper;
+    public _fileHelper: FileHelper;
+    public _detailsHelper: DetailsPageHelper;
+    public _documentHelper: DocumentHelper;
 
     constructor(page: Page) {
         super(page);
-        this.fileHelper = new FileHelper(page);
+        this._fileHelper = new FileHelper(page);
+        this._detailsHelper = new DetailsPageHelper(page);
+        this._documentHelper = new DocumentHelper(page);
     }
 
     public async checkGroupDetailsDisplay({
@@ -43,29 +49,8 @@ export class UserDetails extends UserCreation {
         await container.locator('button').first().click();
     }
 
-    public async openAndVerifyActionButton() {
-        await this._page.getByRole('button', { name: 'Actions' }).click();
-        const dropdownItems = this._page
-            .locator('//div[@role="menu"]')
-            .locator('span');
-        await expect(dropdownItems).toContainText([
-            'Add Member',
-            'Add Group Role',
-            'Add Notes',
-            'Add Documents',
-        ]);
-    }
-
-    public async openActionFormItem(option: string) {
-        await this._page.getByRole('button', { name: 'Actions' }).click();
-        await this._page
-            .locator("//div[@role='menuitem']")
-            .getByText(option)
-            .click();
-    }
-
     public async addMember(data: UserGroupData) {
-        await this.openActionFormItem('Add Member');
+        await this._detailsHelper.openActionButtonItem('Add Member');
         await this._page.waitForSelector("//span[contains(text(), 'Member')]");
 
         await this.selectOption({
@@ -81,8 +66,8 @@ export class UserDetails extends UserCreation {
     }
 
     public async addDocument(document) {
-        await this.openActionFormItem('Add Documents');
-        await this.fileHelper.setFileInput();
+        await this._detailsHelper.openActionButtonItem('Add Documents');
+        await this._fileHelper.setFileInput();
         await this.fillText(document.comment, { name: 'comments' });
         await this.clickButton('Save');
     }
@@ -108,7 +93,9 @@ export class UserDetails extends UserCreation {
     }
 
     public async addNotes(note: { title: string; date: Date }, open: boolean) {
-        if (!open) await this.openActionFormItem('Add Notes');
+        if (!open) {
+            await this._detailsHelper.openActionButtonItem('Add Notes');
+        }
 
         if (note.title) {
             await this.fillText(note.title, { name: 'comments' });
@@ -144,9 +131,8 @@ export class UserDetails extends UserCreation {
     }
 
     public async addRole(data: UserGroupData) {
-        await this.openActionFormItem('Add Group Role');
+        await this._detailsHelper.openActionButtonItem('Add Group Role');
         await this._page.waitForSelector("//span[contains(text(), 'Role')]");
-
         await this.selectOption({
             option: data.role,
             name: 'role_id',

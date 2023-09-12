@@ -1,5 +1,7 @@
 import { LISTING_ROUTES } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
+import { DetailsPageHelper } from '@/helpers/BaseHelper/details.helper';
+import { DocumentHelper } from '@/helpers/BaseHelper/document.helper';
 import { FileHelper } from '@/helpers/BaseHelper/file.helper';
 import { DepartmentDetails } from '@/helpers/DepartmentHelper/DepartmentDetails.helper';
 import { UserCreation } from '@/helpers/UserGroupHelper/UserGroup.helper';
@@ -12,8 +14,6 @@ const { describe } = PROCESS_TEST;
 
 describe('TUAD001', () => {
     PROCESS_TEST('User Group Details', async ({ page }) => {
-        const fileHelper = new FileHelper(page);
-
         let userData: UserGroupData = {
             name: 'test',
             manager: 'New Test Auto',
@@ -29,7 +29,7 @@ describe('TUAD001', () => {
 
         await test.step('Check User Group Details', async () => {
             console.log(chalk.blue('User Group Details Page Info Checking'));
-            await userDetails.openUserGroupDetails(userData);
+            await userDetails.openDetailsPage(userData);
             console.log(chalk.green('User Group Details Page Info Checked'));
         });
 
@@ -59,8 +59,12 @@ describe('TUAD001', () => {
 
         // await test.step('Check Action', async () => {
         //     console.log(chalk.blue('Action Button Checking'));
-        //     await userDetails.openAndVerifyActionButton();
-        //     await page.locator('html').click();
+        //     await userDetails._detailsHelper.checkActionButtonOptions([
+        //         'Add Member',
+        //         'Add Group Role',
+        //         'Add Notes',
+        //         'Add Documents',
+        //     ]);
         //     console.log(chalk.green('Action Button Checked'));
         // });
 
@@ -71,17 +75,20 @@ describe('TUAD001', () => {
         //     console.log(chalk.green('Member Addition Checked'));
         // });
 
-        await test.step('Check Documents Addition', async () => {
-            console.log(chalk.blue('Documents Addition Checking'));
-            const document = {
-                comment: 'test' + generateRandomNumber(),
-                date: new Date(),
-            };
-            await userDetails.verifyDocumentButtons();
-            // await userDetails.addDocument(document);
-            // await userDetails.verifyDocumentAddition(document);
-            // console.log(chalk.green('Documents Addition Checked'));
-        });
+        // await test.step('Check Documents Addition', async () => {
+        //     console.log(chalk.blue('Documents Addition Checking'));
+        //     const document = {
+        //         comment: 'test' + generateRandomNumber(),
+        //         date: new Date(),
+        //     };
+        //     await userDetails.navigateToTab('Documents');
+
+        //     await userDetails._documentHelper.checkAllButtonsVisibility();
+        //     await userDetails.addDocument(document);
+        //     await documentHelper.checkAllButtonsVisibility();
+        //     await userDetails.verifyDocumentAddition(document);
+        //     console.log(chalk.green('Documents Addition Checked'));
+        // });
 
         // await test.step('Check Notes Addition and Errors', async () => {
         //     console.log(chalk.blue('Notes Addition and Errors Checking'));
