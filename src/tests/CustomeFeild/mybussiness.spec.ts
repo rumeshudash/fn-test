@@ -50,7 +50,11 @@ test.describe('Custom Feilds', () => {
 
         await customfeild.addExpenseCustomeFeild('', 'Text', 1);
 
-        expect(await customfeild.errorMessage()).toBe('Field Name is required');
+        const notification = await customfeild.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
+            'Field Name is required'
+        );
     });
     PROCESS_TEST('Add My Bussinesses Without Type Feilds', async ({ page }) => {
         const customfeild = new CustofeildHelper(page);
@@ -59,7 +63,11 @@ test.describe('Custom Feilds', () => {
         await customfeild.clickExpenseTab('My Bussinesses');
         await customfeild.addExpenseCustomeFeild('Test1', '', 1);
 
-        expect(await customfeild.errorMessage()).toBe('Field Type is required');
+        const notification = await customfeild.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
+            'Field Type is required'
+        );
     });
     PROCESS_TEST('Add Advance Cateorgy With Text type', async ({ page }) => {
         const customfeild = new CustofeildHelper(page);

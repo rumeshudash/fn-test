@@ -23,7 +23,10 @@ test.describe('Expense Head', () => {
         const expenseHead = new ExpenseHeadHelper(page);
         await expenseHead.init();
         await expenseHead.addExpenseHead('');
-        await expect(await expenseHead.errorMessage()).toBe('Name is required');
+
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe('Name is required');
     });
 
     PROCESS_TEST(
@@ -32,7 +35,9 @@ test.describe('Expense Head', () => {
             const expenseHead = new ExpenseHeadHelper(page);
             await expenseHead.init();
             await expenseHead.addExpenseHead('Rent');
-            await expect(await expenseHead.errorMessage()).toBe(
+            const notification = await expenseHead.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
                 'Duplicate expense head name'
             );
         }
@@ -44,7 +49,9 @@ test.describe('Expense Head', () => {
             await expenseHead.init();
             const Name = await ExpenseHeadHelper.generateRandomGradeName();
             await expenseHead.addExpenseHead(Name);
-            await expect(await expenseHead.successToast()).toBe(
+            const notification = await expenseHead.notificationHelper;
+
+            expect(await notification.getToastSuccess()).toBe(
                 'Successfully saved '
             );
 
@@ -56,7 +63,9 @@ test.describe('Expense Head', () => {
         await expenseHead.init();
         const Name = await ExpenseHeadHelper.generateRandomGradeName();
         await expenseHead.addExpenseHead(Name, 'Test10', 'Ravi');
-        await expect(await expenseHead.successToast()).toBe(
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe(
             'Successfully saved '
         );
     });
@@ -67,9 +76,9 @@ test.describe('Expense Head', () => {
             await expenseHead.init();
             const Name = await ExpenseHeadHelper.generateRandomGradeName();
             await expenseHead.changeActiveStatus('Test10');
-            await expect(await expenseHead.successToast()).toBe(
-                'Status Changed'
-            );
+            const notification = await expenseHead.notificationHelper;
+
+            expect(await notification.getToastSuccess()).toBe('Status Changed');
 
             await page.getByText('Inactive').click();
 
@@ -84,7 +93,9 @@ test.describe('Expense Head', () => {
 
         await expenseHead.changeInactiveStatus('Salary');
 
-        await expect(await expenseHead.successToast()).toBe('Status Changed');
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe('Status Changed');
     });
     PROCESS_TEST(
         'Edit Expense Head with empty Name feild',
@@ -92,7 +103,9 @@ test.describe('Expense Head', () => {
             const expenseHead = new ExpenseHeadHelper(page);
             await expenseHead.init();
             await expenseHead.editExpenseHead('Test10', '');
-            await expect(await expenseHead.errorMessage()).toBe(
+            const notification = await expenseHead.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
                 'Name is required'
             );
         }
@@ -102,7 +115,9 @@ test.describe('Expense Head', () => {
         const expenseHead = new ExpenseHeadHelper(page);
         await expenseHead.init();
         await expenseHead.editExpenseHead('Test10', 'Rent');
-        await expect(await expenseHead.errorMessage()).toBe(
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
             'Duplicate expense head name'
         );
     });
@@ -112,7 +127,9 @@ test.describe('Expense Head', () => {
 
         await expenseHead.editExpenseHead('Time', 'Test10');
 
-        await expect(await expenseHead.successToast()).toBe(
+        const notification = await expenseHead.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe(
             'Successfully saved '
         );
     });

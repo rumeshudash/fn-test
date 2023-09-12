@@ -3,16 +3,20 @@ import { expect } from '@playwright/test';
 
 import { NotesHelper } from '../BaseHelper/notes.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class ExpenseHeadDetailsHelper extends BaseHelper {
     public noteHelper: NotesHelper;
 
     public tabhelper: TabHelper;
 
+    public notificationHelper: NotificationHelper;
+
     constructor(page: any) {
         super(page);
         this.noteHelper = new NotesHelper(page);
         this.tabhelper = new TabHelper(page);
+        this.notificationHelper = new NotificationHelper(page);
     }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');

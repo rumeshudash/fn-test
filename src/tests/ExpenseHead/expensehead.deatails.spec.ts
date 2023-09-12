@@ -60,7 +60,9 @@ test.describe('Expense Head Details', () => {
 
             await expenseHeadDetails.editExpenseHead('');
 
-            await expect(await expenseHeadDetails.errorMessage()).toBe(
+            const notification = await expenseHeadDetails.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
                 'Name is required'
             );
         }
@@ -81,7 +83,9 @@ test.describe('Expense Head Details', () => {
 
             await expenseHeadDetails.editExpenseHead('Rent');
 
-            await expect(await expenseHeadDetails.errorMessage()).toBe(
+            const notification = await expenseHeadDetails.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
                 'Duplicate expense head name'
             );
         }

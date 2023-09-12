@@ -50,7 +50,9 @@ test.describe('Customs Feilds', () => {
 
         await customefeild.addExpenseCustomeFeild('', 'Text', 1);
 
-        expect(await customefeild.errorMessage()).toBe(
+        const notification = await customefeild.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
             'Field Name is required'
         );
     });
@@ -61,7 +63,9 @@ test.describe('Customs Feilds', () => {
         await customefeild.clickExpenseTab('Employee Head');
         await customefeild.addExpenseCustomeFeild('Test1', '', 1);
 
-        expect(await customefeild.errorMessage()).toBe(
+        const notification = await customefeild.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
             'Field Type is required'
         );
     });

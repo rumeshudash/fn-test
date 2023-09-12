@@ -57,7 +57,9 @@ test.describe('Custom Feilds', () => {
 
             await customfeild.addExpenseCustomeFeild('', 'Text', 1);
 
-            expect(await customfeild.errorMessage()).toBe(
+            const notification = await customfeild.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
                 'Field Name is required'
             );
         }
@@ -71,7 +73,9 @@ test.describe('Custom Feilds', () => {
             await customfeild.clickExpenseTab('Employee Advance');
             await customfeild.addExpenseCustomeFeild('Test1', '', 1);
 
-            expect(await customfeild.errorMessage()).toBe(
+            const notification = await customfeild.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
                 'Field Type is required'
             );
         }
