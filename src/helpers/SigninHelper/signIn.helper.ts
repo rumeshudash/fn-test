@@ -1,7 +1,7 @@
-import { BaseHelper } from '../BaseHelper/base.helper';
-import { expect } from '@playwright/test';
-import { uuidV4 } from '@/utils/common.utils';
+import { Page, expect } from '@playwright/test';
 import chalk from 'chalk';
+import { BaseHelper } from '../BaseHelper/base.helper';
+import { PortalSelectorHelper } from '../BaseHelper/portalSelector.helper';
 
 type LoginDetailsInput = {
     username: string;
@@ -11,8 +11,14 @@ type LoginDetailsInput = {
 export class SignInHelper extends BaseHelper {
     private SIGNIN_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
+    // private Dashboard_DOM_SELECTOR = '';
 
-    private Dashboard_DOM_SELECTOR = '';
+    private portalSelectorHelper: PortalSelectorHelper;
+
+    constructor(page: Page) {
+        super(page);
+        this.portalSelectorHelper = new PortalSelectorHelper(page);
+    }
 
     public async init() {
         await this.navigateTo('SIGNIN');
@@ -105,14 +111,10 @@ export class SignInHelper extends BaseHelper {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
 
         await this.CheckLogin(data);
-        await this._page.waitForTimeout(1000);
         await this._page.getByText('New Test Auto').click();
 
-        this._page.getByText('Select Portal');
-
-        await this._page.waitForTimeout(1000);
-
-        await this._page.getByText('FinOps Portal').click();
+        await this.portalSelectorHelper.selectFinopsPortal();
+        // await this._page.getByText('FinOps Portal').click();
 
         this._page.getByText('Dashboard');
 
