@@ -4,6 +4,7 @@
         "Finops",
         "gstin",
         "networkidle",
+        "Recko",
         "selectbox"
     ],
     "cSpell.ignoreWords": ["TECF002"]
