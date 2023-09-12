@@ -70,7 +70,7 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
     }
 
     public async clickOnActions() {
-        this._page.getByRole('button', { name: 'Actions' }).click();
+        this.clickButton('Actions');
         this._page.waitForTimeout(1000);
     }
 

@@ -141,7 +141,7 @@ test.describe('Expense Head', () => {
         const name = await ExpenseHeadHelper.generateRandomGradeName();
         const name2 = await ExpenseHeadHelper.generateRandomGradeName();
 
-        await expenseHead.addandClickCheckbox(name);
+        await expenseHead.addAndClickCheckbox(name);
 
         await expect(await page.getByText('Add Expense Head')).toHaveCount(2);
     });
