@@ -14,7 +14,7 @@ test.describe('Grades', () => {
         const grades = new GradesHelper(page);
         await grades.init();
         await grades.clickButton('Add Grade');
-        // await grades.checkTitle();
+        await grades.checkTitle();
     });
 
     PROCESS_TEST('with empty Name feild', async ({ page }) => {
@@ -69,7 +69,7 @@ test.describe('Grades', () => {
         await grades.init();
         const gradeName = await GradesHelper.generateRandomGradeName();
         grades.checkWithCheckbox(gradeName, 1);
-        // await grades.checkTitle();
+        await grades.checkTitle();
     });
     PROCESS_TEST('Active to inactive', async ({ page }) => {
         const grades = new GradesHelper(page);

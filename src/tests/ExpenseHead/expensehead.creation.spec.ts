@@ -17,7 +17,10 @@ test.describe('Expense Head', () => {
         await expenseHead.init();
 
         await expenseHead.clickButton('Add Expense Head');
-        await expect(page.getByText('Add Expense Head')).toHaveCount(2);
+
+        const dialog = await expenseHead.dialogHelper;
+
+        await dialog.checkDialogTitle('Add Expense Head');
     });
     PROCESS_TEST('Create Expense Head empty Name feild', async ({ page }) => {
         const expenseHead = new ExpenseHeadHelper(page);
@@ -141,7 +144,7 @@ test.describe('Expense Head', () => {
         const name = await ExpenseHeadHelper.generateRandomGradeName();
         const name2 = await ExpenseHeadHelper.generateRandomGradeName();
 
-        await expenseHead.addandClickCheckbox(name);
+        await expenseHead.addAndClickCheckbox(name);
 
         await expect(await page.getByText('Add Expense Head')).toHaveCount(2);
     });

@@ -4,32 +4,40 @@ import { expect } from '@playwright/test';
 import { NotesHelper } from '../BaseHelper/notes.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { ListingHelper } from '../BaseHelper/listing.helper';
+import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
 
-export class ExpenseHeadDetailsHelper extends BaseHelper {
+export class ExpenseHeadDetailsHelper extends ListingHelper {
     public noteHelper: NotesHelper;
 
     public tabhelper: TabHelper;
 
     public notificationHelper: NotificationHelper;
 
+    public breadCrumbHelper: BreadCrumbHelper;
+
     constructor(page: any) {
         super(page);
         this.noteHelper = new NotesHelper(page);
         this.tabhelper = new TabHelper(page);
         this.notificationHelper = new NotificationHelper(page);
+
+        this.breadCrumbHelper = new BreadCrumbHelper(page);
     }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
     }
 
     public async clickOnExpenseHead(name: string) {
-        this._page.getByRole('tab', { name: 'All', exact: true }).click();
+        await this.tabHelper.clickTab('All');
 
-        this._page.waitForTimeout(1000);
+        await this._page.waitForTimeout(1000);
 
-        await this._page.getByText(name).click();
+        const row = await this.findRowInTable(name, 'NAME');
 
-        this._page.waitForTimeout(2000);
+        await this.clickTextOnTable(row, 'NAME');
+
+        await this._page.waitForTimeout(3000);
     }
 
     public async clickOnManagerName(name: string) {
@@ -70,7 +78,7 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
     }
 
     public async clickOnActions() {
-        this._page.getByRole('button', { name: 'Actions' }).click();
+        this.clickButton('Actions');
         this._page.waitForTimeout(1000);
     }
 
@@ -140,5 +148,55 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
         await this.clickButton('Yes');
 
         await this._page.waitForTimeout(1000);
+    }
+
+    public async checkExpense(expense_number: string, columnName: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        await this.clickTextOnTable(row, columnName);
+
+        await this._page.waitForTimeout(3000);
+    }
+
+    public async checkExpenseStatus(expense_number: string, status: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        const statusText = await this.getCellText(row, 'STATUS');
+
+        expect(statusText).toBe(status);
+    }
+
+    public async checkBalance(expense_number: string, balance: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        const balanceText = await this.getCellText(row, 'BALANCE');
+
+        expect(balanceText).toBe(balance);
+    }
+
+    public async checkExpenseAmnt(expense_number: string, amnt: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        const amntText = await this.getCellText(row, 'EXPENSE AMOUNT');
+
+        expect(amntText).toBe(amnt);
+    }
+
+    public async checkDate(expense_number: string, date: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        const dateText = await this.getCellText(row, 'EXPENSE DATE');
+
+        expect(dateText).toBe(date);
     }
 }
