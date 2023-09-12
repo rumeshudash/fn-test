@@ -15,6 +15,7 @@ export class CustofeildHelper extends ListingHelper {
     }
 
     public async clickExpenseTab(TabName: string) {
+        await this.tabHelper.checkTabExists(TabName);
         await this.tabHelper.clickTab(TabName);
     }
 

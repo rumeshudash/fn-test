@@ -16,9 +16,6 @@ test.describe('Custom Feilds', () => {
             await customefeild.init();
 
             await customefeild.clickExpenseTab('Advance Category');
-            await expect(
-                page.getByRole('tab', { name: 'Advance Category', exact: true })
-            ).toHaveCount(1);
         }
     );
 

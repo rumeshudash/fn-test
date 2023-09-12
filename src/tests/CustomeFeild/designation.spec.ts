@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { PROCESS_TEST } from '@/fixtures';
 
-test.describe('CustomeFeild', () => {
+test.describe('Custom Feilds', () => {
     PROCESS_TEST('Check the page opening', async ({ page }) => {
         const customfeild = new CustofeildHelper(page);
         await customfeild.init();
@@ -16,9 +16,6 @@ test.describe('CustomeFeild', () => {
             await customfeild.init();
 
             await customfeild.clickExpenseTab('Designation');
-            await expect(
-                page.getByRole('tab', { name: 'Designation', exact: true })
-            ).toHaveCount(1);
         }
     );
 

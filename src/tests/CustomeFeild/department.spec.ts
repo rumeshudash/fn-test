@@ -16,9 +16,6 @@ test.describe('Custom Feilds', () => {
             await customfeild.init();
 
             await customfeild.clickExpenseTab('Department');
-            await expect(
-                page.getByRole('tab', { name: 'Department', exact: true })
-            ).toHaveCount(1);
         }
     );
 
