@@ -1,6 +1,14 @@
 import { ListingHelper } from '../BaseHelper/listing.helper';
 
+import { DialogHelper } from '../BaseHelper/dialog.helper';
+
 export class GradesHelper extends ListingHelper {
+    public dialogHelper: DialogHelper;
+
+    constructor(page: any) {
+        super(page);
+        this.dialogHelper = new DialogHelper(page);
+    }
     private static GRADES_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
 
@@ -27,10 +35,6 @@ export class GradesHelper extends ListingHelper {
         await this.click({ role: 'button', name: 'save' });
     }
 
-    public async clickPolicy() {
-        await this._page.locator("//input[@type='checkbox']").click();
-    }
-
     public async checkWithCheckbox(name: string, priority: number) {
         await this.click({ role: 'button', name: 'Add Grade' });
         await this.fillText(name, {
@@ -39,7 +43,7 @@ export class GradesHelper extends ListingHelper {
         await this.fillText(priority, {
             name: 'priority',
         });
-        await this.clickPolicy();
+        await this.clickCheckbox();
 
         await this.click({ role: 'button', name: 'save' });
     }
@@ -48,12 +52,14 @@ export class GradesHelper extends ListingHelper {
         await this.clickButtonInTable(row, 'STATUS');
     }
 
+    public async checkTitle() {
+        await this.dialogHelper.checkDialogTitle('Add Grade');
+    }
+
     public async editGrdaes(name: string, newname: string, priority: number) {
-        const btnlocator = '//button';
-        async function performAction(element: any) {
-            await element.click();
-        }
-        await this.FindrowAndperformAction(name, 4, btnlocator, performAction);
+        const row = await this.findRowInTable(name, 'NAME');
+        await this.clickButtonInTable(row, 'ACTION');
+
         if (newname !== undefined) {
             await this.fillText(newname, {
                 name: 'name',

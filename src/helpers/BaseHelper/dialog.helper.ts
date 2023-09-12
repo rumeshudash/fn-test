@@ -19,7 +19,7 @@ export class DialogHelper extends BaseHelper {
     public async getDialogTitle() {
         const container = this.getDialogContainer().getLocator();
         const titleTexts = await container
-            .locator('> h2')
+            .locator('h2')
             .getByRole('heading')
             .allInnerTexts();
 

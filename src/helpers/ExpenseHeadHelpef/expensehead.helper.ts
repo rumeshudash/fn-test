@@ -48,7 +48,7 @@ export class ExpenseHeadHelper extends BaseHelper {
 
         const btnlocator = '//button';
 
-        this.FindrowAndperformAction(name, 3, btnlocator, performAction);
+        this.findrowAndperformAction(name, 3, btnlocator, performAction);
 
         this._page.waitForTimeout(1000);
     }
@@ -67,7 +67,7 @@ export class ExpenseHeadHelper extends BaseHelper {
 
         const btnlocator = '//button';
 
-        this.FindrowAndperformAction(name, 3, btnlocator, performAction);
+        this.findrowAndperformAction(name, 3, btnlocator, performAction);
 
         this._page.waitForTimeout(1000);
     }
@@ -85,7 +85,7 @@ export class ExpenseHeadHelper extends BaseHelper {
 
         const btnlocator = '//button';
 
-        this.FindrowAndperformAction(name, 5, btnlocator, performAction);
+        this.findrowAndperformAction(name, 5, btnlocator, performAction);
 
         this.fillText(newname, {
             name: 'name',
