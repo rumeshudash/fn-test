@@ -214,4 +214,21 @@ test.describe('Expense Head Details', () => {
 
         console.log(chalk.green('Notes Deleted'));
     });
+
+    PROCESS_TEST('Check Expense from expense Tab', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Expenses');
+
+        await expenseHeadDetails.checkExpense('EXPVN614');
+
+        const breadCrumb = expenseHeadDetails.breadCrumbHelper;
+
+        await expect(await breadCrumb.getBreadCrumbSubTitle()).toBe(
+            '#EXPVN614'
+        );
+    });
 });

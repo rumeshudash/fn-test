@@ -5,6 +5,7 @@ import { NotesHelper } from '../BaseHelper/notes.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
+import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
 
 export class ExpenseHeadDetailsHelper extends ListingHelper {
     public noteHelper: NotesHelper;
@@ -13,18 +14,22 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
     public notificationHelper: NotificationHelper;
 
+    public breadCrumbHelper: BreadCrumbHelper;
+
     constructor(page: any) {
         super(page);
         this.noteHelper = new NotesHelper(page);
         this.tabhelper = new TabHelper(page);
         this.notificationHelper = new NotificationHelper(page);
+
+        this.breadCrumbHelper = new BreadCrumbHelper(page);
     }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
     }
 
     public async clickOnExpenseHead(name: string) {
-        await this._page.getByRole('tab', { name: 'All', exact: true }).click();
+        await this.tabHelper.clickTab('All');
 
         await this._page.waitForTimeout(1000);
 
@@ -143,5 +148,15 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this.clickButton('Yes');
 
         await this._page.waitForTimeout(1000);
+    }
+
+    public async checkExpense(expense_number: string) {
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+
+        await this.clickTextOnTable(row, 'EXPENSE NO.');
+
+        await this._page.waitForTimeout(3000);
     }
 }
