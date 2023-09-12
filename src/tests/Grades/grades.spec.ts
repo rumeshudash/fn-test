@@ -64,10 +64,11 @@ test.describe('Grades', () => {
     PROCESS_TEST('Active to inactive', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();
-
+        await grades.checkPageTitle('Grades');
         await grades.activeToInactive('E2');
 
         // expect(await grades.successToast()).toBe('Status Changed');
+        await page.waitForTimeout(1000);
     });
     PROCESS_TEST('EditIcon Click', async ({ page }) => {
         const grades = new GradesHelper(page);

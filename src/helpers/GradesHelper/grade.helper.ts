@@ -1,18 +1,8 @@
-import { generateRandomNumber } from '@/utils/common.utils';
-import { BaseHelper } from '../BaseHelper/base.helper';
-import { expect } from '@playwright/test';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 
-export class GradesHelper extends BaseHelper {
+export class GradesHelper extends ListingHelper {
     private static GRADES_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
-
-    public listin: ListingHelper;
-
-    constructor(page: any) {
-        super(page);
-        this.listin = new ListingHelper(page);
-    }
 
     public async init() {
         await this.navigateTo('GRADES');
@@ -54,8 +44,8 @@ export class GradesHelper extends BaseHelper {
         await this.click({ role: 'button', name: 'save' });
     }
     public async activeToInactive(name: string) {
-        const row = await this.listin.findRowInTable(name, 'NAME');
-        await this.listin.clickButtonInTable(row, 'STATUS');
+        const row = await this.findRowInTable(name, 'NAME');
+        await this.clickButtonInTable(row, 'STATUS');
     }
 
     public async editGrdaes(name: string, newname: string, priority: number) {
