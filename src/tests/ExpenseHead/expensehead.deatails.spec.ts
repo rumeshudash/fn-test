@@ -58,7 +58,7 @@ test.describe('Expense Head Details', () => {
 
             await page.waitForTimeout(1000);
 
-            await expenseHeadDetails.EditExpenseHead('');
+            await expenseHeadDetails.editExpenseHead('');
 
             await expect(await expenseHeadDetails.errorMessage()).toBe(
                 'Name is required'
@@ -79,7 +79,7 @@ test.describe('Expense Head Details', () => {
 
             await page.waitForTimeout(1000);
 
-            await expenseHeadDetails.EditExpenseHead('Rent');
+            await expenseHeadDetails.editExpenseHead('Rent');
 
             await expect(await expenseHeadDetails.errorMessage()).toBe(
                 'Duplicate expense head name'
@@ -182,7 +182,7 @@ test.describe('Expense Head Details', () => {
 
         await page.waitForTimeout(1000);
 
-        await expenseHeadDetails.EditNotes(
+        await expenseHeadDetails.editNotes(
             {
                 title: 'First Notes',
                 date: new Date(),
@@ -203,7 +203,7 @@ test.describe('Expense Head Details', () => {
 
         await page.waitForTimeout(1000);
 
-        await expenseHeadDetails.DeleteNotes({
+        await expenseHeadDetails.deleteNotes({
             title: 'Second Notes',
             date: new Date(),
         });

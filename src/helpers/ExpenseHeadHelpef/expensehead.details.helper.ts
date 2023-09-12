@@ -33,7 +33,7 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
         this._page.waitForTimeout(2000);
     }
 
-    public async EditExpenseHead(
+    public async editExpenseHead(
         name: string,
         parent?: string,
         manager?: string
@@ -112,7 +112,7 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    public async EditNotes(
+    public async editNotes(
         note: { title: string; date: Date },
         newNotes: string
     ) {
@@ -131,7 +131,7 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    public async DeleteNotes(note: { title: string; date: Date }) {
+    public async deleteNotes(note: { title: string; date: Date }) {
         await this.verifyNoteAddition({
             title: note.title,
             date: note.date,

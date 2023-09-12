@@ -9,7 +9,7 @@ export class ExpenseHeadHelper extends BaseHelper {
         await this._page.locator("//input[@type='checkbox']").click();
     }
 
-    public async AddExpenseHead(
+    public async addExpenseHead(
         name: string,
         parent?: string,
         manager?: string,
@@ -72,7 +72,7 @@ export class ExpenseHeadHelper extends BaseHelper {
         this._page.waitForTimeout(1000);
     }
 
-    public async EditExpenseHead(name: string, newname: string) {
+    public async editExpenseHead(name: string, newname: string) {
         this._page.getByRole('tab', { name: 'All', exact: true }).click();
 
         this._page.waitForTimeout(1000);
@@ -96,7 +96,7 @@ export class ExpenseHeadHelper extends BaseHelper {
         this._page.waitForTimeout(1000);
     }
 
-    public async AddandClickCheckbox(name: string) {
+    public async addandClickCheckbox(name: string) {
         await this.clickButton('Add Expense Head');
         await this.fillText(name, {
             name: 'name',
