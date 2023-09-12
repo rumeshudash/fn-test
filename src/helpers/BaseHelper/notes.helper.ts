@@ -16,12 +16,12 @@ export class NotesHelper extends BaseHelper {
      *
      */
 
-    public AddNotesConatiner() {
-        return this.locate('//*[@id="radix-:r17:"]/div');
+    public addNotesConatiner() {
+        return this.locate('div.col-flex.h-full');
     }
 
     public async checkNotesPage() {
-        const container = this.AddNotesConatiner().getLocator();
+        const container = this.addNotesConatiner().getLocator();
         const titleTexts = await container.locator('> h2').allInnerTexts();
 
         await expect(titleTexts[0]).toBe('Add Notes');
