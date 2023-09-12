@@ -1,5 +1,6 @@
 import { BaseHelper } from '@/baseHelper';
 import { expect } from '@playwright/test';
+import chalk from 'chalk';
 
 export class DialogHelper extends BaseHelper {
     /**
@@ -18,13 +19,17 @@ export class DialogHelper extends BaseHelper {
      */
     public async getDialogTitle() {
         const container = this.getDialogContainer().getLocator();
-        const titleTexts = await container
-            .locator('h2')
-            .getByRole('heading')
-            .allInnerTexts();
+        const titleTexts = await container.locator('h2').allInnerTexts();
 
         if (titleTexts.length < 1) return null;
         return titleTexts[0];
+    }
+
+    public async checkFormIsOpen() {
+        const element = await this.getDialogContainer();
+        expect(await element.isVisible(), {
+            message: 'checking  form is open or not.',
+        }).toBe(true);
     }
 
     /**
@@ -51,5 +56,35 @@ export class DialogHelper extends BaseHelper {
             .getLocator()
             .locator('.dialog-close')
             .click();
+    }
+
+    async verifyInputField(fieldName): Promise<void> {
+        const dialogContainer = this.getDialogContainer();
+        const parentLocator = dialogContainer.locate(
+            `//span[text()="${fieldName}"]/parent::label/parent::div`
+        )._locator;
+
+        await expect(
+            parentLocator,
+            chalk.red(`Dialog ${fieldName} visibility`)
+        ).toBeVisible();
+    }
+
+    //they handle confirm dialog
+    public async checkConfirmDialogOpenOrNot() {
+        await this.closeDialog();
+
+        const dialog = await this.locateByText(
+            'Do you want to exit? The details you have entered will be deleted.'
+        );
+        await this._page.waitForLoadState('domcontentloaded');
+
+        expect(await dialog.isVisible(), 'check confirm dialog open or not');
+
+        // await this.clickConfirmDialogAction('Yes!');
+    }
+
+    public async clickConfirmDialogAction(string: 'Yes!' | 'No') {
+        await this._page.locator(`//span[text()='${string}']`).click();
     }
 }

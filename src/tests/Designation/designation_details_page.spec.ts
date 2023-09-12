@@ -1,8 +1,11 @@
 import { PROCESS_TEST } from '@/fixtures';
+import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
+import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/employeeCreation.helper';
 import {
     DesignationDetailsPageHelper,
     DesignationHelper,
 } from '@/helpers/DesignationHelper/designation.helper';
+import { EmployeeCreation } from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
 import {
     designationInfo,
     designation_details_page_Info,
@@ -51,11 +54,13 @@ describe('TDD001', () => {
 
             await detailsPageEdit.fillNameField();
             await designation.clickButton('Save');
-
-            expect(
-                await designation.toastMessage(),
-                chalk.red('ToastMessage match')
-            ).toBe('Successfully saved ');
+            await designation.notification.checkToastSuccess(
+                'Successfully saved'
+            );
+            // expect(
+            //     await designation.toastMessage(),
+            //     chalk.red('ToastMessage match')
+            // ).toBe('Successfully saved ');
         });
     });
 
@@ -89,6 +94,8 @@ describe('TDD001', () => {
             employeeInfo,
             page
         );
+        const employeeCreation = new FillEmployeeCreationForm(page);
+        const dialogForm = new DialogHelper(page);
         await designation.init();
         await designation.searchDesignation();
         await designation.changeTab('All');
@@ -97,19 +104,27 @@ describe('TDD001', () => {
 
         await test.step('Verify Employee Form Field', async () => {
             await detailsPage.clickActionOption('Add Employee');
-            await detailsPage.verifyAddEmployeeForm('Name');
-            await detailsPage.verifyAddEmployeeForm('Email');
-            await detailsPage.verifyAddEmployeeForm('Employee Code');
-            await detailsPage.verifyAddEmployeeForm('Department');
-            await detailsPage.verifyAddEmployeeForm('Designation');
-            await detailsPage.verifyAddEmployeeForm('Grade');
-            await detailsPage.verifyAddEmployeeForm('Reporting Manager');
-            await detailsPage.verifyAddEmployeeForm('Approval Manager');
+            await dialogForm.verifyInputField('Name');
+            await dialogForm.verifyInputField('Email');
+            await dialogForm.verifyInputField('Employee Code');
+            await dialogForm.verifyInputField('Department');
+            await dialogForm.verifyInputField('Designation');
+            await dialogForm.verifyInputField('Grade');
+            await dialogForm.verifyInputField('Reporting Manager');
+            await dialogForm.verifyInputField('Approval Manager');
         });
 
         await test.step('Fill Employee Form Field', async () => {
-            await detailsPage.fillEmployeeForm();
+            await employeeCreation.fillEmployeeForm(employeeInfo);
+            // await detailsPage.fillEmployeeForm();
             await detailsPage.clickButton('Save');
+            await designation.notification.checkToastSuccess(
+                'Successfully created'
+            );
+            // expect(
+            //     await employeeCreation.toastMessage(),
+            //     'ToastMessage success check'
+            // ).toBe('Successfully created');
         });
 
         await test.step('Verify Employee Tab Details', async () => {
