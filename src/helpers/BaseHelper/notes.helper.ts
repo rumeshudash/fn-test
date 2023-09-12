@@ -1,9 +1,12 @@
 import { BaseHelper } from '@/baseHelper';
 import { expect } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 import { TabHelper } from './tab.helper';
 
-export class NotesHelper extends BaseHelper {
+import { DialogHelper } from './dialog.helper';
+
+export class NotesHelper extends DialogHelper {
     public tabHelper: TabHelper;
 
     constructor(page: any) {
@@ -15,21 +18,77 @@ export class NotesHelper extends BaseHelper {
      * @description Navigate to Notes page and Check Title of page
      *
      */
-
-    public addNotesConatiner() {
-        return this.locate('div.col-flex.h-full');
+    public async addNotesTitle() {
+        await this.checkDialogTitle('Add Note');
     }
 
-    public async checkNotesPage() {
-        const container = this.addNotesConatiner().getLocator();
-        const titleTexts = await container.locator('> h2').allInnerTexts();
-
-        await expect(titleTexts[0]).toBe('Add Notes');
+    /**
+     *@description This function will check if  Note tab is present or not
+     *
+     *
+     */
+    public async checkNoteTab() {
+        await this.tabHelper.checkTabExists('Notes');
     }
 
-    public async clickNotesTab() {
+    /**
+     * @description This function will Click Notes Tab if  Note tab is present or not
+     *
+     *
+     */
+    public async clickNoteTab() {
         await this.tabHelper.clickTab('Notes');
+    }
 
-        await this.tabHelper.checkTabSelected('Notes');
+    /**
+     * @description This function will return the the container of tab
+     *
+     *
+     */
+    public getNotesContainer(): Locator {
+        return this.locate('div', {
+            class: ['h-full', 'col-flex'],
+        }).getLocator();
+    }
+
+    /**
+     * @description This function will return the Row of the notes
+     * @param {string} query - The query to search for in the nth element in row of notes
+     *
+     */
+    public async getNotesRow(query: { title: string }): Promise<Locator> {
+        const Notes = this.getNotesContainer();
+        return Notes.locator('div.flex.gap-4').filter({
+            hasText: query.title,
+        });
+    }
+
+    /**
+     * @description This function will Click on the Row of the notes
+     *@param {string} query - The query to search for in the nth element in row of notes
+     *
+     */
+    public async clickNotesRow(query: { title: string }) {
+        const Notes = await this.getNotesRow(query);
+        await Notes.click();
+    }
+
+    /**
+     * @description This function will Click on the Edit button of the notes
+     *@param {string} query - The query to search for in the nth element in row of notes
+     *
+     *
+     */
+    public async clickEditIcon(query: { title: string }) {
+        const notesRow = await this.getNotesRow({
+            title: query.title,
+        });
+        await this.clickNotesRow({
+            title: query.title,
+        });
+
+        await notesRow.locator('//button').click();
+
+        await this._page.waitForTimeout(1000);
     }
 }

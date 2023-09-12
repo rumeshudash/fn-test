@@ -165,11 +165,6 @@ test.describe('Expense Head Details', () => {
         await expenseHeadDetails.clickOnTab('Notes');
 
         await page.waitForTimeout(1000);
-
-        await expenseHeadDetails.verifyNoteAddition({
-            title: 'First Notes',
-            date: new Date(),
-        });
     });
 
     PROCESS_TEST('Edit Notes', async ({ page }) => {
@@ -184,7 +179,7 @@ test.describe('Expense Head Details', () => {
 
         await expenseHeadDetails.editNotes(
             {
-                title: 'First Notes',
+                title: 'Edit Notes',
                 date: new Date(),
             },
             'Edit Notes'

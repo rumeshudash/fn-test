@@ -2,11 +2,18 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 
 import { NotesHelper } from '../BaseHelper/notes.helper';
-
-import { formatDate } from '@/utils/common.utils';
+import { TabHelper } from '../BaseHelper/tab.helper';
 
 export class ExpenseHeadDetailsHelper extends BaseHelper {
     public noteHelper: NotesHelper;
+
+    public tabhelper: TabHelper;
+
+    constructor(page: any) {
+        super(page);
+        this.noteHelper = new NotesHelper(page);
+        this.tabhelper = new TabHelper(page);
+    }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
     }
@@ -64,11 +71,7 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
     }
 
     public async clickOnTab(tabName: string) {
-        await this._page
-            .getByRole('tab', { name: `${tabName}`, exact: true })
-            .click();
-
-        this._page.waitForTimeout(2000);
+        await this.tabhelper.clickTab(tabName);
     }
     public async clickOnAddNotes(notes: string) {
         await this.clickButton('Add Notes');
@@ -92,35 +95,17 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
         this._page.waitForTimeout(1000);
     }
 
-    public async verifyNoteAddition(note: { title: string; date: Date }) {
-        await this._page.getByRole('tab').getByText('Notes').click();
-        const notesTab = this._page.locator("//div[@role='tabpanel']").nth(2);
-        const notesRow = notesTab.locator('div.flex.gap-4').filter({
-            hasText: note.title,
-        });
-
-        this._page.waitForTimeout(1000);
-
-        await notesRow.click();
-
-        const btnlocator = '//button';
-
-        await notesRow.locator(btnlocator).click();
-
-        // await this._page.getByText('Edit').click();
-
-        await this._page.waitForTimeout(1000);
-    }
-
     public async editNotes(
         note: { title: string; date: Date },
         newNotes: string
     ) {
-        await this.verifyNoteAddition({
+        await this.noteHelper.clickNoteTab();
+
+        await this.noteHelper.clickEditIcon({
             title: note.title,
-            date: note.date,
         });
-        await this._page.getByText('Edit').click();
+
+        await this._page.getByRole('menuitem', { name: 'Edit' }).click();
 
         await this.fillText(newNotes, {
             name: 'comments',
@@ -132,11 +117,13 @@ export class ExpenseHeadDetailsHelper extends BaseHelper {
     }
 
     public async deleteNotes(note: { title: string; date: Date }) {
-        await this.verifyNoteAddition({
+        await this.noteHelper.clickNoteTab();
+
+        await this.noteHelper.clickEditIcon({
             title: note.title,
-            date: note.date,
         });
-        await this._page.getByText('Delete').click();
+
+        await this._page.getByRole('menuitem', { name: 'Delete' }).click();
 
         await this._page.waitForTimeout(1000);
 
