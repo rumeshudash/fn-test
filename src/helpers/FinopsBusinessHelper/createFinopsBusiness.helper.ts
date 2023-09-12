@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { gstinDataType } from '../CommonCardHelper/genericGstin.card.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
 interface gstinBusinessInformation {
     gstin: string;
     mobile: string;
@@ -12,9 +13,12 @@ interface gstinBusinessInformation {
 
 export default class CreateFinopsBusinessHelper extends BaseHelper {
     public listHelper: ListingHelper;
+    public formHelper: FormHelper;
+
     constructor(page) {
         super(page);
         this.listHelper = new ListingHelper(page);
+        this.formHelper = new FormHelper(page);
     }
     public async init() {
         const URL = LISTING_ROUTES['BUSINESSESS'];
@@ -24,14 +28,8 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
 
     public async clickNavigationTab(nav: string) {
         await this._page.locator(`//span[text()='${nav}']`).click();
-    }
 
-    public async clickModalCloseButton() {
-        await this._page
-            .locator(
-                `//div[contains(@class,'col-flex overflow-y-hidden')]/following-sibling::button[1]`
-            )
-            .click();
+        // await this.listHelper.tabHelper.clickTab(nav);
     }
 
     public async clickConfirmDialogAction(string: 'Yes!' | 'No') {
@@ -39,7 +37,7 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
     }
 
     public async checkConfirmDialogOpenOrNot() {
-        await this.clickModalCloseButton();
+        await this.formHelper.dialogHelper.closeDialog();
 
         const dialog = await this.locateByText(
             'Do you want to exit? The details you have entered will be deleted.'
@@ -58,53 +56,33 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
             await button.isVisible(),
             'Add Business button not found !! '
         ).toBe(true);
-
         await button.click();
         console.log(chalk.blue('Open Add Business Form'));
-        // await this._page.waitForTimeout(1000);
     }
 
-    public async checkModalHeaderTitle() {
-        await this.locateByRole('heading');
+    // public async fillGstin(gstin: string): Promise<void> {
+    //     await this.fillInput(gstin, { name: 'gstin' });
+    // }
 
-        expect(
-            await this._locator.isVisible(),
-            'check modal header title '
-        ).toBe(true);
-        const text = await this._locator.textContent();
-        console.log(chalk.blue('Business Form Header is '), chalk.yellow(text));
-    }
-    public async checkFormIsOpen() {
-        // const element = await this.locateByText('Add Business');
-        const element = await this._page.getByRole('dialog');
-        expect(await element.isVisible(), 'check form is open').toBe(true);
-        // await this._page.waitForTimeout(1000);
-        await this.checkModalHeaderTitle();
+    // public async fillMobile(mobile: string): Promise<void> {
+    //     await this.fillInput(mobile, { name: 'mobile' });
+    // }
 
-        console.log(chalk.blue('Checking Business Form Is Open Or Not'));
-    }
-
-    public async fillGstin(gstin: string): Promise<void> {
-        await this.fillInput(gstin, { name: 'gstin' });
-    }
-
-    public async fillMobile(mobile: string): Promise<void> {
-        await this.fillInput(mobile, { name: 'mobile' });
-    }
-
-    public async fillEmail(email: string): Promise<void> {
-        await this.fillInput(email, { name: 'email' });
-    }
+    // public async fillEmail(email: string): Promise<void> {
+    //     await this.fillInput(email, { name: 'email' });
+    // }
 
     public async fillBusinessInputInformation(
         data: gstinBusinessInformation,
         targetClick: 'email' | 'mobile' | 'gstin' = 'email'
     ): Promise<void> {
         console.log(chalk.blue('Filling gstin business information ....'));
-        await this.fillGstin(data.gstin);
-        await this.fillEmail(data.email);
-        await this.fillMobile(data.mobile);
-        // if (targetClick === 'submit') return await this.submitButton();
+        for (const [key, value] of Object.entries(data)) {
+            await this.fillInput(value, {
+                name: key,
+            });
+        }
+
         await this.click({
             selector: 'input',
             name: targetClick,
@@ -130,16 +108,12 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         }).toBe(false);
     }
 
-    public async checkMandatoryFields(): Promise<void> {
-        expect(await this.isInputMandatory({ name: 'gstin' }), {
-            message: 'Gstin is required?',
-        }).toBeTruthy();
-        expect(await this.isInputMandatory({ name: 'mobile' }), {
-            message: 'Mobile is required?',
-        }).toBeTruthy();
-        expect(await this.isInputMandatory({ name: 'email' }), {
-            message: 'Email is required?',
-        }).toBeTruthy();
+    public async checkMandatoryFields(fields: string[]): Promise<void> {
+        for (let field of fields) {
+            expect(await this.isInputMandatory({ name: 'gstin' }), {
+                message: `${field} mandatory checking...`,
+            }).toBeTruthy();
+        }
     }
 
     public async checkEmailError(message?: string): Promise<void> {
@@ -198,10 +172,9 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         status: 'Active' | 'Inactive' = 'Active',
         row: any
     ): Promise<void> {
-        const status_cell = await this.listHelper.getCell(row, 'STATUS');
-        await expect(status_cell, {
-            message: 'Checking Status',
-        }).toHaveText(status);
+        expect(await this.listHelper.getCellText(row, 'STATUS'), {
+            message: `Checking ${status} status`,
+        }).toBe(status);
     }
 
     public async clickBusinessNameCell(cell: any): Promise<void> {
@@ -218,15 +191,14 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
 
         await this.listHelper.getCellText(row, 'ADDED AT'); //check created date present or not
 
-        await this.clickBusinessNameCell(name_cell);
-
         await this.VerifyTabClickable();
+        await this.clickBusinessNameCell(name_cell);
     }
 
     public async VerifyTabClickable(): Promise<void> {
-        await this.listHelper.tabHelper.clickTab('Active');
         await this.listHelper.tabHelper.clickTab('Inactive');
         await this.listHelper.tabHelper.clickTab('All');
+        await this.listHelper.tabHelper.clickTab('Active');
     }
 
     public async checkToastMessage(): Promise<void> {

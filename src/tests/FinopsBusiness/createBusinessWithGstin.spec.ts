@@ -4,18 +4,18 @@ import GenericGstinCardHelper, {
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Nitin And Company',
-    value: '07CFXPS9334F1ZN',
-    business_type: 'Proprietorship',
-    pan_number: 'CFXPS9334F',
+    trade_name: 'Flipkart India Private Limited',
+    value: '03AABCF8078M2ZA',
+    business_type: 'Private Limited',
+    pan_number: 'AABCF8078M',
     address:
-        'GALI NO -3, KABUL NAGAR, NEAR OBC BANK SHAHDARA, 1/5952,3RD FLOOR, East Delhi, 110032, Delhi, NA',
+        'Khasra No.306, 348/305, Village Katna,, Teshil Payal, Unit No.1, Ludhiana, 141113, Punjab, NA, Khewat No.79/80,',
     status: 'Active',
 };
 
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '07CFXPS9334F1ZN',
+    gstin: '03AABCF8078M2ZA',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
@@ -25,7 +25,10 @@ const createInit = async (page: any) => {
     gstin_helper.expand_card = true;
     await helper.init(); // got to business listing page
     await helper.openBusinessForm();
-    await helper.checkFormIsOpen();
+    await helper.formHelper.dialogHelper.checkFormIsOpen();
+
+    await helper.formHelper.checkTitle('Add Business');
+
     await helper.clickNavigationTab('GSTIN Registered');
 
     return {
@@ -41,7 +44,7 @@ describe(`TBA001`, () => {
 
             await helper.fillBusinessInputInformation(businessInformation);
 
-            await helper.checkMandatoryFields();
+            await helper.checkMandatoryFields(Object.keys(businessInformation));
             await gstin_helper.gstinInfoCheck();
         }
     );
@@ -136,24 +139,11 @@ describe(`TBA001`, () => {
 
         await helper.fillBusinessInputInformation(businessInformation);
 
-        await helper.checkMandatoryFields();
+        await helper.checkMandatoryFields(Object.keys(businessInformation));
         await gstin_helper.gstinInfoCheck();
         await helper.submitButton();
         await helper.checkToastMessage();
         // verifying list information
         await helper.verifyTableData(businessGstinInfo);
     });
-    // PROCESS_TEST(
-    //     'Verify table data after creating business',
-    //     async ({ page }) => {
-    //         const { helper, gstin_helper } = await createInit(page);
-
-    //         await helper.fillBusinessInputInformation(businessInformation);
-
-    //         await helper.checkMandatoryFields();
-    //         await gstin_helper.gstinInfoCheck();
-    //         await helper.submitButton();
-    //         await helper.checkToastMessage();
-    //     }
-    // );
 });

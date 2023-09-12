@@ -5,7 +5,7 @@ const createInit = async (page: any) => {
 
     await helper.init(); // got to business listing page
     await helper.openBusinessForm();
-    await helper.checkFormIsOpen();
+    await helper.formHelper.dialogHelper.checkFormIsOpen();
     await helper.clickNavigationTab('GSTIN Registered');
 
     return {
