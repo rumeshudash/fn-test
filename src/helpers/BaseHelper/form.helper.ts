@@ -2,6 +2,8 @@ import { BaseHelper } from '@/baseHelper';
 import { Locator, Page, expect } from '@playwright/test';
 import { BreadCrumbHelper } from './breadCrumb.helper';
 import { DialogHelper } from './dialog.helper';
+import chalk from 'chalk';
+import { ObjectDto } from '@/types/common.types';
 
 export class FormHelper extends BaseHelper {
     public breadcrumbHelper: BreadCrumbHelper;
@@ -82,5 +84,47 @@ export class FormHelper extends BaseHelper {
         expect(inputError, `Check input has error message: ${message}`).toBe(
             message
         );
+    }
+    /**
+     * fill form by passing object data. And key should be name of input.
+     */
+    public async fillFormInputInformation(
+        data: ObjectDto,
+        targetClick?: string
+    ): Promise<void> {
+        console.log(chalk.blue('Filling form input information ....'));
+        for (const [key, value] of Object.entries(data)) {
+            await this.fillInput(value, {
+                name: key,
+            });
+        }
+        if (!targetClick) return;
+        await this.click({
+            selector: 'input',
+            name: targetClick,
+        });
+    }
+
+    /**
+     * it helps to submit the form
+     */
+    public async submitButton(button_title: string = 'Save') {
+        const btnClick = this._page.getByRole('button', { name: button_title });
+        expect(await btnClick.isEnabled(), {
+            message: 'check save button enabled',
+        }).toBe(true);
+
+        await btnClick.click();
+        await this._page.waitForLoadState('networkidle');
+        return btnClick;
+    }
+
+    public async checkDisableSubmit(
+        button_title: string = 'Save'
+    ): Promise<void> {
+        const submitButton = await this.submitButton(button_title);
+        expect(await submitButton.isEnabled(), {
+            message: 'check save button disabled',
+        }).toBe(false);
     }
 }

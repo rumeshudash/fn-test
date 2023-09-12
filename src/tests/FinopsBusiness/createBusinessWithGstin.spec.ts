@@ -24,14 +24,15 @@ const businessInformation = {
     email: 'user@gmail.com',
 };
 const createInit = async (page: any) => {
+    const title = 'Add Business';
     const helper = new CreateFinopsBusinessHelper(page);
     const gstin_helper = new GenericGstinCardHelper(businessGstinInfo, page);
     gstin_helper.expand_card = true;
     await helper.init(); // got to business listing page
-    await helper.openBusinessForm();
+    await helper.listHelper.openDialogFormByButtonText(title);
     await helper.formHelper.dialogHelper.checkFormIsOpen();
 
-    await helper.formHelper.checkTitle('Add Business');
+    await helper.formHelper.checkTitle(title);
 
     await helper.clickNavigationTab('GSTIN Registered');
 
@@ -46,7 +47,9 @@ describe(`TBA001`, () => {
         async ({ page }) => {
             const { helper, gstin_helper } = await createInit(page);
 
-            await helper.fillBusinessInputInformation(businessInformation);
+            await helper.formHelper.fillFormInputInformation(
+                businessInformation
+            );
 
             await helper.checkMandatoryFields(Object.keys(businessInformation));
             await gstin_helper.gstinInfoCheck();
@@ -57,12 +60,12 @@ describe(`TBA001`, () => {
         'without Gstin Number-submit button disabled check',
         async ({ page }) => {
             const { helper } = await createInit(page);
-            await helper.fillBusinessInputInformation({
+            await helper.formHelper.fillFormInputInformation({
                 ...businessInformation,
                 gstin: '',
             });
             await helper.checkGstinError();
-            await helper.checkDisableSubmit();
+            await helper.formHelper.checkDisableSubmit();
         }
     );
 
@@ -71,18 +74,18 @@ describe(`TBA001`, () => {
         async ({ page }) => {
             const { helper } = await createInit(page);
 
-            await helper.fillBusinessInputInformation({
+            await helper.formHelper.fillFormInputInformation({
                 ...businessInformation,
                 mobile: '',
             });
             await helper.checkMobileError();
-            await helper.checkDisableSubmit();
+            await helper.formHelper.checkDisableSubmit();
         }
     );
 
     PROCESS_TEST('without Email-submit button check', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.fillBusinessInputInformation(
+        await helper.formHelper.fillFormInputInformation(
             {
                 ...businessInformation,
                 email: '',
@@ -91,34 +94,34 @@ describe(`TBA001`, () => {
         );
 
         await helper.checkEmailError();
-        await helper.checkDisableSubmit();
+        await helper.formHelper.checkDisableSubmit();
     });
 
     PROCESS_TEST('Verify Invalid Gstin', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.fillBusinessInputInformation({
+        await helper.formHelper.fillFormInputInformation({
             ...businessInformation,
             gstin: '27AAQCS4259Q1Z1',
         });
 
         await helper.checkGstinError('Invalid Gstin Number');
-        await helper.checkDisableSubmit();
+        await helper.formHelper.checkDisableSubmit();
     });
 
     PROCESS_TEST('Verify Invalid Mobile Number', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.fillBusinessInputInformation({
+        await helper.formHelper.fillFormInputInformation({
             ...businessInformation,
             mobile: '984561234',
         });
 
         await helper.checkMobileError(Invalid_Mobile_Error_Message);
-        await helper.checkDisableSubmit();
+        await helper.formHelper.checkDisableSubmit();
     });
 
     PROCESS_TEST('Verify Invalid Email address', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.fillBusinessInputInformation(
+        await helper.formHelper.fillFormInputInformation(
             {
                 ...businessInformation,
                 email: 'usergmail',
@@ -127,25 +130,25 @@ describe(`TBA001`, () => {
         );
 
         await helper.checkEmailError(Invalid_Email_Error_Message);
-        await helper.checkDisableSubmit();
+        await helper.formHelper.checkDisableSubmit();
     });
     PROCESS_TEST('Verify Confirm Dialog Open Or not', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.fillBusinessInputInformation({
+        await helper.formHelper.fillFormInputInformation({
             ...businessInformation,
         });
 
-        await helper.checkConfirmDialogOpenOrNot();
+        await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
     });
 
     PROCESS_TEST('Create Business Account.', async ({ page }) => {
         const { helper, gstin_helper } = await createInit(page);
 
-        await helper.fillBusinessInputInformation(businessInformation);
+        await helper.formHelper.fillFormInputInformation(businessInformation);
 
         await helper.checkMandatoryFields(Object.keys(businessInformation));
         await gstin_helper.gstinInfoCheck();
-        await helper.submitButton();
+        await helper.formHelper.submitButton();
         await helper.checkToastMessage();
         // verifying list information
         await helper.verifyTableData(businessGstinInfo);

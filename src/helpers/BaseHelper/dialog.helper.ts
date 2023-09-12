@@ -56,4 +56,21 @@ export class DialogHelper extends BaseHelper {
             .locator('.dialog-close')
             .click();
     }
+
+    //they handle confirm dialog
+    public async checkConfirmDialogOpenOrNot() {
+        await this.closeDialog();
+
+        const dialog = await this.locateByText(
+            'Do you want to exit? The details you have entered will be deleted.'
+        );
+        await this._page.waitForLoadState('domcontentloaded');
+
+        expect(await dialog.isVisible(), 'check confirm dialog open or not');
+
+        // await this.clickConfirmDialogAction('Yes!');
+    }
+    public async clickConfirmDialogAction(string: 'Yes!' | 'No') {
+        await this._page.locator(`//span[text()='${string}']`).click();
+    }
 }
