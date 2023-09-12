@@ -40,4 +40,11 @@ export class BreadCrumbHelper extends BaseHelper {
             message: `Breadcrumb title check: "${title}"`,
         }).toBe(title);
     }
+
+    public async clickBreadCrumbsLink(linkName: string): Promise<void> {
+        const breadcrumbContainer = this.getBreadCrumbContainer();
+        await breadcrumbContainer
+            .locate(`//a[contains(text(),"${linkName}")]`)
+            ._locator.click();
+    }
 }

@@ -1,5 +1,6 @@
 import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
+import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
     ApprovalToggleHelper,
@@ -14,6 +15,7 @@ const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
 describe('TECF004', () => {
     PROCESS_TEST('Expense Approval by POC with Comment', async ({ page }) => {
+        // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const verificationFlows = new ApprovalWorkflowsTab(page);
         const signIn = new SignInHelper(page);
@@ -56,14 +58,17 @@ describe('TECF004', () => {
         const savedExpensePage = new SavedExpenseCreation(page);
 
         await test.step('Check Saved and Party Status with poc', async () => {
-            expect(await savedExpensePage.toastMessage()).toBe(
+            await savedExpensePage.notification.checkToastSuccess(
                 'Invoice raised successfully.'
             );
+            // expect(await savedExpensePage.toastMessage()).toBe(
+            //     'Invoice raised successfully.'
+            // );
             expect(await savedExpensePage.checkPartyStatus()).toBe('Submitted');
         });
 
         await test.step('Check Approval Flows', async () => {
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
             await verificationFlows.checkLevel();
             await verificationFlows.checkUser();
@@ -90,7 +95,7 @@ describe('TECF004', () => {
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickApprove();
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await page.waitForTimeout(1000);
             expect(
                 await verificationFlows.checkApprovalStatus(
@@ -106,7 +111,7 @@ describe('TECF004', () => {
             await signIn.signInPage('newtestauto@company.com', '123456');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
-            await savedExpensePage.clickTab('Approval Workflows');
+            await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await page.waitForTimeout(1500);
             expect(
                 await verificationFlows.checkByFinOpsAdmin(
