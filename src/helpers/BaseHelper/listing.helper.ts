@@ -163,4 +163,36 @@ export class ListingHelper extends PageHelper {
         const cell = await this.getCell(row, columnName);
         await cell.locator('a').click();
     }
+
+    /**
+     * This function helps to get Locator of the text element in the cell.
+     * @param {Locator} row - The locator of the table row.
+     *
+     * @param {string} columnName - The columnName to search for in the table row.
+     * @return {Promise<Locator>} - The locator of the text element in the cell.
+     */
+
+    private async getTextLocator(
+        row: Locator,
+        columnName: string
+    ): Promise<Locator> {
+        const cell = await this.getCell(row, columnName);
+        const locator = cell.locator('a');
+        console.log(chalk.blue('Get Text Locator', locator));
+        return locator;
+    }
+
+    /**
+     * @description This function helps to click on the text element in the cell.
+     * @param {Locator} row - The locator of the table row.
+     * @param {string} columnName - The columnName to search for in the table row.
+     */
+
+    public async clickTextOnTable(
+        row: Locator,
+        columnName: string
+    ): Promise<void> {
+        const text = await this.getTextLocator(row, columnName);
+        await text.click();
+    }
 }
