@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 import chalk from 'chalk';
 
 export class NotificationHelper extends BaseHelper {
-    constructor(page) {
+    constructor(page: any) {
         super(page);
     }
 
@@ -78,11 +78,11 @@ export class NotificationHelper extends BaseHelper {
             class: ['label.text-error'],
         })._locator;
         const errorCount = await error.count();
-
+        console.log(chalk.red(`Error ocurred: ${errorCount}`));
         if (errorCount > 0) {
-            console.log(chalk.red(`Error ocurred: ${errorCount}`));
             for (let i = 0; i < errorCount; i++) {
                 const errorMsg = await error.nth(i).innerText();
+                console.log('Error: ', chalk.red(errorMsg));
                 return errorMsg;
             }
         }

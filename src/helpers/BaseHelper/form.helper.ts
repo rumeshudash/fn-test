@@ -86,13 +86,22 @@ export class FormHelper extends BaseHelper {
         );
     }
 
+    /**
+     * This function checks if the input field with the given name is empty.
+     * It uses the `locate` function to find the input element with a specific `name` attribute.
+     * The value of the input field is retrieved using the `inputValue` function.
+     * It then asserts that the value of the input field is an empty string using the `expect` function.
+     *
+     * @param inputName - The name of the input field to check.
+     * @returns A promise that resolves when the input field is confirmed to be empty.
+     */
     async isInputFieldEmpty(inputName: string): Promise<void> {
-        const name_field = await this.locate('input', {
+        const nameField: string = await this.locate('input', {
             name: inputName,
         })._locator.inputValue();
-        expect(name_field, chalk.red('Name field value')).toBe('');
+        expect(nameField).toBe('');
     }
-    
+
     /**
      * fill form by passing object data. And key should be name of input.
      */
@@ -113,6 +122,34 @@ export class FormHelper extends BaseHelper {
         });
     }
 
+    public async fillTextAreaForm(
+        data: ObjectDto,
+        targetClick?: string
+    ): Promise<void> {
+        console.log(chalk.blue('Filling form input information ....'));
+        for (const [key, value] of Object.entries(data)) {
+            await this.fillText(value, {
+                name: key,
+            });
+        }
+        if (!targetClick) return;
+        await this.click({
+            selector: 'textarea',
+            name: targetClick,
+        });
+    }
+
+    public async uploadDocument(fileName: ObjectDto): Promise<void> {
+        console.log(chalk.blue('Uploading Document ...'));
+        for (const [key, value] of Object.entries(fileName)) {
+            await this._page.setInputFiles(
+                `//input[@type='${key}']`,
+                `./images/${value}`
+            );
+            await this._page.waitForLoadState('networkidle');
+        }
+    }
+
     /**
      * it helps to submit the form
      */
@@ -123,6 +160,7 @@ export class FormHelper extends BaseHelper {
         }).toBe(true);
 
         await btnClick.click();
+        await this._page.waitForTimeout(300);
         await this._page.waitForLoadState('networkidle');
         return btnClick;
     }

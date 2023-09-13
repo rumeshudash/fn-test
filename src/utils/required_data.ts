@@ -176,14 +176,39 @@ export const employeeCreationInfo_SaveAndCreate = {
 };
 
 export const employeeCreationInfo = {
-    name: 'Admin Create7',
-    email: 'employeecreation7@test.com',
+    name: 'Admin Create6',
+    email: 'employeecreation6@test.com',
     status: 'Active',
-    employee_code: 'EC07',
+    employee_code: 'EC06',
     department: 'Test',
     designation: 'Chief Marketing Officer',
     grade: 'E3',
     reporting_manager: 'Amit Raj',
     approval_mananger: 'Ravi',
-    notes: 'Adding Notes for testing',
+    notes: 'again with incorrect format',
+};
+
+export const EditEmployeeCreationInfo = {
+    name: 'Edited Admin Create7',
+    // grade: 'E4',
+    // department: 'Sales',
+    // designation: 'Admin Manager',
+    employee_code: 'edit EC07',
+};
+
+//Bank Account Details for Employee Details Page
+export const bankAccountInfo = {
+    account_number: '12345678',
+    re_account_number: '12345678',
+    ifsc_code: 'ICIC0000005',
+};
+
+//Add Documents
+export const DocumentInfo = {
+    comment: {
+        comments: 'Adding Document',
+    },
+    document: {
+        file: 'pan-card.jpg',
+    },
 };

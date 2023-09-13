@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { Locator, Page } from 'playwright-core';
 import { LISTING_ROUTES, TEST_URL } from '../../constants/api.constants';
 import { Logger } from './log.helper';
+import { employeeCreationInfo } from '@/utils/required_data';
 
 export class BaseHelper {
     protected _page: Page;
@@ -297,11 +298,6 @@ export class BaseHelper {
             await selectBox.click();
         }
         console.log(`${input || option} is selected`);
-        // await this.click({
-        //     selector: `//div[contains(@class,"MenuList")]//div[contains(@class,"option")]//div[contains(text(),"${
-        //         input || option
-        //     }")]`,
-        // });
 
         const elements = await this._page
             .locator(
@@ -751,7 +747,7 @@ export class BaseHelper {
      * Return Error Message Conatains in the span tag
      *
      * @return {string} - returns the error message in the feild if error text-error exist .
-     */
+    //  */
     // public async errorMessage() {
     //     const errorMessage = await this._page
     //         .locator('//span[contains(@class, "label-text-alt text-error")]')
@@ -811,20 +807,18 @@ export class BaseHelper {
         locator: string,
         actionCallback: (element: any) => Promise<void>
     ) {
-        const table = await this._page.locator(
+        const table = this._page.locator(
             '//div[contains(@class,"table finnoto__table__container ")]'
         );
-        const rows = await table.locator('//div[contains(@class,"table-row")]'); //select the row
+        const rows = table.locator('//div[contains(@class,"table-row")]'); //select the row
 
         for (let i = 0; i < (await rows.count()); i++) {
-            const row = await rows.nth(i);
-            const tds = await row.locator(
-                '//div[contains(@class,"table-cell")]'
-            );
+            const row = rows.nth(i);
+            const tds = row.locator('//div[contains(@class,"table-cell")]');
             for (let j = 0; j < (await tds.count()); j++) {
                 const cell = await tds.nth(j).innerText();
                 if (cell === name) {
-                    const Button = await tds.nth(cellno).locator(`${locator}`);
+                    const Button = tds.nth(cellno).locator(`${locator}`);
                     await actionCallback(Button);
 
                     break;
@@ -839,5 +833,59 @@ export class BaseHelper {
      */
     static async generateRandomGradeName() {
         return `Test${Math.floor(Math.random() * 1000000)}`;
+    }
+
+    async clickActionButton() {
+        const parentLocator = this._page.locator(
+            '//div[contains(@class,"breadcrumbs")]/parent::div'
+        );
+        const actionButton = parentLocator.locator(
+            '//button[text()="Actions"]'
+        );
+        await actionButton.click();
+    }
+
+    async verifyActionOptions(options: string) {
+        const optionContainer = this.locate('div', { role: 'menu' })._locator;
+
+        const verifyOption = optionContainer.getByRole('menuitem', {
+            name: options,
+        });
+        await expect(verifyOption, `${options} visibility`).toBeVisible();
+    }
+
+    async clickActionOption(options: string) {
+        const optionContainer = this.locate('div', { role: 'menu' })._locator;
+        await optionContainer.getByRole('menuitem', { name: options }).click();
+    }
+
+    async setRole(title: string) {
+        const role = this.locate(
+            `//div[text()='${title}']/parent::div/parent::div`
+        )._locator;
+
+        await role.locator('//input').click();
+    }
+
+    async addNotes(notes: string) {
+        await this.fillText(notes, {
+            selector: 'textarea',
+        });
+    }
+
+    async checkNotes(notes: string) {
+        const notesParentLocator = this.locate(
+            `//div[text()='${notes}']/parent::div/parent::div`
+        )._locator.first();
+
+        expect(
+            await notesParentLocator.isVisible(),
+            chalk.red('Checking Notes visibility')
+        ).toBe(true);
+        const user = notesParentLocator.locator('//p[1]');
+        const date_time = notesParentLocator.locator('//p[2]');
+
+        await expect(user).toBeVisible();
+        await expect(date_time).toBeVisible();
     }
 }

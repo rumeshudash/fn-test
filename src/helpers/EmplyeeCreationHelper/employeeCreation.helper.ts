@@ -1,35 +1,49 @@
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
-import { addSeconds } from 'date-fns';
+import { addSeconds, isThisSecond } from 'date-fns';
 import { PageHelper } from '../BaseHelper/page.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
-import { employeeCreationInfo } from '@/utils/required_data';
+import { bankAccountInfo, employeeCreationInfo } from '@/utils/required_data';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
+import { Locator } from 'playwright';
+import chalk from 'chalk';
+import { tr } from 'date-fns/locale';
 
 export class EmployeeCreation extends ListingHelper {
     public notification: NotificationHelper;
-    constructor(page) {
+    public breadcrumb: BreadCrumbHelper;
+    constructor(page: any) {
         super(page);
         this.notification = new NotificationHelper(page);
+        this.breadcrumb = new BreadCrumbHelper(page);
     }
 
     async init() {
         await this.navigateTo('EMPLOYEE_CREATION');
     }
+
+    async clickEmployeeInfo(title: string, columnName: string) {
+        const row = await this.findRowInTable(title, columnName);
+        const clickCell = (await this.getCell(row, columnName)).locator('a');
+        await clickCell.click();
+        await this._page.waitForTimeout(2000);
+    }
 }
 
 export class AddEmployeeCreation extends BaseHelper {
     // public employeeCreationInfo;
-    constructor(page) {
+    public listing: ListingHelper;
+    public formHelper: FormHelper;
+    public breadCrumb: BreadCrumbHelper;
+    constructor(page: any) {
         super(page);
+        this.listing = new ListingHelper(page);
+        this.formHelper = new FormHelper(page);
+        this.breadCrumb = new BreadCrumbHelper(page);
         // this.employeeCreationInfo = employeeCreationInfo;
-    }
-    public async verifyAfterSaveAndCreate() {
-        const name_field = await this.locate('input', {
-            name: 'name',
-        })._locator.inputValue();
-        expect(name_field).toBe('');
     }
 
     async employeeCodeLocator() {
@@ -209,4 +223,76 @@ export class AddEmployeeCreation extends BaseHelper {
 
     //     await this._page.waitForTimeout(2000);
     // }
+}
+
+export class EmployeeDetailsPage extends BaseHelper {
+    public breadCrumb: BreadCrumbHelper;
+    public listing: ListingHelper;
+    constructor(page: any) {
+        super(page);
+        this.listing = new ListingHelper(page);
+    }
+
+    async parentEmployeeDetails() {
+        return this.locate('//div[contains(@class,"h-full overflow-hidden")]')
+            ._locator;
+    }
+
+    async checkEmployeeName() {
+        const parentHelper = await this.parentEmployeeDetails();
+        const locateName = parentHelper.filter({
+            hasText: employeeCreationInfo.name,
+        });
+
+        await expect(locateName).toBeVisible();
+    }
+
+    async checkEmployeeCode() {
+        const parentHelper = await this.parentEmployeeDetails();
+        const locateCode = parentHelper.locator(
+            "//div[@class='text-sm text-base-secondary']"
+        );
+        expect(await locateCode.innerText()).toBe(
+            employeeCreationInfo.employee_code
+        );
+    }
+
+    async checkEmployeeDetails(locator: string, text: string) {
+        const parentHelper = await this.parentEmployeeDetails();
+        const isVisible = await parentHelper.locator(locator).innerText();
+        expect(isVisible).toBe(text);
+    }
+
+    async clickEditIcon() {
+        await this._page.locator("//button[@data-title='Edit']").click();
+    }
+    async checkBankInfo() {
+        const row = await this.listing.findRowInTable(
+            bankAccountInfo.ifsc_code,
+            'IFSC CODE'
+        );
+        expect(await row.isVisible(), 'Check row of IFSC Code').toBe(true);
+    }
+
+    async checkInviteUserEmail() {
+        const email = this.locate(
+            `(//span[text()='${employeeCreationInfo.email}'])[2]`
+        )._locator;
+        await expect(
+            email,
+            chalk.red(`${employeeCreationInfo.email} Visibility check`)
+        ).toBeVisible();
+    }
+    async checkDocumentName(name: string | number) {
+        const documentNameContainer = this.locate(
+            "//div[contains(@class,'absolute left-0')]"
+        )._locator;
+        const documentName = documentNameContainer.locator(
+            `//div[text()='${name}']`
+        );
+        await expect(
+            documentName,
+            chalk.red(`Document ${name} Visibility`)
+        ).toBeVisible();
+    }
 }
