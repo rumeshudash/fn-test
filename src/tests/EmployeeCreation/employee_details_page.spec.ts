@@ -12,10 +12,57 @@ import {
     DocumentInfo,
     EditEmployeeCreationInfo,
     bankAccountInfo,
-    employeeCreationInfo,
 } from '@/utils/required_data';
-import test from '@playwright/test';
 
+const employeeCreationInfo = {
+    name: 'Admin Create6',
+    email: 'employeecreation6@test.com',
+    status: 'Active',
+    identifier: 'EC06',
+    department_id: 'Test',
+    designation_id: 4018,
+    grade_id: 'E3',
+    manager_id: 'Amit Raj',
+    approval_manager_id: 'Ravi',
+    notes: 'again with incorrect format',
+};
+
+const employeeCreationSchema = {
+    name: {
+        type: 'text',
+        required: true,
+    },
+    email: {
+        type: 'text',
+        required: true,
+    },
+    identifier: {
+        type: 'text',
+        required: true,
+    },
+    department_id: {
+        type: 'select',
+        required: false,
+    },
+    designation_id: {
+        type: 'select',
+        required: false,
+    },
+    grade_id: {
+        type: 'select',
+        required: false,
+    },
+    manager_id: {
+        type: 'select',
+        required: false,
+    },
+    approval_manager_id: {
+        type: 'select',
+        required: false,
+    },
+};
+
+const bankAccountSchema = {};
 const { describe, expect } = PROCESS_TEST;
 describe('TED001', () => {
     PROCESS_TEST('Verify to Employee Code Page', async ({ page }) => {
@@ -78,7 +125,10 @@ describe('TED001', () => {
         );
         await detailsPage.clickEditIcon();
         await dialog.checkDialogTitle('Edit Employee');
-        await formHelper.fillFormInputInformation(EditEmployeeCreationInfo);
+        await formHelper.fillFormInputInformation(
+            employeeCreationSchema,
+            EditEmployeeCreationInfo
+        );
         await editEmployeeForm.clickButton('Save');
         await notification.checkToastSuccess('Successfully created');
     });
@@ -117,7 +167,7 @@ describe('TED001', () => {
         );
         await detailsPage.clickActionButton();
         await detailsPage.clickActionOption('Add Bank Account');
-        await form.fillFormInputInformation(bankAccountInfo);
+        await form.fillFormInputInformation(bankAccountSchema, bankAccountInfo);
         await form.submitButton();
         await form.submitButton();
         await notification.checkToastSuccess('Successfully saved');

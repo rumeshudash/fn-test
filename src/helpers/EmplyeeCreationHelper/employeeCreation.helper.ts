@@ -11,7 +11,18 @@ import { FormHelper } from '../BaseHelper/form.helper';
 import { Locator } from 'playwright';
 import chalk from 'chalk';
 import { tr } from 'date-fns/locale';
-
+const employeeCreationInfo = {
+    name: 'Admin Create6',
+    email: 'employeecreation6@test.com',
+    status: 'Active',
+    identifier: 'EC06',
+    department_id: 'Test',
+    designation_id: 4018,
+    grade_id: 'E3',
+    manager_id: 'Amit Raj',
+    approval_manager_id: 'Ravi',
+    notes: 'again with incorrect format',
+};
 export class EmployeeCreation extends ListingHelper {
     public notification: NotificationHelper;
     public breadcrumb: BreadCrumbHelper;

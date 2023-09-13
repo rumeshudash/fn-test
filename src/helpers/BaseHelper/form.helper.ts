@@ -110,20 +110,24 @@ export class FormHelper extends BaseHelper {
         data: ObjectDto,
         targetClick?: string
     ): Promise<void> {
+        console.log('Schema', formSchema);
         for (const [name, schema] of Object.entries(formSchema)) {
-            switch (schema?.type) {
-                case 'select':
-                    return await this.selectOption({
-                        name,
-                        option: String(data[name]),
-                    });
-                case 'textarea':
-                    return await this.fillText(data[name], { name });
-                default:
-                    await this.fillInput(data[name], {
-                        name: name,
-                    });
-            }
+            console.log('Name', name);
+            // switch (schema?.type) {
+            //     case 'select':
+            //         await this.selectOption({
+            //             name,
+            //             option: String(data[name]),
+            //         });
+            //         await this._page.waitForTimeout(1000);
+            //         return;
+            //     case 'textarea':
+            //         return await this.fillText(data[name], { name });
+            //     default:
+            //         await this.fillInput(data[name], {
+            //             name: name,
+            //         });
+            // }
         }
         if (!targetClick) return;
         await this.click({

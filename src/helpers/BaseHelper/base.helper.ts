@@ -4,7 +4,6 @@ import chalk from 'chalk';
 import { Locator, Page } from 'playwright-core';
 import { LISTING_ROUTES, TEST_URL } from '../../constants/api.constants';
 import { Logger } from './log.helper';
-import { employeeCreationInfo } from '@/utils/required_data';
 
 export class BaseHelper {
     protected _page: Page;

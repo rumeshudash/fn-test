@@ -6,14 +6,66 @@ import {
     AddEmployeeCreation,
     EmployeeCreation,
 } from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
-import {
-    employeeCreationInfo,
-    employeeCreationInfo_SaveAndCreate,
-} from '@/utils/required_data';
 import test from '@playwright/test';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
+import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/addEmployeeForm.helper';
 
 const { expect, describe } = PROCESS_TEST;
+
+const employeeCreationInfo_SaveAndCreate = {
+    name: 'Admin SnC7',
+    email: 'employeecreationSnc77@test.com',
+    identifier: 'EC00377',
+    department_id: 'Test',
+    designation_id: 'Admin Accountant',
+    grade_id: 'E3',
+    manager_id: 'Amit Raj',
+    approval_manager_id: 'Ravi',
+    notes: 'Adding Notes for testing',
+};
+
+const employeeCreationInfo = {
+    name: 'Admin Create6',
+    email: 'employeecreation6@test.com',
+    status: 'Active',
+    identifier: 'EC06',
+    department_id: 'Test',
+    designation_id: 4018,
+    grade_id: 'E3',
+    manager_id: 'Amit Raj',
+    approval_manager_id: 'Ravi',
+    notes: 'again with incorrect format',
+};
+
+const employeeCreationSchema = {
+    name: {
+        type: 'text',
+        required: true,
+    },
+    email: {
+        type: 'text',
+        required: true,
+    },
+    identifier: {
+        type: 'text',
+        required: true,
+    },
+    department_id: {
+        type: 'select',
+    },
+    designation_id: {
+        type: 'select',
+    },
+    grade_id: {
+        type: 'select',
+    },
+    manager_id: {
+        type: 'select',
+    },
+    approval_manager_id: {
+        type: 'select',
+    },
+};
 
 describe('TEC001', () => {
     PROCESS_TEST('Verify Employee Creation Page', async ({ page }) => {
@@ -28,7 +80,7 @@ describe('TEC001', () => {
         const dialogForm = new DialogHelper(page);
         const addEmployeeCreationForm = new AddEmployeeCreation(page);
         const employeeCreationPage = new EmployeeCreation(page);
-        const employeeCreation = new FillEmployeeCreationForm(page);
+        // const employeeCreation = new FillEmployeeCreationForm(page);
         const dialog = new DialogHelper(page);
         const formHelper = new FormHelper(page);
         await employeeCreationPage.init();
@@ -47,11 +99,11 @@ describe('TEC001', () => {
         });
 
         await test.step('Fill Employee Form', async () => {
-            await formHelper.fillFormInputInformation(
-                employeeCreationInfo_SaveAndCreate
-            );
-            await employeeCreation.saveAndCreateCheckbox();
-            await employeeCreation.clickButton('Save');
+            await formHelper.fillFormInputInformation(employeeCreationSchema, {
+                ...employeeCreationInfo_SaveAndCreate,
+            });
+            await employeeCreationPage.saveAndCreateCheckbox();
+            await employeeCreationPage.clickButton('Save');
             await employeeCreationPage.notification.checkToastSuccess(
                 'Successfully created'
             );
@@ -71,7 +123,10 @@ describe('TEC001', () => {
         await dialog.checkDialogTitle('Add Employee');
 
         await test.step('Fill Employee Form', async () => {
-            await formHelper.fillFormInputInformation(employeeCreationInfo);
+            await formHelper.fillFormInputInformation(
+                employeeCreationSchema,
+                employeeCreationInfo
+            );
             await employeeCreation.clickButton('Save');
             await employeeCreationPage.notification.checkToastSuccess(
                 'Successfully created'
