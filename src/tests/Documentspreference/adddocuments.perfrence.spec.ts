@@ -18,4 +18,19 @@ test.describe('Add Documents Prefrence', () => {
 
         await documents_preference.clickAddBtn();
     });
+
+    test('Adding Documents Preference with empty name', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        await signin.checkDashboard({
+            username: 'resetpassword@company.com',
+            password: '123456',
+        });
+
+        const documents_preference = new DocumentspreferenceHelper(page);
+
+        await documents_preference.init();
+
+        await documents_preference.addDocumentPreference('COI');
+    });
 });

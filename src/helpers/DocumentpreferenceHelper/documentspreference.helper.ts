@@ -53,4 +53,23 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         expect(title).toBe('Add Document Preference');
     }
+
+    public async addDocumentPreference(
+        Document: string,
+        Mandatory?: string,
+        fileMandatory?: string
+    ) {
+        const text = await this.ifRowExists(Document, 'NAME');
+
+        expect(text).toBe(false);
+
+        await this.clickAddBtn();
+
+        await this.selectOption({
+            option: Document,
+            hasText: 'Search...',
+        });
+
+        await this._page.waitForTimeout(1000);
+    }
 }
