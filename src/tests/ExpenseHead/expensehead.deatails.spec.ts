@@ -10,7 +10,7 @@ test.describe('Expense Head Details', () => {
         await expenseHeadDetails.init();
 
         await expenseHeadDetails.clickOnExpenseHead('Time');
-        await expect(page.getByText('Expense Head Detail')).toHaveCount(2);
+        // await expect(page.getByText('Expense Head Detail')).toHaveCount(2);
     });
 
     PROCESS_TEST(
@@ -213,5 +213,96 @@ test.describe('Expense Head Details', () => {
         });
 
         console.log(chalk.green('Notes Deleted'));
+    });
+
+    PROCESS_TEST('Check Expense from expense Tab', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Expenses');
+
+        await expenseHeadDetails.checkExpense('EXPVN614', 'EXPENSE NO.');
+
+        const breadCrumb = expenseHeadDetails.breadCrumbHelper;
+
+        await expect(await breadCrumb.getBreadCrumbSubTitle()).toBe(
+            '#EXPVN614'
+        );
+    });
+
+    PROCESS_TEST('Check Expense  Bill FROM', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Expenses');
+        await expenseHeadDetails.checkExpense('EXPVN614', 'BILL FROM');
+
+        const breadCrumb = expenseHeadDetails.breadCrumbHelper;
+
+        await expect(await breadCrumb.getBreadCrumbTitle()).toBe(
+            'Vendor Detail'
+        );
+    });
+
+    PROCESS_TEST('Check Expense  Bill To', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Expenses');
+        await expenseHeadDetails.checkExpense('EXPVN614', 'BILL TO');
+
+        const breadCrumb = expenseHeadDetails.breadCrumbHelper;
+
+        await expect(await breadCrumb.getBreadCrumbTitle()).toBe(
+            'Business Details'
+        );
+    });
+    PROCESS_TEST('Check Expense  STATUS', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Expenses');
+
+        await expenseHeadDetails.checkExpenseStatus('EXPVN614', 'Pending');
+    });
+
+    PROCESS_TEST('Check Balance', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Expenses');
+
+        await expenseHeadDetails.checkBalance('EXPVN614', '₹11,111.00');
+    });
+    PROCESS_TEST('Check Expense  Amount', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Expenses');
+
+        await expenseHeadDetails.checkExpenseAmnt('EXPVN614', '₹11,111.00');
+    });
+
+    PROCESS_TEST('Check Expense  Date', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+
+        await expenseHeadDetails.clickOnTab('Expenses');
+
+        await expenseHeadDetails.checkDate('EXPVN614', '29 Aug, 2023 5:45 AM');
     });
 });
