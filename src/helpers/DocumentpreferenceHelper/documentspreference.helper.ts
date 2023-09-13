@@ -156,7 +156,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
             });
         }
 
-        await this.clickCheckbox();
+        await this._page
+            .locator('label')
+            .filter({ hasText: 'save and create another' })
+            .click();
 
         await this._page.waitForTimeout(1000);
 
