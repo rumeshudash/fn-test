@@ -33,6 +33,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
         await this._page.waitForTimeout(1000);
 
+        await this.searchInList(name);
+
         const row = await this.findRowInTable(name, 'NAME');
 
         await this.clickTextOnTable(row, 'NAME');

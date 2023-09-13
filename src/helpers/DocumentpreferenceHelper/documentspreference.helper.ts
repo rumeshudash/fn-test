@@ -142,4 +142,24 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickButton('Save');
     }
+
+    public async addAndClickCheck(Document: string) {
+        const text = await this.ifRowExists(Document, 'NAME');
+
+        expect(text).toBe(false);
+
+        await this.clickAddBtn();
+        if (Document) {
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
+            });
+        }
+
+        await this.clickCheckbox();
+
+        await this._page.waitForTimeout(1000);
+
+        await this.clickButton('Save');
+    }
 }

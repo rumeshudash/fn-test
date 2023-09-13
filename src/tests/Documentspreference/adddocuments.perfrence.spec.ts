@@ -132,4 +132,24 @@ test.describe('Add Documents Prefrence', () => {
             'Successfully created document preference'
         );
     });
+    test('Check Add and Save Another ', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        await signin.checkDashboard({
+            username: 'resetpassword@company.com',
+            password: '123456',
+        });
+
+        const documents_preference = new DocumentspreferenceHelper(page);
+
+        await documents_preference.init();
+
+        await documents_preference.addAndClickCheck('Pan Card'); // Running this test case again may give the issue since we caant use same name
+
+        const notification = await documents_preference.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe(
+            'Successfully created document preference'
+        );
+    });
 });
