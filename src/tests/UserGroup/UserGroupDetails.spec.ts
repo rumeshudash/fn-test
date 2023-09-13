@@ -19,6 +19,7 @@ describe('TUAD001', () => {
             manager: 'New Test Auto',
             description: 'testt',
             member: 'Admin Create',
+            memberEmail: 'employeecreation1@test.com',
             role: 'Advance Manager',
         };
 
@@ -29,51 +30,48 @@ describe('TUAD001', () => {
 
         await test.step('Check User Group Details', async () => {
             console.log(chalk.blue('User Group Details Page Info Checking'));
-            await userDetails.openDetailsPage(userData);
+            await userDetails.openDetailsPage(userData.name);
+            await userDetails.validateDetailsPage(userData);
             console.log(chalk.green('User Group Details Page Info Checked'));
         });
 
-        // await test.step('Check Edit Department', async () => {
-        //     console.log(chalk.blue('Department Details Edit Checking'));
+        await test.step('Check Edit Department', async () => {
+            console.log(chalk.blue('Department Details Edit Checking'));
 
-        //     await userDetails.openEditForm();
-        //     const newUserData: UserGroupData = {
-        //         name: 'Test' + generateRandomNumber(),
-        //         manager: 'Abhishek Gupta',
-        //         description: 'test' + generateRandomNumber(),
-        //     };
+            await userDetails.detailsHelper.openEditForm();
+            const newUserData: UserGroupData = {
+                name: 'Test' + generateRandomNumber(),
+                manager: 'Abhishek Gupta',
+                description: 'test' + generateRandomNumber(),
+            };
 
-        //     await userDetails.fillUserGroupForm({
-        //         name: newUserData.name,
-        //         manager: newUserData.manager,
-        //         description: newUserData.description,
-        //     });
-        //     await userDetails.checkGroupDetailsDisplay({
-        //         name: newUserData.name,
-        //         manager: newUserData.manager,
-        //         description: newUserData.description,
-        //     });
+            await userDetails.fillUserGroupForm({
+                name: newUserData.name,
+                manager: newUserData.manager,
+                description: newUserData.description,
+            });
+            await userDetails.validateDetailsPage(newUserData);
 
-        //     console.log(chalk.green('Department Details Edit Checked'));
-        // });
+            console.log(chalk.green('Department Details Edit Checked'));
+        });
 
-        // await test.step('Check Action', async () => {
-        //     console.log(chalk.blue('Action Button Checking'));
-        //     await userDetails._detailsHelper.checkActionButtonOptions([
-        //         'Add Member',
-        //         'Add Group Role',
-        //         'Add Notes',
-        //         'Add Documents',
-        //     ]);
-        //     console.log(chalk.green('Action Button Checked'));
-        // });
+        await test.step('Check Action Button', async () => {
+            console.log(chalk.blue('Action Button Checking'));
+            await userDetails.detailsHelper.checkActionButtonOptions([
+                'Add Member',
+                'Add Group Role',
+                'Add Notes',
+                'Add Documents',
+            ]);
+            console.log(chalk.green('Action Button Checked'));
+        });
 
-        // await test.step('Check Member Addition', async () => {
-        //     console.log(chalk.blue('Member Addition Checking'));
-        //     await userDetails.addMember(userData);
-        //     await userDetails.verifyMemberAddition(userData);
-        //     console.log(chalk.green('Member Addition Checked'));
-        // });
+        await test.step('Check Member Addition', async () => {
+            console.log(chalk.blue('Member Addition Checking'));
+            await userDetails.addMember(userData);
+            await userDetails.verifyMemberAddition(userData);
+            console.log(chalk.green('Member Addition Checked'));
+        });
 
         // await test.step('Check Documents Addition', async () => {
         //     console.log(chalk.blue('Documents Addition Checking'));
@@ -83,9 +81,8 @@ describe('TUAD001', () => {
         //     };
         //     await userDetails.navigateToTab('Documents');
 
-        //     await userDetails._documentHelper.checkAllButtonsVisibility();
+        //     await userDetails.documentHelper.checkAllButtonsVisibility();
         //     await userDetails.addDocument(document);
-        //     await documentHelper.checkAllButtonsVisibility();
         //     await userDetails.verifyDocumentAddition(document);
         //     console.log(chalk.green('Documents Addition Checked'));
         // });

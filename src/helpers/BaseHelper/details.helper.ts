@@ -16,6 +16,7 @@ export class DetailsPageHelper extends BaseHelper {
     constructor(page: Page) {
         super(page);
         this.documentHelper = new DocumentHelper(page);
+        this.breadCrumbHelper = new BreadCrumbHelper(page);
     }
 
     /**
@@ -42,7 +43,19 @@ export class DetailsPageHelper extends BaseHelper {
      * @return {Locator} The document details container element.
      */
     public getDetailInfoContainer() {
-        return this._page.locator('.h-full.overflow-hidden.rounded.shadow-lg');
+        return this._page.locator("//div[@data-title='detail_information']");
+    }
+
+    /**
+     * Retrieve the edit button element.
+     *
+     * @return {Locator} The edit button element.
+     */
+    public getEditButton() {
+        const button = this.breadCrumbHelper
+            .getBreadCrumbContainer()
+            .locate("//button[@data-title='Edit']");
+        return button;
     }
 
     /**
@@ -80,6 +93,7 @@ export class DetailsPageHelper extends BaseHelper {
      * @return {Promise<void>} Promise that resolves once the options are checked.
      */
     public async openActionButtonItem(option: string) {
+        await this.getActionButton().click();
         const actionButton = this.getDropdownItems().getByText(option);
         await actionButton.click();
     }
@@ -90,10 +104,22 @@ export class DetailsPageHelper extends BaseHelper {
      * @param {string[]} options - Options to be checked inside action button.
      * @return {Promise<void>} Promise that resolves once the options are checked.
      */
-    public async validateDetailsPageInfo(title: string, details: DetailInfo[]) {
-        await this.breadCrumbHelper.checkBreadCrumbTitle(title);
+    public async validateDetailsPageInfo(
+        pageTitle: string,
+        details: DetailInfo[]
+    ) {
+        await this.breadCrumbHelper.checkBreadCrumbTitle(pageTitle);
         for (const detail of details) {
             await this.validateDetailInfoItem(detail.selector, detail.text);
         }
+    }
+
+    /**
+     * Opens the edit form
+     *
+     * @return {Promise<void>} Promise that resolves once the options are checked.
+     */
+    public async openEditForm() {
+        await this.getEditButton().click();
     }
 }

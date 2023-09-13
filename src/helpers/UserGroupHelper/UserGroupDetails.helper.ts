@@ -6,68 +6,51 @@ import { formatDate } from '@/utils/common.utils';
 import { FileHelper } from '../BaseHelper/file.helper';
 import { DetailsPageHelper } from '../BaseHelper/details.helper';
 import { DocumentHelper } from '../BaseHelper/document.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
 
 export class UserDetails extends UserCreation {
-    public _fileHelper: FileHelper;
-    public _detailsHelper: DetailsPageHelper;
-    public _documentHelper: DocumentHelper;
+    public fileHelper: FileHelper;
+    public detailsHelper: DetailsPageHelper;
+    public documentHelper: DocumentHelper;
+    public dialogHelper: DialogHelper;
+    public tabHelper: TabHelper;
 
     constructor(page: Page) {
         super(page);
-        this._fileHelper = new FileHelper(page);
-        this._detailsHelper = new DetailsPageHelper(page);
-        this._documentHelper = new DocumentHelper(page);
-    }
-
-    public async checkGroupDetailsDisplay({
-        name,
-        manager,
-        description,
-    }: UserGroupData) {
-        console.log(chalk.green('User Group details page is visible'));
-        await expect(this._page.getByText(name, { exact: true })).toBeVisible();
-
-        if (manager) {
-            const managerText = await this._page
-                .locator('#has-Manager')
-                .textContent();
-            expect(managerText).toBe(manager);
-        }
-
-        if (description) {
-            const descriptionText = await this._page
-                .locator('#has-Description')
-                .textContent();
-            expect(descriptionText).toBe(description);
-        }
-    }
-
-    public async openEditForm() {
-        const container = this._page.locator(
-            `//div[contains(@class,'breadcrumbs')]/ancestor::div[contains(@class,"justify-between")]`
-        );
-        await container.locator('button').first().click();
+        this.fileHelper = new FileHelper(page);
+        this.detailsHelper = new DetailsPageHelper(page);
+        this.documentHelper = new DocumentHelper(page);
+        this.dialogHelper = new DialogHelper(page);
+        this.tabHelper = new TabHelper(page);
     }
 
     public async addMember(data: UserGroupData) {
-        await this._detailsHelper.openActionButtonItem('Add Member');
+        await this.detailsHelper.openActionButtonItem('Add Member');
         await this._page.waitForSelector("//span[contains(text(), 'Member')]");
 
         await this.selectOption({
-            option: data.member,
+            option: data.memberEmail,
             name: 'user_id',
         });
         await this.clickButton('Save');
     }
 
-    public async verifyMemberAddition(data: UserGroupData) {
-        const addedEmployeeRow = await this.getRowFromTable(data.member);
-        expect(addedEmployeeRow).not.toBeNull();
+    public async verifyMemberAddition(data: UserGroupData): Promise<void> {
+        const addedMember = await this.listHelper.findRowInTable(
+            data.member,
+            'NAME'
+        );
+
+        expect(addedMember).not.toBeNull();
+
+        const memberCell = await this.listHelper.getCell(addedMember, 'NAME');
+        await expect(memberCell).toContainText(data.member);
     }
 
-    public async addDocument(document) {
-        await this._detailsHelper.openActionButtonItem('Add Documents');
-        await this._fileHelper.setFileInput();
+    public async addDocument(document): Promise<void> {
+        await this.detailsHelper.openActionButtonItem('Add Documents');
+        await this.documentHelper.uploadDocument(true);
         await this.fillText(document.comment, { name: 'comments' });
         await this.clickButton('Save');
     }
@@ -75,26 +58,21 @@ export class UserDetails extends UserCreation {
     public async verifyDocumentAddition(document: {
         comment: string;
         date: Date;
-    }) {
-        await this._page.getByRole('tab').getByText('Documents').click();
-        const documentsTab = this._page
-            .locator("//div[@role='tabpanel']")
-            .filter({ hasText: 'Documents' });
-        await documentsTab.locator('button').nth(1).click();
-        const addedRow = await this._page
-            .locator("//div[contains(@class,'flex gap-4')]")
-            .filter({
-                hasText: document.comment,
-            });
-        expect(addedRow).not.toBeNull();
-        await expect(addedRow).toContainText(document.comment);
-        const formattedDate = formatDate(document.date);
-        await expect(addedRow).toContainText(formattedDate);
+    }): Promise<void> {
+        await this.tabHelper.clickTab('Documents');
+        await this.documentHelper.toggleDocumentView('Table View');
+        await this.documentHelper.checkDocument(
+            document.comment,
+            document.date
+        );
     }
 
-    public async addNotes(note: { title: string; date: Date }, open: boolean) {
+    public async addNotes(
+        note: { title: string; date: Date },
+        open: boolean
+    ): Promise<void> {
         if (!open) {
-            await this._detailsHelper.openActionButtonItem('Add Notes');
+            await this.detailsHelper.openActionButtonItem('Add Notes');
         }
 
         if (note.title) {
@@ -118,8 +96,11 @@ export class UserDetails extends UserCreation {
         }
     }
 
-    public async verifyNoteAddition(note: { title: string; date: Date }) {
-        await this._page.getByRole('tab').getByText('Notes').click();
+    public async verifyNoteAddition(note: {
+        title: string;
+        date: Date;
+    }): Promise<void> {
+        await this.tabHelper.clickTab('Notes');
         const notesTab = this._page.locator("//div[@role='tabpanel']").nth(2);
         const notesRow = notesTab.locator('div.flex.gap-4').filter({
             hasText: note.title,
@@ -130,8 +111,8 @@ export class UserDetails extends UserCreation {
         expect(noteDate).not.toBeNull();
     }
 
-    public async addRole(data: UserGroupData) {
-        await this._detailsHelper.openActionButtonItem('Add Group Role');
+    public async addRole(data: UserGroupData): Promise<void> {
+        await this.detailsHelper.openActionButtonItem('Add Group Role');
         await this._page.waitForSelector("//span[contains(text(), 'Role')]");
         await this.selectOption({
             option: data.role,
@@ -141,7 +122,7 @@ export class UserDetails extends UserCreation {
     }
 
     public async deleteRole(data: UserGroupData) {
-        await this._page.getByRole('tab').getByText('Roles').click();
+        await this.tabHelper.clickTab('Roles');
         const addedRole = await this.getRowFromTable(data.role);
         await addedRole.locator('svg').first().click();
         await this._page
@@ -152,13 +133,8 @@ export class UserDetails extends UserCreation {
     }
 
     public async verifyRoleAddition(data: UserGroupData) {
-        await this._page.getByRole('tab').getByText('Roles').click();
+        await this.tabHelper.clickTab('Roles');
         const addedRole = await this.getRowFromTable(data.role);
         expect(addedRole).not.toBeNull();
-    }
-
-    public async verifyDocumentButtons() {
-        await this.navigateToTab('Documents');
-        await this._page.pause();
     }
 }

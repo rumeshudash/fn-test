@@ -67,7 +67,7 @@ export class ListingHelper extends PageHelper {
                     titleIndex + 1
                 })`
             )
-            .getByText(query)
+            .getByText(query, { exact: true })
             .locator('//ancestor::div[contains(@class,"table-row")]');
     }
 

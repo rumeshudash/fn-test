@@ -2,13 +2,18 @@ import { Locator, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { ListingHelper } from '../BaseHelper/listing.helper';
+import { DetailsPageHelper } from '../BaseHelper/details.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
 
 export class UserCreation extends BaseHelper {
     public listHelper: ListingHelper;
+    public detailsHelper: DetailsPageHelper;
+    public tabHelper: TabHelper;
 
     constructor(page: any) {
         super(page);
         this.listHelper = new ListingHelper(page);
+        this.detailsHelper = new DetailsPageHelper(page);
     }
 
     public async init() {
@@ -32,12 +37,10 @@ export class UserCreation extends BaseHelper {
 
     // open add user group form
     public async openUserGroupForm() {
-        const container = this._page.locator(
-            `//div[contains(@class,'breadcrumbs')]/ancestor::div[contains(@class,"justify-between")]`
-        );
-        await container
-            .getByRole('button', { name: 'add_circle_outline Add User Group' })
-            .click();
+        await this.click({
+            role: 'button',
+            name: 'add_circle_outline Add User Group',
+        });
         console.log(chalk.green('Add User Group button clicked'));
         await expect(this._page.locator('//button[text()="Save"]'), {
             message: 'Checking save button visibility',
@@ -114,22 +117,23 @@ export class UserCreation extends BaseHelper {
         data: UserGroupData,
         status: string
     ) {
-        expect(group).not.toBeNull();
-
-        // verify name
-        await expect(group).toContainText(data.name);
+        const name = await this.listHelper.getCellText(group, 'NAME');
+        expect(name).toBe(data.name);
 
         // verify manager
-        const manager = group.getByText(data.manager);
-        expect(manager).not.toBeNull();
+        const manager = await this.listHelper.getCellText(group, 'MANAGER');
+        expect(manager).toBe(data.manager);
 
         // verify status
-        const statusButton = group.locator('button').first();
-        expect(await statusButton.textContent()).toBe(status);
+        const statusButton = await this.listHelper.getCellText(group, 'STATUS');
+        expect(statusButton).toBe(status);
 
         // verify description
-        const description = group.getByText(data.description);
-        expect(description).not.toBeNull();
+        const description = await this.listHelper.getCellText(
+            group,
+            'DESCRIPTION'
+        );
+        expect(description).toBe(data.description);
     }
 
     // fill user group form
@@ -185,45 +189,31 @@ export class UserCreation extends BaseHelper {
         console.log(chalk.green('User Group toast message verified'));
     }
 
-    // goto user group details page
-    public async openUserGroupDetails(data: UserGroupData) {
+    public async openDetailsPage(name: string) {
         console.log(chalk.blue('Opening user group details'));
         await this._page.waitForSelector('div.table-row.body-row');
-        await this._page
-            .locator('div.table-row.body-row')
-            .getByText(data.name, { exact: true })
-            .click();
-        await expect(
-            this._page.getByText('User Group Detail').first()
-        ).toBeVisible();
-        console.log(chalk.green('User Group Detail page opened'));
-        await expect(
-            this._page.locator(`//div[text()="${data.name}"]`)
-        ).toBeVisible();
-        console.log(chalk.green('User Group name verified'));
-
-        // verify description
-        const desc = await this._page
-            .locator('span#has-Description')
-            .textContent();
-        expect(desc).toBe(data.description);
-
-        // verify manager
-        const manager = await this._page
-            .locator('span#has-Manager')
-            .textContent();
-        expect(manager).toBe(data.manager);
+        const row = await this.listHelper.findRowInTable(name, 'NAME');
+        const cell = await this.listHelper.getCell(row, 'NAME');
+        await cell.locator('a').click();
     }
 
-    public async openDetailsPage(data: UserGroupData) {
-        console.log(chalk.blue('Opening user group details'));
-        await this._page.waitForSelector('div.table-row.body-row');
-        const row = await this.listHelper.findRowInTable(data.name, 'Name');
-        const cell = await this.listHelper.getCell(row, 'Name');
-        console.log('cell is here');
-        console.log(cell);
-
-        // await cell.locator('a').click();
+    // verify user group details page
+    public async validateDetailsPage(data: UserGroupData) {
+        await this._page.waitForSelector(`//h1[text()="User Group Detail"]`);
+        await this.detailsHelper.validateDetailsPageInfo('User Group Detail', [
+            {
+                selector: '//h3[@role="heading"]',
+                text: data.name,
+            },
+            {
+                selector: '#has-Manager',
+                text: data.manager,
+            },
+            {
+                selector: '#has-Description',
+                text: data.description,
+            },
+        ]);
     }
 
     // navigate to tabs based on status

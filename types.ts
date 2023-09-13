@@ -221,5 +221,6 @@ interface UserGroupData {
     manager?: string;
     description?: string;
     member?: string;
+    memberEmail?: string;
     role?: string;
 }
