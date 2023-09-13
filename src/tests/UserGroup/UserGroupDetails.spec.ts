@@ -73,40 +73,40 @@ describe('TUAD001', () => {
             console.log(chalk.green('Member Addition Checked'));
         });
 
-        // await test.step('Check Documents Addition', async () => {
-        //     console.log(chalk.blue('Documents Addition Checking'));
-        //     const document = {
-        //         comment: 'test' + generateRandomNumber(),
-        //         date: new Date(),
-        //     };
-        //     await userDetails.navigateToTab('Documents');
+        await test.step('Check Documents Addition', async () => {
+            console.log(chalk.blue('Documents Addition Checking'));
+            const document = {
+                comment: 'test' + generateRandomNumber(),
+                date: new Date(),
+            };
+            await userDetails.navigateToTab('Documents');
 
-        //     await userDetails.documentHelper.checkAllButtonsVisibility();
-        //     await userDetails.addDocument(document);
-        //     await userDetails.verifyDocumentAddition(document);
-        //     console.log(chalk.green('Documents Addition Checked'));
-        // });
+            await userDetails.documentHelper.checkAllButtonsVisibility();
+            await userDetails.addDocument(document);
+            await userDetails.verifyDocumentAddition(document);
+            console.log(chalk.green('Documents Addition Checked'));
+        });
 
-        // await test.step('Check Notes Addition and Errors', async () => {
-        //     console.log(chalk.blue('Notes Addition and Errors Checking'));
-        //     let note = {
-        //         title: '',
-        //         date: new Date(),
-        //     };
-        //     await userDetails.addNotes(note, false);
-        //     note.title = 'test' + generateRandomNumber();
-        //     await userDetails.addNotes(note, true);
-        //     await userDetails.verifyNoteAddition(note);
-        //     console.log(chalk.green('Notes Addition and Errors Checked'));
-        // });
+        await test.step('Check Notes Addition and Errors', async () => {
+            console.log(chalk.blue('Notes Addition and Errors Checking'));
+            let note = {
+                title: '',
+                date: new Date(),
+            };
+            await userDetails.addNotes(note, false);
+            note.title = 'test' + generateRandomNumber();
+            await userDetails.addNotes(note, true);
+            await userDetails.verifyNoteAddition(note);
+            console.log(chalk.green('Notes Addition and Errors Checked'));
+        });
 
-        // await test.step('Check Role Addition', async () => {
-        //     console.log(chalk.blue('Role Addition Checking'));
-        //     await userDetails.addRole(userData);
-        //     await userDetails.verifyRoleAddition(userData);
-        //     await userDetails.deleteRole(userData);
-        //     // await userDetails.verifyDeletion(userData);
-        //     console.log(chalk.green('Role Addition Checked'));
-        // });
+        await test.step('Check Role Addition', async () => {
+            console.log(chalk.blue('Role Addition Checking'));
+            await userDetails.addRole(userData);
+            await userDetails.verifyRoleAddition(userData);
+            await userDetails.deleteRole(userData);
+            // await userDetails.verifyDeletion(userData);
+            console.log(chalk.green('Role Addition Checked'));
+        });
     });
 });
