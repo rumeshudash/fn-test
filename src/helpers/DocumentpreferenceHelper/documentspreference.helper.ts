@@ -64,12 +64,15 @@ export class DocumentspreferenceHelper extends ListingHelper {
         expect(text).toBe(false);
 
         await this.clickAddBtn();
-
-        await this.selectOption({
-            option: Document,
-            hasText: 'Search...',
-        });
+        if (Document) {
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
+            });
+        }
 
         await this._page.waitForTimeout(1000);
+
+        await this.clickButton('Save');
     }
 }

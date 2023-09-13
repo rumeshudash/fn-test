@@ -19,7 +19,9 @@ test.describe('Add Documents Prefrence', () => {
         await documents_preference.clickAddBtn();
     });
 
-    test('Adding Documents Preference with empty name', async ({ page }) => {
+    test('Adding Documents Preference with empty Documents', async ({
+        page,
+    }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         await signin.checkDashboard({
@@ -31,6 +33,12 @@ test.describe('Add Documents Prefrence', () => {
 
         await documents_preference.init();
 
-        await documents_preference.addDocumentPreference('COI');
+        await documents_preference.addDocumentPreference('');
+
+        const notification = await documents_preference.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
+            'Document is required'
+        );
     });
 });
