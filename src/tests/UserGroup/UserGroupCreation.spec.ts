@@ -52,12 +52,10 @@ describe('TUA001', () => {
             await userCreation.navigateTo('USERGROUPS');
             await userCreation.toggleAll();
             await page.waitForSelector('div.table-row.body-row');
-            const addedGroup = await userCreation.getRowFromTable(
-                userData.name
+            const addedGroup = await userCreation.listHelper.findRowInTable(
+                userData.name,
+                'NAME'
             );
-            console.log('addedgroup');
-            console.log(addedGroup);
-
             await userCreation.verifyUserGroupDetails(
                 addedGroup,
                 userData,
@@ -66,7 +64,8 @@ describe('TUA001', () => {
         });
 
         await test.step('Check User Group Details Page', async () => {
-            await userCreation.openUserGroupDetails(userData);
+            await userCreation.openDetailsPage(userData.name);
+            await userCreation.validateDetailsPage(userData);
         });
 
         await test.step('Check Group Status Toggle', async () => {
@@ -74,7 +73,7 @@ describe('TUA001', () => {
             await userCreation.toggleStatus(userData.name, 'Inactive');
 
             // verify usergroup is not present in active tab
-            await userCreation.navigateToTab('Active');
+            await userCreation.tabHelper.clickTab('Active');
             await userCreation.verifyIfPresent({
                 data: userData,
                 present: false,
@@ -82,7 +81,7 @@ describe('TUA001', () => {
             });
 
             // verify usergroup is present in inactive tab
-            await userCreation.navigateToTab('Inactive');
+            await userCreation.tabHelper.clickTab('Inactive');
             await userCreation.verifyIfPresent({
                 data: userData,
                 present: true,
@@ -93,7 +92,7 @@ describe('TUA001', () => {
             await userCreation.toggleStatus(userData.name, 'Active');
 
             // verify usergroup is present in active tab
-            await userCreation.navigateToTab('Active');
+            await userCreation.tabHelper.clickTab('Active');
             await userCreation.verifyIfPresent({
                 data: userData,
                 present: true,
@@ -101,7 +100,7 @@ describe('TUA001', () => {
             });
 
             // verify usergroup is not present in inactive tab
-            await userCreation.navigateToTab('Inactive');
+            await userCreation.tabHelper.clickTab('Inactive');
             await userCreation.verifyIfPresent({
                 data: userData,
                 present: false,
