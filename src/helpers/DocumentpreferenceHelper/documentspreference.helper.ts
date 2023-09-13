@@ -54,11 +54,7 @@ export class DocumentspreferenceHelper extends ListingHelper {
         expect(title).toBe('Add Document Preference');
     }
 
-    public async addDocumentPreference(
-        Document: string,
-        Mandatory?: string,
-        fileMandatory?: string
-    ) {
+    public async addDocumentPreference(Document: string) {
         const text = await this.ifRowExists(Document, 'NAME');
 
         expect(text).toBe(false);
@@ -70,6 +66,77 @@ export class DocumentspreferenceHelper extends ListingHelper {
                 hasText: 'Search...',
             });
         }
+
+        await this._page.waitForTimeout(1000);
+
+        await this.clickButton('Save');
+    }
+
+    public async addDocumentMendatory(Document: string) {
+        const text = await this.ifRowExists(Document, 'NAME');
+
+        expect(text).toBe(false);
+
+        await this.clickAddBtn();
+        if (Document) {
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
+            });
+        }
+        await this._page
+            .locator('label')
+            .filter({ hasText: 'Document Mandatory' })
+            .click();
+
+        await this._page.waitForTimeout(1000);
+
+        await this.clickButton('Save');
+    }
+    public async addDocumentFileMendatory(Document: string) {
+        const text = await this.ifRowExists(Document, 'NAME');
+
+        expect(text).toBe(false);
+
+        await this.clickAddBtn();
+        if (Document) {
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
+            });
+        }
+        await this._page
+            .locator('label')
+            .filter({ hasText: 'Document Files Mandatory' })
+            .click();
+
+        await this._page.waitForTimeout(1000);
+
+        await this.clickButton('Save');
+    }
+
+    public async addWithBothMandatory(Document: string) {
+        const text = await this.ifRowExists(Document, 'NAME');
+
+        expect(text).toBe(false);
+
+        await this.clickAddBtn();
+        if (Document) {
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
+            });
+        }
+
+        await this._page
+            .locator('label')
+            .filter({ hasText: 'Document Mandatory' })
+            .click();
+
+        await this._page
+            .locator('label')
+            .filter({ hasText: 'Document Files Mandatory' })
+            .click();
 
         await this._page.waitForTimeout(1000);
 
