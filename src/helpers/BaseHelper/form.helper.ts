@@ -92,19 +92,29 @@ export class FormHelper extends BaseHelper {
         })._locator.inputValue();
         expect(name_field, chalk.red('Name field value')).toBe('');
     }
-    
+
     /**
      * fill form by passing object data. And key should be name of input.
      */
     public async fillFormInputInformation(
+        formSchema: ObjectDto,
         data: ObjectDto,
         targetClick?: string
     ): Promise<void> {
-        console.log(chalk.blue('Filling form input information ....'));
-        for (const [key, value] of Object.entries(data)) {
-            await this.fillInput(value, {
-                name: key,
-            });
+        for (const [name, schema] of Object.entries(formSchema)) {
+            switch (schema?.type) {
+                case 'select':
+                    return await this.selectOption({
+                        name,
+                        option: String(data[name]),
+                    });
+                case 'textarea':
+                    return await this.fillText(data[name], { name });
+                default:
+                    await this.fillInput(data[name], {
+                        name: name,
+                    });
+            }
         }
         if (!targetClick) return;
         await this.click({
@@ -134,5 +144,14 @@ export class FormHelper extends BaseHelper {
         expect(await submitButton.isEnabled(), {
             message: 'check save button disabled',
         }).toBe(false);
+    }
+
+    public async checkMandatoryFields(schema: ObjectDto): Promise<void> {
+        for (const [name, fieldSchema] of Object.entries(schema)) {
+            if (!fieldSchema?.required) continue;
+            expect(await this.isInputMandatory({ name }), {
+                message: `${name} mandatory checking...`,
+            }).toBeTruthy();
+        }
     }
 }

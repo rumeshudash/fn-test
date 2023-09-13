@@ -2,17 +2,15 @@ import { PROCESS_TEST } from '@/fixtures';
 import GenericGstinCardHelper from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import {
     BusinessManagedOnboarding,
-    GstinBusinessManagedOnboarding,
     WithoutGstinBusinessManagedOnboarding,
 } from '@/helpers/VendorOnboardingHelper/businessManagedOnboarding.helper';
-import {
-    VendorClientInfo,
-    VendorInfo_NonGstin,
-    businessVendorGstin,
-    clientGstinInfo,
-} from '@/utils/required_data';
-import { test } from '@playwright/test';
+import { VendorInfo_NonGstin, clientGstinInfo } from '@/utils/required_data';
 const { expect, describe } = PROCESS_TEST;
+
+const data = {
+    name: 'Sirjan',
+    address: 'dfaskdf',
+};
 
 //Business Managed vendor onboarding with GSTIN
 describe('TCBV002', () => {
