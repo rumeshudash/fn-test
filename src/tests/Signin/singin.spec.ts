@@ -19,8 +19,10 @@ test.describe('Signin', () => {
         await signin.init();
         await signin.isValidEmail('');
         // await signin.clickButton('Next →');
+        const notification = await signin.notificationHelper;
+
         expect(
-            await signin.errorMessage(),
+            await notification.getErrorMessage(),
             chalk.red('Error Message match ')
         ).toBe('Email Address is required');
     });
@@ -33,8 +35,10 @@ test.describe('Signin', () => {
             password: '',
         });
         // await signin.clickButton('Submit');
+        const notification = await signin.notificationHelper;
+
         expect(
-            await signin.errorMessage(),
+            await notification.getErrorMessage(),
             chalk.red('Error Message match ')
         ).toBe('Password is required');
     });
@@ -43,8 +47,10 @@ test.describe('Signin', () => {
         await signin.init();
         await signin.isValidEmail('test');
         // await signin.clickButton('Next →');
+        const notification = await signin.notificationHelper;
+
         expect(
-            await signin.errorMessage(),
+            await notification.getErrorMessage(),
             chalk.red('Error Message match ')
         ).toBe('Email Address must be a valid email');
     });
@@ -57,8 +63,10 @@ test.describe('Signin', () => {
             password: '123456',
         });
         // await signin.clickButton('Submit');
+        const notification = await signin.notificationHelper;
+
         expect(
-            await signin.errorToast(),
+            await notification.getToastError(),
             chalk.red('ToastMessage match ')
         ).toBe(`Invalid username or password`);
     });
@@ -71,8 +79,10 @@ test.describe('Signin', () => {
             password: '1234567aaaaashsjh',
         });
         // await signin.clickButton('Submit');
+        const notification = await signin.notificationHelper;
+
         expect(
-            await signin.errorMessage(),
+            await notification.getErrorMessage(),
             chalk.red('Error Message match ')
         ).toBe(`Invalid username or password..`);
     });
@@ -102,8 +112,10 @@ test.describe('Signin', () => {
             password: '123456',
         });
 
+        const notification = await signin.notificationHelper;
+
         expect(
-            await signin.errorMessage(),
+            await notification.getErrorMessage(),
             chalk.red('Error Message match ')
         ).toBe(
             'Account locked for too many invalid attempts. Please try after 5 minutes'
@@ -141,8 +153,10 @@ test.describe('Signin', () => {
         const mobile = 12345;
         await signin.MobileNumber(mobile);
 
+        const notification = await signin.notificationHelper;
+
         expect(
-            await signin.errorMessage(),
+            await notification.getErrorMessage(),
             chalk.red('Error Message match ')
         ).toBe('Mobile Number is not allowed');
     });

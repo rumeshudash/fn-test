@@ -1,12 +1,35 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
+import { ListingHelper } from '../BaseHelper/listing.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { NotesHelper } from '../BaseHelper/notes.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 
-export class ExpenseHeadHelper extends BaseHelper {
+export class ExpenseHeadHelper extends ListingHelper {
+    public noteHelper: NotesHelper;
+
+    public tabhelper: TabHelper;
+
+    public notificationHelper: NotificationHelper;
+
+    public dialogHelper: DialogHelper;
+
+    constructor(page: any) {
+        super(page);
+        this.noteHelper = new NotesHelper(page);
+        this.tabhelper = new TabHelper(page);
+        this.notificationHelper = new NotificationHelper(page);
+        this.dialogHelper = new DialogHelper(page);
+    }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
     }
+    // public async clickPolicy() {
+    //     await this._page.locator("//input[@type='checkbox']").click();
+    // }
 
-    public async AddExpenseHead(
+    public async addExpenseHead(
         name: string,
         parent?: string,
         manager?: string,
@@ -37,35 +60,55 @@ export class ExpenseHeadHelper extends BaseHelper {
         await this.click({ role: 'button', name: 'save' });
     }
 
-    public changeActiveStatus(name: string) {
-        // this._page.getByRole('tab', { name: 'Active', exact: true }).click();
-        async function performAction(element: any) {
-            await element.click();
-        }
+    public async changeActiveStatus(name: string) {
+        await this.tabHelper.checkTabExists('Active');
+        await this.tabHelper.clickTab('Active');
+        const row = await this.findRowInTable(name, 'NAME');
 
-        const btnlocator = '//button';
-
-        this.FindrowAndperformAction(name, 3, btnlocator, performAction);
+        await this.clickButtonInTable(row, 'STATUS');
 
         this._page.waitForTimeout(1000);
     }
     public async changeInactiveStatus(name: string) {
-        this._page.getByText('Inactive').click();
+        await this.tabHelper.checkTabExists('Inactive');
+        await this.tabHelper.clickTab('Inactive');
+
+        const row = await this.findRowInTable(name, 'NAME');
+
+        await this.clickButtonInTable(row, 'STATUS');
 
         this._page.waitForTimeout(1000);
 
         await this._page.getByText(name);
 
-        // this._page.waitForTimeout(1000);
+        this._page.waitForTimeout(1000);
+    }
 
-        async function performAction(element: any) {
-            await element.click();
-        }
+    public async editExpenseHead(name: string, newname: string) {
+        await this.tabHelper.checkTabExists('All');
+        await this.tabHelper.clickTab('All');
 
-        const btnlocator = '//button';
+        const row = await this.findRowInTable(name, 'NAME');
 
-        this.FindrowAndperformAction(name, 3, btnlocator, performAction);
+        await this.clickButtonInTable(row, 'ACTION');
+
+        this.fillText(newname, {
+            name: 'name',
+        });
+
+        await this.click({ role: 'button', name: 'save' });
 
         this._page.waitForTimeout(1000);
+    }
+
+    public async addAndClickCheckbox(name: string) {
+        await this.clickButton('Add Expense Head');
+        await this.fillText(name, {
+            name: 'name',
+        });
+
+        await this.clickCheckbox();
+
+        await this.click({ role: 'button', name: 'save' });
     }
 }

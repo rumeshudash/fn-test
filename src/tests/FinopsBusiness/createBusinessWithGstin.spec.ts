@@ -23,6 +23,21 @@ const businessInformation = {
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
+
+const formSchema = {
+    gstin: {
+        type: 'text',
+        required: true,
+    },
+    mobile: {
+        type: 'tel',
+        required: true,
+    },
+    email: {
+        type: 'email',
+        required: true,
+    },
+};
 const createInit = async (page: any) => {
     const title = 'Add Business';
     const helper = new CreateFinopsBusinessHelper(page);
@@ -48,10 +63,11 @@ describe(`TBA001`, () => {
             const { helper, gstin_helper } = await createInit(page);
 
             await helper.formHelper.fillFormInputInformation(
+                formSchema,
                 businessInformation
             );
 
-            await helper.checkMandatoryFields(Object.keys(businessInformation));
+            await helper.formHelper.checkMandatoryFields(formSchema);
             await gstin_helper.gstinInfoCheck();
         }
     );
@@ -60,7 +76,7 @@ describe(`TBA001`, () => {
         'without Gstin Number-submit button disabled check',
         async ({ page }) => {
             const { helper } = await createInit(page);
-            await helper.formHelper.fillFormInputInformation({
+            await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...businessInformation,
                 gstin: '',
             });
@@ -74,7 +90,7 @@ describe(`TBA001`, () => {
         async ({ page }) => {
             const { helper } = await createInit(page);
 
-            await helper.formHelper.fillFormInputInformation({
+            await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...businessInformation,
                 mobile: '',
             });
@@ -86,6 +102,7 @@ describe(`TBA001`, () => {
     PROCESS_TEST('without Email-submit button check', async ({ page }) => {
         const { helper } = await createInit(page);
         await helper.formHelper.fillFormInputInformation(
+            formSchema,
             {
                 ...businessInformation,
                 email: '',
@@ -99,7 +116,7 @@ describe(`TBA001`, () => {
 
     PROCESS_TEST('Verify Invalid Gstin', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.formHelper.fillFormInputInformation({
+        await helper.formHelper.fillFormInputInformation(formSchema, {
             ...businessInformation,
             gstin: '27AAQCS4259Q1Z1',
         });
@@ -110,7 +127,7 @@ describe(`TBA001`, () => {
 
     PROCESS_TEST('Verify Invalid Mobile Number', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.formHelper.fillFormInputInformation({
+        await helper.formHelper.fillFormInputInformation(formSchema, {
             ...businessInformation,
             mobile: '984561234',
         });
@@ -122,6 +139,7 @@ describe(`TBA001`, () => {
     PROCESS_TEST('Verify Invalid Email address', async ({ page }) => {
         const { helper } = await createInit(page);
         await helper.formHelper.fillFormInputInformation(
+            formSchema,
             {
                 ...businessInformation,
                 email: 'usergmail',
@@ -134,7 +152,7 @@ describe(`TBA001`, () => {
     });
     PROCESS_TEST('Verify Confirm Dialog Open Or not', async ({ page }) => {
         const { helper } = await createInit(page);
-        await helper.formHelper.fillFormInputInformation({
+        await helper.formHelper.fillFormInputInformation(formSchema, {
             ...businessInformation,
         });
 
@@ -144,12 +162,15 @@ describe(`TBA001`, () => {
     PROCESS_TEST('Create Business Account.', async ({ page }) => {
         const { helper, gstin_helper } = await createInit(page);
 
-        await helper.formHelper.fillFormInputInformation(businessInformation);
+        await helper.formHelper.fillFormInputInformation(
+            formSchema,
+            businessInformation
+        );
 
-        await helper.checkMandatoryFields(Object.keys(businessInformation));
+        await helper.formHelper.checkMandatoryFields(formSchema);
         await gstin_helper.gstinInfoCheck();
         await helper.formHelper.submitButton();
-        await helper.checkToastMessage();
+        await helper.checkToastSuccess('Saved Successfully !!');
         // verifying list information
         await helper.verifyTableData(businessGstinInfo);
     });

@@ -14,17 +14,17 @@ test.describe('Grades', () => {
         const grades = new GradesHelper(page);
         await grades.init();
         await grades.clickButton('Add Grade');
-        await expect(
-            page.locator('//span[contains(text(),"Name")]')
-        ).toHaveCount(1);
+        await grades.checkTitle();
     });
 
     PROCESS_TEST('with empty Name feild', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();
 
-        await grades.AddGrades('', 1);
-        await expect(await grades.errorMessage()).toBe('Name is required');
+        await grades.addGrades('', 1);
+        const notification = await grades.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe('Name is required');
     });
 
     PROCESS_TEST('with empty Priority feild', async ({ page }) => {
@@ -32,24 +32,36 @@ test.describe('Grades', () => {
         await grades.init();
 
         await grades.checkPriority('PROCESS_TEST');
-        await expect(await grades.errorMessage()).toBe('Priority is required');
+        const notification = await grades.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
+            'Priority is required'
+        );
     });
 
     PROCESS_TEST('with duplicate Name feild', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();
-        await grades.AddGrades('E1', 1);
+        await grades.addGrades('E1', 1);
 
-        await expect(await grades.errorMessage()).toBe('Duplicate grade name');
+        const notification = await grades.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
+            'Duplicate grade name'
+        );
     });
 
     PROCESS_TEST('With valid Name and Priority', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();
         const gradeName = await GradesHelper.generateRandomGradeName();
-        await grades.AddGrades(gradeName, 1);
+        await grades.addGrades(gradeName, 1);
 
-        await expect(await grades.successToast()).toBe('Successfully saved ');
+        const notification = await grades.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe(
+            'Successfully saved '
+        );
         await expect(page.getByText(gradeName)).toHaveCount(1);
     });
     PROCESS_TEST('With save and create another checked', async ({ page }) => {
@@ -57,41 +69,46 @@ test.describe('Grades', () => {
         await grades.init();
         const gradeName = await GradesHelper.generateRandomGradeName();
         grades.checkWithCheckbox(gradeName, 1);
-        await expect(
-            page.locator('//span[contains(text(),"Name")]')
-        ).toHaveCount(1);
+        await grades.checkTitle();
     });
     PROCESS_TEST('Active to inactive', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();
-
-        await grades.ActiveToInactive('E2');
+        await grades.checkPageTitle('Grades');
+        await grades.activeToInactive('E2');
 
         // expect(await grades.successToast()).toBe('Status Changed');
+        await page.waitForTimeout(1000);
     });
     PROCESS_TEST('EditIcon Click', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();
         const newGradeName = await GradesHelper.generateRandomGradeName();
 
-        await grades.EditGrdaes('E1', newGradeName, null);
+        await grades.editGrdaes('E1', newGradeName, null);
 
-        expect(await grades.successToast()).toBe('Successfully saved ');
+        const notification = await grades.notificationHelper;
+
+        expect(await notification.getToastSuccess).toBe('Successfully saved ');
         await expect(page.getByText(newGradeName)).toHaveCount(1);
     });
     PROCESS_TEST('EditIcon Click with empty Name feild', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();
 
-        await grades.EditGrdaes('NEWHAMsss', '', null);
-        expect(await grades.errorMessage()).toBe('Name is required');
+        await grades.editGrdaes('NEWHAMsss', '', null);
+        const notification = await grades.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe('Name is required');
     });
     PROCESS_TEST('EditIcon Click with  Priority feild', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();
 
-        await grades.EditGrdaes('NEWHAMsss', undefined, 19);
+        await grades.editGrdaes('NEWHAMsss', undefined, 19);
 
-        expect(await grades.successToast).toBe('Successfully saved');
+        const notification = await grades.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe('Successfully saved');
     });
 });

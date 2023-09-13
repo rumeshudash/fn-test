@@ -1,12 +1,12 @@
 import { LISTING_ROUTES } from '@/constants/api.constants';
 import { expect } from '@playwright/test';
 import chalk from 'chalk';
-import { BaseHelper } from '../BaseHelper/base.helper';
-import { ListingHelper } from '../BaseHelper/listing.helper';
-import { gstinDataType } from '../CommonCardHelper/genericGstin.card.helper';
 import { FormHelper } from '../BaseHelper/form.helper';
+import { ListingHelper } from '../BaseHelper/listing.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { gstinDataType } from '../CommonCardHelper/genericGstin.card.helper';
 
-export default class CreateFinopsBusinessHelper extends BaseHelper {
+export default class CreateFinopsBusinessHelper extends NotificationHelper {
     public listHelper: ListingHelper;
     public formHelper: FormHelper;
 
@@ -23,14 +23,6 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
 
     public async clickNavigationTab(nav: string) {
         await this._page.locator(`//span[text()='${nav}']`).click();
-    }
-
-    public async checkMandatoryFields(fields: string[]): Promise<void> {
-        for (let field of fields) {
-            expect(await this.isInputMandatory({ name: 'gstin' }), {
-                message: `${field} mandatory checking...`,
-            }).toBeTruthy();
-        }
     }
 
     public async checkEmailError(message?: string): Promise<void> {
@@ -118,11 +110,11 @@ export default class CreateFinopsBusinessHelper extends BaseHelper {
         await this.listHelper.tabHelper.clickTab('Active');
     }
 
-    public async checkToastMessage(): Promise<void> {
-        await this._page.waitForTimeout(1000);
-        const toast = await this._page.locator('div.ct-toast-success');
-        expect(await toast.isVisible(), 'checking toast message').toBe(true);
-        const textContent = await toast.textContent();
-        console.log(chalk.blue('toast message is '), chalk.green(textContent));
-    }
+    // public async checkToastMessage(): Promise<void> {
+    //     await this._page.waitForTimeout(1000);
+    //     const toast = await this._page.locator('div.ct-toast-success');
+    //     expect(await toast.isVisible(), 'checking toast message').toBe(true);
+    //     const textContent = await toast.textContent();
+    //     console.log(chalk.blue('toast message is '), chalk.green(textContent));
+    // }
 }

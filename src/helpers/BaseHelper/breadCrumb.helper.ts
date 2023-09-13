@@ -28,6 +28,23 @@ export class BreadCrumbHelper extends BaseHelper {
     }
 
     /**
+     * Retrieves the Subtitle from Bread Crum like #EXPVN614.
+     *
+     * @return {Promise<string | null>} The title text or null if not found.
+     */
+    public async getBreadCrumbSubTitle() {
+        const container = this.getBreadCrumbContainer().getLocator();
+        const titleTexts = await container
+            .locator('> h1')
+            .locator('span')
+            .locator('span')
+            .allInnerTexts();
+
+        if (titleTexts.length < 1) return null;
+        return titleTexts[0];
+    }
+
+    /**
      * Checks the breadcrumb title against the provided title.
      *
      * @param {string} title - The title to check against the breadcrumb title.
