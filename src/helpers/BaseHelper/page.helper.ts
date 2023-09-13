@@ -29,4 +29,15 @@ export class PageHelper extends BaseHelper {
     public async checkPageTitle(title: string) {
         await this.breadcrumbHelper.checkBreadCrumbTitle(title);
     }
+
+    /**
+     * @description This function helps to click on configure button in the page
+     *
+     */
+
+    public async clickConfigureButton() {
+        const buttonLocator = '//button[@data-title="Configure Table"]';
+        await this._page.waitForSelector(buttonLocator);
+        await this._page.click(buttonLocator);
+    }
 }

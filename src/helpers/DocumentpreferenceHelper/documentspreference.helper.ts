@@ -1,12 +1,16 @@
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { expect } from '@playwright/test';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 export class DocumentspreferenceHelper extends ListingHelper {
     public notificationHelper: NotificationHelper;
+
+    public dialogHelper: DialogHelper;
 
     constructor(page: any) {
         super(page);
         this.notificationHelper = new NotificationHelper(page);
+        this.dialogHelper = new DialogHelper(page);
     }
     public async init() {
         await this.navigateTo('DOCUMENT_PREFERENCES');
