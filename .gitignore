@@ -3,5 +3,7 @@
 /report
 state.json
 yarn.lock
+/package-lock.json
+yarn-error.log
 yarn-error.log
 .env
