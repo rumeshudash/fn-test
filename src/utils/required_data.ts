@@ -166,12 +166,12 @@ export const paymentModeInfo = {
 export const employeeCreationInfo_SaveAndCreate = {
     name: 'Admin SnC7',
     email: 'employeecreationSnc7@test.com',
-    employee_code: 'EC0037',
-    department: 'Test',
-    designation: 'Chief Marketing Officer',
-    grade: 'E3',
-    reporting_manager: 'Amit Raj',
-    approval_mananger: 'Ravi',
+    identifier: 'EC0037',
+    department_id: 'Test',
+    designation_id: 'Chief Marketing Officer',
+    grade_id: 'E3',
+    manager_id: 'Amit Raj',
+    approval_manager_id: 'Ravi',
     notes: 'Adding Notes for testing',
 };
 
@@ -179,21 +179,21 @@ export const employeeCreationInfo = {
     name: 'Admin Create6',
     email: 'employeecreation6@test.com',
     status: 'Active',
-    employee_code: 'EC06',
-    department: 'Test',
-    designation: 'Chief Marketing Officer',
-    grade: 'E3',
-    reporting_manager: 'Amit Raj',
-    approval_mananger: 'Ravi',
+    identifier: 'EC06',
+    department_id: 'Test',
+    designation_id: 'Chief Marketing Officer',
+    grade_id: 'E3',
+    manager_id: 'Amit Raj',
+    approval_manager_id: 'Ravi',
     notes: 'again with incorrect format',
 };
 
 export const EditEmployeeCreationInfo = {
     name: 'Edited Admin Create7',
     // grade: 'E4',
-    // department: 'Sales',
+    // department_id: 'Sales',
     // designation: 'Admin Manager',
-    employee_code: 'edit EC07',
+    identifier: 'edit EC07',
 };
 
 //Bank Account Details for Employee Details Page

@@ -1,7 +1,6 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { BreadCrumbHelper } from '@/helpers/BaseHelper/breadCrumb.helper';
 import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
-import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/employeeCreation.helper';
 import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
 import {
     AddEmployeeCreation,
@@ -12,6 +11,7 @@ import {
     employeeCreationInfo_SaveAndCreate,
 } from '@/utils/required_data';
 import test from '@playwright/test';
+import { FormHelper } from '@/helpers/BaseHelper/form.helper';
 
 const { expect, describe } = PROCESS_TEST;
 
@@ -29,8 +29,11 @@ describe('TEC001', () => {
         const addEmployeeCreationForm = new AddEmployeeCreation(page);
         const employeeCreationPage = new EmployeeCreation(page);
         const employeeCreation = new FillEmployeeCreationForm(page);
+        const dialog = new DialogHelper(page);
+        const formHelper = new FormHelper(page);
         await employeeCreationPage.init();
-        await employeeCreationPage.clickButton('Add Employee');
+        await addEmployeeCreationForm.clickAddIcon();
+        await dialog.checkDialogTitle('Add Employee');
 
         await test.step('Verify then Fill Employee Form', async () => {
             await dialogForm.verifyInputField('Name');
@@ -44,7 +47,7 @@ describe('TEC001', () => {
         });
 
         await test.step('Fill Employee Form', async () => {
-            await employeeCreation.fillEmployeeForm(
+            await formHelper.fillFormInputInformation(
                 employeeCreationInfo_SaveAndCreate
             );
             await employeeCreation.saveAndCreateCheckbox();
@@ -60,11 +63,15 @@ describe('TEC001', () => {
     PROCESS_TEST('Fill Employee Form', async ({ page }) => {
         const employeeCreation = new FillEmployeeCreationForm(page);
         const employeeCreationPage = new EmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const formHelper = new FormHelper(page);
+        const dialog = new DialogHelper(page);
         await employeeCreationPage.init();
-        await employeeCreationPage.clickButton('Add Employee');
+        await addEmployeeCreationForm.clickAddIcon();
+        await dialog.checkDialogTitle('Add Employee');
 
         await test.step('Fill Employee Form', async () => {
-            await employeeCreation.fillEmployeeForm(employeeCreationInfo);
+            await formHelper.fillFormInputInformation(employeeCreationInfo);
             await employeeCreation.clickButton('Save');
             await employeeCreationPage.notification.checkToastSuccess(
                 'Successfully created'

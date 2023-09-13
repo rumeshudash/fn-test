@@ -1,6 +1,6 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
-import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/employeeCreation.helper';
+import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/addEmployeeForm.helper';
 import {
     DesignationDetailsPageHelper,
     DesignationHelper,

@@ -578,7 +578,6 @@ export class BaseHelper {
         return this._locator.isVisible({ timeout });
     }
 
-    // public async checkButtonVisibility(buttonName: string) {
     //     const btnCheck = this._page.locator(`//button[text()='${buttonName}']`);
     //     return await btnCheck.isEnabled();
     // }
@@ -641,53 +640,7 @@ export class BaseHelper {
                 chalk.red(buttonName, ' button is not clickable or disabled')
             );
         }
-        // await this._page.waitForTimeout(1500);
-        // await this.errorMsg();
-        // await this.toastSuccess();
-        // await this.toastError();
-        // await this.toastWarn();
-        // await this._page.waitForTimeout(1000);
     }
-
-    // public async toastMessage() {
-    //     await this.errorMsg();
-    // await this.toastSuccess();
-    // await this.toastError();
-    // await this.toastWarn();
-    // const error = this._page.locator('span.label.text-error');
-    // const errorCount = await error.count();
-    // if (errorCount > 0) {
-    //     console.log(chalk.red(`Error ocurred: ${errorCount}`));
-    //     for (let i = 0; i < errorCount; i++) {
-    //         const errorMsg = await error.nth(i).textContent();
-    //         return errorMsg;
-    //     }
-    // }
-    // const toast = this._page.locator('div.ct-toast-success');
-    // const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-    // const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
-    // const toastErrorCount = await toastError.count();
-    // const toastWarnCount = await toastWarn.count();
-    // const toastCount = await toast.count();
-    // if (toastCount > 0) {
-    //     for (let i = 0; i < toastCount; i++) {
-    //         const successMsg = await toast.last().textContent();
-    //         return successMsg;
-    //     }
-    // }
-    // if (toastWarnCount > 0) {
-    //     for (let i = 0; i < toastWarnCount; i++) {
-    //         const errorMsg = await toastWarn.nth(i).textContent();
-    //         return errorMsg;
-    //     }
-    // }
-    // if (toastErrorCount > 0) {
-    //     for (let i = 0; i < toastErrorCount; i++) {
-    //         const errorMsg = await toastError.nth(i).textContent();
-    //         return errorMsg;
-    //     }
-    // }
-    // }
 
     public async setCheckbox(choice: string) {
         const checkBox = this.locate(

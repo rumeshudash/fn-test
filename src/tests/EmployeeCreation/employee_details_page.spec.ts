@@ -1,6 +1,6 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
-import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/employeeCreation.helper';
+import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/addEmployeeForm.helper';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
 import { NotificationHelper } from '@/helpers/BaseHelper/notification.helper';
 import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
@@ -22,10 +22,10 @@ describe('TED001', () => {
         const employeeCreation = new EmployeeCreation(page);
         const detailsPage = new EmployeeDetailsPage(page);
         await employeeCreation.init();
-        await employeeCreation.searchInList(employeeCreationInfo.employee_code);
+        await employeeCreation.searchInList(employeeCreationInfo.identifier);
 
         await employeeCreation.clickEmployeeInfo(
-            employeeCreationInfo.employee_code,
+            employeeCreationInfo.identifier,
             'EMPLOYEE CODE'
         );
         await employeeCreation.breadcrumb.checkBreadCrumbTitle(
@@ -39,19 +39,19 @@ describe('TED001', () => {
         );
         await detailsPage.checkEmployeeDetails(
             '#has-Department',
-            employeeCreationInfo.department
+            employeeCreationInfo.department_id
         );
         await detailsPage.checkEmployeeDetails(
             '#has-Designation',
-            employeeCreationInfo.designation
+            employeeCreationInfo.designation_id
         );
         await detailsPage.checkEmployeeDetails(
             '#has-Reporting\\ Manager',
-            employeeCreationInfo.reporting_manager
+            employeeCreationInfo.manager_id
         );
         await detailsPage.checkEmployeeDetails(
             '#has-Approval\\ Manager',
-            employeeCreationInfo.reporting_manager
+            employeeCreationInfo.approval_manager_id
         );
         await detailsPage.checkEmployeeDetails(
             '#has-Email',
@@ -59,7 +59,7 @@ describe('TED001', () => {
         );
         await detailsPage.checkEmployeeDetails(
             '#has-Grade',
-            employeeCreationInfo.grade
+            employeeCreationInfo.grade_id
         );
     });
 
@@ -69,15 +69,16 @@ describe('TED001', () => {
         const editEmployeeForm = new FillEmployeeCreationForm(page);
         const notification = new NotificationHelper(page);
         const dialog = new DialogHelper(page);
+        const formHelper = new FormHelper(page);
         await employeeCreation.init();
-        await employeeCreation.searchInList(employeeCreationInfo.employee_code);
+        await employeeCreation.searchInList(employeeCreationInfo.identifier);
         await employeeCreation.clickEmployeeInfo(
             employeeCreationInfo.email,
             'EMAIL'
         );
         await detailsPage.clickEditIcon();
         await dialog.checkDialogTitle('Edit Employee');
-        await editEmployeeForm.fillEmployeeForm(EditEmployeeCreationInfo);
+        await formHelper.fillFormInputInformation(EditEmployeeCreationInfo);
         await editEmployeeForm.clickButton('Save');
         await notification.checkToastSuccess('Successfully created');
     });
@@ -89,7 +90,7 @@ describe('TED001', () => {
         // const notification = new NotificationHelper(page);
         // const dialog = new DialogHelper(page);
         await employeeCreation.init();
-        await employeeCreation.searchInList(employeeCreationInfo.employee_code);
+        await employeeCreation.searchInList(employeeCreationInfo.identifier);
         await employeeCreation.clickEmployeeInfo(
             employeeCreationInfo.email,
             'EMAIL'
@@ -109,7 +110,7 @@ describe('TED001', () => {
         const tab = new TabHelper(page);
         const form = new FormHelper(page);
         await employeeCreation.init();
-        await employeeCreation.searchInList(employeeCreationInfo.employee_code);
+        await employeeCreation.searchInList(employeeCreationInfo.identifier);
         await employeeCreation.clickEmployeeInfo(
             employeeCreationInfo.email,
             'EMAIL'
@@ -135,7 +136,7 @@ describe('TED001', () => {
         const tab = new TabHelper(page);
         const form = new FormHelper(page);
         await employeeCreation.init();
-        await employeeCreation.searchInList(employeeCreationInfo.employee_code);
+        await employeeCreation.searchInList(employeeCreationInfo.identifier);
         await employeeCreation.clickEmployeeInfo(
             employeeCreationInfo.email,
             'EMAIL'
@@ -159,7 +160,7 @@ describe('TED001', () => {
         const dialog = new DialogHelper(page);
         const notification = new NotificationHelper(page);
         await employeeCreation.init();
-        await employeeCreation.searchInList(employeeCreationInfo.employee_code);
+        await employeeCreation.searchInList(employeeCreationInfo.identifier);
         await employeeCreation.clickEmployeeInfo(
             employeeCreationInfo.email,
             'EMAIL'
@@ -182,7 +183,7 @@ describe('TED001', () => {
         const tab = new TabHelper(page);
         const notification = new NotificationHelper(page);
         await employeeCreation.init();
-        await employeeCreation.searchInList(employeeCreationInfo.employee_code);
+        await employeeCreation.searchInList(employeeCreationInfo.identifier);
         await employeeCreation.clickEmployeeInfo(
             employeeCreationInfo.email,
             'EMAIL'

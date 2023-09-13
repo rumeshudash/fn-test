@@ -46,9 +46,17 @@ export class AddEmployeeCreation extends BaseHelper {
         // this.employeeCreationInfo = employeeCreationInfo;
     }
 
+    async clickAddIcon() {
+        await this._page
+            .locator(
+                "//div[contains(@class,'flex-wrap justify-end')]//button[1]"
+            )
+            .click();
+    }
+
     async employeeCodeLocator() {
         return this.locate(
-            `//a[text()="${employeeCreationInfo.employee_code}"]/parent::div/parent::div`
+            `//a[text()="${employeeCreationInfo.identifier}"]/parent::div/parent::div`
         )._locator.first();
     }
 
@@ -77,35 +85,35 @@ export class AddEmployeeCreation extends BaseHelper {
     async getEmployeeDepartment() {
         const parentLocator = await this.employeeCodeLocator();
         return parentLocator.locator(
-            `//a[text()="${employeeCreationInfo.department}"]`
+            `//a[text()="${employeeCreationInfo.department_id}"]`
         );
     }
 
     async getEmployeeDesignation() {
         const parentLocator = await this.employeeCodeLocator();
         return parentLocator.locator(
-            `//a[text()="${employeeCreationInfo.designation}"]`
+            `//a[text()="${employeeCreationInfo.designation_id}"]`
         );
     }
 
     async getEmployeeGrade() {
         const parentLocator = await this.employeeCodeLocator();
         return parentLocator.locator(
-            `//p[text()="${employeeCreationInfo.grade}"]`
+            `//p[text()="${employeeCreationInfo.grade_id}"]`
         );
     }
 
     async getEmployeeReportingManager() {
         const parentLocator = await this.employeeCodeLocator();
         return parentLocator
-            .locator(`//a[text()="${employeeCreationInfo.reporting_manager}"]`)
+            .locator(`//a[text()="${employeeCreationInfo.manager_id}"]`)
             .first();
     }
 
     async getEmployeeApprovalManager() {
         const parentLocator = await this.employeeCodeLocator();
         return parentLocator
-            .locator(`//a[text()="${employeeCreationInfo.reporting_manager}"]`)
+            .locator(`//a[text()="${employeeCreationInfo.manager_id}"]`)
             .nth(1);
     }
 
@@ -126,15 +134,15 @@ export class AddEmployeeCreation extends BaseHelper {
             if (employeeCreationInfo.email)
                 await expect(employee_email).toBeVisible();
             await expect(employee_email).toBeVisible();
-            if (employeeCreationInfo.department)
+            if (employeeCreationInfo.department_id)
                 await expect(employee_department).toBeVisible();
-            if (employeeCreationInfo.designation)
+            if (employeeCreationInfo.designation_id)
                 await expect(employee_designation).toBeVisible();
-            if (employeeCreationInfo.grade)
+            if (employeeCreationInfo.grade_id)
                 await expect(employee_grade).toBeVisible();
-            if (employeeCreationInfo.reporting_manager)
+            if (employeeCreationInfo.manager_id)
                 await expect(employee_reporting_manager).toBeVisible();
-            if (employeeCreationInfo.reporting_manager)
+            if (employeeCreationInfo.approval_manager_id)
                 await expect(employee_approval_manager).toBeVisible();
         }
         await verifyVisibility();
@@ -147,7 +155,7 @@ export class AddEmployeeCreation extends BaseHelper {
         await employee_code.click();
 
         const code_locator = this.locate('div', {
-            text: employeeCreationInfo.employee_code,
+            text: employeeCreationInfo.identifier,
         })._locator;
         await expect(code_locator).toBeVisible();
     }
@@ -174,7 +182,9 @@ export class AddEmployeeCreation extends BaseHelper {
             '//div[contains(@class,"text-base font-semibold")]'
         )._locator.innerText();
 
-        expect(department_locator).toContain(employeeCreationInfo.department);
+        expect(department_locator).toContain(
+            employeeCreationInfo.department_id
+        );
     }
 
     async checkEmployeeDesignationLink() {
@@ -182,7 +192,7 @@ export class AddEmployeeCreation extends BaseHelper {
         await employee_designation.click();
 
         const designation_locator = this.locate('div', {
-            text: employeeCreationInfo.designation,
+            text: employeeCreationInfo.designation_id,
         })._locator;
 
         await expect(designation_locator).toBeVisible();
@@ -194,7 +204,7 @@ export class AddEmployeeCreation extends BaseHelper {
         await employee_reporting_manager.click();
 
         const reporting_manager_locator = this.locate('div', {
-            text: employeeCreationInfo.reporting_manager,
+            text: employeeCreationInfo.manager_id,
         })._locator;
 
         await expect(reporting_manager_locator).toBeVisible();
@@ -206,7 +216,7 @@ export class AddEmployeeCreation extends BaseHelper {
         await employee_approval_manager.click();
 
         const approval_mananger_locator = this.locate('div', {
-            text: employeeCreationInfo.reporting_manager,
+            text: employeeCreationInfo.manager_id,
         })._locator;
 
         await expect(approval_mananger_locator).toBeVisible();
@@ -253,7 +263,7 @@ export class EmployeeDetailsPage extends BaseHelper {
             "//div[@class='text-sm text-base-secondary']"
         );
         expect(await locateCode.innerText()).toBe(
-            employeeCreationInfo.employee_code
+            employeeCreationInfo.identifier
         );
     }
 
