@@ -31,4 +31,27 @@ test.describe('TDP001', () => {
             'MANDATORY',
         ]);
     });
+    PROCESS_TEST('Change Document Mandatory Status', async ({ page }) => {
+        const documents_preference = new DocumentspreferenceHelper(page);
+
+        await documents_preference.init();
+
+        await documents_preference.changeSatus('COI', 'DOCUMENT MANDATORY');
+
+        const notification = await documents_preference.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe('Status Changed');
+    });
+
+    PROCESS_TEST('Change Mandatory Status', async ({ page }) => {
+        const documents_preference = new DocumentspreferenceHelper(page);
+
+        await documents_preference.init();
+
+        await documents_preference.changeSatus('COI', 'MANDATORY');
+
+        const notification = await documents_preference.notificationHelper;
+
+        expect(await notification.getToastSuccess()).toBe('Status Changed');
+    });
 });
