@@ -45,4 +45,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this._page.waitForTimeout(1000);
     }
+
+    public async clickAddBtn() {
+        await this.clickButton('Add New');
+
+        const title = await this.dialogHelper.getDialogTitle();
+
+        expect(title).toBe('Add Document Preference');
+    }
 }
