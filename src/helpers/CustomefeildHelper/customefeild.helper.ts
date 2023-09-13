@@ -1,18 +1,28 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
+import { ListingHelper } from '../BaseHelper/listing.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
-export class CustofeildHelper extends BaseHelper {
+export class CustofeildHelper extends ListingHelper {
+    public tabHelper: TabHelper;
+    public notificationHelper: NotificationHelper;
+
+    constructor(page: any) {
+        super(page);
+        this.tabHelper = new TabHelper(page);
+        this.notificationHelper = new NotificationHelper(page);
+    }
     public async init() {
         await this.navigateTo('CUSTOMEFEILDS');
     }
 
     public async clickExpenseTab(TabName: string) {
-        await this._page
-            .getByRole('tab', { name: `${TabName}`, exact: true })
-            .click();
+        await this.tabHelper.checkTabExists(TabName);
+        await this.tabHelper.clickTab(TabName);
     }
 
-    public async AddExpenseCustomeFeild(
+    public async addExpenseCustomeFeild(
         name: string,
         type: string,
         priority: number
@@ -30,7 +40,7 @@ export class CustofeildHelper extends BaseHelper {
         });
         await this.click({ role: 'button', name: 'save' });
     }
-    public async AddExpenseWithTextType(
+    public async addExpenseWithTextType(
         name: string,
         type: string,
         priority: number,
@@ -55,7 +65,7 @@ export class CustofeildHelper extends BaseHelper {
 
         await this.click({ role: 'button', name: 'save' });
     }
-    public async AddExpenseWitBooleanType(
+    public async addExpenseWitBooleanType(
         name: string,
         type: string,
         priority: number,
@@ -77,7 +87,7 @@ export class CustofeildHelper extends BaseHelper {
         }
         await this.click({ role: 'button', name: 'save' });
     }
-    public async AddExpenseWithDateType(
+    public async addExpenseWithDateType(
         name: string,
         type: string,
         priority: number,
@@ -133,35 +143,19 @@ export class CustofeildHelper extends BaseHelper {
     //     await this.click({ role: 'button', name: 'save' });
     // }
 
-    public async ChangeStatus(name: string) {
-        async function performAction(element: any) {
-            await element.click();
-        }
-
-        const btnlocator = '//button';
-
-        await this.FindrowAndperformAction(name, 5, btnlocator, performAction);
+    public async changeStatus(name: string) {
+        const row = await this.findRowInTable(name, 'NAME');
+        await this.clickButtonInTable(row, 'ACTION');
     }
 
-    public async ChangeMendatory(name: string) {
-        async function performAction(element: any) {
-            await element.click();
-        }
-
-        const btnlocator = '//button';
-
-        await this.FindrowAndperformAction(name, 6, btnlocator, performAction);
+    public async changeMendatory(name: string) {
+        const row = await this.findRowInTable(name, 'NAME');
+        await this.clickButtonInTable(row, 'MEANDATORY');
     }
 
-    public async CheckEdit(name: string) {
-        await this.FindrowAndperformAction(
-            name,
-            7,
-            '//button',
-            async (element: any) => {
-                await element.click();
-            }
-        );
+    public async checkEdit(name: string) {
+        const row = await this.findRowInTable(name, 'NAME');
+        await this.clickButtonInTable(row, 'ACTION');
     }
 
     public async changeNameORPriority(
@@ -172,7 +166,7 @@ export class CustofeildHelper extends BaseHelper {
         newname?: string,
         newpriority?: number
     ) {
-        await this.CheckEdit(name);
+        await this.checkEdit(name);
 
         // await this._page.getByText(`${name}`);
         // await this._page.getByText(`${type}`);

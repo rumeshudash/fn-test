@@ -60,4 +60,5 @@ export const LISTING_ROUTES = {
     EXPENSE_HEADS: TEST_URL + '/e/f/expense-heads',
     PAYMENTMODES: TEST_URL + '/e/f/payment-modes',
     EMPLOYEE_CREATION: TEST_URL + '/e/f/employees',
+    DOCUMENT_PREFERENCES: TEST_URL + '/e/f/document-preferences',
 };

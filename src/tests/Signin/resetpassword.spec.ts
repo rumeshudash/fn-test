@@ -16,7 +16,7 @@ test.describe('Reset Password', () => {
         await resetPassword.init();
 
         await resetPassword.resetPassword('', '1234567', '1234567');
-        expect(await resetPassword.errorMessage()).toBe(
+        expect(await resetPassword.getErrorMessage()).toBe(
             'Old Password is required'
         );
     });
@@ -28,7 +28,7 @@ test.describe('Reset Password', () => {
 
             await resetPassword.resetPassword('1234544', '12', '12345678');
 
-            expect(await resetPassword.errorMessage()).toBe(
+            expect(await resetPassword.getErrorMessage()).toBe(
                 'Confirm New Password does not match'
             );
         }
@@ -40,7 +40,7 @@ test.describe('Reset Password', () => {
             await resetPassword.init();
             await resetPassword.resetPassword('1234544', '121234544', '');
 
-            expect(await resetPassword.errorMessage()).toBe(
+            expect(await resetPassword.getErrorMessage()).toBe(
                 'Confirm New Password is required'
             );
         }
@@ -52,7 +52,7 @@ test.describe('Reset Password', () => {
             await resetPassword.init();
             await resetPassword.resetPassword('1234544', '1234544', '1234544');
 
-            expect(await resetPassword.errorMessage()).toBe(
+            expect(await resetPassword.getErrorMessage()).toBe(
                 "Your old password can't be same as your New password"
             );
         }
@@ -63,7 +63,7 @@ test.describe('Reset Password', () => {
             const resetPassword = new ResetPasswordHelper(page);
             await resetPassword.init();
             await resetPassword.resetPassword('123456', '1234567', '1234567');
-            expect(await resetPassword.successToast()).toBe(
+            expect(await resetPassword.getToastSuccess()).toBe(
                 'Successfully changed password'
             );
         }

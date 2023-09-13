@@ -69,7 +69,7 @@ export class DialogHelper extends BaseHelper {
             chalk.red(`Dialog ${fieldName} visibility`)
         ).toBeVisible();
     }
-    
+
     //they handle confirm dialog
     public async checkConfirmDialogOpenOrNot() {
         await this.closeDialog();
@@ -83,7 +83,7 @@ export class DialogHelper extends BaseHelper {
 
         // await this.clickConfirmDialogAction('Yes!');
     }
-  
+
     public async clickConfirmDialogAction(string: 'Yes!' | 'No') {
         await this._page.locator(`//span[text()='${string}']`).click();
     }

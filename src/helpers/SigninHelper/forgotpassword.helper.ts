@@ -2,8 +2,16 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 
 import { expect } from '@playwright/test';
 import { FormHelper } from '../BaseHelper/form.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class ForgotPasswordHelper extends FormHelper {
+    public notificationHelper: NotificationHelper;
+
+    constructor(page: any) {
+        super(page);
+        this.notificationHelper = new NotificationHelper(page);
+    }
+
     private FORGOT_PASSWORD_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
 
@@ -26,11 +34,5 @@ export class ForgotPasswordHelper extends FormHelper {
 
         // await this.click({ role: 'button', name: 'Back' });
         // await this._page.waitForTimeout(1000);
-    }
-
-    public async errorMessage() {
-        return this._page
-            .locator('//span[contains(@class, "label-text")]')
-            .textContent();
     }
 }

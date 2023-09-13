@@ -273,6 +273,35 @@ export class EmployeeDetailsPage extends BaseHelper {
         );
         expect(await row.isVisible(), 'Check row of IFSC Code').toBe(true);
     }
+    async setRole(title: string) {
+        const role = this.locate(
+            `//div[text()='${title}']/parent::div/parent::div`
+        )._locator;
+
+        await role.locator('//input').click();
+    }
+
+    async addNotes(notes: string) {
+        await this.fillText(notes, {
+            selector: 'textarea',
+        });
+    }
+
+    async checkNotes(notes: string) {
+        const notesParentLocator = this.locate(
+            `//div[text()='${notes}']/parent::div/parent::div`
+        )._locator.first();
+
+        expect(
+            await notesParentLocator.isVisible(),
+            chalk.red('Checking Notes visibility')
+        ).toBe(true);
+        const user = notesParentLocator.locator('//p[1]');
+        const date_time = notesParentLocator.locator('//p[2]');
+
+        await expect(user).toBeVisible();
+        await expect(date_time).toBeVisible();
+    }
 
     async checkInviteUserEmail() {
         const email = this.locate(
