@@ -18,4 +18,17 @@ test.describe('TDP001', () => {
         await documents_preference.checkPageTitle('Document Preferences');
         await documents_preference.searchTextInList('COI');
     });
+
+    PROCESS_TEST('Check List Feilds', async ({ page }) => {
+        const documents_preference = new DocumentspreferenceHelper(page);
+
+        await documents_preference.init();
+
+        await documents_preference.getTableHeader([
+            'S.N',
+            'NAME',
+            'DOCUMENT MANDATORY',
+            'MANDATORY',
+        ]);
+    });
 });

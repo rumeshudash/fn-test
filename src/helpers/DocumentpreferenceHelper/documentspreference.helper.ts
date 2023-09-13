@@ -17,4 +17,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         expect(text).toBe(name);
     }
+
+    public async getTableHeader(name: string[]) {
+        const RowNames = await this.getTableColumnNames();
+
+        expect(RowNames).toEqual(name);
+    }
 }
