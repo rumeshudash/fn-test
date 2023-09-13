@@ -123,7 +123,10 @@ export class UserDetails extends UserCreation {
 
     public async deleteRole(data: UserGroupData) {
         await this.tabHelper.clickTab('Roles');
-        const addedRole = await this.getRowFromTable(data.role);
+        const addedRole = await this.listHelper.findRowInTable(
+            data.role,
+            'NAME'
+        );
         await addedRole.locator('svg').first().click();
         await this._page
             .locator("//div[@role='dialog']")
@@ -134,7 +137,19 @@ export class UserDetails extends UserCreation {
 
     public async verifyRoleAddition(data: UserGroupData) {
         await this.tabHelper.clickTab('Roles');
-        const addedRole = await this.getRowFromTable(data.role);
+        const addedRole = await this.listHelper.findRowInTable(
+            data.role,
+            'NAME'
+        );
         expect(addedRole).not.toBeNull();
+    }
+
+    public async verifyRoleDeletion(data: UserGroupData) {
+        await this.tabHelper.clickTab('Roles');
+        const deletedRole = await this.listHelper.findRowInTable(
+            data.role,
+            'NAME'
+        );
+        expect(deletedRole).not.toBeVisible();
     }
 }

@@ -14,6 +14,7 @@ export class UserCreation extends BaseHelper {
         super(page);
         this.listHelper = new ListingHelper(page);
         this.detailsHelper = new DetailsPageHelper(page);
+        this.tabHelper = new TabHelper(page);
     }
 
     public async init() {
@@ -93,22 +94,6 @@ export class UserCreation extends BaseHelper {
             message: `Checking: (${message}) error message`,
         }).toBe(message);
         console.log(chalk.green('Error message verified and button disabled'));
-    }
-
-    // get user group using a identifier from the table rows
-    public async getRowFromTable(identifier: string) {
-        const tableRow = this._page.locator('div.table-row.body-row');
-        const count = await tableRow.count();
-        let addedRow = null;
-        for (let i = 0; i < count; i++) {
-            const row = tableRow.nth(i);
-            const rowText = await row.textContent();
-            if (rowText.includes(identifier)) {
-                addedRow = row;
-                break;
-            }
-        }
-        return addedRow;
     }
 
     // check user group addition in the row
@@ -237,11 +222,11 @@ export class UserCreation extends BaseHelper {
 
     // toggle user group status from the row
     public async toggleStatus(name: string, status: string) {
-        await this.navigateTo('USERGROUPS');
-        await this.toggleAll();
-        await this.navigateToTab('All');
         console.log(chalk.blue('Toggling group status'));
-        const group = await this.getRowFromTable(name);
+        await this.navigateTo('USERGROUPS');
+        await this.tabHelper.clickTab('All');
+        await this.listHelper.searchInList(name);
+        const group = await this.listHelper.findRowInTable(name, 'NAME');
         const toggleButton = group.locator('button').first();
         let isClicked = false;
         if (
@@ -284,24 +269,18 @@ export class UserCreation extends BaseHelper {
     }) {
         console.log(chalk.blue('user group listing page opened'));
 
-        // check for no data case if present is false
-        if (!present) {
-            const noData = await this._page
-                .locator("//div[@id='no-data-available']")
-                .isVisible();
-            if (noData) {
-                return;
-            }
-        }
-
-        await this._page.waitForSelector('div.table-row.body-row');
-        const addedGroup = await this.getRowFromTable(data.name);
+        await this.listHelper.searchInList(data.name);
+        const addedGroup = await this.listHelper.findRowInTable(
+            data.name,
+            'NAME'
+        );
 
         // if added user group is not present
         if (!present) {
-            expect(addedGroup).toBeNull();
+            expect(addedGroup).not.toBeVisible();
             return;
         }
+
         await this.verifyUserGroupDetails(addedGroup, data, status);
     }
 }

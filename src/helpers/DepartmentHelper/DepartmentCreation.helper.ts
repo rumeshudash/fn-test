@@ -2,8 +2,25 @@ import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { formatDate } from '@/utils/common.utils';
+import { ListingHelper } from '../BaseHelper/listing.helper';
+import { DetailsPageHelper } from '../BaseHelper/details.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
+import { DocumentHelper } from '../BaseHelper/document.helper';
 
 export class DepartmentCreation extends BaseHelper {
+    public listingHelper: ListingHelper;
+    public detailsHelper: DetailsPageHelper;
+    public documentHelper: DocumentHelper;
+    public tabHelper: TabHelper;
+
+    constructor(page) {
+        super(page);
+        this.listingHelper = new ListingHelper(page);
+        this.detailsHelper = new DetailsPageHelper(page);
+        this.documentHelper = new DocumentHelper(page);
+        this.tabHelper = new TabHelper(page);
+    }
+
     public async init() {
         const isExpanded = await this._page
             .locator('.hamburger_button.hamburger_button--active')
@@ -37,15 +54,6 @@ export class DepartmentCreation extends BaseHelper {
             message: 'Checking save button visibility',
         }).toBeVisible();
         console.log(chalk.green('Add department form is visible'));
-    }
-
-    // get 100 rows with pagination
-    public async toggleAll() {
-        await this._page
-            .locator('.selectbox-control')
-            .filter({ hasText: '20 / Page' })
-            .click();
-        await this._page.getByText('100 / Page').click();
     }
 
     // fill department values
@@ -99,21 +107,16 @@ export class DepartmentCreation extends BaseHelper {
         }
     }
 
-    // get department using a identifier from the table rows
-    public async getRowFromTable(identifier: string) {
-        const toggleRow = this._page.locator('div.table-row.body-row');
-        const toggleRowLength = await toggleRow.count();
-        console.log(chalk.green('Department listing page loaded'));
-        let addedRow = null;
-        for (let i = 0; i < toggleRowLength; i++) {
-            const row = toggleRow.nth(i);
-            const rowText = await row.textContent();
-            if (rowText.includes(identifier)) {
-                addedRow = row;
-                break;
-            }
-        }
-        return addedRow;
+    // goto department details page
+    public async validateDetailsPage(department: DepartmentCreationData) {
+        this.detailsHelper.validateDetailsPageInfo('Department Detail', [
+            {
+                selector: '//h3[@role="heading"]',
+                text: department.name,
+            },
+            { selector: '#has-Manager', text: department.manager },
+            { selector: '#has-Parent', text: department.parent },
+        ]);
     }
 
     // check department addition in the row
@@ -146,25 +149,19 @@ export class DepartmentCreation extends BaseHelper {
     }) {
         console.log(chalk.blue('Department listing page opened'));
 
-        // check for no data case if present is false
-        if (!present) {
-            const noData = await this._page
-                .locator("//div[@id='no-data-available']")
-                .isVisible();
-            if (noData) {
-                return;
-            }
-        }
-
-        await this._page.waitForSelector('div.table-row.body-row');
-        const addedDepartment = await this.getRowFromTable(data.name);
+        await this.listingHelper.searchInList(data.name);
+        const addedDepartmentRow = await this.listingHelper.findRowInTable(
+            data.name,
+            'NAME'
+        );
 
         // if added department is not present
         if (!present) {
-            expect(addedDepartment).toBeNull();
+            expect(addedDepartmentRow).not.toBeVisible();
             return;
         }
-        await this.verifyDepartmentDetails(addedDepartment, data, status);
+
+        await this.verifyDepartmentDetails(addedDepartmentRow, data, status);
     }
 
     // navigate to tabs based on status
@@ -177,30 +174,16 @@ export class DepartmentCreation extends BaseHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    // goto department details page
-    public async openDepartmentDetailsPage(name: string) {
-        console.log(chalk.blue('Opening department details'));
-        // await this._page.waitForSelector('div.table-row.body-row');
-        await this._page
-            .locator('div.table-row.body-row')
-            .getByText(name, { exact: true })
-            .click();
-        await expect(
-            this._page.getByText('Department Detail').first()
-        ).toBeVisible();
-        console.log(chalk.green('Department details page opened'));
-        await expect(
-            this._page.locator(`//div[text()="${name}"]`)
-        ).toBeVisible();
-    }
-
     // toggle department status from the row
     public async toggleStatus(name: string, status: string) {
         await this.navigateTo('DEPARTMENTS');
-        await this.toggleAll();
-        await this.navigateToTab('All');
+        await this.tabHelper.clickTab('All');
         console.log(chalk.blue('Toggling department status'));
-        const department = await this.getRowFromTable(name);
+        await this.listingHelper.searchInList(name);
+        const department = await this.listingHelper.findRowInTable(
+            name,
+            'NAME'
+        );
         const toggleButton = department.locator('button').first();
         if (
             (await toggleButton.textContent()) === 'Active' &&

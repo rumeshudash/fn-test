@@ -146,4 +146,21 @@ export class ListingHelper extends PageHelper {
         await button.click();
         console.log(chalk.blue('Open Add Business Form'));
     }
+
+    /**
+     * Opens details page based on identifier of the row.
+     *
+     * @param {string} id - The identifier of the row.
+     * @param {string} columnName - The columnName to search for in the table row.
+     * @return {Promise<void>} - Promise that resolves when the link is clicked.
+     */
+    public async openDetailsPage(
+        id: string,
+        columnName: string
+    ): Promise<void> {
+        await this.searchInList(id);
+        const row = await this.findRowInTable(id, columnName);
+        const cell = await this.getCell(row, columnName);
+        await cell.locator('a').click();
+    }
 }

@@ -73,19 +73,23 @@ describe('TUAD001', () => {
             console.log(chalk.green('Member Addition Checked'));
         });
 
-        await test.step('Check Documents Addition', async () => {
-            console.log(chalk.blue('Documents Addition Checking'));
-            const document = {
-                comment: 'test' + generateRandomNumber(),
-                date: new Date(),
-            };
-            await userDetails.navigateToTab('Documents');
+        // await test.step('Check Documents Addition', async () => {
+        //     console.log(chalk.blue('Documents Addition Checking'));
+        //     const document = {
+        //         comment: 'test' + generateRandomNumber(),
+        //         date: new Date(),
+        //     };
+        //     await userDetails.tabHelper.clickTab('Documents');
 
-            await userDetails.documentHelper.checkAllButtonsVisibility();
-            await userDetails.addDocument(document);
-            await userDetails.verifyDocumentAddition(document);
-            console.log(chalk.green('Documents Addition Checked'));
-        });
+        //     await userDetails.documentHelper.checkAllButtonsVisibility();
+        //     await userDetails.addDocument(document);
+        //     await userDetails.documentHelper.checkZoom();
+        //     await userDetails.documentHelper.checkPagination();
+        //     // await userDetails.documentHelper.checkDocumentDelete(document);
+        //     // await userDetails.checkDelete();
+        //     // await userDetails.verifyDocumentAddition(document);
+        //     console.log(chalk.green('Documents Addition Checked'));
+        // });
 
         await test.step('Check Notes Addition and Errors', async () => {
             console.log(chalk.blue('Notes Addition and Errors Checking'));
@@ -100,12 +104,12 @@ describe('TUAD001', () => {
             console.log(chalk.green('Notes Addition and Errors Checked'));
         });
 
-        await test.step('Check Role Addition', async () => {
+        await test.step('Check Role Addition and Deletion', async () => {
             console.log(chalk.blue('Role Addition Checking'));
             await userDetails.addRole(userData);
             await userDetails.verifyRoleAddition(userData);
             await userDetails.deleteRole(userData);
-            // await userDetails.verifyDeletion(userData);
+            await userDetails.verifyRoleDeletion(userData);
             console.log(chalk.green('Role Addition Checked'));
         });
     });

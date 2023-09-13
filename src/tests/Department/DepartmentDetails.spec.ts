@@ -9,7 +9,7 @@ const { expect, describe } = PROCESS_TEST;
 
 describe('TDD001', () => {
     PROCESS_TEST('Department Details Verification', async ({ page }) => {
-        let data: EmployeeCreationData = {
+        let employeeData: EmployeeCreationData = {
             name: 'Employee' + generateRandomNumber(),
             manager: 'newtestauto@company.com',
             identifier: 'E' + generateRandomNumber(),
@@ -18,8 +18,7 @@ describe('TDD001', () => {
         };
 
         const department: DepartmentCreationData = {
-            name: 'Department128639490360',
-            identifier: 'department128639490360',
+            name: 'Testt',
             manager: 'Ravi',
             parent: 'Sales',
         };
@@ -30,12 +29,11 @@ describe('TDD001', () => {
 
         await test.step('Check Department Details', async () => {
             console.log(chalk.blue('Department Details Page Info Checking'));
-            await departmentDetails.openDepartmentDetailsPage(department.name);
-            await departmentDetails.checkDepartmentDetailsDisplay({
-                name: department.name,
-                identifier: department.identifier,
-                manager: department.manager,
-            });
+            await departmentDetails.listingHelper.openDetailsPage(
+                department.name,
+                'NAME'
+            );
+            await departmentDetails.validateDetailsPage(department);
             console.log(chalk.green('Department Details Page Info Checked'));
         });
 
@@ -58,27 +56,24 @@ describe('TDD001', () => {
                 },
                 true
             );
-            await departmentDetails.checkDepartmentDetailsDisplay({
-                name: newDepartmentData.name,
-                identifier: department.identifier,
-                parent: newDepartmentData.parent,
-                manager: newDepartmentData.manager,
-            });
-
+            await departmentDetails.validateDetailsPage(newDepartmentData);
             console.log(chalk.green('Department Details Edit Checked'));
         });
 
         await test.step('Check Action ', async () => {
             console.log(chalk.blue('Action Button Checking'));
-            await departmentDetails.openAndVerifyActionButton();
-            await page.locator('html').click();
+            await departmentDetails.detailsHelper.checkActionButtonOptions([
+                'Employee Add',
+                'Add Notes',
+                'Add Documents',
+            ]);
             console.log(chalk.green('Action Button Checked'));
         });
 
         await test.step('Check Employee Addition', async () => {
             console.log(chalk.blue('Employee Addition Checking'));
-            await departmentDetails.addEmployee(data);
-            await departmentDetails.verifyEmployeeAddition(data);
+            await departmentDetails.addEmployee(employeeData);
+            await departmentDetails.verifyEmployeeAddition(employeeData);
             console.log(chalk.green('Employee Addition Checked'));
         });
 
@@ -100,9 +95,12 @@ describe('TDD001', () => {
                 title: '',
                 date: new Date(),
             };
-            await departmentDetails.addNotes(note, false);
+            await departmentDetails.detailsHelper.openActionButtonItem(
+                'Add Notes'
+            );
+            await departmentDetails.addNotes(note);
             note.title = 'test' + generateRandomNumber();
-            await departmentDetails.addNotes(note, true);
+            await departmentDetails.addNotes(note);
             await departmentDetails.verifyNoteAddition(note);
             console.log(chalk.green('Notes Addition and Errors Checked'));
         });

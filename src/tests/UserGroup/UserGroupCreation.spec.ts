@@ -50,8 +50,7 @@ describe('TUA001', () => {
 
         await test.step('Check User Group in Table', async () => {
             await userCreation.navigateTo('USERGROUPS');
-            await userCreation.toggleAll();
-            await page.waitForSelector('div.table-row.body-row');
+            await userCreation.listHelper.searchInList(userData.name);
             const addedGroup = await userCreation.listHelper.findRowInTable(
                 userData.name,
                 'NAME'

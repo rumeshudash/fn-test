@@ -204,7 +204,7 @@ export class BaseHelper {
         const { selector, ...rest } = options || {};
         if (options && Object.keys(options).length) this.locate(selector, rest);
 
-        expect(
+        await expect(
             this._locator,
             `Checking ${this._tempSelector} does exist!!`
         ).toBeVisible();
