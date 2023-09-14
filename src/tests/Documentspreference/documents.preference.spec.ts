@@ -55,4 +55,11 @@ test.describe('TDP001', () => {
 
         expect(await notification.getToastSuccess()).toBe('Status Changed');
     });
+    PROCESS_TEST('Click On Configurate Button', async ({ page }) => {
+        const documents_preference = new DocumentspreferenceHelper(page);
+
+        await documents_preference.init();
+
+        await documents_preference.clickConfigureButton();
+    });
 });

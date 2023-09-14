@@ -197,4 +197,10 @@ export class ListingHelper extends PageHelper {
 
         return row.isVisible();
     }
+
+    /**
+     * @description -This function will click on the configure table button
+     *
+     *
+     */
 }

@@ -22,10 +22,19 @@ test.describe('TFM001', () => {
 
         await menucard.openAndCloseMenuCard();
     });
-    PROCESS_TEST('get SideBar Items', async ({ page }) => {
+    PROCESS_TEST('Check Side Bar Main Menu', async ({ page }) => {
         const menucard = new MenucardHelper(page);
         await menucard.init();
 
         await menucard.getSideBarItems();
+    });
+
+    PROCESS_TEST('Check Side Bar Sub Menu is Opening', async ({ page }) => {
+        const menucard = new MenucardHelper(page);
+        await menucard.init();
+
+        await menucard.openAndCloseMenuCard();
+
+        await menucard.clickOnSideBarMenu('Dashboard');
     });
 });

@@ -92,6 +92,13 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
 
         await this.clickButton('Save');
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(Document, 'NAME');
+
+        const textInRow = await this.getCellText(row, 'MANDATORY');
+
+        expect(textInRow).toBe('Active');
     }
     public async addDocumentFileMendatory(Document: string) {
         const text = await this.ifRowExists(Document, 'NAME');
@@ -113,6 +120,14 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
 
         await this.clickButton('Save');
+
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(Document, 'NAME');
+
+        const textInRow = await this.getCellText(row, 'DOCUMENT MANDATORY');
+
+        expect(textInRow).toBe('Active');
     }
 
     public async addWithBothMandatory(Document: string) {
@@ -141,6 +156,22 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
 
         await this.clickButton('Save');
+
+        await this._page.waitForTimeout(1000);
+
+        const row1 = await this.findRowInTable(Document, 'NAME');
+
+        const textInRow1 = await this.getCellText(row1, 'MANDATORY');
+
+        expect(textInRow1).toBe('Active');
+
+        await this._page.waitForTimeout(1000);
+
+        const row = await this.findRowInTable(Document, 'NAME');
+
+        const textInRow = await this.getCellText(row, 'DOCUMENT MANDATORY');
+
+        expect(textInRow).toBe('Active');
     }
 
     public async addAndClickCheck(Document: string) {

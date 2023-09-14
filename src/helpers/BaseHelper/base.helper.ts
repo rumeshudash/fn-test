@@ -846,9 +846,11 @@ export class BaseHelper {
      * @param {string} name - The unique text from which we need to find checkbox
      */
 
-    public async clickCheckbox(name?: string) {
+    public async clickCheckbox(options?: { name?: string; hasText?: string }) {
         let tempSelector = '//input[@type="checkbox"]';
-        if (name) tempSelector += `[@name="${name}"]`;
+        if (options.name) tempSelector += `[@name="${options.name}"]`;
+        if (options.hasText)
+            tempSelector += `//ancestor::div[contains(text(),"${options.hasText}")]`;
 
         await this._page.locator(tempSelector).click();
     }
