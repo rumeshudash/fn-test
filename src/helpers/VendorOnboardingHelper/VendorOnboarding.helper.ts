@@ -1,7 +1,7 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import GenericGstinCardHelper from '../CommonCardHelper/genericGstin.card.helper';
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 import {
     COI_NUMBER,
     IMAGE_NAME,

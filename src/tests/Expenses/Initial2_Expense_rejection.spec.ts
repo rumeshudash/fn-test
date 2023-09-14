@@ -1,6 +1,5 @@
 import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
-import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
     ApprovalToggleHelper,

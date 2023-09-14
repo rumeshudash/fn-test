@@ -1,9 +1,9 @@
 import { uuidV4 } from '@/utils/common.utils';
-import { BaseHelper } from '.././BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 import chalk from 'chalk';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
-export class SignupHelper extends BaseHelper {
+export class SignupHelper extends NotificationHelper {
     private static SIGNUP_DOM_SELECTOR = '//form/parent::div';
 
     public async init() {

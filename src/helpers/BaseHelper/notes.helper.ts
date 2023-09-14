@@ -1,6 +1,5 @@
-import { BaseHelper } from '@/baseHelper';
 import { expect } from '@playwright/test';
-import { Locator, Page } from '@playwright/test';
+import { Locator } from '@playwright/test';
 
 import { TabHelper } from './tab.helper';
 

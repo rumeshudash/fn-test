@@ -1,4 +1,3 @@
-import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
 import {

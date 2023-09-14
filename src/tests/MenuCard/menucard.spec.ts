@@ -1,5 +1,5 @@
 import { MenucardHelper } from '@/helpers/Menucardhelper/menucard.helper';
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
 test.describe('TFM001', () => {

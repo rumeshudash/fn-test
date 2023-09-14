@@ -1,6 +1,4 @@
-import { LISTING_ROUTES } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
-import { DepartmentDetails } from '@/helpers/DepartmentHelper/DepartmentDetails.helper';
 import { UserCreation } from '@/helpers/UserGroupHelper/UserGroup.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';

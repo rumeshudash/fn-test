@@ -163,27 +163,27 @@ export const paymentModeInfo = {
 
 //For Employee Creation in HR
 
-export const employeeCreationInfo_SaveAndCreate = {
-    name: 'Admin SnC7',
-    email: 'employeecreationSnc7@test.com',
-    employee_code: 'EC0037',
-    department: 'Test',
-    designation: 'Chief Marketing Officer',
-    grade: 'E3',
-    reporting_manager: 'Amit Raj',
-    approval_mananger: 'Ravi',
-    notes: 'Adding Notes for testing',
+export const EditEmployeeCreationInfo = {
+    name: 'Edited Admin Create7',
+    // grade: 'E4',
+    // department_id: 'Sales',
+    // designation: 'Admin Manager',
+    identifier: 'edit EC07',
 };
 
-export const employeeCreationInfo = {
-    name: 'Admin Create7',
-    email: 'employeecreation7@test.com',
-    status: 'Active',
-    employee_code: 'EC07',
-    department: 'Test',
-    designation: 'Chief Marketing Officer',
-    grade: 'E3',
-    reporting_manager: 'Amit Raj',
-    approval_mananger: 'Ravi',
-    notes: 'Adding Notes for testing',
+//Bank Account Details for Employee Details Page
+export const bankAccountInfo = {
+    account_number: '12345678',
+    re_account_number: '12345678',
+    ifsc_code: 'ICIC0000005',
+};
+
+//Add Documents
+export const DocumentInfo = {
+    comment: {
+        comments: 'Adding Document',
+    },
+    document: {
+        file: 'pan-card.jpg',
+    },
 };

@@ -1,4 +1,3 @@
-import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 
 import { NotesHelper } from '../BaseHelper/notes.helper';
