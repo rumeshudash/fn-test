@@ -149,15 +149,21 @@ test.describe('Expense Head Details', () => {
         const randomnumber =
             await ExpenseHeadDetailsHelper.generateRandomGradeName();
 
-        const document = {
-            imagePath: 'pan-card.jpg',
-            comment: 'test' + randomnumber,
-            date: new Date(),
-        };
-
-        await expenseHeadDetails.addDocument(document);
+        await expenseHeadDetails.addDocument();
 
         console.log(chalk.green('Documents Addition Checked'));
+    });
+    PROCESS_TEST('Check Documents', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Time');
+        await expenseHeadDetails.clickOnTab('Documents');
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.checkDocument('Test');
+
+        console.log(chalk.green('Documents Checked'));
     });
 
     PROCESS_TEST('Verify Notes', async ({ page }) => {

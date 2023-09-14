@@ -6,6 +6,7 @@ import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
+import { DocumentHelper } from '../BaseHelper/document.helper';
 
 export class ExpenseHeadDetailsHelper extends ListingHelper {
     public noteHelper: NotesHelper;
@@ -16,6 +17,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
     public breadCrumbHelper: BreadCrumbHelper;
 
+    public documentHelper: DocumentHelper;
+
     constructor(page: any) {
         super(page);
         this.noteHelper = new NotesHelper(page);
@@ -23,6 +26,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         this.notificationHelper = new NotificationHelper(page);
 
         this.breadCrumbHelper = new BreadCrumbHelper(page);
+
+        this.documentHelper = new DocumentHelper(page);
     }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
@@ -95,18 +100,25 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    public async addDocument(document: { comment: string; imagePath: string }) {
+    public async addDocument() {
         // await this.clickButton('Upload Documents');
-        await this._page
-            .locator("//div[@role='presentation']")
-            .locator("//input[@type='file']")
-            .setInputFiles(`images/${document.imagePath}`);
-        await this._page.waitForTimeout(1000);
-
-        await this.fillText(document.comment, { name: 'comments' });
-        await this.clickButton('Save');
+        await this.documentHelper.uploadDocument(false);
 
         this._page.waitForTimeout(1000);
+
+        await this.clickButton('Save');
+    }
+
+    public async checkDocuments() {
+        await this.documentHelper.checkDocument('testTest495235', new Date());
+    }
+
+    public async checkZoom() {
+        await this.documentHelper.checkZoom();
+    }
+
+    public async checkPagination() {
+        await this.documentHelper.checkPagination();
     }
 
     public async verifyNoteAddition(note: { title: string; date: Date }) {
