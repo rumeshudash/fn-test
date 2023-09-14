@@ -137,13 +137,9 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         note: { title: string; date: Date },
         newNotes: string
     ) {
-        await this.noteHelper.clickNoteTab();
-
-        await this.noteHelper.clickEditIcon({
+        await this.noteHelper.clickEditButton({
             title: note.title,
         });
-
-        await this._page.getByRole('menuitem', { name: 'Edit' }).click();
 
         await this.fillText(newNotes, {
             name: 'comments',
@@ -155,19 +151,9 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
     }
 
     public async deleteNotes(note: { title: string; date: Date }) {
-        await this.noteHelper.clickNoteTab();
-
-        await this.noteHelper.clickEditIcon({
+        await this.noteHelper.clickDeleteIcon({
             title: note.title,
         });
-
-        await this._page.getByRole('menuitem', { name: 'Delete' }).click();
-
-        await this._page.waitForTimeout(1000);
-
-        await this.clickButton('Yes');
-
-        await this._page.waitForTimeout(1000);
     }
 
     public async checkExpense(expense_number: string, columnName: string) {
