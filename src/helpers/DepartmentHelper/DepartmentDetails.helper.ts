@@ -1,37 +1,9 @@
 import { expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { formatDate } from '@/utils/common.utils';
 import { DepartmentCreation } from './DepartmentCreation.helper';
 
 export class DepartmentDetails extends DepartmentCreation {
-    public async checkDepartmentDetailsDisplay({
-        name,
-        parent,
-        manager,
-        identifier,
-    }: EmployeeCreationData) {
-        console.log(chalk.green('Department details page is visible'));
-        await expect(this._page.getByText(name, { exact: true })).toBeVisible();
-
-        const identifierText = await this._page
-            .locator('#has-Identifier')
-            .textContent();
-        expect(identifierText).toBe(identifier);
-
-        const managerText = await this._page
-            .locator('#has-Manager')
-            .textContent();
-        expect(managerText).toBe(manager);
-
-        if (parent) {
-            const parentText = await this._page
-                .locator('#has-Parent')
-                .textContent();
-            expect(parentText).toBe(parent);
-        }
-    }
-
     public async openEditForm() {
         const container = this._page.locator(
             `//div[contains(@class,'breadcrumbs')]/ancestor::div[contains(@class,"justify-between")]`
@@ -56,11 +28,10 @@ export class DepartmentDetails extends DepartmentCreation {
     }
 
     public async addEmployee(data: EmployeeCreationData) {
-        await this.openForm('Employee Add');
+        this.detailsHelper.openActionButtonItem('Employee Add');
         await this._page.waitForSelector(
             "//div[contains(text(), 'Select Designation')]"
         );
-
         await this.fillInput(data.name, { name: 'name' });
         await this.fillInput(data.email, { name: 'email' });
         await this.fillInput(data.identifier, { name: 'identifier' });
@@ -68,32 +39,37 @@ export class DepartmentDetails extends DepartmentCreation {
             option: data.manager,
             name: 'manager_id',
         });
+        await this.selectOption({
+            option: data.designation,
+            name: 'designation_id',
+        });
         await this.clickButton('Save');
+        await this._page.waitForTimeout(1000);
     }
 
     public async verifyEmployeeAddition(data: EmployeeCreationData) {
-        const addedEmployeeRow = await this.getRowFromTable(data.identifier);
-        expect(addedEmployeeRow).not.toBeNull();
-        const name = await addedEmployeeRow.getByText(data.name);
-        expect(name).not.toBeNull();
-        const email = await addedEmployeeRow.getByText(data.email);
-        expect(email).not.toBeNull();
-        const identifier = await addedEmployeeRow.getByText(data.identifier);
-        expect(identifier).not.toBeNull();
-        const manager = await addedEmployeeRow.getByText(data.manager);
-        expect(manager).not.toBeNull();
+        const addedEmployeeRow = await this.listingHelper.findRowInTable(
+            data.identifier,
+            'IDENTIFIER'
+        );
+
+        Object.keys(data).forEach(async (key) => {
+            if (key === 'manager') return;
+            const value = data[key];
+            const cell = await this.listingHelper.getCellText(
+                addedEmployeeRow,
+                key.toUpperCase()
+            );
+            expect(cell).toBe(value);
+        });
     }
 
     public async addDocument(document: { comment: string; imagePath: string }) {
-        await this.openForm('Add Documents');
-        await this._page
-            .locator("//div[@role='presentation']")
-            .locator("//input[@type='file']")
-            .setInputFiles(`images/${document.imagePath}`);
-        await this._page.waitForTimeout(1000);
-
+        await this.detailsHelper.openActionButtonItem('Add Documents');
+        await this.documentHelper.uploadDocument(true);
         await this.fillText(document.comment, { name: 'comments' });
         await this.clickButton('Save');
+        await this._page.waitForTimeout(1000);
     }
 
     public async verifyDocumentAddition(document: {
@@ -101,25 +77,15 @@ export class DepartmentDetails extends DepartmentCreation {
         imagePath: string;
         date: Date;
     }) {
-        await this._page.getByRole('tab').getByText('Documents').click();
-        const documentsTab = this._page
-            .locator("//div[@role='tabpanel']")
-            .filter({ hasText: 'Documents' });
-        await documentsTab.locator('button').nth(1).click();
-        const addedRow = await this._page
-            .locator("//div[contains(@class,'flex gap-4')]")
-            .filter({
-                hasText: document.comment,
-            });
-        expect(addedRow).not.toBeNull();
-        await expect(addedRow).toContainText(document.comment);
-        const formattedDate = formatDate(document.date);
-        await expect(addedRow).toContainText(formattedDate);
+        await this.tabHelper.clickTab('Documents');
+        await this.documentHelper.toggleDocumentView('Table View');
+        await this.documentHelper.checkDocument(
+            document.comment,
+            document.date
+        );
     }
 
-    public async addNotes(note: { title: string; date: Date }, open: boolean) {
-        if (!open) await this.openForm('Add Notes');
-
+    public async addNotes(note: { title: string; date: Date }) {
         if (note.title) {
             await this.fillText(note.title, { name: 'comments' });
         }
@@ -142,7 +108,7 @@ export class DepartmentDetails extends DepartmentCreation {
     }
 
     public async verifyNoteAddition(note: { title: string; date: Date }) {
-        await this._page.getByRole('tab').getByText('Notes').click();
+        await this.tabHelper.clickTab('Notes');
         const notesTab = this._page.locator("//div[@role='tabpanel']").nth(2);
         const notesRow = notesTab.locator('div.flex.gap-4').filter({
             hasText: note.title,

@@ -38,11 +38,9 @@ describe('TDC001', () => {
         });
 
         await test.step('Check Department Addition', async () => {
-            // get all possible rows with pagination
-            await department.toggleAll();
-
             // check if department is present in all tab
-            await department.navigateToTab('All');
+            await department.tabHelper.clickTab('All');
+
             await department.verifyIfPresent({
                 data: data,
                 present: true,
@@ -69,18 +67,17 @@ describe('TDC001', () => {
         // check if page is redirected to department details page
         await test.step('Check Department Details Page', async () => {
             await department.navigateTo('DEPARTMENTS');
-            await department.toggleAll();
-            await department.navigateToTab('All');
-            await department.openDepartmentDetailsPage(data.name);
+            await department.tabHelper.clickTab('All');
+            await department.listingHelper.openDetailsPage(data.name, 'NAME');
         });
 
-        // check toggle status functionality
+        // // check toggle status functionality
         await test.step('Check Department status change', async () => {
             // toggle status of the department
-            await department.toggleStatus(data.name, 'Inactive');
+            await department.setStatus(data.name, 'Inactive');
 
             // verify deparment is not present in active tab
-            await department.navigateToTab('Active');
+            await department.tabHelper.clickTab('Active');
             await department.verifyIfPresent({
                 data: data,
                 present: false,
@@ -88,7 +85,8 @@ describe('TDC001', () => {
             });
 
             // verify deparment is present in inactive tab
-            await department.navigateToTab('Inactive');
+            await department.tabHelper.clickTab('Inactive');
+
             await department.verifyIfPresent({
                 data: data,
                 present: true,
@@ -96,10 +94,10 @@ describe('TDC001', () => {
             });
 
             // toggle status of the department
-            await department.toggleStatus(data.name, 'Active');
+            await department.setStatus(data.name, 'Active');
 
             // verify deparment is present in active tab
-            await department.navigateToTab('Active');
+            await department.tabHelper.clickTab('Active');
             await department.verifyIfPresent({
                 data: data,
                 present: true,
@@ -107,7 +105,7 @@ describe('TDC001', () => {
             });
 
             // verify deparment is not present in inactive tab
-            await department.navigateToTab('Inactive');
+            await department.tabHelper.clickTab('Inactive');
             await department.verifyIfPresent({
                 data: data,
                 present: false,
@@ -115,13 +113,13 @@ describe('TDC001', () => {
             });
         });
 
-        // check parent department form field
+        // // check parent department form field
         await test.step('Check Parent Department in form', async () => {
             await department.openDepartmentAddForm();
             await department.checkParentDepartment();
         });
 
-        // check save and create another
+        // // check save and create another
         await test.step('Check Save and Create Another', async () => {
             await page.getByLabel('save and create another').click();
             for (let i = 0; i < 2; i++) {

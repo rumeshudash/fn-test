@@ -8,6 +8,7 @@ export class NotificationHelper extends BaseHelper {
     }
 
     async getToastSuccess(): Promise<string> {
+        await this._page.waitForSelector('div.ct-toast-success');
         const toast = this.locate('div', {
             class: ['ct-toast-success'],
         })._locator;

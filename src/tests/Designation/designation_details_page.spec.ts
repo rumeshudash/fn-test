@@ -16,7 +16,7 @@ import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 
-describe('TDD001', () => {
+describe('TDED001', () => {
     PROCESS_TEST('Verify Details Page', async ({ page }) => {
         const designation = new DesignationHelper(designationInfo, page);
         const detailsPage = new DesignationDetailsPageHelper(
