@@ -13,9 +13,9 @@ import { generateRandomNumber } from '@/utils/common.utils';
 const { expect, describe } = PROCESS_TEST;
 
 const employeeCreationInfo_SaveAndCreate = {
-    name: 'Admin SnC7',
-    email: `empcreation${generateRandomNumber()}@test.com`,
-    identifier: `EMP${generateRandomNumber()}`,
+    name: 'Shiv Narayan',
+    email: `workcreation@test.com`,
+    identifier: `emp0332`,
     department_id: 'Test',
     designation_id: 'Admin Accountant',
     grade_id: 'E3',
@@ -25,9 +25,9 @@ const employeeCreationInfo_SaveAndCreate = {
 };
 
 const employeeCreationInfo = {
-    name: 'Admin Create6',
-    email: `empcreation${generateRandomNumber()}@test.com`,
-    identifier: `EMP${generateRandomNumber()}`,
+    name: 'Ghanshyam Singh',
+    email: `empcreationew@test.com`,
+    identifier: `emp0223`,
     status: 'Active',
     department_id: 'Test',
     designation_id: 'Admin Accountant',
@@ -74,7 +74,6 @@ describe('TEC001', () => {
         await PROCESS_TEST.step(
             'Navigate to Employee Creation Page',
             async () => {
-                await employeeCreationPage.profile();
                 await employeeCreationPage.init();
                 await employeeCreationPage.clickAddIcon();
                 await dialogForm.checkDialogTitle('Add Employee');
@@ -84,7 +83,6 @@ describe('TEC001', () => {
 
     PROCESS_TEST('Save and Create Another', async ({ page }) => {
         const dialogForm = new DialogHelper(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
         const employeeCreationPage = new EmployeeCreation(page);
         await employeeCreationPage.init();
         await employeeCreationPage.clickAddIcon();
@@ -112,14 +110,17 @@ describe('TEC001', () => {
                 'Successfully created'
             );
 
-            await addEmployeeCreationForm.formHelper.isInputFieldEmpty('name');
+            await employeeCreationPage.formHelper.isInputFieldEmpty('name');
             await dialogForm.closeDialog();
         });
     });
 
     PROCESS_TEST('Fill Employee Form', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
         const formHelper = new FormHelper(page);
         const dialog = new DialogHelper(page);
         await employeeCreationPage.init();
@@ -140,28 +141,27 @@ describe('TEC001', () => {
 
     PROCESS_TEST('Search then Verify Employee Details', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
 
         await PROCESS_TEST.step('Verify Added Employee Details', async () => {
             await employeeCreationPage.init();
             await employeeCreationPage.searchInList(employeeCreationInfo.name);
-            // await addEmployeeCreationForm.verifyEmployeeDetails();
-            await addEmployeeCreationForm.findRowInTable(
-                employeeCreationInfo.name,
-                'NAME'
-            );
+            await addEmployeeCreationForm.verifyEmployeeDetails();
         });
     });
 
     PROCESS_TEST('Check Employee Code', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
         await employeeCreationPage.init();
         await employeeCreationPage.searchInList(employeeCreationInfo.name);
-        // await addEmployeeCreationForm.listing.findRowInTable(
-        //     employeeCreationInfo.employee_code,
-        //     'EMPLOYEES CODE'
-        // );
+
         await addEmployeeCreationForm.checkEmployeeCodeLink();
         await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
             'Employee Detail'
@@ -170,7 +170,10 @@ describe('TEC001', () => {
 
     PROCESS_TEST('Check Name ', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
 
         await employeeCreationPage.init();
         await employeeCreationPage.searchInList(employeeCreationInfo.name);
@@ -182,7 +185,10 @@ describe('TEC001', () => {
 
     PROCESS_TEST('Check Email', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
 
         await employeeCreationPage.init();
         await employeeCreationPage.searchInList(employeeCreationInfo.name);
@@ -194,7 +200,10 @@ describe('TEC001', () => {
 
     PROCESS_TEST('Check Department', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
 
         await employeeCreationPage.init();
         await employeeCreationPage.searchInList(employeeCreationInfo.name);
@@ -206,7 +215,10 @@ describe('TEC001', () => {
 
     PROCESS_TEST('Check Designation', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
 
         await employeeCreationPage.init();
         await employeeCreationPage.searchInList(employeeCreationInfo.name);
@@ -218,7 +230,10 @@ describe('TEC001', () => {
 
     PROCESS_TEST('Check Approval Manager', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
 
         await employeeCreationPage.init();
         await employeeCreationPage.searchInList(employeeCreationInfo.name);
@@ -230,7 +245,10 @@ describe('TEC001', () => {
 
     PROCESS_TEST('Check Reporting Manager', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
 
         await employeeCreationPage.init();
         await employeeCreationPage.searchInList(employeeCreationInfo.name);
@@ -242,7 +260,10 @@ describe('TEC001', () => {
 
     PROCESS_TEST('Change Employee Status', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(page);
+        const addEmployeeCreationForm = new AddEmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
         const tabHelper = new TabHelper(page);
 
         await employeeCreationPage.init();

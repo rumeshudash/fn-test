@@ -67,7 +67,7 @@ const { describe, expect } = PROCESS_TEST;
 describe('TED001', () => {
     PROCESS_TEST('Verify to Employee Code Page', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(page);
-        const detailsPage = new EmployeeDetailsPage(page);
+        const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
         await employeeCreation.init();
         await employeeCreation.searchInList(employeeCreationInfo.identifier);
 
@@ -112,7 +112,7 @@ describe('TED001', () => {
 
     PROCESS_TEST('Edit Employee Info', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(page);
-        const detailsPage = new EmployeeDetailsPage(page);
+        const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
         const notification = new NotificationHelper(page);
         const dialog = new DialogHelper(page);
         const formHelper = new FormHelper(page);
@@ -134,7 +134,7 @@ describe('TED001', () => {
 
     PROCESS_TEST('Verify Action Options', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(page);
-        const detailsPage = new EmployeeDetailsPage(page);
+        const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
         // const editEmployeeForm = new FillEmployeeCreationForm(page);
         // const notification = new NotificationHelper(page);
         // const dialog = new DialogHelper(page);
@@ -154,7 +154,7 @@ describe('TED001', () => {
 
     PROCESS_TEST('Add Bank Account - Action Options', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(page);
-        const detailsPage = new EmployeeDetailsPage(page);
+        const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
         const notification = new NotificationHelper(page);
         const tab = new TabHelper(page);
         const form = new FormHelper(page);
@@ -180,7 +180,7 @@ describe('TED001', () => {
 
     PROCESS_TEST('Add Documents - Action Options', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(page);
-        const detailsPage = new EmployeeDetailsPage(page);
+        const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
         const notification = new NotificationHelper(page);
         const fileHelper = new FileHelper(page);
         const tab = new TabHelper(page);
@@ -206,7 +206,7 @@ describe('TED001', () => {
 
     PROCESS_TEST('Invite User - Action Options', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(page);
-        const detailsPage = new EmployeeDetailsPage(page);
+        const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
         const dialog = new DialogHelper(page);
         const notification = new NotificationHelper(page);
         await employeeCreation.init();
@@ -228,7 +228,7 @@ describe('TED001', () => {
 
     PROCESS_TEST('Add Notes and Verify - Action Options', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(page);
-        const detailsPage = new EmployeeDetailsPage(page);
+        const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
         const dialog = new DialogHelper(page);
         const tab = new TabHelper(page);
         const notification = new NotificationHelper(page);

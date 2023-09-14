@@ -1,13 +1,4 @@
-import { Locator, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
-import chalk from 'chalk';
-import { formatDate } from '@/utils/common.utils';
-import { ListingHelper } from '../BaseHelper/listing.helper';
-import { DetailsPageHelper } from '../BaseHelper/details.helper';
-import { TabHelper } from '../BaseHelper/tab.helper';
-import { DocumentHelper } from '../BaseHelper/document.helper';
-import { StatusHelper } from '../BaseHelper/status.helper';
-import { LISTING_ROUTES, TEST_URL } from '@/constants/api.constants';
 
 export class SetOrganization extends BaseHelper {
     public async signIn() {
@@ -45,7 +36,6 @@ export class SetOrganization extends BaseHelper {
     }
 
     public async profile() {
-        // await this._page.waitForSelector('#user-popover');
         const profileLocator = this.locate(
             "(//div[@id='user-popover']//div)"
         )._locator.first();

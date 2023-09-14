@@ -21,7 +21,7 @@ describe('TOA001', () => {
     PROCESS_TEST('Set org', async ({ page }) => {
         const setOrg = new SetOrganization(page);
 
-        test.step('Sign in flow', async () => {
+        await PROCESS_TEST.step('Sign in flow', async () => {
             // await setOrg.signIn();
 
             await setOrg.profile();
