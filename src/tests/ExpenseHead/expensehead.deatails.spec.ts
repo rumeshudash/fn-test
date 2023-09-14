@@ -149,15 +149,51 @@ test.describe('Expense Head Details', () => {
         const randomnumber =
             await ExpenseHeadDetailsHelper.generateRandomGradeName();
 
-        const document = {
-            imagePath: 'pan-card.jpg',
-            comment: 'test' + randomnumber,
-            date: new Date(),
-        };
-
-        await expenseHeadDetails.addDocument(document);
+        await expenseHeadDetails.addDocument();
 
         console.log(chalk.green('Documents Addition Checked'));
+    });
+    PROCESS_TEST('Check Documents', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await expenseHeadDetails.clickOnTab('Documents');
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.checkDocuments();
+
+        console.log(chalk.green('Documents Checked'));
+    });
+    PROCESS_TEST('Check zoom Documents', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await expenseHeadDetails.clickOnTab('Documents');
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.checkZoom();
+    });
+
+    PROCESS_TEST('Check Paginations', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await expenseHeadDetails.clickOnTab('Documents');
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.checkPagination();
+    });
+    PROCESS_TEST('Check Delete Documents', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await expenseHeadDetails.clickOnTab('Documents');
+
+        await expenseHeadDetails.checkDocumentDelete();
     });
 
     PROCESS_TEST('Verify Notes', async ({ page }) => {

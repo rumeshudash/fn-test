@@ -95,7 +95,7 @@ export class DocumentHelper extends BaseHelper {
      * @return {Promise<void>} Promise that resolves once the document is checked.
      */
 
-    public async checkDocument(comment: string, date: Date) {
+    public async checkDocument(comment: string, date?: Date) {
         const row = this.getDocumentContainer()
             .getLocator()
             .locator("//div[contains(@class,'flex gap-4')]")
@@ -104,8 +104,10 @@ export class DocumentHelper extends BaseHelper {
             });
         expect(row).not.toBeNull();
 
-        const formattedDate = formatDate(date);
-        await expect(row).toContainText(formattedDate);
+        if (date) {
+            const formattedDate = formatDate(date);
+            await expect(row).toContainText(formattedDate);
+        }
     }
 
     /**
@@ -182,7 +184,7 @@ export class DocumentHelper extends BaseHelper {
 
     public async checkDocumentDelete(document: {
         comment: string;
-        date: Date;
+        date?: Date;
     }) {
         await this.toggleDocumentView('Table View');
 
