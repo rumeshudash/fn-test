@@ -148,23 +148,37 @@ export class ListingHelper extends PageHelper {
     }
 
     /**
-     * @description This function helps to get Locator of the text element in the cell.
+     * Opens details page based on identifier of the row.
+     *
+     * @param {string} id - The identifier of the row.
+     * @param {string} columnName - The columnName to search for in the table row.
+     * @return {Promise<void>} - Promise that resolves when the link is clicked.
+     */
+    public async openDetailsPage(
+        id: string,
+        columnName: string
+    ): Promise<void> {
+        await this.searchInList(id);
+        const row = await this.findRowInTable(id, columnName);
+        const cell = await this.getCell(row, columnName);
+        await cell.locator('a').click();
+    }
+
+    /**
+     * This function helps to get Locator of the text element in the cell.
      * @param {Locator} row - The locator of the table row.
      *
      * @param {string} columnName - The columnName to search for in the table row.
-     * @returns {Promise<Locator>} - The locator of the text element in the cell.
+     * @return {Promise<Locator>} - The locator of the text element in the cell.
      */
 
-    public async getTextLocator(
+    private async getTextLocator(
         row: Locator,
         columnName: string
     ): Promise<Locator> {
         const cell = await this.getCell(row, columnName);
-
-        const locator = await cell.locator('a');
-
+        const locator = cell.locator('a');
         console.log(chalk.blue('Get Text Locator', locator));
-
         return locator;
     }
 

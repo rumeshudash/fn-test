@@ -84,7 +84,8 @@ export class DialogHelper extends BaseHelper {
         // await this.clickConfirmDialogAction('Yes!');
     }
 
-    public async clickConfirmDialogAction(string: 'Yes!' | 'No') {
-        await this._page.locator(`//span[text()='${string}']`).click();
+    public async clickConfirmDialogAction(option: string) {
+        const dialogContainer = this.getDialogContainer().getLocator();
+        await dialogContainer.locator(`//span[text()='${option}']`).click();
     }
 }
