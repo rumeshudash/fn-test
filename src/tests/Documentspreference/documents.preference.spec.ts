@@ -1,5 +1,6 @@
 import { DocumentspreferenceHelper } from '@/helpers/DocumentpreferenceHelper/documentspreference.helper';
 import { test, expect } from '@playwright/test';
+import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 
 import { PROCESS_TEST } from '@/fixtures';
 

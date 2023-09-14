@@ -6,6 +6,7 @@ import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
+import { DocumentHelper } from '../BaseHelper/document.helper';
 
 export class ExpenseHeadDetailsHelper extends ListingHelper {
     public noteHelper: NotesHelper;
@@ -16,6 +17,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
     public breadCrumbHelper: BreadCrumbHelper;
 
+    public documentHelper: DocumentHelper;
+
     constructor(page: any) {
         super(page);
         this.noteHelper = new NotesHelper(page);
@@ -23,6 +26,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         this.notificationHelper = new NotificationHelper(page);
 
         this.breadCrumbHelper = new BreadCrumbHelper(page);
+
+        this.documentHelper = new DocumentHelper(page);
     }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
@@ -32,6 +37,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this.tabHelper.clickTab('All');
 
         await this._page.waitForTimeout(1000);
+
+        await this.searchInList(name);
 
         const row = await this.findRowInTable(name, 'NAME');
 
@@ -93,18 +100,26 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    public async addDocument(document: { comment: string; imagePath: string }) {
+    public async addDocument() {
         // await this.clickButton('Upload Documents');
-        await this._page
-            .locator("//div[@role='presentation']")
-            .locator("//input[@type='file']")
-            .setInputFiles(`images/${document.imagePath}`);
-        await this._page.waitForTimeout(1000);
-
-        await this.fillText(document.comment, { name: 'comments' });
-        await this.clickButton('Save');
+        await this.documentHelper.uploadDocument(false);
 
         this._page.waitForTimeout(1000);
+
+        await this.clickButton('Save');
+    }
+
+    public async checkDocuments() {
+        await this.documentHelper.toggleDocumentView('Table View');
+        await this.documentHelper.checkDocument('testTest495235');
+    }
+
+    public async checkZoom() {
+        await this.documentHelper.checkZoom();
+    }
+
+    public async checkPagination() {
+        await this.documentHelper.checkPagination();
     }
 
     public async verifyNoteAddition(note: { title: string; date: Date }) {
@@ -112,18 +127,19 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
             title: note.title,
         });
     }
+    public async checkDocumentDelete() {
+        await this.documentHelper.checkDocumentDelete({
+            comment: 'testTest626555',
+        });
+    }
 
     public async editNotes(
         note: { title: string; date: Date },
         newNotes: string
     ) {
-        await this.noteHelper.clickNoteTab();
-
-        await this.noteHelper.clickEditIcon({
+        await this.noteHelper.clickEditButton({
             title: note.title,
         });
-
-        await this._page.getByRole('menuitem', { name: 'Edit' }).click();
 
         await this.fillText(newNotes, {
             name: 'comments',
@@ -135,19 +151,9 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
     }
 
     public async deleteNotes(note: { title: string; date: Date }) {
-        await this.noteHelper.clickNoteTab();
-
-        await this.noteHelper.clickEditIcon({
+        await this.noteHelper.clickDeleteIcon({
             title: note.title,
         });
-
-        await this._page.getByRole('menuitem', { name: 'Delete' }).click();
-
-        await this._page.waitForTimeout(1000);
-
-        await this.clickButton('Yes');
-
-        await this._page.waitForTimeout(1000);
     }
 
     public async checkExpense(expense_number: string, columnName: string) {

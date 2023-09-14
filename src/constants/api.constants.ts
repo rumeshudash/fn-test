@@ -61,4 +61,5 @@ export const LISTING_ROUTES = {
     PAYMENTMODES: TEST_URL + '/e/f/payment-modes',
     EMPLOYEE_CREATION: TEST_URL + '/e/f/employees',
     DOCUMENT_PREFERENCES: TEST_URL + '/e/f/document-preferences',
+    DASHBOARD: TEST_URL + '/e/f/',
 };
