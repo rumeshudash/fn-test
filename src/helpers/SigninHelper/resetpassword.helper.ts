@@ -1,8 +1,15 @@
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 
 export class ResetPasswordHelper extends NotificationHelper {
+    public _dialogHelper: DialogHelper;
+
+    constructor(page: any) {
+        super(page);
+        this._dialogHelper = new DialogHelper(page);
+    }
     public async init() {
         await this.navigateTo('MYPROFILE');
     }
