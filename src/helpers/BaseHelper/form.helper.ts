@@ -99,7 +99,7 @@ export class FormHelper extends BaseHelper {
         const nameField: string = await this.locate('input', {
             name: inputName,
         })._locator.inputValue();
-        expect(nameField).toBe('');
+        expect(nameField, chalk.red(`${inputName} field check`)).toBe('');
     }
 
     /**
@@ -110,24 +110,23 @@ export class FormHelper extends BaseHelper {
         data: ObjectDto,
         targetClick?: string
     ): Promise<void> {
-        console.log('Schema', formSchema);
         for (const [name, schema] of Object.entries(formSchema)) {
-            console.log('Name', name);
-            // switch (schema?.type) {
-            //     case 'select':
-            //         await this.selectOption({
-            //             name,
-            //             option: String(data[name]),
-            //         });
-            //         await this._page.waitForTimeout(1000);
-            //         return;
-            //     case 'textarea':
-            //         return await this.fillText(data[name], { name });
-            //     default:
-            //         await this.fillInput(data[name], {
-            //             name: name,
-            //         });
-            // }
+            switch (schema?.type) {
+                case 'select':
+                    await this.selectOption({
+                        name,
+                        option: String(data[name]),
+                    });
+                    break;
+
+                case 'textarea':
+                    await this.fillText(data[name], { name });
+                    break;
+                default:
+                    await this.fillInput(data[name], {
+                        name: name,
+                    });
+            }
         }
         if (!targetClick) return;
         await this.click({
@@ -151,17 +150,6 @@ export class FormHelper extends BaseHelper {
             selector: 'textarea',
             name: targetClick,
         });
-    }
-
-    public async uploadDocument(fileName: ObjectDto): Promise<void> {
-        console.log(chalk.blue('Uploading Document ...'));
-        for (const [key, value] of Object.entries(fileName)) {
-            await this._page.setInputFiles(
-                `//input[@type='${key}']`,
-                `./images/${value}`
-            );
-            await this._page.waitForLoadState('networkidle');
-        }
     }
 
     /**

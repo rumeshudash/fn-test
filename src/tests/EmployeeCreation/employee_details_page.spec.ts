@@ -1,6 +1,6 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
-import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/addEmployeeForm.helper';
+import { FileHelper } from '@/helpers/BaseHelper/file.helper';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
 import { NotificationHelper } from '@/helpers/BaseHelper/notification.helper';
 import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
@@ -20,7 +20,7 @@ const employeeCreationInfo = {
     status: 'Active',
     identifier: 'EC06',
     department_id: 'Test',
-    designation_id: 4018,
+    designation_id: 'Admin Accountant',
     grade_id: 'E3',
     manager_id: 'Amit Raj',
     approval_manager_id: 'Ravi',
@@ -113,7 +113,6 @@ describe('TED001', () => {
     PROCESS_TEST('Edit Employee Info', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(page);
         const detailsPage = new EmployeeDetailsPage(page);
-        const editEmployeeForm = new FillEmployeeCreationForm(page);
         const notification = new NotificationHelper(page);
         const dialog = new DialogHelper(page);
         const formHelper = new FormHelper(page);
@@ -129,7 +128,7 @@ describe('TED001', () => {
             employeeCreationSchema,
             EditEmployeeCreationInfo
         );
-        await editEmployeeForm.clickButton('Save');
+        await detailsPage.clickButton('Save');
         await notification.checkToastSuccess('Successfully created');
     });
 
@@ -183,6 +182,7 @@ describe('TED001', () => {
         const employeeCreation = new EmployeeCreation(page);
         const detailsPage = new EmployeeDetailsPage(page);
         const notification = new NotificationHelper(page);
+        const fileHelper = new FileHelper(page);
         const tab = new TabHelper(page);
         const form = new FormHelper(page);
         await employeeCreation.init();
@@ -193,7 +193,7 @@ describe('TED001', () => {
         );
         await detailsPage.clickActionButton();
         await detailsPage.clickActionOption('Add Documents');
-        await form.uploadDocument(DocumentInfo.document);
+        await fileHelper.setFileInput({ isDialog: true });
         await form.fillTextAreaForm(DocumentInfo.comment);
         await form.submitButton();
         await notification.getToastSuccess();

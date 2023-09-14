@@ -8,14 +8,15 @@ import {
 } from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
 import test from '@playwright/test';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
-import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/addEmployeeForm.helper';
+
+import { generateRandomNumber } from '@/utils/common.utils';
 
 const { expect, describe } = PROCESS_TEST;
 
 const employeeCreationInfo_SaveAndCreate = {
     name: 'Admin SnC7',
-    email: 'employeecreationSnc77@test.com',
-    identifier: 'EC00377',
+    email: `empcreation${generateRandomNumber()}@test.com`,
+    identifier: `EMP${generateRandomNumber()}`,
     department_id: 'Test',
     designation_id: 'Admin Accountant',
     grade_id: 'E3',
@@ -26,11 +27,11 @@ const employeeCreationInfo_SaveAndCreate = {
 
 const employeeCreationInfo = {
     name: 'Admin Create6',
-    email: 'employeecreation6@test.com',
+    email: `empcreation${generateRandomNumber()}@test.com`,
+    identifier: `EMP${generateRandomNumber()}`,
     status: 'Active',
-    identifier: 'EC06',
     department_id: 'Test',
-    designation_id: 4018,
+    designation_id: 'Admin Accountant',
     grade_id: 'E3',
     manager_id: 'Amit Raj',
     approval_manager_id: 'Ravi',
@@ -70,24 +71,26 @@ const employeeCreationSchema = {
 describe('TEC001', () => {
     PROCESS_TEST('Verify Employee Creation Page', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
-        await test.step('Navigate to Employee Creation Page', async () => {
-            await employeeCreationPage.init();
-            await employeeCreationPage.clickButton('Add Employee');
-        });
+        await PROCESS_TEST.step(
+            'Navigate to Employee Creation Page',
+            async () => {
+                await employeeCreationPage.init();
+                await employeeCreationPage.clickButton('Add Employee');
+            }
+        );
     });
 
     PROCESS_TEST('Save and Create Another', async ({ page }) => {
         const dialogForm = new DialogHelper(page);
         const addEmployeeCreationForm = new AddEmployeeCreation(page);
         const employeeCreationPage = new EmployeeCreation(page);
-        // const employeeCreation = new FillEmployeeCreationForm(page);
         const dialog = new DialogHelper(page);
         const formHelper = new FormHelper(page);
         await employeeCreationPage.init();
         await addEmployeeCreationForm.clickAddIcon();
         await dialog.checkDialogTitle('Add Employee');
 
-        await test.step('Verify then Fill Employee Form', async () => {
+        await PROCESS_TEST.step('Verify then Fill Employee Form', async () => {
             await dialogForm.verifyInputField('Name');
             await dialogForm.verifyInputField('Email');
             await dialogForm.verifyInputField('Employee Code');
@@ -98,10 +101,11 @@ describe('TEC001', () => {
             await dialogForm.verifyInputField('Approval Manager');
         });
 
-        await test.step('Fill Employee Form', async () => {
-            await formHelper.fillFormInputInformation(employeeCreationSchema, {
-                ...employeeCreationInfo_SaveAndCreate,
-            });
+        await PROCESS_TEST.step('Fill Employee Form', async () => {
+            await formHelper.fillFormInputInformation(
+                employeeCreationSchema,
+                employeeCreationInfo_SaveAndCreate
+            );
             await employeeCreationPage.saveAndCreateCheckbox();
             await employeeCreationPage.clickButton('Save');
             await employeeCreationPage.notification.checkToastSuccess(
@@ -109,11 +113,11 @@ describe('TEC001', () => {
             );
 
             await addEmployeeCreationForm.formHelper.isInputFieldEmpty('name');
+            await dialog.closeDialog();
         });
     });
 
     PROCESS_TEST('Fill Employee Form', async ({ page }) => {
-        const employeeCreation = new FillEmployeeCreationForm(page);
         const employeeCreationPage = new EmployeeCreation(page);
         const addEmployeeCreationForm = new AddEmployeeCreation(page);
         const formHelper = new FormHelper(page);
@@ -122,12 +126,12 @@ describe('TEC001', () => {
         await addEmployeeCreationForm.clickAddIcon();
         await dialog.checkDialogTitle('Add Employee');
 
-        await test.step('Fill Employee Form', async () => {
+        await PROCESS_TEST.step('Fill Employee Form', async () => {
             await formHelper.fillFormInputInformation(
                 employeeCreationSchema,
                 employeeCreationInfo
             );
-            await employeeCreation.clickButton('Save');
+            await employeeCreationPage.clickButton('Save');
             await employeeCreationPage.notification.checkToastSuccess(
                 'Successfully created'
             );
@@ -138,7 +142,7 @@ describe('TEC001', () => {
         const employeeCreationPage = new EmployeeCreation(page);
         const addEmployeeCreationForm = new AddEmployeeCreation(page);
 
-        await test.step('Verify Added Employee Details', async () => {
+        await PROCESS_TEST.step('Verify Added Employee Details', async () => {
             await employeeCreationPage.init();
             await employeeCreationPage.searchInList(employeeCreationInfo.name);
             // await addEmployeeCreationForm.verifyEmployeeDetails();
@@ -258,9 +262,9 @@ describe('TEC001', () => {
             // );
             await breadcrumbHelper.clickBreadCrumbsLink('Employees');
             await tabHelper.clickTab('Inactive');
-            await expect(
-                await addEmployeeCreationForm.getEmployeeStatus()
-            ).toBe('Inactive');
+            expect(await addEmployeeCreationForm.getEmployeeStatus()).toBe(
+                'Inactive'
+            );
         });
 
         await PROCESS_TEST.step('Activate Status', async () => {
@@ -278,9 +282,9 @@ describe('TEC001', () => {
             // );
             await breadcrumbHelper.clickBreadCrumbsLink('Employees');
             await tabHelper.clickTab('Active');
-            await expect(
-                await addEmployeeCreationForm.getEmployeeStatus()
-            ).toBe('Active');
+            expect(await addEmployeeCreationForm.getEmployeeStatus()).toBe(
+                'Active'
+            );
         });
     });
 });

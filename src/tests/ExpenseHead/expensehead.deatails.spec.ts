@@ -1,5 +1,5 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { ExpenseHeadDetailsHelper } from '@/helpers/ExpenseHeadHelpef/expensehead.details.helper';
+import { ExpenseHeadDetailsHelper } from '@/helpers/ExpenseHeadHelper/expensehead.details.helper';
 import chalk from 'chalk';
 
 import { test, expect } from '@playwright/test';

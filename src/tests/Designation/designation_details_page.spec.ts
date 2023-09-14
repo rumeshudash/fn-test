@@ -1,6 +1,6 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
-import { FillEmployeeCreationForm } from '@/helpers/BaseHelper/addEmployeeForm.helper';
+import { FormHelper } from '@/helpers/BaseHelper/form.helper';
 import {
     DesignationDetailsPageHelper,
     DesignationHelper,
@@ -15,6 +15,8 @@ import { test } from '@playwright/test';
 import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
+
+const employeeInfoSchema = {};
 
 describe('TDD001', () => {
     PROCESS_TEST('Verify Details Page', async ({ page }) => {
@@ -94,7 +96,7 @@ describe('TDD001', () => {
             employeeInfo,
             page
         );
-        const employeeCreation = new FillEmployeeCreationForm(page);
+        const formHelper = new FormHelper(page);
         const dialogForm = new DialogHelper(page);
         await designation.init();
         await designation.searchDesignation();
@@ -115,7 +117,10 @@ describe('TDD001', () => {
         });
 
         await test.step('Fill Employee Form Field', async () => {
-            await employeeCreation.fillEmployeeForm(employeeInfo);
+            await formHelper.fillFormInputInformation(
+                employeeInfoSchema,
+                employeeInfo
+            );
             // await detailsPage.fillEmployeeForm();
             await detailsPage.clickButton('Save');
             await designation.notification.checkToastSuccess(
