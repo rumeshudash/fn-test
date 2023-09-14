@@ -157,13 +157,43 @@ test.describe('Expense Head Details', () => {
         const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
         await expenseHeadDetails.init();
 
-        await expenseHeadDetails.clickOnExpenseHead('Time');
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
         await expenseHeadDetails.clickOnTab('Documents');
         await page.waitForTimeout(1000);
 
-        await expenseHeadDetails.checkDocument('Test');
+        await expenseHeadDetails.checkDocuments();
 
         console.log(chalk.green('Documents Checked'));
+    });
+    PROCESS_TEST('Check zoom Documents', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await expenseHeadDetails.clickOnTab('Documents');
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.checkZoom();
+    });
+
+    PROCESS_TEST('Check Paginations', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await expenseHeadDetails.clickOnTab('Documents');
+        await page.waitForTimeout(1000);
+
+        await expenseHeadDetails.checkPagination();
+    });
+    PROCESS_TEST('Check Delete Documents', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+
+        await expenseHeadDetails.clickOnExpenseHead('Foods & Accommodations');
+        await expenseHeadDetails.clickOnTab('Documents');
+
+        await expenseHeadDetails.checkDocumentDelete();
     });
 
     PROCESS_TEST('Verify Notes', async ({ page }) => {

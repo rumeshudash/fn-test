@@ -110,7 +110,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
     }
 
     public async checkDocuments() {
-        await this.documentHelper.checkDocument('testTest495235', new Date());
+        await this.documentHelper.toggleDocumentView('Table View');
+        await this.documentHelper.checkDocument('testTest495235');
     }
 
     public async checkZoom() {
@@ -124,6 +125,11 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
     public async verifyNoteAddition(note: { title: string; date: Date }) {
         await this.noteHelper.checkNoteExists({
             title: note.title,
+        });
+    }
+    public async checkDocumentDelete() {
+        await this.documentHelper.checkDocumentDelete({
+            comment: 'testTest626555',
         });
     }
 
