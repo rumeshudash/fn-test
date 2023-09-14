@@ -63,5 +63,18 @@ test.describe('Verify Phone', () => {
         await verifyPhone.clickResendOTP();
     });
 
-    test('With already sent OTP', async ({ page }) => {});
+    test('Check with broken link', async ({ page }) => {
+        const verifyPhone = new VerifyPhone(page);
+        const number = '9816934348';
+        await verifyPhone.init(number);
+
+        await verifyPhone.fillOtp('1111', 4);
+
+        await verifyPhone.clickVerify();
+
+        expect(
+            await verifyPhone.getToastError(),
+            chalk.red('Error Message match ')
+        ).toBe('Invalid otp');
+    });
 });
