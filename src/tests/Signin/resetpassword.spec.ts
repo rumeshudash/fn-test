@@ -3,7 +3,7 @@ import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { test, expect } from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
-test.describe('Reset Password', () => {
+test.describe('TRP001', () => {
     PROCESS_TEST('Reset Password page is open', async ({ page }) => {
         const resetPassword = new ResetPasswordHelper(page);
         await resetPassword.init();
@@ -58,7 +58,7 @@ test.describe('Reset Password', () => {
         }
     );
     PROCESS_TEST(
-        'PROCESS_TEST with valid old password and  valid new password',
+        ' with valid old password and  valid new password',
         async ({ page }) => {
             const resetPassword = new ResetPasswordHelper(page);
             await resetPassword.init();
@@ -68,4 +68,13 @@ test.describe('Reset Password', () => {
             );
         }
     );
+
+    PROCESS_TEST('Check with Invalid Old password', async ({ page }) => {
+        const resetPassword = new ResetPasswordHelper(page);
+        await resetPassword.init();
+        await resetPassword.resetPassword('123456', '1234567', '1234567');
+        expect(await resetPassword.getToastError()).toBe(
+            'Invalid old password'
+        );
+    });
 });
