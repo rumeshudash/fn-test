@@ -61,9 +61,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.selectOption({
-                option: Document,
-                hasText: 'Search...',
+            await this.fillText(Document, {
+                name: 'document_id',
             });
         }
 
@@ -79,9 +78,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.selectOption({
-                option: Document,
-                hasText: 'Search...',
+            await this.fillText(Document, {
+                name: 'document_id',
             });
         }
         await this._page
@@ -100,9 +98,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.selectOption({
-                option: Document,
-                hasText: 'Search...',
+            await this.fillText(Document, {
+                name: 'document_id',
             });
         }
         await this._page
@@ -122,9 +119,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.selectOption({
-                option: Document,
-                hasText: 'Search...',
+            await this.fillText(Document, {
+                name: 'document_id',
             });
         }
 
@@ -150,9 +146,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.selectOption({
-                option: Document,
-                hasText: 'Search...',
+            await this.fillText(Document, {
+                name: 'document_id',
             });
         }
 
