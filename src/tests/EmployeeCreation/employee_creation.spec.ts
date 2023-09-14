@@ -25,11 +25,11 @@ const employeeCreationInfo_SaveAndCreate = {
 };
 
 const employeeCreationInfo = {
-    name: 'Ghanshyam Singh',
-    email: `empcreationew@test.com`,
-    identifier: `emp0223`,
+    name: 'Dhan Bahadur Singh',
+    email: `empcreationew1@test.com`,
+    identifier: `emp02223`,
     status: 'Active',
-    department_id: 'Test',
+    department_id: 'Test857730457030',
     designation_id: 'Admin Accountant',
     grade_id: 'E3',
     manager_id: 'Amit Raj',
@@ -298,10 +298,9 @@ describe('TEC001', () => {
             await employeeCreationPage.notification.checkToastSuccess(
                 'Status Changed'
             );
-            // await expect(await addEmployeeCreationForm.toastSuccess()).toBe(
-            //     'Status Changed'
-            // );
+
             await breadcrumbHelper.clickBreadCrumbsLink('Employees');
+            await employeeCreationPage.searchInList(employeeCreationInfo.name);
             await tabHelper.clickTab('Active');
             expect(await addEmployeeCreationForm.getEmployeeStatus()).toBe(
                 'Active'

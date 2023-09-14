@@ -1,24 +1,11 @@
 import { expect } from '@playwright/test';
 import { ListingHelper } from '../BaseHelper/listing.helper';
-import { bankAccountInfo, employeeInfo } from '@/utils/required_data';
+import { bankAccountInfo } from '@/utils/required_data';
 import { FormHelper } from '../BaseHelper/form.helper';
 import chalk from 'chalk';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
-import { ObjectDto } from '@/types/common.types';
 
-// const employeeCreationInfo = {
-//     name: 'Admin Create6',
-//     email: 'employeecreation6@test.com',
-//     status: 'Active',
-//     identifier: 'EC06',
-//     department_id: 'Test',
-//     designation_id: 'Admin Accountant',
-//     grade_id: 'E3',
-//     manager_id: 'Amit Raj',
-//     approval_manager_id: 'Ravi',
-//     notes: 'again with incorrect format',
-// };
 export class EmployeeCreation extends ListingHelper {
     public formHelper: FormHelper;
     public notification: NotificationHelper;
@@ -136,46 +123,51 @@ export class AddEmployeeCreation extends EmployeeCreation {
         const employee_approval_manager =
             await this.getEmployeeApprovalManager();
 
-        // async function checkEmployeeDetailsMatch() {
-        console.log(this.employeeInfo);
-        if (this.employeeInfo.identifier)
-            await expect(employee_code).toHaveText(
-                this.employeeInfo.identifier
-            );
+        const checkEmployeeDetailsMatch = async () => {
+            if (this.employeeInfo.identifier)
+                await expect(employee_code).toHaveText(
+                    this.employeeInfo.identifier
+                );
 
-        if (this.employeeInfo.name)
-            await expect(employee_name).toHaveText(this.employeeInfo.name);
+            if (this.employeeInfo.name)
+                await expect(employee_name).toHaveText(this.employeeInfo.name);
 
-        if (this.employeeInfo.email)
-            await expect(employee_email).toHaveText(this.employeeInfo.email);
+            if (this.employeeInfo.email)
+                await expect(employee_email).toHaveText(
+                    this.employeeInfo.email
+                );
 
-        if (this.employeeInfo.email)
-            await expect(employee_email).toHaveText(this.employeeInfo.email);
+            if (this.employeeInfo.email)
+                await expect(employee_email).toHaveText(
+                    this.employeeInfo.email
+                );
 
-        if (this.employeeInfo.department_id)
-            await expect(employee_department).toHaveText(
-                this.employeeInfo.department_id
-            );
+            if (this.employeeInfo.department_id)
+                await expect(employee_department).toHaveText(
+                    this.employeeInfo.department_id
+                );
 
-        if (this.employeeInfo.designation_id)
-            await expect(employee_designation).toHaveText(
-                this.employeeInfo.designation_id
-            );
+            if (this.employeeInfo.designation_id)
+                await expect(employee_designation).toHaveText(
+                    this.employeeInfo.designation_id
+                );
 
-        if (this.employeeInfo.grade_id)
-            await expect(employee_grade).toHaveText(this.employeeInfo.grade_id);
+            if (this.employeeInfo.grade_id)
+                await expect(employee_grade).toHaveText(
+                    this.employeeInfo.grade_id
+                );
 
-        if (this.employeeInfo.manager_id)
-            await expect(employee_reporting_manager).toHaveText(
-                this.employeeInfo.manager_id
-            );
+            if (this.employeeInfo.manager_id)
+                await expect(employee_reporting_manager).toHaveText(
+                    this.employeeInfo.manager_id
+                );
 
-        if (this.employeeInfo.approval_manager_id)
-            await expect(employee_approval_manager).toHaveText(
-                this.employeeInfo.approval_manager_id
-            );
-        // }
-        // await checkEmployeeDetailsMatch();
+            if (this.employeeInfo.approval_manager_id)
+                await expect(employee_approval_manager).toHaveText(
+                    this.employeeInfo.approval_manager_id
+                );
+        };
+        await checkEmployeeDetailsMatch();
     }
 
     public async checkEmployeeCodeLink() {
