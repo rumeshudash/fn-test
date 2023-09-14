@@ -195,4 +195,20 @@ export class ListingHelper extends PageHelper {
         const text = await this.getTextLocator(row, columnName);
         await text.click();
     }
+
+    /**
+     *
+     * @description This function helps to check if row exists or not
+     * @param {string}query - The query to search for in the table row.
+     * @param {string}columnName - The columnName to search for in the table row.
+     * @returns {Promise<boolean>} - returns true if row exists else false
+     */
+    public async ifRowExists(
+        query: string,
+        columnName: string
+    ): Promise<boolean> {
+        const row = await this.findRowInTable(query, columnName);
+
+        return row.isVisible();
+    }
 }

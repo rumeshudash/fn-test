@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { PortalSelectorHelper } from '../BaseHelper/portalSelector.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 
 type LoginDetailsInput = {
     username: string;
@@ -11,6 +12,8 @@ type LoginDetailsInput = {
 
 export class SignInHelper extends BaseHelper {
     public notificationHelper: NotificationHelper;
+
+    public dialogHelper: DialogHelper;
 
     private SIGNIN_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
@@ -22,6 +25,7 @@ export class SignInHelper extends BaseHelper {
         super(page);
         this.portalSelectorHelper = new PortalSelectorHelper(page);
         this.notificationHelper = new NotificationHelper(page);
+        this.dialogHelper = new DialogHelper(page);
     }
 
     public async init() {
@@ -115,8 +119,10 @@ export class SignInHelper extends BaseHelper {
         await this._page.waitForSelector(this.SIGNIN_DOM_SELECTOR);
 
         await this.CheckLogin(data);
-        await this._page.getByText('New Test Auto').click();
 
+        if (await this.isVisible({ text: 'Select Organization' })) {
+            await this.click({ id: 'org-1' });
+        }
         await this.portalSelectorHelper.selectFinopsPortal();
         // await this._page.getByText('FinOps Portal').click();
 
