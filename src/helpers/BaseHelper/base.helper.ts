@@ -297,11 +297,6 @@ export class BaseHelper {
             await selectBox.click();
         }
         console.log(`${input || option} is selected`);
-        // await this.click({
-        //     selector: `//div[contains(@class,"MenuList")]//div[contains(@class,"option")]//div[contains(text(),"${
-        //         input || option
-        //     }")]`,
-        // });
 
         const elements = await this._page
             .locator(
@@ -582,7 +577,6 @@ export class BaseHelper {
         return this._locator.isVisible({ timeout });
     }
 
-    // public async checkButtonVisibility(buttonName: string) {
     //     const btnCheck = this._page.locator(`//button[text()='${buttonName}']`);
     //     return await btnCheck.isEnabled();
     // }
@@ -645,53 +639,7 @@ export class BaseHelper {
                 chalk.red(buttonName, ' button is not clickable or disabled')
             );
         }
-        // await this._page.waitForTimeout(1500);
-        // await this.errorMsg();
-        // await this.toastSuccess();
-        // await this.toastError();
-        // await this.toastWarn();
-        // await this._page.waitForTimeout(1000);
     }
-
-    // public async toastMessage() {
-    //     await this.errorMsg();
-    // await this.toastSuccess();
-    // await this.toastError();
-    // await this.toastWarn();
-    // const error = this._page.locator('span.label.text-error');
-    // const errorCount = await error.count();
-    // if (errorCount > 0) {
-    //     console.log(chalk.red(`Error ocurred: ${errorCount}`));
-    //     for (let i = 0; i < errorCount; i++) {
-    //         const errorMsg = await error.nth(i).textContent();
-    //         return errorMsg;
-    //     }
-    // }
-    // const toast = this._page.locator('div.ct-toast-success');
-    // const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-    // const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
-    // const toastErrorCount = await toastError.count();
-    // const toastWarnCount = await toastWarn.count();
-    // const toastCount = await toast.count();
-    // if (toastCount > 0) {
-    //     for (let i = 0; i < toastCount; i++) {
-    //         const successMsg = await toast.last().textContent();
-    //         return successMsg;
-    //     }
-    // }
-    // if (toastWarnCount > 0) {
-    //     for (let i = 0; i < toastWarnCount; i++) {
-    //         const errorMsg = await toastWarn.nth(i).textContent();
-    //         return errorMsg;
-    //     }
-    // }
-    // if (toastErrorCount > 0) {
-    //     for (let i = 0; i < toastErrorCount; i++) {
-    //         const errorMsg = await toastError.nth(i).textContent();
-    //         return errorMsg;
-    //     }
-    // }
-    // }
 
     public async setCheckbox(choice: string) {
         const checkBox = this.locate(
@@ -751,7 +699,7 @@ export class BaseHelper {
      * Return Error Message Conatains in the span tag
      *
      * @return {string} - returns the error message in the feild if error text-error exist .
-     */
+    //  */
     // public async errorMessage() {
     //     const errorMessage = await this._page
     //         .locator('//span[contains(@class, "label-text-alt text-error")]')
@@ -811,20 +759,18 @@ export class BaseHelper {
         locator: string,
         actionCallback: (element: any) => Promise<void>
     ) {
-        const table = await this._page.locator(
+        const table = this._page.locator(
             '//div[contains(@class,"table finnoto__table__container ")]'
         );
-        const rows = await table.locator('//div[contains(@class,"table-row")]'); //select the row
+        const rows = table.locator('//div[contains(@class,"table-row")]'); //select the row
 
         for (let i = 0; i < (await rows.count()); i++) {
-            const row = await rows.nth(i);
-            const tds = await row.locator(
-                '//div[contains(@class,"table-cell")]'
-            );
+            const row = rows.nth(i);
+            const tds = row.locator('//div[contains(@class,"table-cell")]');
             for (let j = 0; j < (await tds.count()); j++) {
                 const cell = await tds.nth(j).innerText();
                 if (cell === name) {
-                    const Button = await tds.nth(cellno).locator(`${locator}`);
+                    const Button = tds.nth(cellno).locator(`${locator}`);
                     await actionCallback(Button);
 
                     break;
@@ -841,15 +787,27 @@ export class BaseHelper {
         return `Test${Math.floor(Math.random() * 1000000)}`;
     }
 
-    /**
-     * This function will click on checkbox based on the name provided.
-     * @param {string} name - The unique text from which we need to find checkbox
-     */
+    async clickActionButton() {
+        const parentLocator = this._page.locator(
+            '//div[contains(@class,"breadcrumbs")]/parent::div'
+        );
+        const actionButton = parentLocator.locator(
+            '//button[text()="Actions"]'
+        );
+        await actionButton.click();
+    }
 
-    public async clickCheckbox(name?: string) {
-        let tempSelector = '//input[@type="checkbox"]';
-        if (name) tempSelector += `[@name="${name}"]`;
+    async verifyActionOptions(options: string) {
+        const optionContainer = this.locate('div', { role: 'menu' })._locator;
 
-        await this._page.locator(tempSelector).click();
+        const verifyOption = optionContainer.getByRole('menuitem', {
+            name: options,
+        });
+        await expect(verifyOption, `${options} visibility`).toBeVisible();
+    }
+
+    async clickActionOption(options: string) {
+        const optionContainer = this.locate('div', { role: 'menu' })._locator;
+        await optionContainer.getByRole('menuitem', { name: options }).click();
     }
 }

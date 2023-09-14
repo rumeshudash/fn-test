@@ -1,6 +1,5 @@
 import { BaseHelper } from '@/baseHelper';
-import { Locator, Page, expect } from '@playwright/test';
-import { FileHelper } from './file.helper';
+import { Page, expect } from '@playwright/test';
 import { DocumentHelper } from './document.helper';
 import { BreadCrumbHelper } from './breadCrumb.helper';
 

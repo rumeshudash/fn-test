@@ -1,6 +1,5 @@
-import { Page, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
-import { TEST_URL } from '@/constants/api.constants';
 import chalk from 'chalk';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';

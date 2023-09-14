@@ -1,8 +1,6 @@
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
-import { IMAGE_NAME } from '@/utils/required_data';
-import { EmployeeCreation } from '../EmplyeeCreationHelper/employeeCreation.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class DesignationHelper extends BaseHelper {
@@ -221,71 +219,7 @@ export class DesignationDetailsPageHelper extends BaseHelper {
         if (await edit_button.isVisible()) await edit_button.click();
     }
 
-    async clickActionButton() {
-        const parentLocator = await this.optionsParentLocator();
-        const actionButton = parentLocator.locator(
-            '//button[text()="Actions"]'
-        );
-        await actionButton.click();
-    }
-
-    async verifyActionOptions(options: string) {
-        const optionContainer = this.locate('div', { role: 'menu' })._locator;
-
-        const verifyOption = optionContainer.getByRole('menuitem', {
-            name: options,
-        });
-        await expect(verifyOption, `${options} visibility`).toBeVisible();
-    }
-
-    async clickActionOption(options: string) {
-        const optionContainer = this.locate('div', { role: 'menu' })._locator;
-        await optionContainer.getByRole('menuitem', { name: options }).click();
-    }
-
-    // async verifyAddEmployeeForm(fieldName) {
-    //     await this._page.waitForTimeout(2000);
-    //     const parentLocator = this._page.locator(
-    //         `//div[@role="dialog"]//span[text()="${fieldName}"]/parent::label/parent::div`
-    //     );
-    //     await expect(
-    //         parentLocator,
-    //         chalk.red(`Dialog ${fieldName} visibility`)
-    //     ).toBeVisible();
-    // }
-
-    // async fillEmployeeForm() {
-    //     await this.fillText(this.employeeInfo.name, {
-    //         name: 'name',
-    //     });
-    //     await this.fillText(this.employeeInfo.email, {
-    //         name: 'email',
-    //     });
-    //     await this.fillText(this.employeeInfo.employee_code, {
-    //         name: 'identifier',
-    //     });
-    //     await this.selectOption({
-    //         input: this.employeeInfo.department,
-    //         placeholder: 'Select  Department',
-    //     });
-    //     await this.selectOption({
-    //         input: this.employeeInfo.grade,
-    //         placeholder: 'Select Grade',
-    //     });
-    //     await this.selectOption({
-    //         input: this.employeeInfo.reporting_manager,
-    //         placeholder: 'Select Manager',
-    //         exact: true,
-    //     });
-    //     // await this.selectOption({
-    //     //     input: this.employeeInfo.approval_mananger,
-    //     //     placeholder: 'Select approval Manager',
-    //     //     exact: true,
-    //     // });
-    // }
-
     async verifyEmployeeTabDetails() {
-        // await this.click({ role: 'button', text: 'Employee' });
         await this.locate('//button[text()="Employee"]')._locator.click();
         const parentHelper = this.locate(
             `//a[text()="${this.employeeInfo.employee_code}"]/parent::div/parent::div`

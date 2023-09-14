@@ -86,11 +86,20 @@ export class FormHelper extends BaseHelper {
         );
     }
 
+    /**
+     * This function checks if the input field with the given name is empty.
+     * It uses the `locate` function to find the input element with a specific `name` attribute.
+     * The value of the input field is retrieved using the `inputValue` function.
+     * It then asserts that the value of the input field is an empty string using the `expect` function.
+     *
+     * @param inputName - The name of the input field to check.
+     * @returns A promise that resolves when the input field is confirmed to be empty.
+     */
     async isInputFieldEmpty(inputName: string): Promise<void> {
-        const name_field = await this.locate('input', {
+        const nameField: string = await this.locate('input', {
             name: inputName,
         })._locator.inputValue();
-        expect(name_field, chalk.red('Name field value')).toBe('');
+        expect(nameField, chalk.red(`${inputName} field check`)).toBe('');
     }
 
     /**
@@ -104,12 +113,15 @@ export class FormHelper extends BaseHelper {
         for (const [name, schema] of Object.entries(formSchema)) {
             switch (schema?.type) {
                 case 'select':
-                    return await this.selectOption({
+                    await this.selectOption({
                         name,
                         option: String(data[name]),
                     });
+                    break;
+
                 case 'textarea':
-                    return await this.fillText(data[name], { name });
+                    await this.fillText(data[name], { name });
+                    break;
                 default:
                     await this.fillInput(data[name], {
                         name: name,
@@ -119,6 +131,23 @@ export class FormHelper extends BaseHelper {
         if (!targetClick) return;
         await this.click({
             selector: 'input',
+            name: targetClick,
+        });
+    }
+
+    public async fillTextAreaForm(
+        data: ObjectDto,
+        targetClick?: string
+    ): Promise<void> {
+        console.log(chalk.blue('Filling form input information ....'));
+        for (const [key, value] of Object.entries(data)) {
+            await this.fillText(value, {
+                name: key,
+            });
+        }
+        if (!targetClick) return;
+        await this.click({
+            selector: 'textarea',
             name: targetClick,
         });
     }
@@ -133,6 +162,7 @@ export class FormHelper extends BaseHelper {
         }).toBe(true);
 
         await btnClick.click();
+        await this._page.waitForTimeout(300);
         await this._page.waitForLoadState('networkidle');
         return btnClick;
     }

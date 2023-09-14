@@ -48,7 +48,7 @@ const createInit = async (page: any) => {
 
     await helper.formHelper.checkTitle(title);
 
-    await helper.clickNavigationTab('Non GSTIN Registered');
+    await helper.clickNavigationTab('Non GST Registered');
 
     return {
         helper,

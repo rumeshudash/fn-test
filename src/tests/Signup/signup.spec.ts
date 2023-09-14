@@ -25,9 +25,10 @@ test.describe('Signup', () => {
             confirm_password: '123456',
         });
         await signup.clickButton('Next →');
-        expect(await signup.errorMessage(), chalk.red('Name field match')).toBe(
-            'Name is required'
-        );
+        expect(
+            await signup.getErrorMessage(),
+            chalk.red('Name field match')
+        ).toBe('Name is required');
     });
 
     test('without Email Field', async ({ page }) => {
@@ -41,7 +42,7 @@ test.describe('Signup', () => {
         });
         await signup.clickButton('Next →');
         expect(
-            await signup.errorMessage(),
+            await signup.getErrorMessage(),
             chalk.red('Email field match')
         ).toBe('Email is required');
     });
@@ -57,7 +58,7 @@ test.describe('Signup', () => {
         });
         await page.waitForTimeout(2000);
         expect(
-            await signup.errorMessage(),
+            await signup.getErrorMessage(),
             chalk.red('Password field match')
         ).toBe('Password is required');
     });
@@ -73,7 +74,7 @@ test.describe('Signup', () => {
         });
         await signup.clickButton('Next →');
         expect(
-            await signup.errorMessage(),
+            await signup.getErrorMessage(),
             chalk.red('Confirm Password match')
         ).toBe('Confirm Password is required');
     });

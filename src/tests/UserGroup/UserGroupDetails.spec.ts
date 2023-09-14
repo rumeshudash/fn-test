@@ -1,10 +1,5 @@
 import { LISTING_ROUTES } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
-import { DetailsPageHelper } from '@/helpers/BaseHelper/details.helper';
-import { DocumentHelper } from '@/helpers/BaseHelper/document.helper';
-import { FileHelper } from '@/helpers/BaseHelper/file.helper';
-import { DepartmentDetails } from '@/helpers/DepartmentHelper/DepartmentDetails.helper';
-import { UserCreation } from '@/helpers/UserGroupHelper/UserGroup.helper';
 import { UserDetails } from '@/helpers/UserGroupHelper/UserGroupDetails.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';

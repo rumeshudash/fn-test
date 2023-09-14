@@ -1,101 +1,118 @@
 import { expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
-import { addSeconds } from 'date-fns';
-import { PageHelper } from '../BaseHelper/page.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
-import { employeeCreationInfo } from '@/utils/required_data';
-import { TabHelper } from '../BaseHelper/tab.helper';
+import { bankAccountInfo } from '@/utils/required_data';
+import { FormHelper } from '../BaseHelper/form.helper';
+import chalk from 'chalk';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
 
 export class EmployeeCreation extends ListingHelper {
+    public formHelper: FormHelper;
     public notification: NotificationHelper;
-    constructor(page) {
+    public breadCrumb: BreadCrumbHelper;
+    constructor(page: any) {
         super(page);
         this.notification = new NotificationHelper(page);
+        this.formHelper = new FormHelper(page);
+        this.breadCrumb = new BreadCrumbHelper(page);
     }
 
-    async init() {
+    public async init() {
         await this.navigateTo('EMPLOYEE_CREATION');
+    }
+    public async clickAddIcon() {
+        await this._page
+            .locator(
+                "//div[contains(@class,'flex-wrap justify-end')]//button[1]"
+            )
+            .click();
+    }
+    public async clickEmployeeInfo(title: string, columnName: string) {
+        const row = await this.findRowInTable(title, columnName);
+        const clickCell = (await this.getCell(row, columnName)).locator('a');
+        await clickCell.click();
+        await this._page.waitForTimeout(2000);
     }
 }
 
-export class AddEmployeeCreation extends BaseHelper {
-    // public employeeCreationInfo;
-    constructor(page) {
+export class AddEmployeeCreation extends EmployeeCreation {
+    public employeeInfo;
+    constructor(employeeInfo, page: any) {
         super(page);
-        // this.employeeCreationInfo = employeeCreationInfo;
+        this.employeeInfo = employeeInfo;
     }
-    public async verifyAfterSaveAndCreate() {
-        const name_field = await this.locate('input', {
-            name: 'name',
-        })._locator.inputValue();
-        expect(name_field).toBe('');
-    }
-
-    async employeeCodeLocator() {
-        return this.locate(
-            `//a[text()="${employeeCreationInfo.employee_code}"]/parent::div/parent::div`
-        )._locator.first();
-    }
-
-    async getEmployeeName() {
-        const parentLocator = await this.employeeCodeLocator();
-        return parentLocator.locator(
-            `//a[text()="${employeeCreationInfo.name}"]`
+    public async employeeRowLocator() {
+        const row = await this.findRowInTable(
+            this.employeeInfo.identifier,
+            'EMPLOYEE CODE'
         );
+        return row;
     }
 
-    async getEmployeeEmail() {
-        const parentLocator = await this.employeeCodeLocator();
-        return parentLocator.locator(
-            `//a[text()="${employeeCreationInfo.email}"]`
+    public async getEmployeeCode() {
+        const parentRow = await this.employeeRowLocator();
+        const cellCode = await this.getCell(parentRow, 'EMPLOYEE CODE');
+        return cellCode;
+    }
+
+    public async getEmployeeName() {
+        const parentRow = await this.employeeRowLocator();
+        const cellName = await this.getCell(parentRow, 'NAME');
+        return cellName;
+    }
+
+    public async getEmployeeEmail() {
+        const parentRow = await this.employeeRowLocator();
+        const cellEmail = await this.getCell(parentRow, 'EMAIL');
+        return cellEmail;
+    }
+
+    public async getEmployeeStatus() {
+        const parentRow = await this.employeeRowLocator();
+        const cellStatus = (
+            await this.getCell(parentRow, 'STATUS')
+        ).innerText();
+        return cellStatus;
+    }
+
+    public async getEmployeeDepartment() {
+        const parentRow = await this.employeeRowLocator();
+        const cellDepartment = await this.getCell(parentRow, 'DEPARTMENT');
+        return cellDepartment;
+    }
+
+    public async getEmployeeDesignation() {
+        const parentRow = await this.employeeRowLocator();
+        const cellDesignation = await this.getCell(parentRow, 'DESIGNATION');
+        return cellDesignation;
+    }
+
+    public async getEmployeeGrade() {
+        const parentRow = await this.employeeRowLocator();
+        const cellGrade = await this.getCell(parentRow, 'GRADE');
+        return cellGrade;
+    }
+
+    public async getEmployeeReportingManager() {
+        const parentRow = await this.employeeRowLocator();
+        const cellReportingManager = await this.getCell(
+            parentRow,
+            'REPORTING MANAGER'
         );
+        return cellReportingManager;
     }
 
-    async getEmployeeStatus() {
-        const parentLocator = await this.employeeCodeLocator();
-        return await parentLocator
-            .locator(`(//div[@class='centralize'])`)
-            .first()
-            .innerText();
-    }
-
-    async getEmployeeDepartment() {
-        const parentLocator = await this.employeeCodeLocator();
-        return parentLocator.locator(
-            `//a[text()="${employeeCreationInfo.department}"]`
+    public async getEmployeeApprovalManager() {
+        const parentRow = await this.employeeRowLocator();
+        const cellApprovalManager = await this.getCell(
+            parentRow,
+            'APPROVAL MANAGER'
         );
+        return cellApprovalManager;
     }
 
-    async getEmployeeDesignation() {
-        const parentLocator = await this.employeeCodeLocator();
-        return parentLocator.locator(
-            `//a[text()="${employeeCreationInfo.designation}"]`
-        );
-    }
-
-    async getEmployeeGrade() {
-        const parentLocator = await this.employeeCodeLocator();
-        return parentLocator.locator(
-            `//p[text()="${employeeCreationInfo.grade}"]`
-        );
-    }
-
-    async getEmployeeReportingManager() {
-        const parentLocator = await this.employeeCodeLocator();
-        return parentLocator
-            .locator(`//a[text()="${employeeCreationInfo.reporting_manager}"]`)
-            .first();
-    }
-
-    async getEmployeeApprovalManager() {
-        const parentLocator = await this.employeeCodeLocator();
-        return parentLocator
-            .locator(`//a[text()="${employeeCreationInfo.reporting_manager}"]`)
-            .nth(1);
-    }
-
-    async verifyEmployeeDetails() {
+    public async verifyEmployeeDetails() {
+        const employee_code = await this.getEmployeeCode();
         const employee_name = await this.getEmployeeName();
         const employee_email = await this.getEmployeeEmail();
         const employee_department = await this.getEmployeeDepartment();
@@ -106,107 +123,233 @@ export class AddEmployeeCreation extends BaseHelper {
         const employee_approval_manager =
             await this.getEmployeeApprovalManager();
 
-        async function verifyVisibility() {
-            if (employeeCreationInfo.name)
-                await expect(employee_name).toBeVisible();
-            if (employeeCreationInfo.email)
-                await expect(employee_email).toBeVisible();
-            await expect(employee_email).toBeVisible();
-            if (employeeCreationInfo.department)
-                await expect(employee_department).toBeVisible();
-            if (employeeCreationInfo.designation)
-                await expect(employee_designation).toBeVisible();
-            if (employeeCreationInfo.grade)
-                await expect(employee_grade).toBeVisible();
-            if (employeeCreationInfo.reporting_manager)
-                await expect(employee_reporting_manager).toBeVisible();
-            if (employeeCreationInfo.reporting_manager)
-                await expect(employee_approval_manager).toBeVisible();
-        }
-        await verifyVisibility();
+        const checkEmployeeDetailsMatch = async () => {
+            if (this.employeeInfo.identifier)
+                await expect(employee_code).toHaveText(
+                    this.employeeInfo.identifier
+                );
+
+            if (this.employeeInfo.name)
+                await expect(employee_name).toHaveText(this.employeeInfo.name);
+
+            if (this.employeeInfo.email)
+                await expect(employee_email).toHaveText(
+                    this.employeeInfo.email
+                );
+
+            if (this.employeeInfo.email)
+                await expect(employee_email).toHaveText(
+                    this.employeeInfo.email
+                );
+
+            if (this.employeeInfo.department_id)
+                await expect(employee_department).toHaveText(
+                    this.employeeInfo.department_id
+                );
+
+            if (this.employeeInfo.designation_id)
+                await expect(employee_designation).toHaveText(
+                    this.employeeInfo.designation_id
+                );
+
+            if (this.employeeInfo.grade_id)
+                await expect(employee_grade).toHaveText(
+                    this.employeeInfo.grade_id
+                );
+
+            if (this.employeeInfo.manager_id)
+                await expect(employee_reporting_manager).toHaveText(
+                    this.employeeInfo.manager_id
+                );
+
+            if (this.employeeInfo.approval_manager_id)
+                await expect(employee_approval_manager).toHaveText(
+                    this.employeeInfo.approval_manager_id
+                );
+        };
+        await checkEmployeeDetailsMatch();
     }
 
-    async checkEmployeeCodeLink() {
-        const employee_code = (await this.employeeCodeLocator())
-            .locator('//a')
-            .first();
-        await employee_code.click();
+    public async checkEmployeeCodeLink() {
+        const employee_code = await this.getEmployeeCode();
+        const code = await employee_code.innerText();
+        await employee_code.locator('//a').click();
 
-        const code_locator = this.locate('div', {
-            text: employeeCreationInfo.employee_code,
-        })._locator;
-        await expect(code_locator).toBeVisible();
+        const code_locator = await this.locate(
+            '//div[@data-title="detail_subtitle"]'
+        )._locator.innerText();
+        expect(code_locator).toContain(code);
     }
-    async checkEmployeeNameLink() {
+    public async checkEmployeeNameLink() {
         const employee_name = await this.getEmployeeName();
         const name = await employee_name.innerText();
-        await employee_name.click();
+        await employee_name.locator('//a').click();
 
-        const name_locator = this.locate('div', { text: name })._locator;
-        await expect(name_locator).toBeVisible();
+        const name_locator = await this.locate(
+            '//div[@data-title="detail_subtitle"]'
+        )._locator.innerText();
+        expect(name_locator).toContain(name);
     }
-    async checkEmployeeEmailLink() {
+    public async checkEmployeeEmailLink() {
         const employee_email = await this.getEmployeeEmail();
-        await employee_email.click();
-        const email_locator = await this.locate('span', { id: 'has-Email' })
-            ._locator;
-        await expect(email_locator).toBeVisible();
+        const email = await employee_email.innerText();
+        await employee_email.locator('//a').click();
+        const email_locator = await this.locate('span', {
+            id: 'has-Email',
+        })._locator.innerText();
+        expect(email_locator).toContain(email);
     }
 
-    async checkEmployeeDepartmentLink() {
+    public async checkEmployeeDepartmentLink() {
         const employee_department = await this.getEmployeeDepartment();
-        await employee_department.click();
+        const department = await employee_department.innerText();
+        await employee_department.locator('//a').click();
+
         const department_locator = await this.locate(
-            '//div[contains(@class,"text-base font-semibold")]'
+            '//div[@data-title="detail_subtitle"]'
         )._locator.innerText();
 
-        expect(department_locator).toContain(employeeCreationInfo.department);
+        expect(department_locator).toContain(department);
     }
 
-    async checkEmployeeDesignationLink() {
+    public async checkEmployeeDesignationLink() {
         const employee_designation = await this.getEmployeeDesignation();
-        await employee_designation.click();
+        const designation = await employee_designation.innerText();
+        await employee_designation.locator('//a').click();
 
-        const designation_locator = this.locate('div', {
-            text: employeeCreationInfo.designation,
-        })._locator;
+        const designation_locator = await this.locate(
+            '//div[@data-title="detail_subtitle"]'
+        )._locator.innerText();
 
-        await expect(designation_locator).toBeVisible();
+        expect(designation_locator).toContain(designation);
     }
 
-    async checkReportingManagerLink() {
+    public async checkReportingManagerLink() {
         const employee_reporting_manager =
             await this.getEmployeeReportingManager();
-        await employee_reporting_manager.click();
+        const reporting_manager = await employee_reporting_manager.innerText();
+        await employee_reporting_manager.locator('//a').click();
 
-        const reporting_manager_locator = this.locate('div', {
-            text: employeeCreationInfo.reporting_manager,
-        })._locator;
-
-        await expect(reporting_manager_locator).toBeVisible();
+        const reporting_manager_locator = await this.locate(
+            '//div[@data-title="detail_subtitle"] //h3'
+        )._locator.innerText();
+        expect(reporting_manager_locator).toContain(reporting_manager);
     }
 
-    async checkApprovalManagerLink() {
+    public async checkApprovalManagerLink() {
         const employee_approval_manager =
             await this.getEmployeeApprovalManager();
-        await employee_approval_manager.click();
+        const approval_manager = await employee_approval_manager.innerText();
+        await employee_approval_manager.locator('//a').click();
 
-        const approval_mananger_locator = this.locate('div', {
-            text: employeeCreationInfo.reporting_manager,
-        })._locator;
+        const approval_mananger_locator = await this.locate(
+            '//div[@data-title="detail_subtitle"] //h3'
+        )._locator.innerText();
 
-        await expect(approval_mananger_locator).toBeVisible();
+        expect(approval_mananger_locator).toContain(approval_manager);
     }
 
-    async clickActionOption(options: string) {
+    public async clickActionOption(options: string) {
         const optionContainer = this.locate('div', { role: 'menu' })._locator;
         await optionContainer.getByRole('menuitem', { name: options }).click();
     }
-    // async changeTab(tabName: string) {
-    //     await this._page
-    //         .getByRole('tab', { name: tabName, exact: true })
-    //         .click();
+}
 
-    //     await this._page.waitForTimeout(2000);
-    // }
+export class EmployeeDetailsPage extends EmployeeCreation {
+    public employeeCreationInfo;
+    constructor(employeeCreationInfo, page: any) {
+        super(page);
+        this.employeeCreationInfo = employeeCreationInfo;
+    }
+    public async parentEmployeeDetails() {
+        return this.locate('//div[contains(@class,"h-full overflow-hidden")]')
+            ._locator;
+    }
+
+    public async checkEmployeeName() {
+        const parentHelper = await this.parentEmployeeDetails();
+        const locateName = parentHelper.filter({
+            hasText: this.employeeCreationInfo.name,
+        });
+
+        await expect(locateName).toBeVisible();
+    }
+
+    public async checkEmployeeCode() {
+        const parentHelper = await this.parentEmployeeDetails();
+        const locateCode = parentHelper.locator(
+            "//div[@class='text-sm text-base-secondary']"
+        );
+        expect(await locateCode.innerText()).toBe(
+            this.employeeCreationInfo.identifier
+        );
+    }
+
+    public async checkEmployeeDetails(locator: string, text: string) {
+        const parentHelper = await this.parentEmployeeDetails();
+        const isVisible = await parentHelper.locator(locator).innerText();
+        expect(isVisible).toBe(text);
+    }
+
+    public async clickEditIcon() {
+        await this._page.locator("//button[@data-title='Edit']").click();
+    }
+    public async checkBankInfo() {
+        const row = await this.findRowInTable(
+            bankAccountInfo.ifsc_code,
+            'IFSC CODE'
+        );
+        expect(await row.isVisible(), 'Check row of IFSC Code').toBe(true);
+    }
+    public async setRole(title: string) {
+        const role = this.locate(
+            `//div[text()='${title}']/parent::div/parent::div`
+        )._locator;
+
+        await role.locator('//input').click();
+    }
+
+    public async addNotes(notes: string) {
+        await this.fillText(notes, {
+            selector: 'textarea',
+        });
+    }
+
+    public async checkNotes(notes: string) {
+        const notesParentLocator = this.locate(
+            `//div[text()='${notes}']/parent::div/parent::div`
+        )._locator.first();
+
+        expect(
+            await notesParentLocator.isVisible(),
+            chalk.red('Checking Notes visibility')
+        ).toBe(true);
+        const user = notesParentLocator.locator('//p[1]');
+        const date_time = notesParentLocator.locator('//p[2]');
+
+        await expect(user).toBeVisible();
+        await expect(date_time).toBeVisible();
+    }
+
+    public async checkInviteUserEmail() {
+        const email = this.locate(
+            `(//span[text()='${this.employeeCreationInfo.email}'])[2]`
+        )._locator;
+        await expect(
+            email,
+            chalk.red(`${this.employeeCreationInfo.email} Visibility check`)
+        ).toBeVisible();
+    }
+    public async checkDocumentName(name: string | number) {
+        const documentNameContainer = this.locate(
+            "//div[contains(@class,'absolute left-0')]"
+        )._locator;
+        const documentName = documentNameContainer.locator(
+            `//div[text()='${name}']`
+        );
+        await expect(
+            documentName,
+            chalk.red(`Document ${name} Visibility`)
+        ).toBeVisible();
+    }
 }

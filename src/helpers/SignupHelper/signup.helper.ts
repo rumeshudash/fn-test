@@ -1,9 +1,9 @@
 import { uuidV4 } from '@/utils/common.utils';
-import { BaseHelper } from '.././BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 import chalk from 'chalk';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
-export class SignupHelper extends BaseHelper {
+export class SignupHelper extends NotificationHelper {
     private static SIGNUP_DOM_SELECTOR = '//form/parent::div';
 
     public async init() {
@@ -29,10 +29,10 @@ export class SignupHelper extends BaseHelper {
         const helper = this.locate(SignupHelper.SIGNUP_DOM_SELECTOR);
 
         await helper.fillInput(data.name, { name: 'name' });
-        await helper.fillInput(data.email, { name: 'email' });
+        await helper.fillInput(data.email, { name: 'username' });
         await helper.fillInput(data.password, { name: 'password' });
         await helper.fillInput(data.confirm_password, {
-            name: 'confirm\\ password',
+            name: 'confirmPassword',
         });
     }
     public async checkSignInLink() {
