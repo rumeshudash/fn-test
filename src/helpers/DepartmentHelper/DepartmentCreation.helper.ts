@@ -6,12 +6,14 @@ import { ListingHelper } from '../BaseHelper/listing.helper';
 import { DetailsPageHelper } from '../BaseHelper/details.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { DocumentHelper } from '../BaseHelper/document.helper';
+import { StatusHelper } from '../BaseHelper/status.helper';
 
 export class DepartmentCreation extends BaseHelper {
     public listingHelper: ListingHelper;
     public detailsHelper: DetailsPageHelper;
     public documentHelper: DocumentHelper;
     public tabHelper: TabHelper;
+    public statusHelper: StatusHelper;
 
     constructor(page) {
         super(page);
@@ -19,6 +21,7 @@ export class DepartmentCreation extends BaseHelper {
         this.detailsHelper = new DetailsPageHelper(page);
         this.documentHelper = new DocumentHelper(page);
         this.tabHelper = new TabHelper(page);
+        this.statusHelper = new StatusHelper(page);
     }
 
     public async init() {
@@ -157,7 +160,7 @@ export class DepartmentCreation extends BaseHelper {
 
         // if added department is not present
         if (!present) {
-            expect(addedDepartmentRow).not.toBeVisible();
+            await expect(addedDepartmentRow).not.toBeVisible();
             return;
         }
 
@@ -175,31 +178,11 @@ export class DepartmentCreation extends BaseHelper {
     }
 
     // toggle department status from the row
-    public async toggleStatus(name: string, status: string) {
+    public async setStatus(name: string, status: string) {
+        console.log(chalk.blue('Toggling department status'));
         await this.navigateTo('DEPARTMENTS');
         await this.tabHelper.clickTab('All');
-        console.log(chalk.blue('Toggling department status'));
-        await this.listingHelper.searchInList(name);
-        const department = await this.listingHelper.findRowInTable(
-            name,
-            'NAME'
-        );
-        const toggleButton = department.locator('button').first();
-        if (
-            (await toggleButton.textContent()) === 'Active' &&
-            status === 'Inactive'
-        ) {
-            await toggleButton.click();
-        } else if (
-            (await toggleButton.textContent()) === 'Inactive' &&
-            status === 'Active'
-        ) {
-            await toggleButton.click();
-        } else {
-            console.log(chalk.red('Department status is already ' + status));
-        }
-        expect(toggleButton).toHaveText(status);
-        await this._page.waitForTimeout(1000);
+        await this.statusHelper.setStatus(name, status);
         console.log(chalk.green('Department status toggled'));
     }
 

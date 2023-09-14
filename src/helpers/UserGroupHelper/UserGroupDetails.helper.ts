@@ -150,6 +150,6 @@ export class UserDetails extends UserCreation {
             data.role,
             'NAME'
         );
-        expect(deletedRole).not.toBeVisible();
+        await expect(deletedRole).not.toBeVisible();
     }
 }

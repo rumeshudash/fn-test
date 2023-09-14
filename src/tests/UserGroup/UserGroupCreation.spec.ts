@@ -69,7 +69,7 @@ describe('TUA001', () => {
 
         await test.step('Check Group Status Toggle', async () => {
             // toggle status of the department
-            await userCreation.toggleStatus(userData.name, 'Inactive');
+            await userCreation.setStatus(userData.name, 'Inactive');
 
             // verify usergroup is not present in active tab
             await userCreation.tabHelper.clickTab('Active');
@@ -88,7 +88,7 @@ describe('TUA001', () => {
             });
 
             // toggle status of the userCreation
-            await userCreation.toggleStatus(userData.name, 'Active');
+            await userCreation.setStatus(userData.name, 'Active');
 
             // verify usergroup is present in active tab
             await userCreation.tabHelper.clickTab('Active');

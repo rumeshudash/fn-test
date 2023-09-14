@@ -4,17 +4,20 @@ import chalk from 'chalk';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { DetailsPageHelper } from '../BaseHelper/details.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
+import { StatusHelper } from '../BaseHelper/status.helper';
 
 export class UserCreation extends BaseHelper {
     public listHelper: ListingHelper;
     public detailsHelper: DetailsPageHelper;
     public tabHelper: TabHelper;
+    public statusHelper: StatusHelper;
 
     constructor(page: any) {
         super(page);
         this.listHelper = new ListingHelper(page);
         this.detailsHelper = new DetailsPageHelper(page);
         this.tabHelper = new TabHelper(page);
+        this.statusHelper = new StatusHelper(page);
     }
 
     public async init() {
@@ -211,49 +214,12 @@ export class UserCreation extends BaseHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    // get 100 rows with pagination
-    public async toggleAll() {
-        await this._page
-            .locator('.selectbox-control')
-            .filter({ hasText: '20 / Page' })
-            .click();
-        await this._page.getByText('100 / Page').click();
-    }
-
     // toggle user group status from the row
-    public async toggleStatus(name: string, status: string) {
+    public async setStatus(name: string, status: string) {
         console.log(chalk.blue('Toggling group status'));
         await this.navigateTo('USERGROUPS');
         await this.tabHelper.clickTab('All');
-        await this.listHelper.searchInList(name);
-        const group = await this.listHelper.findRowInTable(name, 'NAME');
-        const toggleButton = group.locator('button').first();
-        let isClicked = false;
-        if (
-            (await toggleButton.textContent()) === 'Active' &&
-            status === 'Inactive'
-        ) {
-            await toggleButton.click();
-            isClicked = true;
-        } else if (
-            (await toggleButton.textContent()) === 'Inactive' &&
-            status === 'Active'
-        ) {
-            await toggleButton.click();
-            isClicked = true;
-        } else {
-            console.log(chalk.red('Group status is already ' + status));
-        }
-        if (isClicked) {
-            const toast = this._page.locator('div.ct-toast-success').first();
-            expect(await toast.textContent(), {
-                message: 'Checking toast message',
-            }).toBe('Status Changed');
-            console.log(chalk.green('Toggle Status toast message verified'));
-        }
-
-        expect(toggleButton).toHaveText(status);
-        await this._page.waitForTimeout(1000);
+        await this.statusHelper.setStatus(name, status);
         console.log(chalk.green('Group status toggled'));
     }
 
@@ -277,7 +243,7 @@ export class UserCreation extends BaseHelper {
 
         // if added user group is not present
         if (!present) {
-            expect(addedGroup).not.toBeVisible();
+            await expect(addedGroup).not.toBeVisible();
             return;
         }
 

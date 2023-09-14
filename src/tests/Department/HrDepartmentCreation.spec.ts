@@ -74,7 +74,7 @@ describe('TDC001', () => {
         // // check toggle status functionality
         await test.step('Check Department status change', async () => {
             // toggle status of the department
-            await department.toggleStatus(data.name, 'Inactive');
+            await department.setStatus(data.name, 'Inactive');
 
             // verify deparment is not present in active tab
             await department.tabHelper.clickTab('Active');
@@ -94,7 +94,7 @@ describe('TDC001', () => {
             });
 
             // toggle status of the department
-            await department.toggleStatus(data.name, 'Active');
+            await department.setStatus(data.name, 'Active');
 
             // verify deparment is present in active tab
             await department.tabHelper.clickTab('Active');
