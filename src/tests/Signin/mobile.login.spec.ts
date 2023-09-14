@@ -58,6 +58,8 @@ test.describe('Verify Phone', () => {
         const number = '9816934348';
         await verifyPhone.init(number);
 
+        await page.waitForTimeout(4000);
+
         await verifyPhone.clickResendOTP();
     });
 

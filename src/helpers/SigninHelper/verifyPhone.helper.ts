@@ -24,8 +24,13 @@ export class VerifyPhone extends NotificationHelper {
     }
 
     public async clickResendOTP() {
+        const locator = await this._page.locator(
+            '//button[contains(@class, "link link-hover text-sm")]'
+        );
+
+        expect(locator).toBeVisible();
         await this._page.waitForTimeout(1000);
-        await this.clickButton('Resend OTP');
+        await locator.click();
         await this._page.waitForTimeout(1000);
     }
 }

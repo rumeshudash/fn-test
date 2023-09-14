@@ -61,8 +61,9 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
-                name: 'document_id',
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
             });
         }
 
@@ -78,8 +79,9 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
-                name: 'document_id',
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
             });
         }
         await this._page
@@ -98,8 +100,9 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
-                name: 'document_id',
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
             });
         }
         await this._page
@@ -119,11 +122,11 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
-                name: 'document_id',
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
             });
         }
-
         await this._page
             .locator('label')
             .filter({ hasText: 'Document Mandatory' })
@@ -146,11 +149,11 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
-                name: 'document_id',
+            await this.selectOption({
+                option: Document,
+                hasText: 'Search...',
             });
         }
-
         await this._page
             .locator('label')
             .filter({ hasText: 'save and create another' })
