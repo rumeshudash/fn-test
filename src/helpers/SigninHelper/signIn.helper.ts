@@ -144,12 +144,16 @@ export class SignInHelper extends NotificationHelper {
             const password = SignInHelper.generateRandomPassword();
             await this.fillText(password, { id: 'password' });
             await this.click({ role: 'button', name: 'Submit' });
-            if (
-                (await this.getErrorMessage()).includes(
+
+            const errorMessage = await this.getErrorMessage();
+
+            if (errorMessage) {
+                if (
+                    errorMessage ===
                     'Account locked for too many invalid attempts. Please try after 5 minutes'
-                )
-            ) {
-                break;
+                ) {
+                    break;
+                }
             }
         }
     }
