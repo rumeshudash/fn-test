@@ -77,4 +77,17 @@ test.describe('Verify Phone', () => {
             chalk.red('Error Message match ')
         ).toBe('Invalid otp');
     });
+
+    test('Maximum Invalid OTP', async ({ page }) => {
+        const signin = new SignInHelper(page);
+        await signin.init();
+        const mobile = 9854345677;
+        await signin.MobileNumber(mobile);
+        const verifyPhone = new VerifyPhone(page);
+
+        // const number = '9816934348';
+        // await verifyPhone.init(number);
+
+        await verifyPhone.maximumAttempt();
+    });
 });
