@@ -742,7 +742,8 @@ export class BaseHelper {
     public async fillOtp(data: string, expectedLength: number) {
         expect(data.length).toBe(expectedLength);
 
-        for (let i = 0; i < data.length; i++) {
+        for (let i = 0; i < expectedLength; i++) {
+            console.log(data[i]);
             // Locate the OTP input fields and fill them with the corresponding digit
             await this._page.locator('.otpInput').nth(i).fill(data[i]);
         }

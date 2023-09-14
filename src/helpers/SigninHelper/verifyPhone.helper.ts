@@ -19,7 +19,13 @@ export class VerifyPhone extends NotificationHelper {
      * */
 
     public async clickVerify() {
-        await this.click({ role: 'button', name: 'Verify & Proceed' });
+        await this.clickButton('Verify & Proceed');
+        await this._page.waitForTimeout(1000);
+    }
+
+    public async clickResendOTP() {
+        await this._page.waitForTimeout(1000);
+        await this.clickButton('Resend OTP');
         await this._page.waitForTimeout(1000);
     }
 }
