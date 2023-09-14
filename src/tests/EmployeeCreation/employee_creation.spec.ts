@@ -6,7 +6,6 @@ import {
     AddEmployeeCreation,
     EmployeeCreation,
 } from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
-import test from '@playwright/test';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
 
 import { generateRandomNumber } from '@/utils/common.utils';
@@ -71,11 +70,14 @@ const employeeCreationSchema = {
 describe('TEC001', () => {
     PROCESS_TEST('Verify Employee Creation Page', async ({ page }) => {
         const employeeCreationPage = new EmployeeCreation(page);
+        const dialogForm = new DialogHelper(page);
         await PROCESS_TEST.step(
             'Navigate to Employee Creation Page',
             async () => {
+                await employeeCreationPage.profile();
                 await employeeCreationPage.init();
-                await employeeCreationPage.clickButton('Add Employee');
+                await employeeCreationPage.clickAddIcon();
+                await dialogForm.checkDialogTitle('Add Employee');
             }
         );
     });
@@ -84,11 +86,9 @@ describe('TEC001', () => {
         const dialogForm = new DialogHelper(page);
         const addEmployeeCreationForm = new AddEmployeeCreation(page);
         const employeeCreationPage = new EmployeeCreation(page);
-        const dialog = new DialogHelper(page);
-        const formHelper = new FormHelper(page);
         await employeeCreationPage.init();
-        await addEmployeeCreationForm.clickAddIcon();
-        await dialog.checkDialogTitle('Add Employee');
+        await employeeCreationPage.clickAddIcon();
+        await dialogForm.checkDialogTitle('Add Employee');
 
         await PROCESS_TEST.step('Verify then Fill Employee Form', async () => {
             await dialogForm.verifyInputField('Name');
@@ -102,7 +102,7 @@ describe('TEC001', () => {
         });
 
         await PROCESS_TEST.step('Fill Employee Form', async () => {
-            await formHelper.fillFormInputInformation(
+            await employeeCreationPage.formHelper.fillFormInputInformation(
                 employeeCreationSchema,
                 employeeCreationInfo_SaveAndCreate
             );
@@ -113,7 +113,7 @@ describe('TEC001', () => {
             );
 
             await addEmployeeCreationForm.formHelper.isInputFieldEmpty('name');
-            await dialog.closeDialog();
+            await dialogForm.closeDialog();
         });
     });
 
@@ -146,7 +146,7 @@ describe('TEC001', () => {
             await employeeCreationPage.init();
             await employeeCreationPage.searchInList(employeeCreationInfo.name);
             // await addEmployeeCreationForm.verifyEmployeeDetails();
-            await addEmployeeCreationForm.listing.findRowInTable(
+            await addEmployeeCreationForm.findRowInTable(
                 employeeCreationInfo.name,
                 'NAME'
             );
@@ -187,7 +187,7 @@ describe('TEC001', () => {
         await employeeCreationPage.init();
         await employeeCreationPage.searchInList(employeeCreationInfo.name);
         await addEmployeeCreationForm.checkEmployeeEmailLink();
-        await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
+        await employeeCreationPage.breadCrumb.checkBreadCrumbTitle(
             'Employee Detail'
         );
     });

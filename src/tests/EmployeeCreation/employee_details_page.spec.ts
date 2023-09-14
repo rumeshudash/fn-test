@@ -75,7 +75,7 @@ describe('TED001', () => {
             employeeCreationInfo.identifier,
             'EMPLOYEE CODE'
         );
-        await employeeCreation.breadcrumb.checkBreadCrumbTitle(
+        await employeeCreation.breadCrumb.checkBreadCrumbTitle(
             'Employee Detail'
         );
         await detailsPage.checkEmployeeName();
