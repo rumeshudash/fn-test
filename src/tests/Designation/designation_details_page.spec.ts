@@ -5,16 +5,14 @@ import {
     DesignationDetailsPageHelper,
     DesignationHelper,
 } from '@/helpers/DesignationHelper/designation.helper';
-import { EmployeeCreation } from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
 import {
     designationInfo,
     designation_details_page_Info,
     employeeInfo,
 } from '@/utils/required_data';
 import { test } from '@playwright/test';
-import chalk from 'chalk';
 
-const { expect, describe } = PROCESS_TEST;
+const { describe } = PROCESS_TEST;
 
 const employeeInfoSchema = {};
 

@@ -1,7 +1,3 @@
-import { BaseHelper } from '../BaseHelper/base.helper';
-import { expect } from '@playwright/test';
-import { VerifyEmailHelper } from '../SignupHelper/verifyEmail.helper';
-
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class VerifyPhone extends NotificationHelper {

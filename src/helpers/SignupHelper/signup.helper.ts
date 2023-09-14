@@ -1,5 +1,4 @@
 import { uuidV4 } from '@/utils/common.utils';
-import { BaseHelper } from '.././BaseHelper/base.helper';
 import { expect } from '@playwright/test';
 import chalk from 'chalk';
 import { NotificationHelper } from '../BaseHelper/notification.helper';

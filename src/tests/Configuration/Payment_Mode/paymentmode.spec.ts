@@ -41,11 +41,9 @@ describe('TPM001', () => {
             await paymentMode.addNewPaymentMode();
             await paymentMode.fillPaymentModeForm();
             await paymentMode.clickButton('Save');
-
-            expect(
-                await paymentMode.toastMessage(),
-                chalk.red('Toast Message match')
-            ).toBe('Successfully saved');
+            await paymentMode.notification.checkToastSuccess(
+                'Successfully saved'
+            );
         });
     });
 
@@ -67,21 +65,14 @@ describe('TPM001', () => {
             await paymentMode.searchPaymentMode();
             //Change Bank Status to Inactive from Active
             await paymentMode.changeBankStatus('Active');
-            expect(
-                await paymentMode.toastMessage(),
-                chalk.red('Toast Message match')
-            ).toBe('Status Changed');
 
+            await paymentMode.notification.checkToastSuccess('Status Changed');
             await paymentMode.verifyBankStatus('Inactive');
 
             //Change Bank Status to Active from Inactive
             await paymentMode.changeBankStatus('Inactive');
 
-            expect(
-                await paymentMode.toastMessage(),
-                chalk.red('Toast Message match')
-            ).toBe('Status Changed');
-
+            await paymentMode.notification.checkToastSuccess('Status Changed');
             await paymentMode.verifyBankStatus('Active');
         });
     });
@@ -93,9 +84,6 @@ describe('TPM001', () => {
         await paymentMode.editPaymentModeName();
         await paymentMode.clickButton('Save');
 
-        expect(
-            await paymentMode.toastMessage(),
-            chalk.red('Toast Message match')
-        ).toBe('Successfully saved');
+        await paymentMode.notification.checkToastSuccess('Successfully saved');
     });
 });

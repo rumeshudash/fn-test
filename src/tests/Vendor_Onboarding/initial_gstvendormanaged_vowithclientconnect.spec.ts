@@ -14,7 +14,6 @@ import {
     BANKDETAILS,
     LOWER_TDS_DETAILS,
     IMAGE_NAME,
-    ClientBusinessDetails,
 } from '@/utils/required_data';
 import chalk from 'chalk';
 

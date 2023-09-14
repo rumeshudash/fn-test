@@ -1,20 +1,23 @@
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class PaymentModesHelper extends BaseHelper {
     public PaymentModeInfo;
     public PaymentMode_Update_Info;
+    public notification: NotificationHelper;
     constructor(PaymentModeInfo, page) {
         super(page);
         this.PaymentModeInfo = PaymentModeInfo;
+        this.notification = new NotificationHelper(page);
     }
 
-    async init() {
+    public async init() {
         await this.navigateTo('PAYMENTMODES');
     }
 
-    async verifyPaymentPage() {
+    public async verifyPaymentPage() {
         const getBreadcrumb = this.locate(
             '//div[contains(@class,"breadcrumbs")]'
         )._locator;
@@ -24,21 +27,21 @@ export class PaymentModesHelper extends BaseHelper {
         ).toContain('Payment Modes');
     }
 
-    async addNewPaymentMode() {
+    public async addNewPaymentMode() {
         await this.click({ role: 'button', text: 'Add New' });
         expect(
             await this._page.getByRole('dialog').isVisible(),
             'dialog visibility'
         ).toBe(true);
     }
-    async verifyEmptyField() {
+    public async verifyEmptyField() {
         const name_field = await this.locate('input', {
             name: 'name',
         })._locator.inputValue();
         expect(name_field, chalk.red('Name field value')).toBe('');
     }
 
-    async verifyAddNewPaymentMode() {
+    public async verifyAddNewPaymentMode() {
         const addPaymentHeading = await this.locate()
             ._locator.getByRole('heading')
             .textContent();
@@ -48,7 +51,7 @@ export class PaymentModesHelper extends BaseHelper {
         ).toContain('Add payment mode');
     }
 
-    async fillPaymentModeForm() {
+    public async fillPaymentModeForm() {
         await this.fillText(this.PaymentModeInfo.name, { name: 'name' });
         await this.selectOption({
             input: this.PaymentModeInfo.type ? this.PaymentModeInfo.type : '',
@@ -67,14 +70,14 @@ export class PaymentModesHelper extends BaseHelper {
         }
     }
 
-    async searchPaymentMode() {
+    public async searchPaymentMode() {
         await this.fillText(this.PaymentModeInfo.name, {
             placeholder: 'Search ( min: 3 characters )',
         });
         await this._page.waitForTimeout(2000);
     }
 
-    async verifyPaymentDetails() {
+    public async verifyPaymentDetails() {
         const parentHelper = this.locate(
             `//p[text()="${this.PaymentModeInfo.name}"]/parent::div/parent::div`
         )._locator.first();
@@ -109,7 +112,7 @@ export class PaymentModesHelper extends BaseHelper {
         await expect(bank_action, chalk.red('Action visibility')).toBeVisible();
     }
 
-    async changeBankStatus(status: string) {
+    public async changeBankStatus(status: string) {
         const parentHelper = this.locate(
             `//p[text()="${this.PaymentModeInfo.name}"]/parent::div/parent::div`
         )._locator.first();
@@ -122,7 +125,7 @@ export class PaymentModesHelper extends BaseHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    async verifyBankStatus(status: string) {
+    public async verifyBankStatus(status: string) {
         const parentHelper = this.locate(
             `//p[text()="${this.PaymentModeInfo.name}"]/parent::div/parent::div`
         )._locator.first();
@@ -132,7 +135,7 @@ export class PaymentModesHelper extends BaseHelper {
         expect(bank_status, chalk.red('Bank status visibility')).toBe(true);
     }
 
-    async editPaymentModeName() {
+    public async editPaymentModeName() {
         const parentHelper = this.locate(
             `//p[text()="${this.PaymentModeInfo.name}"]/parent::div/parent::div`
         )._locator.first();

@@ -8,8 +8,6 @@ import {
 } from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
 
-import { generateRandomNumber } from '@/utils/common.utils';
-
 const { expect, describe } = PROCESS_TEST;
 
 const employeeCreationInfo_SaveAndCreate = {

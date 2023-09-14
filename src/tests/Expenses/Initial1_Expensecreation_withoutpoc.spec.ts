@@ -2,7 +2,6 @@ import { PROCESS_TEST } from '@/fixtures';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
     ApprovalToggleHelper,
-    ApprovalWorkflowsTab,
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
 import { generateRandomNumber } from '@/utils/common.utils';

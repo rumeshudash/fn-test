@@ -1,6 +1,5 @@
 import { UserCreation } from './UserGroup.helper';
-import { Locator, Page, expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
+import { Page, expect } from '@playwright/test';
 import chalk from 'chalk';
 import { formatDate } from '@/utils/common.utils';
 import { FileHelper } from '../BaseHelper/file.helper';

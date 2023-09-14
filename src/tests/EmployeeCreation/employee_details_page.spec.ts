@@ -135,9 +135,7 @@ describe('TED001', () => {
     PROCESS_TEST('Verify Action Options', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(page);
         const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
-        // const editEmployeeForm = new FillEmployeeCreationForm(page);
-        // const notification = new NotificationHelper(page);
-        // const dialog = new DialogHelper(page);
+
         await employeeCreation.init();
         await employeeCreation.searchInList(employeeCreationInfo.identifier);
         await employeeCreation.clickEmployeeInfo(

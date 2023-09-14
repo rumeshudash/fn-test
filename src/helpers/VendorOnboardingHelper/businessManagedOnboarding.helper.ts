@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
-import { LISTING_ROUTES, TEST_URL } from '@/constants/api.constants';
+import { LISTING_ROUTES } from '@/constants/api.constants';
 import { vendorGstinInfo } from '@/utils/required_data';
 import chalk from 'chalk';
 

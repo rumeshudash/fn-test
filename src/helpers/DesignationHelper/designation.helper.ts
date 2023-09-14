@@ -1,8 +1,6 @@
 import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
-import { IMAGE_NAME } from '@/utils/required_data';
-import { EmployeeCreation } from '../EmplyeeCreationHelper/employeeCreation.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class DesignationHelper extends BaseHelper {
