@@ -51,6 +51,7 @@ export class BreadCrumbHelper extends BaseHelper {
      * @return {Promise<void>} - A Promise that resolves with no value.
      */
     public async checkBreadCrumbTitle(title: string): Promise<void> {
+        await this._page.waitForSelector(`//h1[text()="${title}"]`);
         const breadCrumbTitle = await this.getBreadCrumbTitle();
 
         expect(breadCrumbTitle, {

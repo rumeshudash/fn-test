@@ -2,15 +2,18 @@ import { BaseHelper } from '@/baseHelper';
 import { Page, expect } from '@playwright/test';
 import { FileHelper } from './file.helper';
 import { formatDate } from '@/utils/common.utils';
+import { DialogHelper } from './dialog.helper';
 
 type tableView = 'Table View' | 'Document View';
 
 export class DocumentHelper extends BaseHelper {
-    _fileHelper: FileHelper;
+    private _fileHelper: FileHelper;
+    private _dialogHelper: DialogHelper;
 
     constructor(page: Page) {
         super(page);
         this._fileHelper = new FileHelper(page);
+        this._dialogHelper = new DialogHelper(page);
     }
 
     /**
@@ -22,6 +25,27 @@ export class DocumentHelper extends BaseHelper {
         return this.locate(
             "//div[@role='tabpanel'][.//text()[contains(., 'Documents')]]"
         );
+    }
+
+    /**
+     * Retrieve the pagination container element.
+     *
+     * @return {HTMLElement} The pagination container element.
+     */
+    public getPaginationContainer() {
+        return this.getDocumentContainer()
+            .getLocator()
+            .locator('.absolute.z-10.gap-2.row-flex');
+    }
+
+    /**
+     * Retrieve the pagination text.
+     *
+     * @return {Promise<string>} The pagination text.
+     */
+    public getPaginationText() {
+        const paginationContainer = this.getPaginationContainer();
+        return paginationContainer.locator('div').nth(2).textContent();
     }
 
     /**
@@ -92,5 +116,99 @@ export class DocumentHelper extends BaseHelper {
      */
     public async uploadDocument(isDialog: boolean) {
         await this._fileHelper.setFileInput({ isDialog: isDialog });
+        await this._page.waitForSelector('div.ct-toast-success');
+    }
+
+    /**
+     * Checks if the zoom button is working.
+     *
+     *
+     * @return {Promise<void>} Promise that resolves once the zoom button is checked.
+     */
+    public async checkZoom() {
+        const container = this.getDocumentContainer().getLocator();
+        const button = container.locator(`//button[@data-title='Zoom']`);
+        await button.click();
+
+        const zoom = container.getByText('Zoom:');
+        await expect(zoom).toBeVisible();
+    }
+
+    /**
+     * Checks if the pagination button is working
+     *
+     *
+     * @return {Promise<void>} Promise that resolves once the zoom button is checked.
+     */
+    public async checkPagination() {
+        const paginationContainer = this.getPaginationContainer();
+        const back = paginationContainer.locator(
+            "//button[@data-title='resource_pagination_prev']"
+        );
+        const next = paginationContainer.locator(
+            '//button[@data-title="resource_pagination_next"]'
+        );
+
+        // get initial pagination number
+        let paginationText = await this.getPaginationText();
+        const initialPage = paginationText.split('/')[0];
+
+        // check if back button is disabled initially
+        await expect(back).toBeDisabled();
+        await next.click();
+
+        // check if back button is enabled after clicking next
+        await expect(back).toBeEnabled();
+
+        // check if next button is working
+        paginationText = await this.getPaginationText();
+        let currentPage = Number(paginationText.split('/')[0]);
+        expect(currentPage).toBe(Number(initialPage) + 1);
+
+        // check if back button is working
+        await back.click();
+        paginationText = await this.getPaginationText();
+        currentPage = Number(paginationText.split('/')[0]);
+        expect(currentPage).toBe(Number(initialPage));
+    }
+
+    /**
+     * Checks if the delete document is working.
+     *
+     * @param {comment} comment - comment of the document to be checked for deletion.
+     * @param {date} date - date of the document to be checked for deletion.
+     * @return {Promise<void>} Promise that resolves once the document is checked.
+     */
+
+    public async checkDocumentDelete(document: {
+        comment: string;
+        date: Date;
+    }) {
+        await this.toggleDocumentView('Table View');
+
+        const container = this.getDocumentContainer().getLocator();
+        // delete the document
+        const row = container
+            .locator("//div[contains(@class,'flex gap-4')]")
+            .filter({
+                hasText: document.comment,
+            });
+        await row.click();
+        await row.locator('button').last().click();
+        await this._dialogHelper.clickConfirmDialogAction('Yes');
+
+        // confirm the deletion
+        await this._page
+            .locator('div.ct-toast-success')
+            .waitFor({ state: 'visible' });
+
+        const deletedRow = await container
+            .locator("//div[contains(@class,'flex gap-4')]")
+            .filter({
+                hasText: document.comment,
+            })
+            .isVisible();
+
+        expect(deletedRow).toBe(false);
     }
 }
