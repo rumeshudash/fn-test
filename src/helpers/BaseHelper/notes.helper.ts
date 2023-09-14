@@ -115,7 +115,6 @@ export class NotesHelper extends DialogHelper {
      * @param {string} Title - The Title  to search for in the nth element in row of notes
      *  @param {Date} Date - The Date  to search for in the nth element in row of notes
      */
-
     public async clickDeleteIcon(notes: { title: string; date?: Date }) {
         await this.clickNoteTab();
 
@@ -138,10 +137,9 @@ export class NotesHelper extends DialogHelper {
 
     /**
      * @description This function will Click on Edit button of the notes
-     *
-     *
+     * @param {string} title - The Title  to search for in the nth element in row of notes
+     * @param {Date} date - The Date  to search for in the nth element in row of notes
      */
-
     public async clickEditButton(notes: { title: string; date?: Date }) {
         await this.clickNoteTab();
         await this.clickEditIcon({
