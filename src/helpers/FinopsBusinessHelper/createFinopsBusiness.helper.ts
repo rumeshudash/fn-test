@@ -5,6 +5,7 @@ import { FormHelper } from '../BaseHelper/form.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { gstinDataType } from '../CommonCardHelper/genericGstin.card.helper';
+import { ObjectDto } from '@/types/common.types';
 
 export default class CreateFinopsBusinessHelper extends NotificationHelper {
     public listHelper: ListingHelper;
@@ -23,6 +24,7 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
 
     public async clickNavigationTab(nav: string) {
         await this._page.locator(`//span[text()='${nav}']`).click();
+        await this._page.waitForLoadState('networkidle');
     }
 
     public async checkEmailError(message?: string): Promise<void> {
@@ -90,15 +92,24 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
         await cell.click();
     }
 
-    public async verifyTableData(data: gstinDataType): Promise<void> {
-        const row = await this.listHelper.findRowInTable(data?.value, 'GSTIN');
+    public async verifyTableData(
+        data: ObjectDto,
+        isGstin?: boolean
+    ): Promise<void> {
+        let row: any;
+        if (isGstin) {
+            row = await this.listHelper.findRowInTable(data?.value, 'GSTIN');
+        } else {
+            row = await this.listHelper.findRowInTable(data?.value, 'NAME');
+        }
         const name_cell = await this.listHelper.getCell(row, 'NAME');
 
-        await this.verifyBusinessName(name_cell, data?.trade_name);
-
         await this.verifyStatus('Active', row);
-
-        await this.listHelper.getCellText(row, 'ADDED AT'); //check created date present or not
+        await this.listHelper.getCellText(row, 'ADDED AT');
+        await this.verifyBusinessName(
+            name_cell,
+            isGstin ? data?.trade_name : data?.name
+        );
 
         await this.VerifyTabClickable();
         await this.clickBusinessNameCell(name_cell);

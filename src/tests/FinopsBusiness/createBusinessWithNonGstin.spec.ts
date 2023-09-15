@@ -1,5 +1,11 @@
+import {
+    Invalid_Email_Error_Message,
+    Invalid_Mobile_Error_Message,
+    Invalid_Pin_code_Error_Message,
+} from '@/constants/errorMessage.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
+import { generateRandomNumber } from '@/utils/common.utils';
 
 const businessInformation = {
     name: 'Finops Non Gstin Business',
@@ -7,7 +13,8 @@ const businessInformation = {
     email: 'user@gmail.com',
     pincode: 560056,
     address: 'Uttar pradesh chhattis gund',
-    type_id: 1005, // Individual
+    // type_id: 1005, // Individual
+    type_id: 'Individual',
 };
 
 const formSchema = {
@@ -32,7 +39,6 @@ const formSchema = {
         required: true,
     },
     type_id: {
-        // business type
         type: 'select',
         required: true,
     },
@@ -50,121 +56,175 @@ const createInit = async (page: any) => {
 
     await helper.clickNavigationTab('Non GST Registered');
 
-    return {
-        helper,
-    };
+    return helper;
 };
 const { describe } = PROCESS_TEST;
-describe(`TBA002`, () => {
-    PROCESS_TEST(
-        'Fill All Business Information. and verify pan information information',
-        async ({ page }) => {
-            const { helper } = await createInit(page);
 
-            await helper.formHelper.fillFormInputInformation(
-                formSchema,
-                businessInformation
-            );
+describe.configure({ mode: 'serial' });
+describe(`Non Gst Business Creation`, () => {
+    PROCESS_TEST('TBA002 ', async ({ page }) => {
+        const helper = await createInit(page);
+        const nonGstBusiness = {
+            ...businessInformation,
+            name: `non gstin business--${generateRandomNumber()}`,
+        };
 
+        await PROCESS_TEST.step('Check Confirm Pop Up Modal', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {});
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction('No');
+        });
+
+        await PROCESS_TEST.step('Check Mandatory Fields', async () => {
             await helper.formHelper.checkMandatoryFields(formSchema);
-        }
-    );
+        });
 
-    // PROCESS_TEST(
-    //     'without Gstin Number-submit button disabled check',
-    //     async ({ page }) => {
-    //         const { helper } = await createInit(page);
-    //         await helper.formHelper.fillFormInputInformation({
-    //             ...businessInformation,
-    //             gstin: '',
-    //         });
-    //         await helper.checkGstinError();
-    //         await helper.formHelper.checkDisableSubmit();
-    //     }
-    // );
+        await PROCESS_TEST.step('Fill Form Without  Data', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {});
+            await helper.formHelper.submitButton();
+            await helper.formHelper.checkAllMandatoryInputErrors(formSchema);
+        });
 
-    // PROCESS_TEST(
-    //     'without Mobile Number-submit button check',
-    //     async ({ page }) => {
-    //         const { helper } = await createInit(page);
+        await PROCESS_TEST.step('Without Business Name', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                name: '',
+            });
+            await helper.formHelper.checkInputError('name', formSchema['name']);
+        });
 
-    //         await helper.formHelper.fillFormInputInformation({
-    //             ...businessInformation,
-    //             mobile: '',
-    //         });
-    //         await helper.checkMobileError();
-    //         await helper.formHelper.checkDisableSubmit();
-    //     }
-    // );
+        await PROCESS_TEST.step('With Invalid Business Name ', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                name: '1224556',
+            });
+            await helper.formHelper.checkInputError('name', formSchema['name']);
 
-    // PROCESS_TEST('without Email-submit button check', async ({ page }) => {
-    //     const { helper } = await createInit(page);
-    //     await helper.formHelper.fillFormInputInformation(
-    //         {
-    //             ...businessInformation,
-    //             email: '',
-    //         },
-    //         'mobile'
-    //     );
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                name: '@$#%^^&&',
+            });
+            await helper.formHelper.checkInputError('name', formSchema['name']);
+        });
 
-    //     await helper.checkEmailError();
-    //     await helper.formHelper.checkDisableSubmit();
-    // });
+        await PROCESS_TEST.step('Without Business Type', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                type_id: '',
+            });
+            await helper.formHelper.submitButton();
+            await helper.formHelper.checkInputError(
+                'type_id',
+                formSchema['type_id']
+            );
+        });
 
-    // PROCESS_TEST('Verify Invalid Gstin', async ({ page }) => {
-    //     const { helper } = await createInit(page);
-    //     await helper.formHelper.fillFormInputInformation({
-    //         ...businessInformation,
-    //         gstin: '27AAQCS4259Q1Z1',
-    //     });
+        await PROCESS_TEST.step('Without Pin code', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                pincode: '',
+            });
+            await helper.formHelper.submitButton();
+            await helper.formHelper.checkInputError(
+                'pincode',
+                formSchema['pincode']
+            );
+        });
 
-    //     await helper.checkGstinError('Invalid Gstin Number');
-    //     await helper.formHelper.checkDisableSubmit();
-    // });
+        await PROCESS_TEST.step('Without Invalid Pin code', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                pincode: '452',
+            });
+            await helper.formHelper.submitButton();
+            await helper.formHelper.checkInputError(
+                'pincode',
+                formSchema['pincode'],
+                Invalid_Pin_code_Error_Message
+            );
+        });
 
-    // PROCESS_TEST('Verify Invalid Mobile Number', async ({ page }) => {
-    //     const { helper } = await createInit(page);
-    //     await helper.formHelper.fillFormInputInformation({
-    //         ...businessInformation,
-    //         mobile: '984561234',
-    //     });
+        await PROCESS_TEST.step('Without Address ', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                address: '',
+            });
+            await helper.formHelper.submitButton();
+            await helper.formHelper.checkInputError(
+                'address',
+                formSchema['address']
+            );
+        });
 
-    //     await helper.checkMobileError(Invalid_Mobile_Error_Message);
-    //     await helper.formHelper.checkDisableSubmit();
-    // });
+        await PROCESS_TEST.step('Without Email ', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                email: '',
+            });
+            await helper.formHelper.submitButton();
+            await helper.formHelper.checkInputError(
+                'email',
+                formSchema['email']
+            );
+        });
 
-    // PROCESS_TEST('Verify Invalid Email address', async ({ page }) => {
-    //     const { helper } = await createInit(page);
-    //     await helper.formHelper.fillFormInputInformation(
-    //         {
-    //             ...businessInformation,
-    //             email: 'usergmail',
-    //         },
-    //         'mobile'
-    //     );
+        await PROCESS_TEST.step('With Invalid Email  ', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                email: 'usergmail.com',
+            });
+            await helper.formHelper.submitButton();
+            await helper.formHelper.checkInputError(
+                'email',
+                formSchema['email'],
+                Invalid_Email_Error_Message
+            );
+        });
+        await PROCESS_TEST.step('Without Mobile ', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                mobile: '',
+            });
+            await helper.formHelper.submitButton();
+            await helper.formHelper.checkInputError(
+                'mobile',
+                formSchema['mobile']
+            );
+        });
 
-    //     await helper.checkEmailError(Invalid_Email_Error_Message);
-    //     await helper.formHelper.checkDisableSubmit();
-    // });
-    // PROCESS_TEST('Verify Confirm Dialog Open Or not', async ({ page }) => {
-    //     const { helper } = await createInit(page);
-    //     await helper.formHelper.fillFormInputInformation({
-    //         ...businessInformation,
-    //     });
+        await PROCESS_TEST.step('With Invalid Mobile Number ', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                mobile: '98456123',
+            });
+            await helper.formHelper.submitButton();
+            await helper.formHelper.checkInputError(
+                'mobile',
+                formSchema['mobile'],
+                Invalid_Mobile_Error_Message
+            );
+        });
 
-    //     await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
-    // });
+        await PROCESS_TEST.step(
+            'fill form with valid information ',
+            async () => {
+                await helper.formHelper.fillFormInputInformation(formSchema, {
+                    ...nonGstBusiness,
+                });
 
-    // PROCESS_TEST('Create Business Account.', async ({ page }) => {
-    //     const { helper, gstin_helper } = await createInit(page);
+                await helper.formHelper.submitButton();
+            }
+        );
 
-    //     await helper.formHelper.fillFormInputInformation(businessInformation);
+        await PROCESS_TEST.step('verify create data in table ', async () => {
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+            });
 
-    //     await helper.checkMandatoryFields(Object.keys(businessInformation));
-    //     await gstin_helper.gstinInfoCheck();
-    //     await helper.formHelper.submitButton();
-    //     await helper.checkToastSuccess('Saved Successfully !!');
-    //     // verifying list information
-    //     await helper.verifyTableData(businessGstinInfo);
-    // });
+            await helper.formHelper.submitButton();
+            await helper.checkToastSuccess('Saved Successfully !!');
+
+            await helper.verifyTableData(nonGstBusiness);
+        });
+    });
 });
