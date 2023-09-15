@@ -111,42 +111,6 @@ export const VendorInfo_NonGstin = {
 
 //For Designation Info
 //Click Checkout Create and Save Another Designation
-export const designationInfo_Save_And_Create = {
-    name: 'Testing Save_Create039',
-};
-
-//Create Designation Info
-export const Create_Designation_Info = {
-    name: 'Testing Designation022',
-};
-
-export const designationUpdateInfo = {
-    name: 'Updating Designation023',
-};
-
-//Update Designation Info from Details Page
-export const designationInfo = {
-    name: designationUpdateInfo.name,
-};
-
-//designationInfo must be valid to change in details page
-export const designation_details_page_Info = {
-    name: Create_Designation_Info.name,
-};
-
-//Add Employee in Designation field
-export const employeeInfo = {
-    name: 'CTO',
-    email: 'testemploye1213@email.com',
-    employee_code: 'EMPP1213',
-    department: 'Test',
-    grade: 'E2',
-    reporting_manager: 'Amit Raj',
-    approval_mananger: 'Ravi',
-    notes: 'Adding Notes for testing',
-    IMAGE_NAME: 'pan-card.jpg',
-    comments: 'Testing upload document comments',
-};
 
 //For Payment Modes in Configuration
 export const paymentMode_Save_And_Create = {
