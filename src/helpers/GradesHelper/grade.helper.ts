@@ -122,10 +122,13 @@ export class GradesHelper extends ListingHelper {
         expect(row).toBe(true);
     }
 
-    // public async clickCrossIcon() {
-    //     await this.dialogHelper.closeDialog();
+    public async checkWarning(name: string) {
+        await this.clickButton('Add Expense Head');
 
-    //     await this.dialogHelper.checkConfirmDialogOpenOrNot();
+        await this.fillText(name, {
+            name: 'name',
+        });
 
-    // }
+        await this.dialogHelper.checkConfirmDialogOpenOrNot();
+    }
 }

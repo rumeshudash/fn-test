@@ -113,4 +113,12 @@ test.describe('Grades', () => {
 
         expect(await notification.getToastSuccess()).toBe('Successfully saved');
     });
+    PROCESS_TEST('Check warning ', async ({ page }) => {
+        const grades = new GradesHelper(page);
+        await grades.init();
+
+        const name = 'abcdhg';
+
+        await grades.checkWarning(name);
+    });
 });
