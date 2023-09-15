@@ -53,7 +53,7 @@ export class GradesHelper extends ListingHelper {
             name: 'priority',
         });
 
-        await this.clickCheckbox();
+        await this.saveAndCreateCheckbox();
 
         await this.click({ role: 'button', name: 'save' });
 
