@@ -74,7 +74,7 @@ test.describe('Expense Head', () => {
             const notification = await expenseHead.notificationHelper;
 
             expect(await notification.getToastSuccess()).toBe(
-                'Successfully saved '
+                'Successfully saved'
             );
 
             await expect(page.getByText(Name)).toHaveCount(1);
@@ -87,9 +87,7 @@ test.describe('Expense Head', () => {
         await expenseHead.addExpenseHead(Name, 'Time', 'Ravi');
         const notification = await expenseHead.notificationHelper;
 
-        expect(await notification.getToastSuccess()).toBe(
-            'Successfully saved '
-        );
+        expect(await notification.getToastSuccess()).toBe('Successfully saved');
     });
     PROCESS_TEST(
         'Change Active to inactive and check in inactive',
