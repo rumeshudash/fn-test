@@ -58,6 +58,10 @@ export class ExpenseHeadHelper extends ListingHelper {
         }
         await this._page.waitForTimeout(1000);
         await this.click({ role: 'button', name: 'save' });
+
+        await this.searchInList(name);
+
+        await this._page.waitForTimeout(1000);
     }
 
     public async changeStatus(name: string) {

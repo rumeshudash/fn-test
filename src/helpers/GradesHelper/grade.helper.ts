@@ -41,6 +41,10 @@ export class GradesHelper extends ListingHelper {
         });
 
         await this.click({ role: 'button', name: 'save' });
+
+        await this.searchInList(name);
+
+        await this._page.waitForTimeout(1000);
     }
     public async checkPriority(name: string) {
         await this.clickButton('Add Grade');
@@ -69,6 +73,8 @@ export class GradesHelper extends ListingHelper {
     }
     public async activeToInactive(name: string) {
         await this.searchInList(name);
+
+        await this._page.waitForTimeout(1000);
         const row = await this.findRowInTable(name, 'NAME');
         await this.clickButtonInTable(row, 'STATUS');
 
@@ -86,6 +92,9 @@ export class GradesHelper extends ListingHelper {
     // }
 
     public async editGrdaes(name: string, newname: string, priority: number) {
+        await this.searchInList(name);
+
+        await this._page.waitForTimeout(1000);
         const row = await this.findRowInTable(name, 'NAME');
         await this.clickButtonInTable(row, 'ACTION');
 
@@ -100,6 +109,12 @@ export class GradesHelper extends ListingHelper {
             });
         }
         await this.click({ role: 'button', name: 'save' });
+
+        await this._page.waitForTimeout(1000);
+
+        await this.searchInList(newname);
+
+        await this._page.waitForTimeout(1000);
     }
 
     public async verifyGrades(name: string, priority: number) {
