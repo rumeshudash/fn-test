@@ -63,7 +63,7 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (Document) {
             await this.selectOption({
                 option: Document,
-                hasText: 'Search...',
+                name: 'document_id',
             });
         }
 
@@ -81,7 +81,7 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (Document) {
             await this.selectOption({
                 option: Document,
-                hasText: 'Search...',
+                name: 'document_id',
             });
         }
         await this._page
@@ -102,7 +102,7 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (Document) {
             await this.selectOption({
                 option: Document,
-                hasText: 'Search...',
+                name: 'document_id',
             });
         }
         await this._page
@@ -124,7 +124,7 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (Document) {
             await this.selectOption({
                 option: Document,
-                hasText: 'Search...',
+                name: 'document_id',
             });
         }
         await this._page
@@ -151,7 +151,7 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (Document) {
             await this.selectOption({
                 option: Document,
-                hasText: 'Search...',
+                name: 'document_id',
             });
         }
         await this._page
