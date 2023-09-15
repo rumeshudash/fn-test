@@ -1,10 +1,7 @@
-import { expect } from '@playwright/test';
-import { Locator } from '@playwright/test';
-
-import { TabHelper } from './tab.helper';
-
+import { Locator, expect } from '@playwright/test';
 import { DialogHelper } from './dialog.helper';
 import { NotificationHelper } from './notification.helper';
+import { TabHelper } from './tab.helper';
 
 export class NotesHelper extends DialogHelper {
     public tabHelper: TabHelper;
