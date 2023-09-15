@@ -32,13 +32,15 @@ export class GradesHelper extends ListingHelper {
     }
 
     public async addGrades(name: string, priority: number) {
-        await this.clickButton('Add Grade');
+        // await this.clickButton('Add Grade');
         await this.fillText(name, {
             name: 'name',
         });
-        await this.fillText(priority, {
-            name: 'priority',
-        });
+        if (priority !== null) {
+            await this.fillText(priority, {
+                name: 'priority',
+            });
+        }
 
         await this.click({ role: 'button', name: 'save' });
 
@@ -47,7 +49,7 @@ export class GradesHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
     public async checkPriority(name: string) {
-        await this.clickButton('Add Grade');
+        // await this.clickButton('Add Grade');
         await this.fillText(name, {
             name: 'name',
         });
@@ -91,7 +93,12 @@ export class GradesHelper extends ListingHelper {
     //     expect(await this.dialogHelper.getDialogTitle()).toBe('Add Grade');
     // }
 
-    public async editGrdaes(name: string, newname: string, priority: number) {
+    public async editGrdaes(
+        name: string,
+        newname: string,
+        priority: number,
+        flag?: boolean
+    ) {
         await this.searchInList(name);
 
         await this._page.waitForTimeout(1000);
@@ -112,7 +119,11 @@ export class GradesHelper extends ListingHelper {
 
         await this._page.waitForTimeout(1000);
 
-        await this.searchInList(newname);
+        if (flag) {
+            await this.searchInList(name);
+        } else {
+            await this.searchInList(newname);
+        }
 
         await this._page.waitForTimeout(1000);
     }
@@ -138,8 +149,6 @@ export class GradesHelper extends ListingHelper {
     }
 
     public async checkWarning(name: string) {
-        await this.clickButton('Add Expense Head');
-
         await this.fillText(name, {
             name: 'name',
         });
