@@ -1,5 +1,7 @@
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 
+import { expect } from '@playwright/test';
+
 export class VerifyPhone extends NotificationHelper {
     private static VERIFY_EMAIL_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
@@ -15,7 +17,30 @@ export class VerifyPhone extends NotificationHelper {
      * */
 
     public async clickVerify() {
-        await this.click({ role: 'button', name: 'Verify & Proceed' });
+        await this.clickButton('Verify & Proceed');
         await this._page.waitForTimeout(1000);
+    }
+
+    public async clickResendOTP() {
+        const locator = await this._page.locator(
+            '//button[contains(@class, "link link-hover text-sm")]'
+        );
+
+        expect(locator).toBeVisible();
+        await this._page.waitForTimeout(1000);
+        await locator.click();
+        await this._page.waitForTimeout(1000);
+    }
+
+    public async maximumAttempt() {
+        for (let i = 0; i < 10; i++) {
+            await this.fillOtp('1234', 4);
+            await this.clickVerify();
+
+            const error = await this.getToastError();
+            if (error === 'Too many invalid attempts.. try after sometime') {
+                break;
+            }
+        }
     }
 }

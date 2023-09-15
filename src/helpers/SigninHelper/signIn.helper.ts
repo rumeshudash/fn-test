@@ -10,9 +10,7 @@ type LoginDetailsInput = {
     password: string;
 };
 
-export class SignInHelper extends BaseHelper {
-    public notificationHelper: NotificationHelper;
-
+export class SignInHelper extends NotificationHelper {
     public dialogHelper: DialogHelper;
 
     private SIGNIN_DOM_SELECTOR =
@@ -24,7 +22,7 @@ export class SignInHelper extends BaseHelper {
     constructor(page: Page) {
         super(page);
         this.portalSelectorHelper = new PortalSelectorHelper(page);
-        this.notificationHelper = new NotificationHelper(page);
+
         this.dialogHelper = new DialogHelper(page);
     }
 
@@ -142,18 +140,22 @@ export class SignInHelper extends BaseHelper {
         await this.fillText(username, { id: 'username' });
         await this.click({ role: 'button', name: ' Next → ' });
 
-        // for (let i = 0; i <= 10; i++) {
-        const password = SignInHelper.generateRandomPassword();
-        await this.fillText(password, { id: 'password' });
-        await this.click({ role: 'button', name: 'Submit' });
-        // if (
-        //     (await this.errorMessage()).includes(
-        //         'Account locked for too many invalid attempts. Please try after 5 minutes'
-        //     )
-        // ) {
-        //     break;
-        // }
-        // }
+        for (let i = 0; i <= 10; i++) {
+            const password = SignInHelper.generateRandomPassword();
+            await this.fillText(password, { id: 'password' });
+            await this.click({ role: 'button', name: 'Submit' });
+
+            const errorMessage = await this.getErrorMessage();
+
+            if (errorMessage) {
+                if (
+                    errorMessage ===
+                    'Account locked for too many invalid attempts. Please try after 5 minutes'
+                ) {
+                    break;
+                }
+            }
+        }
     }
 
     /**

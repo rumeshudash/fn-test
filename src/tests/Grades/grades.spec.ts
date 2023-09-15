@@ -13,7 +13,9 @@ test.describe('Grades', () => {
         const grades = new GradesHelper(page);
         await grades.init();
         await grades.clickButton('Add Grade');
-        await grades.checkTitle();
+        const dialog = await grades.dialogHelper;
+
+        await expect(await dialog.getDialogTitle()).toBe('Add Grade');
     });
 
     PROCESS_TEST('with empty Name feild', async ({ page }) => {
@@ -58,17 +60,18 @@ test.describe('Grades', () => {
 
         const notification = await grades.notificationHelper;
 
-        expect(await notification.getToastSuccess()).toBe(
-            'Successfully saved '
-        );
+        expect(await notification.getToastSuccess()).toBe('Successfully saved');
         await expect(page.getByText(gradeName)).toHaveCount(1);
     });
     PROCESS_TEST('With save and create another checked', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();
         const gradeName = await GradesHelper.generateRandomGradeName();
-        grades.checkWithCheckbox(gradeName, 1);
-        await grades.checkTitle();
+        await grades.checkWithCheckbox(gradeName, 1);
+
+        const dialog = await grades.dialogHelper;
+
+        await expect(await dialog.getDialogTitle()).toBe('Add Grade');
     });
     PROCESS_TEST('Active to inactive', async ({ page }) => {
         const grades = new GradesHelper(page);

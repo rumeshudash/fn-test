@@ -1,11 +1,18 @@
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 
 export class ResetPasswordHelper extends NotificationHelper {
+    public _dialogHelper: DialogHelper;
+
+    constructor(page: any) {
+        super(page);
+        this._dialogHelper = new DialogHelper(page);
+    }
     public async init() {
         await this.navigateTo('MYPROFILE');
     }
     public async resetPasswordPage() {
-        this._page.getByRole('button', { name: 'Actions' }).click();
+        this.clickButton('Actions');
         await this._page.waitForTimeout(1000);
         this._page.getByRole('menuitem', { name: 'Change Password' }).click();
 
@@ -19,7 +26,7 @@ export class ResetPasswordHelper extends NotificationHelper {
         newpassword: string,
         confirm: string
     ) {
-        this._page.getByRole('button', { name: 'Actions' }).click();
+        this.clickButton('Actions');
         await this._page.waitForTimeout(1000);
         this._page.getByRole('menuitem', { name: 'Change Password' }).click();
 
@@ -42,7 +49,7 @@ export class ResetPasswordHelper extends NotificationHelper {
         password: string,
         newpassword: string
     ) {
-        this._page.getByRole('button', { name: 'Actions' }).click();
+        this.clickButton('Actions');
         await this._page.waitForTimeout(1000);
         this._page.getByRole('menuitem', { name: 'Change Password' }).click();
 

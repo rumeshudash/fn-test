@@ -12,8 +12,6 @@ export class ForgotPasswordHelper extends FormHelper {
     private FORGOT_PASSWORD_DOM_SELECTOR =
         "(//div[contains(@class,'flex-1 h-full')])[1]";
 
-    private Resend_btn_selector = "//span[@class,' text-info cursor-pointer']";
-
     public async init() {
         await this.navigateTo('FORGOTPASSWORD');
     }
