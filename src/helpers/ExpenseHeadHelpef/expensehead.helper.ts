@@ -60,43 +60,46 @@ export class ExpenseHeadHelper extends ListingHelper {
         await this.click({ role: 'button', name: 'save' });
     }
 
-    public async changeActiveStatus(name: string) {
-        await this.tabHelper.checkTabExists('Active');
-        await this.tabHelper.clickTab('Active');
+    public async changeStatus(name: string) {
+        await this.tabHelper.checkTabExists('All');
+        await this.tabHelper.clickTab('All');
 
         await this.searchInList(name);
         const row = await this.findRowInTable(name, 'NAME');
 
         await this.clickButtonInTable(row, 'STATUS');
 
+        await this._page.waitForTimeout(1000);
+
         const status = await this.getCellText(row, 'STATUS');
 
         console.log(chalk.green('Status is changed to ' + status));
-
-        this._page.waitForTimeout(1000);
     }
-    public async changeInactiveStatus(name: string) {
-        await this.tabHelper.checkTabExists('Inactive');
+
+    public async changeActiveStatus(name: string) {
+        await this.changeStatus(name);
+
         await this.tabHelper.clickTab('Inactive');
 
         await this.searchInList(name);
 
-        const row = await this.findRowInTable(name, 'NAME');
+        await this._page.waitForTimeout(2000);
+    }
 
-        await this.clickButtonInTable(row, 'STATUS');
+    public async changeInactiveStatus(name: string) {
+        await this.changeStatus(name);
 
-        this._page.waitForTimeout(1000);
+        await this.tabHelper.clickTab('Active');
 
-        const status = await this.getCellText(row, 'STATUS');
-
-        console.log(chalk.green('Status is changed to ' + status));
-
-        this._page.waitForTimeout(1000);
+        await this.searchInList(name);
+        await this._page.waitForTimeout(2000);
     }
 
     public async editExpenseHead(name: string, newname: string) {
         await this.tabHelper.checkTabExists('All');
         await this.tabHelper.clickTab('All');
+
+        await this.searchInList(name);
 
         const row = await this.findRowInTable(name, 'NAME');
 
@@ -107,6 +110,10 @@ export class ExpenseHeadHelper extends ListingHelper {
         });
 
         await this.click({ role: 'button', name: 'save' });
+
+        await this.tabHelper.clickTab('All');
+
+        await this.searchInList(newname);
 
         this._page.waitForTimeout(1000);
     }
