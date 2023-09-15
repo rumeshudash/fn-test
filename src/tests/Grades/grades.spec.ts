@@ -129,10 +129,11 @@ test.describe('HR-Grades', () => {
         await PROCESS_TEST.step(
             'Check save and create another checked',
             async () => {
-                // await grades.clickButton('Add Grade');
-                await grades.checkWithCheckbox(name, 1);
+                await dialog.closeDialog();
 
-                const dialog = await grades.dialogHelper;
+                await grades.clickButton('Yes!');
+                await grades.clickButton('Add Grade');
+                await grades.checkWithCheckbox(name, 1);
 
                 await expect(await dialog.getDialogTitle()).toBe('Add Grade');
             }
