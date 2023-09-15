@@ -153,4 +153,14 @@ export class ExpenseHeadHelper extends ListingHelper {
 
         expect(await this._page.getByText(name)).toHaveCount(1);
     }
+
+    public async checkWarning(name: string) {
+        await this.clickButton('Add Expense Head');
+
+        await this.fillText(name, {
+            name: 'name',
+        });
+
+        await this.dialogHelper.checkConfirmDialogOpenOrNot();
+    }
 }

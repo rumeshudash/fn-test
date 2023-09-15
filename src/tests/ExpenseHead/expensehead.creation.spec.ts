@@ -167,4 +167,13 @@ test.describe('Expense Head', () => {
 
         await expect(await page.getByText('Add Expense Head')).toHaveCount(2);
     });
+
+    PROCESS_TEST('Check warning ', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+
+        const name = await ExpenseHeadHelper.generateRandomGradeName();
+
+        await expenseHead.checkWarning(name);
+    });
 });
