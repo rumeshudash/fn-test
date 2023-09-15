@@ -105,7 +105,7 @@ export class ExpenseHeadHelper extends ListingHelper {
             name: 'name',
         });
 
-        await this.clickCheckbox();
+        await this.saveAndCreateCheckbox();
 
         await this.click({ role: 'button', name: 'save' });
     }
