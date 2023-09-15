@@ -58,6 +58,14 @@ export class FormHelper extends BaseHelper {
         ).toBeEditable();
     }
 
+    public checkIsInputDisabled(options: InputFieldLocatorOptions) {
+        const input = this.getInputElement(options);
+        expect(
+            input,
+            `Check input is disabled: ${this._tempSelector}`
+        ).toBeDisabled();
+    }
+
     /**
      * Returns the error element associated with the input field specified by the given options.
      *
