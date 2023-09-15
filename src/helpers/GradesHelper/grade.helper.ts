@@ -121,4 +121,11 @@ export class GradesHelper extends ListingHelper {
 
         expect(row).toBe(true);
     }
+
+    // public async clickCrossIcon() {
+    //     await this.dialogHelper.closeDialog();
+
+    //     await this.dialogHelper.checkConfirmDialogOpenOrNot();
+
+    // }
 }
