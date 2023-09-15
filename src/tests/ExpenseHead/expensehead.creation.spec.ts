@@ -84,7 +84,7 @@ test.describe('Expense Head', () => {
         const expenseHead = new ExpenseHeadHelper(page);
         await expenseHead.init();
         const Name = await ExpenseHeadHelper.generateRandomGradeName();
-        await expenseHead.addExpenseHead(Name, 'Test10', 'Ravi');
+        await expenseHead.addExpenseHead(Name, 'Time', 'Ravi');
         const notification = await expenseHead.notificationHelper;
 
         expect(await notification.getToastSuccess()).toBe(
