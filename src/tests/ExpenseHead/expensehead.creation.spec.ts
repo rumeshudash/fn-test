@@ -44,6 +44,13 @@ test.describe('Expense Head', () => {
         await expenseHead.checkTableHeader();
     });
 
+    PROCESS_TEST('Check Expense is Clickable', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+
+        await expenseHead.checkExpenseHeadClickable('Foods & Accommodations');
+    });
+
     PROCESS_TEST(
         'Create Expense Head with  Duplicate Name feild',
         async ({ page }) => {

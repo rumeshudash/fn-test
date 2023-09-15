@@ -136,4 +136,14 @@ export class ExpenseHeadHelper extends ListingHelper {
             'ACTION',
         ]);
     }
+
+    public async checkExpenseHeadClickable(name: string) {
+        const row = await this.findRowInTable(name, 'NAME');
+
+        await this.clickTextOnTable(row, 'NAME');
+
+        await this._page.waitForTimeout(2000);
+
+        expect(await this._page.getByText(name)).toHaveCount(1);
+    }
 }
