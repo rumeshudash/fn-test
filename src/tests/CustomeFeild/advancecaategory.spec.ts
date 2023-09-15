@@ -77,6 +77,7 @@ test.describe('Custom Feilds', () => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
         const name = await CustofeildHelper.generateRandomGradeName();
+
         await customefeild.clickExpenseTab('Advance Category');
 
         await customefeild.addExpenseWithTextType(name, 'Text', 1, 'Test1');
@@ -105,6 +106,9 @@ test.describe('Custom Feilds', () => {
             await expect(page.getByText(name)).toHaveCount(1);
         }
     );
+
+    PROCESS_TEST('Add Field with same name and  type', () => {});
+
     PROCESS_TEST('Add Advance Categories With TextArea', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
