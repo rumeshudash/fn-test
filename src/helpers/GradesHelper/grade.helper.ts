@@ -41,8 +41,6 @@ export class GradesHelper extends ListingHelper {
         });
 
         await this.click({ role: 'button', name: 'save' });
-
-        await this.verifyGrades(name, priority);
     }
     public async checkPriority(name: string) {
         await this.clickButton('Add Grade');
@@ -119,7 +117,7 @@ export class GradesHelper extends ListingHelper {
 
         expect(status).toBe('Active');
 
-        expect(getText).toBe(priority);
+        expect(getText).toBe(priority.toString());
 
         expect(row).toBe(true);
     }

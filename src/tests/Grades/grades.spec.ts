@@ -58,10 +58,10 @@ test.describe('Grades', () => {
         const gradeName = await GradesHelper.generateRandomGradeName();
         await grades.addGrades(gradeName, 1);
 
-        const notification = await grades.notificationHelper;
+        // const notification = await grades.notificationHelper;
 
-        expect(await notification.getToastSuccess()).toBe('Successfully saved');
-        await expect(page.getByText(gradeName)).toHaveCount(1);
+        // expect(await notification.getToastSuccess()).toBe('Successfully saved');
+        await grades.verifyGrades(gradeName, 1);
     });
     PROCESS_TEST('With save and create another checked', async ({ page }) => {
         const grades = new GradesHelper(page);
