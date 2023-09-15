@@ -4,45 +4,83 @@ import { PROCESS_TEST } from '@/fixtures';
 
 import { test, expect } from '@playwright/test';
 
-test.describe('Expense Head', () => {
-    PROCESS_TEST('Expense Head page is open', async ({ page }) => {
-        const expenseHead = new ExpenseHeadHelper(page);
-        await expenseHead.init();
+test.describe('Configuration - Expense Head', () => {
+    const expenseHeadData = {};
 
-        await expect(page.getByText('Expense Heads')).toHaveCount(2);
-    });
-    PROCESS_TEST('Click on Add Expense Head', async ({ page }) => {
-        const expenseHead = new ExpenseHeadHelper(page);
-        await expenseHead.init();
+    PROCESS_TEST(
+        'TEH001 - Expense Head Creation  -  Negative case',
+        async ({ page }) => {
+            const expenseHead = new ExpenseHeadHelper(page);
+            await expenseHead.init();
+            const dialog = await expenseHead.dialogHelper;
 
-        await expenseHead.clickButton('Add Expense Head');
+            await PROCESS_TEST.step('Check the page opening', async () => {
+                await expenseHead.breadcrumbHelper.checkBreadCrumbTitle(
+                    'Expense Heads'
+                );
+                // await expect(page.getByText('Expense Heads')).toHaveCount(2);
+            });
 
-        const dialog = await expenseHead.dialogHelper;
+            PROCESS_TEST.step('Check Tabs exist', async () => {
+                await expenseHead.verifyTabs();
+            });
 
-        await dialog.checkDialogTitle('Add Expense Head');
-    });
-    PROCESS_TEST('Create Expense Head empty Name feild', async ({ page }) => {
-        const expenseHead = new ExpenseHeadHelper(page);
-        await expenseHead.init();
-        await expenseHead.addExpenseHead('');
+            PROCESS_TEST.step('Check Table Header', async () => {
+                await expenseHead.checkTableHeader();
+            });
 
-        const notification = await expenseHead.notificationHelper;
+            await PROCESS_TEST.step('Click On Add Expense Head', async () => {
+                await expenseHead.clickButton('Add Expense Head');
 
-        expect(await notification.getErrorMessage()).toBe('Name is required');
-    });
-    PROCESS_TEST('Check Tabs exist', async ({ page }) => {
-        const expenseHead = new ExpenseHeadHelper(page);
-        await expenseHead.init();
+                const dialog = await expenseHead.dialogHelper;
 
-        await expenseHead.verifyTabs();
-    });
+                await dialog.checkDialogTitle('Add Expense Head');
+            });
 
-    PROCESS_TEST('Check Table Header', async ({ page }) => {
-        const expenseHead = new ExpenseHeadHelper(page);
-        await expenseHead.init();
+            await PROCESS_TEST.step('Check empty Name feild', async () => {
+                await expenseHead.addExpenseHead('');
 
-        await expenseHead.checkTableHeader();
-    });
+                const notification = await expenseHead.notificationHelper;
+
+                expect(await notification.getErrorMessage()).toBe(
+                    'Name is required'
+                );
+            });
+
+            await PROCESS_TEST.step(
+                'Add expense Head with duplicate name',
+                async () => {
+                    await dialog.closeDialog();
+
+                    await expenseHead.clickButton('Yes!');
+
+                    await expenseHead.clickButton('Add Expense Head');
+
+                    await expenseHead.addExpenseHead('Rent');
+
+                    const notification = await expenseHead.notificationHelper;
+
+                    expect(await notification.getErrorMessage()).toBe(
+                        'Duplicate expense head name'
+                    );
+                }
+            );
+        }
+    );
+
+    // PROCESS_TEST('Check Tabs exist', async ({ page }) => {
+    //     const expenseHead = new ExpenseHeadHelper(page);
+    //     await expenseHead.init();
+
+    //     await expenseHead.verifyTabs();
+    // });
+
+    // PROCESS_TEST('Check Table Header', async ({ page }) => {
+    //     const expenseHead = new ExpenseHeadHelper(page);
+    //     await expenseHead.init();
+
+    //     await expenseHead.checkTableHeader();
+    // });
 
     PROCESS_TEST('Check Expense is Clickable', async ({ page }) => {
         const expenseHead = new ExpenseHeadHelper(page);
@@ -51,19 +89,25 @@ test.describe('Expense Head', () => {
         await expenseHead.checkExpenseHeadClickable('Foods & Accommodations');
     });
 
-    PROCESS_TEST(
-        'Create Expense Head with  Duplicate Name feild',
-        async ({ page }) => {
-            const expenseHead = new ExpenseHeadHelper(page);
-            await expenseHead.init();
-            await expenseHead.addExpenseHead('Rent');
-            const notification = await expenseHead.notificationHelper;
+    // PROCESS_TEST(
+    //     'Create Expense Head with  Duplicate Name feild',
+    //     async ({ page }) => {
+    //         const expenseHead = new ExpenseHeadHelper(page);
+    //         await expenseHead.init();
+    //         await expenseHead.addExpenseHead('Rent');
+    //         const notification = await expenseHead.notificationHelper;
 
-            expect(await notification.getErrorMessage()).toBe(
-                'Duplicate expense head name'
-            );
-        }
+    //         expect(await notification.getErrorMessage()).toBe(
+    //             'Duplicate expense head name'
+    //         );
+    //     }
+    // );
+
+    PROCESS_TEST(
+        'TEH002 - Expense Head Creation  -  Positive case',
+        async ({ page }) => {}
     );
+
     PROCESS_TEST(
         'Create Expense Head with  valid Name feild',
         async ({ page }) => {
