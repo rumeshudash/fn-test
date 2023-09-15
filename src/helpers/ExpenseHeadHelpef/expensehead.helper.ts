@@ -3,6 +3,8 @@ import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { NotesHelper } from '../BaseHelper/notes.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { expect } from '@playwright/test';
+import chalk from 'chalk';
 
 export class ExpenseHeadHelper extends ListingHelper {
     public noteHelper: NotesHelper;
@@ -40,13 +42,13 @@ export class ExpenseHeadHelper extends ListingHelper {
         if (parent) {
             await this.selectOption({
                 option: parent,
-                hasText: 'Select a Parent',
+                name: 'parent_id',
             });
         }
         if (manager) {
             await this.selectOption({
                 option: manager,
-                hasText: 'Select a manager',
+                name: 'manager_id',
             });
         }
         if (abc) {
@@ -61,9 +63,15 @@ export class ExpenseHeadHelper extends ListingHelper {
     public async changeActiveStatus(name: string) {
         await this.tabHelper.checkTabExists('Active');
         await this.tabHelper.clickTab('Active');
+
+        await this.searchInList(name);
         const row = await this.findRowInTable(name, 'NAME');
 
         await this.clickButtonInTable(row, 'STATUS');
+
+        const status = await this.getCellText(row, 'STATUS');
+
+        console.log(chalk.green('Status is changed to ' + status));
 
         this._page.waitForTimeout(1000);
     }
@@ -71,13 +79,17 @@ export class ExpenseHeadHelper extends ListingHelper {
         await this.tabHelper.checkTabExists('Inactive');
         await this.tabHelper.clickTab('Inactive');
 
+        await this.searchInList(name);
+
         const row = await this.findRowInTable(name, 'NAME');
 
         await this.clickButtonInTable(row, 'STATUS');
 
         this._page.waitForTimeout(1000);
 
-        await this._page.getByText(name);
+        const status = await this.getCellText(row, 'STATUS');
+
+        console.log(chalk.green('Status is changed to ' + status));
 
         this._page.waitForTimeout(1000);
     }
@@ -108,5 +120,20 @@ export class ExpenseHeadHelper extends ListingHelper {
         await this.saveAndCreateCheckbox();
 
         await this.click({ role: 'button', name: 'save' });
+    }
+
+    public async verifyTabs() {
+        await this.tabHelper.checkTabExists(['All', 'Active', 'Inactive']);
+    }
+    public async checkTableHeader() {
+        const headers = await this.getTableColumnNames();
+
+        expect(headers).toEqual([
+            'NAME',
+            'MANAGER',
+            'STATUS',
+            'PARENT',
+            'ACTION',
+        ]);
     }
 }

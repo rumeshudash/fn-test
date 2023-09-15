@@ -30,6 +30,19 @@ test.describe('Expense Head', () => {
 
         expect(await notification.getErrorMessage()).toBe('Name is required');
     });
+    PROCESS_TEST('Check Tabs exist', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+
+        await expenseHead.verifyTabs();
+    });
+
+    PROCESS_TEST('Check Table Header', async ({ page }) => {
+        const expenseHead = new ExpenseHeadHelper(page);
+        await expenseHead.init();
+
+        await expenseHead.checkTableHeader();
+    });
 
     PROCESS_TEST(
         'Create Expense Head with  Duplicate Name feild',
