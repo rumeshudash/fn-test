@@ -202,6 +202,84 @@ test.describe('Configuration - Expense Head', () => {
 
         await PROCESS_TEST.step('Click on Edit Icon', async () => {
             await page.goBack();
+            await expenseHeadDetails.clickOnEditIcon();
+
+            const dialog = await expenseHeadDetails.dialogHelper;
+
+            await dialog.checkDialogTitle('Edit Expense Head');
+        });
+
+        await PROCESS_TEST.step('Edit Name with Empty Feild', async () => {
+            await expenseHeadDetails.editExpenseHead('');
+
+            const notification = await expenseHeadDetails.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
+                'Name is required'
+            );
+        });
+
+        await PROCESS_TEST.step('Edit Name with Duplicate Name', async () => {
+            await expenseHeadDetails.editExpenseHead('Rent');
+
+            const notification = await expenseHeadDetails.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
+                'Duplicate expense head name'
+            );
+        });
+
+        await PROCESS_TEST.step('Edit Name with Valid Name', async () => {
+            const name = await ExpenseHeadHelper.generateRandomGradeName();
+
+            await expenseHeadDetails.editExpenseHead(name);
+
+            expenseHeadData['Name'] = name;
+
+            const notification = await expenseHeadDetails.notificationHelper;
+
+            expect(await notification.getToastSuccess()).toBe(
+                'Successfully saved'
+            );
+        });
+
+        await PROCESS_TEST.step('Click on Actions Button', async () => {
+            await expenseHeadDetails.clickOnActions();
+
+            const dialog = await expenseHeadDetails.dialogHelper;
+
+            expect(
+                await dialog.getLocator().getByText('Add Notes')
+            ).toHaveCount(1);
+        });
+
+        await PROCESS_TEST.step('Click on Expense Tab', async () => {
+            await expenseHeadDetails.clickOnTab('Expenses');
+        });
+
+        // await PROCESS_TEST.step('Check Expense', async () => {
+        //     await expenseHeadDetails.checkExpense('EXPVN614', 'EXPENSE NO.');
+
+        //     const breadCrumb = expenseHeadDetails.breadCrumbHelper;
+
+        //     await expect(await breadCrumb.getBreadCrumbSubTitle()).toBe(
+        //         '#EXPVN614'
+        //     );
+        // });
+
+        // await PROCESS_TEST.step('Back to the page', async () => {
+        //     await page.goBack();
+        //     await expenseHeadDetails.clickOnTab('Expenses');
+        // });
+
+        await PROCESS_TEST.step('Click on Notes Tab', async () => {
+            await expenseHeadDetails.clickOnTab('Notes');
+        });
+
+        await PROCESS_TEST.step('Add Notes with Empty Notes', async () => {
+            const notes = await ExpenseHeadHelper.generateRandomGradeName();
+
+            await expenseHeadDetails.clickOnAddNotes(notes);
         });
     });
 });

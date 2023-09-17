@@ -6,6 +6,7 @@ import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
 import { DocumentHelper } from '../BaseHelper/document.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 
 export class ExpenseHeadDetailsHelper extends ListingHelper {
     public noteHelper: NotesHelper;
@@ -18,6 +19,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
     public documentHelper: DocumentHelper;
 
+    public dialogHelper: DialogHelper;
+
     constructor(page: any) {
         super(page);
         this.noteHelper = new NotesHelper(page);
@@ -27,6 +30,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         this.breadCrumbHelper = new BreadCrumbHelper(page);
 
         this.documentHelper = new DocumentHelper(page);
+
+        this.dialogHelper = new DialogHelper(page);
     }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
