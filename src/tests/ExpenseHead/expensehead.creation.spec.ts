@@ -1,4 +1,5 @@
 import { ExpenseHeadHelper } from '@/helpers/ExpenseHeadHelpef/expensehead.helper';
+import { ExpenseHeadDetailsHelper } from '@/helpers/ExpenseHeadHelpef/expensehead.details.helper';
 
 import { PROCESS_TEST } from '@/fixtures';
 
@@ -175,10 +176,32 @@ test.describe('Configuration - Expense Head', () => {
         }
     );
 
-    PROCESS_TEST('Check Expense is Clickable', async ({ page }) => {
-        const expenseHead = new ExpenseHeadHelper(page);
-        await expenseHead.init();
+    PROCESS_TEST('TEH003-Expense Head Deatails', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
+        await PROCESS_TEST.step('Check expense head Deatils page', async () => {
+            await expenseHeadDetails.clickOnExpenseHead(
+                expenseHeadData['Name']
+            );
+        });
 
-        await expenseHead.checkExpenseHeadClickable(expenseHeadData['Name']);
+        await PROCESS_TEST.step('Check expense head name', async () => {
+            expect(page.getByText(expenseHeadData['Name'])).toHaveCount(1);
+        });
+        await PROCESS_TEST.step('Check expense head parent', async () => {
+            expect(page.getByText(expenseHeadData['Parent'])).toHaveCount(1);
+        });
+
+        await PROCESS_TEST.step('Check expense head manager', async () => {
+            await expenseHeadDetails.clickOnManagerName(
+                expenseHeadData['Manager']
+            );
+
+            expect(page.getByText(expenseHeadData['Manager'])).toHaveCount(1);
+        });
+
+        await PROCESS_TEST.step('Click on Edit Icon', async () => {
+            await page.goBack();
+        });
     });
 });
