@@ -198,7 +198,7 @@ export class FormHelper extends BaseHelper {
             clickSubmit: false,
         });
         await this._page.waitForLoadState('networkidle');
-        await expect(await submitButton.isEnabled(), {
+        expect(await submitButton.isEnabled(), {
             message: 'check save button disabled',
         }).toBeFalsy();
     }

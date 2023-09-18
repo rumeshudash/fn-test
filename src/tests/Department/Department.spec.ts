@@ -133,6 +133,7 @@ describe('HR -> Department Creation and Details Verification', () => {
                     manager: data.manager,
                 });
                 await department.checkSaveAndCreateAnother();
+                await page.waitForTimeout(1000);
             }
         });
     });
@@ -185,6 +186,8 @@ describe('HR -> Department Creation and Details Verification', () => {
                 },
                 true
             );
+            await page.waitForTimeout(100);
+            await page.waitForLoadState('networkidle');
             await departmentDetails.validateDetailsPage(newDepartmentData);
             console.log(chalk.green('Department Details Edit Checked'));
         });
