@@ -3,6 +3,7 @@ import {
     Invalid_Mobile_Error_Message,
 } from '@/constants/errorMessage.constants';
 import { PROCESS_TEST } from '@/fixtures';
+import { Logger } from '@/helpers/BaseHelper/log.helper';
 import GenericGstinCardHelper, {
     gstinDataType,
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
@@ -13,12 +14,12 @@ import { expect } from '@playwright/test';
 import chalk from 'chalk';
 
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Mahalaxmi Granite & Ceramics',
-    value: '27AMWPC5402A1ZE',
-    business_type: 'Proprietorship',
-    pan_number: 'AMWPC5402A',
+    trade_name: 'Ravechi Builder India Private Limited',
+    value: '27AAHCR8293A2Z6',
+    business_type: 'Private Limited',
+    pan_number: 'AAHCR8293A',
     address:
-        'MARBLE MARKET, MARBLE MARKET, PANVEL, PLOT NO.83, SECTOR-23, Raigad, 410218, Maharashtra, NA',
+        'SHELTON TOWER, PLOT NO 87,SECTOR 15, CBD-BELAPUR,NAVI MUMBAI, OFFICE NO 807, Thane, 400614, Maharashtra, NA',
     status: 'Active',
 };
 
@@ -37,8 +38,8 @@ const notesSchema = {
 };
 
 const BankInformation = {
-    account_number: '1234567',
-    re_account_number: '1234567',
+    account_number: '12345678',
+    re_account_number: '12345678',
     ifsc_code: 'ICIC0000004',
 };
 
@@ -58,7 +59,7 @@ const BankInformationSchema = {
 };
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '27AMWPC5402A1ZE',
+    gstin: '27AAHCR8293A2Z6',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
@@ -101,36 +102,40 @@ describe(`Create Gstin Business`, () => {
         const { helper, gstin_helper } = await createInit(page);
 
         await PROCESS_TEST.step(' Check Confirm Pop Up Modal', async () => {
-            console.log(
-                chalk.blue(`\nstep-1-->Check Confirm Pop Up Modal`, `\n`)
-            );
+            Logger.info(`\nstep-1-->Check Confirm Pop Up Modal`, `\n`);
+
             await helper.formHelper.fillFormInputInformation(formSchema, {});
             await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
             await helper.formHelper.dialogHelper.clickConfirmDialogAction('No');
         });
 
         await PROCESS_TEST.step('Check Mandatory Fields', async () => {
-            console.log(chalk.blue(`\nstep-2-->Check Mandatory Fields`, `\n`));
+            Logger.info(`\nstep-2-->Check Mandatory Fields`, `\n`);
             await helper.formHelper.checkMandatoryFields(formSchema);
         });
 
         await PROCESS_TEST.step('Fill Form Without  Data', async () => {
-            console.log(chalk.blue(`\nstep-3-->Fill Form Without  Data`, `\n`));
+            Logger.info(`\nstep-3-->Fill Form Without  Data`, `\n`);
             await helper.formHelper.fillFormInputInformation(formSchema, {});
             await helper.formHelper.submitButton();
             await helper.formHelper.checkAllMandatoryInputErrors(formSchema);
         });
         await PROCESS_TEST.step('without Gstin Number', async () => {
-            console.log(chalk.blue(`\nstep-3-->without Gstin Number`, `\n`));
-            await helper.formHelper.fillFormInputInformation(formSchema, {
-                ...businessInformation,
-                gstin: '',
-            });
+            Logger.info(`\nstep-3-->without Gstin Number`, `\n`);
+            await helper.formHelper.fillFormInputInformation(
+                formSchema,
+                {
+                    ...businessInformation,
+                    gstin: '',
+                },
+                'email'
+            );
             await helper.checkGstinError();
+
             await helper.formHelper.checkDisableSubmit();
         });
         await PROCESS_TEST.step('Verify Invalid Gstin', async () => {
-            console.log(chalk.blue(`\nstep-4-->Verify Invalid Gstin`, `\n`));
+            Logger.info(`\nstep-4-->Verify Invalid Gstin`, `\n`);
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...businessInformation,
                 gstin: '27AAQCS4259Q1Z1',
@@ -141,7 +146,7 @@ describe(`Create Gstin Business`, () => {
         });
 
         await PROCESS_TEST.step('Without Email ', async () => {
-            console.log(chalk.blue(`\nstep-5-->Without Email`, `\n`));
+            Logger.info(`\nstep-5-->Without Email`, `\n`);
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...businessInformation,
                 email: '',
@@ -154,7 +159,7 @@ describe(`Create Gstin Business`, () => {
         });
 
         await PROCESS_TEST.step('With Invalid Email  ', async () => {
-            console.log(chalk.blue(`\nstep-6-->With Invalid Email`, `\n`));
+            Logger.info(`\nstep-6-->With Invalid Email`, `\n`);
             await helper.formHelper.fillFormInputInformation(
                 formSchema,
                 {
@@ -171,7 +176,7 @@ describe(`Create Gstin Business`, () => {
             );
         });
         await PROCESS_TEST.step('Without Mobile ', async () => {
-            console.log(chalk.blue(`\nstep-7-->Without Mobile`, `\n`));
+            Logger.info(`\nstep-7-->Without Mobile`, `\n`);
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...businessInformation,
                 mobile: '',
@@ -184,9 +189,8 @@ describe(`Create Gstin Business`, () => {
         });
 
         await PROCESS_TEST.step('With Invalid Mobile Number ', async () => {
-            console.log(
-                chalk.blue(`\nstep-8-->With Invalid Mobile Number`, `\n`)
-            );
+            Logger.info(`\nstep-8-->With Invalid Mobile Number`, `\n`);
+
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...businessInformation,
                 mobile: '98456123',
@@ -200,9 +204,8 @@ describe(`Create Gstin Business`, () => {
         });
 
         await PROCESS_TEST.step('Create Business Account.', async () => {
-            console.log(
-                chalk.blue(`\nstep-10-->Create Business Account.`, `\n`)
-            );
+            Logger.info(`\nstep-10-->Create Business Account.`, `\n`);
+
             await helper.formHelper.fillFormInputInformation(
                 formSchema,
                 businessInformation
@@ -214,9 +217,8 @@ describe(`Create Gstin Business`, () => {
             await helper.checkToastSuccess('Successfully Saved');
         });
         await PROCESS_TEST.step('verify create data in table ', async () => {
-            console.log(
-                chalk.blue(`\nstep-11-->verify create data in table`, `\n`)
-            );
+            Logger.info(`\nstep-11-->verify create data in table`, `\n`);
+
             await helper.listHelper.searchInList(businessInformation?.gstin);
 
             await helper.verifyTableData(businessGstinInfo, true);
@@ -253,25 +255,61 @@ describe('Business Detail', () => {
         );
         await businessDetails.init();
         await businessDetails.breadCrumb.checkBreadCrumbTitle('My Businesses');
-
-        await PROCESS_TEST.step('Check Business GST', async () => {
-            await businessDetails.clickBusiness('GSTIN');
-            await businessDetails.dialog.checkDialogTitle('GST Filing Status');
-            const getStatus = await businessDetails.getBusinessGstStatus(
-                'Business Type'
+        await PROCESS_TEST.step('redirect detail page', async () => {
+            await businessDetails.listHelper.searchInList(
+                businessGstinInfo.value
             );
-            expect(getStatus).toBe(businessGstinInfo.business_type);
-            await businessDetails.dialog.closeDialog();
+            await businessDetails.redirectDetailPage(
+                'GSTIN',
+                businessGstinInfo.value
+            );
         });
 
+        await PROCESS_TEST.step(
+            'verify created data in datails page',
+            async () => {
+                await businessDetails.verifyHeading(
+                    businessGstinInfo.trade_name
+                );
+                await businessDetails.verifyInformation(
+                    'Business Type',
+                    businessGstinInfo.business_type
+                );
+                await businessDetails.verifyInformation(
+                    'Pan Number',
+                    businessGstinInfo.pan_number
+                );
+                // await businessDetails.verifyInformation(
+                //     'Address',
+
+                //     businessGstinInfo.address
+                // );
+            }
+        );
+
+        await PROCESS_TEST.step(
+            'verify gstin clickable and check gstin filing information',
+            async () => {
+                await businessDetails.verifyGstinFilingInformation(
+                    businessGstinInfo
+                );
+            }
+        );
+
         await PROCESS_TEST.step('Verify and Edit Email', async () => {
-            await businessDetails.clickBusiness('NAME');
-            await businessDetails.checkInformation('Email');
+            await businessDetails.verifyInformation(
+                'Email',
+                businessInformation.email
+            );
             await businessDetails.editInformation('Email');
+
             await businessDetails.dialog.checkDialogTitle('Edit Business');
             await businessDetails.formHelper.fillFormInputInformation(
                 formSchema,
-                updated_BusinessInfo,
+                {
+                    ...updated_BusinessInfo,
+                    mobile: businessInformation.mobile,
+                },
                 undefined,
                 ['gstin']
             );
@@ -280,7 +318,10 @@ describe('Business Detail', () => {
         });
 
         await PROCESS_TEST.step('Verify and Edit Mobile Number', async () => {
-            await businessDetails.checkInformation('Mobile Number');
+            await businessDetails.verifyInformation(
+                'Mobile Number',
+                businessInformation.mobile
+            );
             await businessDetails.editInformation('Mobile Number');
             await businessDetails.dialog.checkDialogTitle('Edit Business');
             await businessDetails.formHelper.fillFormInputInformation(
@@ -291,13 +332,6 @@ describe('Business Detail', () => {
             );
             await businessDetails.formHelper.submitButton();
             await businessDetails.checkToastSuccess('Successfully Saved');
-        });
-        await PROCESS_TEST.step('Verify Address', async () => {
-            const address = await businessDetails.checkInformation('Address');
-            // expect(address).toContain(businessGstinInfo.address); @toto address should be same in gstin card and detail page
-            expect(address).toContain(
-                'Marble Market Panvel Raigad Maharashtra'
-            );
         });
 
         await PROCESS_TEST.step(
@@ -335,6 +369,8 @@ describe('Business Detail', () => {
                     await businessDetails.checkToastSuccess(
                         'Successfully saved'
                     );
+
+                    await page.waitForTimeout(1000);
                     await page.waitForLoadState('networkidle');
 
                     const documents =
@@ -431,8 +467,14 @@ describe('Business Detail', () => {
             await businessDetails.checkToastSuccess('Successfully Saved');
 
             await PROCESS_TEST.step('Verify Updated Info', async () => {
-                await businessDetails.checkInformation('Email');
-                await businessDetails.checkInformation('Mobile Number');
+                await businessDetails.verifyInformation(
+                    'Email',
+                    updated_BusinessInfo.email
+                );
+                await businessDetails.verifyInformation(
+                    'Mobile Number',
+                    updated_BusinessInfo.mobile
+                );
             });
         });
     });

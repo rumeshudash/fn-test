@@ -101,7 +101,7 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
     ): Promise<void> {
         const row = await this.listHelper.findRowInTable(text, columnName);
         const name_cell = await this.listHelper.getCell(row, 'NAME');
-        await name_cell.click();
+        await name_cell.locator('//a').click();
         await this._page.waitForLoadState('networkidle');
     }
 
@@ -208,18 +208,35 @@ export class BusinessDetailsPageHelper extends CreateFinopsBusinessHelper {
 
     public async checkInformation(title: string) {
         const parentContainer = await this.informationDetailsLocator();
-        const titleLocator = await parentContainer
-            .locator(
-                `//p[text()='${title}']/parent::div/parent::div/parent::div //span[contains(@id,"has-")]`
-            )
-            .innerText();
+        const titleLocator = await parentContainer.locator(
+            `//p[text()='${title}']/parent::div/parent::div/parent::div //span[contains(@id,"has-")]`
+        );
+
         return titleLocator;
     }
+    public async openGstinFiling(gstin: string) {
+        const parentContainer = await this.informationDetailsLocator();
+        const locator = await parentContainer.locator(
+            `//span[text()='GSTIN']/parent::div/parent::p/parent::div/parent::div/parent::div //div[text()='${gstin}']`
+        );
+        const gstin_element = await locator.getByText(gstin);
+        await gstin_element.click();
+        await this._page.waitForLoadState('networkidle');
+    }
+
+    public async verifyGstinFilingInformation(gstinInfo: ObjectDto) {
+        await this.openGstinFiling(gstinInfo.value);
+        await this.dialog.checkDialogTitle('GST Filing Status');
+        const getStatus = await this.getBusinessGstStatus('Business Type');
+        expect(getStatus).toBe(gstinInfo.business_type);
+        await this.dialog.closeDialog();
+    }
+
     public async verifyInformation(title: string, value: string) {
         const title_element = await this.checkInformation(title);
         expect(title_element, {
             message: 'Verify Information',
-        }).toBe(value);
+        }).toHaveText(value);
     }
 
     public async editInformation(title: string) {
@@ -227,8 +244,8 @@ export class BusinessDetailsPageHelper extends CreateFinopsBusinessHelper {
         const titleLocator = parentContainer.locator(
             `//p[text()='${title}']/parent::div/parent::div/parent::div`
         );
-        const editButoton = titleLocator.locator('//a[text()="Edit"]');
-        await editButoton.click();
+        const editButton = titleLocator.locator('//a[text()="Edit"]');
+        await editButton.click();
     }
 
     public async parentBusinessDetailsRow(name: string) {
