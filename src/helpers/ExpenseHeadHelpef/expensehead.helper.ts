@@ -120,7 +120,6 @@ export class ExpenseHeadHelper extends ListingHelper {
         });
 
         await this.click({ role: 'button', name: 'save' });
-
         // await this.tabHelper.clickTab('All');
     }
 
