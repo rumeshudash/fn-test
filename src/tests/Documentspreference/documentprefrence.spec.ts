@@ -2,6 +2,7 @@ import { DocumentspreferenceHelper } from '@/helpers/DocumentpreferenceHelper/do
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 
 import { test, expect } from '@playwright/test';
+import { PROCESS_TEST } from '@/fixtures';
 
 test.describe('Configuration - Document Preference', () => {
     test('TDP001 -   Create Document Preference - Negative Case ', async ({
@@ -82,6 +83,40 @@ test.describe('Configuration - Document Preference', () => {
             expect(await notification.getToastSuccess()).toBe(
                 'Successfully created document preference'
             );
+        });
+    });
+    PROCESS_TEST('TDP003 - Document preference Details', async ({ page }) => {
+        const documents_preference = new DocumentspreferenceHelper(page);
+        const notification = await documents_preference.notificationHelper;
+
+        await documents_preference.init();
+
+        PROCESS_TEST.step('Check page is opening', async () => {
+            await documents_preference.checkPageTitle('Document Preferences');
+        });
+
+        PROCESS_TEST.step('Check Data is present in list', async () => {
+            await documents_preference.searchTextInList('COI');
+        });
+
+        PROCESS_TEST.step('Check List Feild', async () => {
+            await documents_preference.getTableHeader([
+                'S.N',
+                'NAME',
+                'DOCUMENT MANDATORY',
+                'MANDATORY',
+            ]);
+        });
+
+        PROCESS_TEST.step('Change Document Mandatory Status', async () => {
+            await documents_preference.changeSatus('COI', 'DOCUMENT MANDATORY');
+
+            expect(await notification.getToastSuccess()).toBe('Status Changed');
+        });
+        PROCESS_TEST.step('Change Mandatory Status', async () => {
+            await documents_preference.changeSatus('COI', 'MANDATORY');
+
+            expect(await notification.getToastSuccess()).toBe('Status Changed');
         });
     });
 });
