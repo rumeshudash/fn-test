@@ -1,85 +1,113 @@
 import { BaseHelper } from '@/baseHelper';
 import { expect } from '@playwright/test';
 import chalk from 'chalk';
+import { Logger } from './log.helper';
 
 export class NotificationHelper extends BaseHelper {
-    constructor(page: any) {
-        super(page);
-    }
-
-    async getToastSuccess(): Promise<string> {
-        await this._page.waitForSelector('div.ct-toast-success');
+    /**
+     * Retrieves the toast messages of the specified type.
+     *
+     * @param {'success' | 'error' | 'warn' | 'load'} type - The type of toast message to retrieve.
+     * @return {Promise<string[]>} - An array of toast messages of the specified type, or empty array if no toast messages are found.
+     */
+    public async getToastMessage(type: 'success' | 'error' | 'warn' | 'load') {
+        await this._page.waitForSelector(`div.ct-toast-${type}`);
         const toast = this.locate('div', {
-            class: ['ct-toast-success'],
-        })._locator;
+            class: [`ct-toast-${type}`],
+        }).getLocator();
+
         const toastCount = await toast.count();
-        if (toastCount > 0) {
-            for (let i = 0; i < toastCount; i++) {
-                const successMsg = await toast.last().innerText();
-                return successMsg;
-            }
-        }
+        if (!toastCount) return [];
+        return toast.allInnerTexts();
     }
 
-    async checkToastSuccess(message: string | number): Promise<void> {
+    /**
+     * Retrieves the toast success message.
+     *
+     * @return {Promise<string[]>} The success message.
+     */
+    public async getToastSuccess(): Promise<string[]> {
+        return this.getToastMessage('success');
+    }
+
+    /**
+     * Check if a toast success message matches the expected message.
+     *
+     * @param {string | number} message - The message to check against the toast.
+     * @return {Promise<void>} A promise that resolves when the check is complete.
+     */
+    public async checkToastSuccess(message: string | number): Promise<void> {
         const toastMessage = await this.getToastSuccess();
-        expect(toastMessage, chalk.red('Toast Message check ')).toBe(message);
+        this._checkToastMessage(toastMessage, message);
     }
 
-    async getToastError(): Promise<string> {
-        const toast = this.locate('div', {
-            class: ['ct-toast-error'],
-        })._locator;
-
-        const toastCount = await toast.count();
-        if (toastCount > 0) {
-            for (let i = 0; i < toastCount; i++) {
-                const errorMsg = await toast.last().innerText();
-                return errorMsg;
-            }
-        }
+    /**
+     * Retrieves the toast error message.
+     *
+     * @return {Promise<string[]>} The toast error message.
+     */
+    public async getToastError(): Promise<string[]> {
+        return this.getToastMessage('error');
     }
-    async checkToastError(message: string | number): Promise<void> {
+
+    /**
+     * Check if a toast error message matches the expected message.
+     *
+     * @param {string | number} message - The expected error message.
+     * @return {Promise<void>} - A promise that resolves when the check is complete.
+     */
+    public async checkToastError(message: string | number): Promise<void> {
         const toastMessage = await this.getToastError();
-        expect(toastMessage, chalk.red('Toast Message check ')).toBe(message);
+        this._checkToastMessage(toastMessage, message);
     }
 
-    async getToastWarning(): Promise<string> {
-        const toast = this.locate('div', { class: ['ct-toast-warn'] })._locator;
-        const toastCount = await toast.count();
-        if (toastCount > 0) {
-            for (let i = 0; i < toastCount; i++) {
-                const warningMsg = await toast.last().innerText();
-                return warningMsg;
-            }
-        }
+    /**
+     * Retrieves a warning toast message.
+     *
+     * @return {Promise<string[]>} An array of warning toast messages.
+     */
+    public async getToastWarning(): Promise<string[]> {
+        return this.getToastMessage('warn');
     }
-    async checkToastWarning(message: string | number): Promise<void> {
+
+    /**
+     * Check if a toast warning message matches the expected message.
+     *
+     * @param {string | number} message - The expected warning message.
+     * @return {Promise<void>} - A promise that resolves when the check is complete.
+     */
+    public async checkToastWarning(message: string | number): Promise<void> {
         const toastMessage = await this.getToastWarning();
-        expect(toastMessage, chalk.red('Toast Message check ')).toBe(message);
+        this._checkToastMessage(toastMessage, message);
     }
 
-    async getToastLoading(): Promise<string> {
-        const toast = this.locate('div', { class: ['ct-toast-load'] })._locator;
-        const toastCount = await toast.count();
-        if (toastCount > 0) {
-            for (let i = 0; i < toastCount; i++) {
-                const loadingMsg = await toast.last().innerText();
-                return loadingMsg;
-            }
-        }
+    /**
+     * Retrieves the toast loading message.
+     *
+     * @return {Promise<string[]>} A promise that resolves to an array of toast messages.
+     */
+    public async getToastLoading(): Promise<string[]> {
+        return this.getToastMessage('load');
     }
 
-    async checkToastLoading(message: string | number): Promise<void> {
+    /**
+     * Check if a toast loading message matches the expected message.
+     *
+     * @param {string | number} message - The expected loading message.
+     * @return {Promise<void>} - A promise that resolves when the check is complete.
+     */
+    public async checkToastLoading(message: string | number): Promise<void> {
         const toastMessage = await this.getToastLoading();
-        expect(toastMessage, chalk.red('Toast Message check ')).toBe(message);
+        this._checkToastMessage(toastMessage, message);
     }
-    async getErrorMessage() {
+
+    public async getErrorMessage() {
         const error = this.locate('span', {
             class: ['label.text-error'],
         })._locator;
         const errorCount = await error.count();
-        console.log(chalk.red(`Error ocurred: ${errorCount}`));
+
+        Logger.error(`Error ocurred: ${errorCount}`);
         if (errorCount > 0) {
             for (let i = 0; i < errorCount; i++) {
                 const errorMsg = await error.nth(i).innerText();
@@ -89,8 +117,24 @@ export class NotificationHelper extends BaseHelper {
         }
     }
 
-    async checkErrorMessage(message: string | number): Promise<void> {
+    public async checkErrorMessage(message: string | number): Promise<void> {
         const toastMessage = await this.getErrorMessage();
         expect(toastMessage, chalk.red('Error Message check ')).toBe(message);
+    }
+
+    /**
+     * Checks if a given toast message is present in the list of toast messages.
+     *
+     * @param {string[]} toastMessages - The list of toast messages to check.
+     * @param {string | number} message - The toast message to look for.
+     */
+    private _checkToastMessage(
+        toastMessages: string[],
+        message: string | number
+    ) {
+        expect(
+            toastMessages,
+            chalk.red(`Checking toast message: ${message}`)
+        ).toContainEqual(message);
     }
 }

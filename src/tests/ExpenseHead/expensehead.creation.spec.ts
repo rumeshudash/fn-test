@@ -75,9 +75,10 @@ test.describe('Configuration - Expense Head', () => {
         'TEH002 - Expense Head Creation  -  Positive case',
         async ({ page }) => {
             const expenseHead = new ExpenseHeadHelper(page);
-            await expenseHead.init();
+            const notification = expenseHead.notificationHelper;
+            const dialog = expenseHead.dialogHelper;
 
-            const dialog = await expenseHead.dialogHelper;
+            await expenseHead.init();
 
             await PROCESS_TEST.step(
                 'Create Expense Head With Name Feild',
@@ -100,10 +101,7 @@ test.describe('Configuration - Expense Head', () => {
                 'Add expense Head with duplicate name',
                 async () => {
                     await expenseHead.clickButton('Add Expense Head');
-
                     await expenseHead.addExpenseHead(expenseHeadData.Name);
-
-                    const notification = await expenseHead.notificationHelper;
 
                     expect(await notification.getErrorMessage()).toBe(
                         'Duplicate expense head name'
@@ -151,8 +149,6 @@ test.describe('Configuration - Expense Head', () => {
                 async () => {
                     await expenseHead.editExpenseHead(expenseHeadData.Name, '');
 
-                    const notification = await expenseHead.notificationHelper;
-
                     expect(await notification.getErrorMessage()).toBe(
                         'Name is required'
                     );
@@ -169,8 +165,6 @@ test.describe('Configuration - Expense Head', () => {
                         expenseHeadData.Name,
                         expenseHeadData.NewName
                     );
-
-                    const notification = await expenseHead.notificationHelper;
 
                     expect(await notification.getErrorMessage()).toBe(
                         'Duplicate expense head name'
@@ -191,8 +185,6 @@ test.describe('Configuration - Expense Head', () => {
                     );
 
                     expenseHeadData.Name = NewName;
-
-                    const notification = await expenseHead.notificationHelper;
 
                     expect(await notification.getToastSuccess()).toBe(
                         'Successfully saved'

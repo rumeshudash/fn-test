@@ -59,13 +59,12 @@ export class ExpenseHeadHelper extends ListingHelper {
                 name: 'date',
             });
         }
-        await this._page.waitForTimeout(1000);
         await this.clickButton('Save');
-    }
 
-    public async searchExpense(name: string) {
         await this.searchInList(name);
+
         await this._page.waitForTimeout(1000);
+        await this.searchInList(name);
     }
 
     public async changeStatus(name: string) {

@@ -58,6 +58,14 @@ export class FormHelper extends BaseHelper {
         ).toBeEditable();
     }
 
+    public checkIsInputDisabled(options: InputFieldLocatorOptions) {
+        const input = this.getInputElement(options);
+        expect(
+            input,
+            `Check input is disabled: ${this._tempSelector}`
+        ).toBeDisabled();
+    }
+
     /**
      * Returns the error element associated with the input field specified by the given options.
      *
@@ -111,19 +119,22 @@ export class FormHelper extends BaseHelper {
         targetClick?: string
     ): Promise<void> {
         for (const [name, schema] of Object.entries(formSchema)) {
+            const value = data[name] || '';
             switch (schema?.type) {
                 case 'select':
                     await this.selectOption({
                         name,
-                        option: String(data[name]),
+
+                        option: value ? String(value) : '',
                     });
+
                     break;
 
                 case 'textarea':
-                    await this.fillText(data[name], { name });
+                    await this.fillText(value, { name });
                     break;
                 default:
-                    await this.fillInput(data[name], {
+                    await this.fillInput(value, {
                         name: name,
                     });
             }
@@ -139,7 +150,7 @@ export class FormHelper extends BaseHelper {
         data: ObjectDto,
         targetClick?: string
     ): Promise<void> {
-        console.log(chalk.blue('Filling form input information ....'));
+        console.log(chalk.blue('Filling form TextArea information ....'));
         for (const [key, value] of Object.entries(data)) {
             await this.fillText(value, {
                 name: key,
@@ -152,36 +163,103 @@ export class FormHelper extends BaseHelper {
         });
     }
 
+    private async _clickSubmitButton(button: any) {
+        expect(await button.isEnabled(), {
+            message: 'check save button enabled',
+        }).toBe(true);
+        await button.click();
+        const button_title = await button.textContent();
+        console.log(chalk.yellow(`${button_title} is clicked`));
+        await this._page.waitForTimeout(300);
+        await this._page.waitForLoadState('networkidle');
+    }
     /**
      * it helps to submit the form
      */
-    public async submitButton(button_title: string = 'Save') {
+    public async submitButton(
+        button_title: string = 'Save',
+        options?: {
+            waitForNetwork?: boolean;
+            clickSubmit?: boolean;
+        }
+    ) {
+        const { waitForNetwork, clickSubmit = true } = options || {};
+        if (waitForNetwork) await this._page.waitForTimeout(300);
         const btnClick = this._page.getByRole('button', { name: button_title });
-        expect(await btnClick.isEnabled(), {
-            message: 'check save button enabled',
-        }).toBe(true);
+        if (clickSubmit) await this._clickSubmitButton(btnClick);
 
-        await btnClick.click();
-        await this._page.waitForTimeout(300);
-        await this._page.waitForLoadState('networkidle');
         return btnClick;
     }
 
     public async checkDisableSubmit(
         button_title: string = 'Save'
     ): Promise<void> {
-        const submitButton = await this.submitButton(button_title);
+        const submitButton = await this.submitButton(button_title, {
+            clickSubmit: false,
+        });
+        await this._page.waitForLoadState('networkidle');
         expect(await submitButton.isEnabled(), {
             message: 'check save button disabled',
-        }).toBe(false);
+        }).toBeFalsy();
     }
 
-    public async checkMandatoryFields(schema: ObjectDto): Promise<void> {
-        for (const [name, fieldSchema] of Object.entries(schema)) {
+    public async checkMandatoryFields(formSchema: ObjectDto): Promise<void> {
+        for (const [name, fieldSchema] of Object.entries(formSchema)) {
             if (!fieldSchema?.required) continue;
-            expect(await this.isInputMandatory({ name }), {
-                message: `${name} mandatory checking...`,
-            }).toBeTruthy();
+            expect(
+                await this.isInputMandatory(
+                    { name },
+                    fieldSchema?.type === 'textarea' ? 'textarea' : 'input'
+                ),
+                {
+                    message: `${name} mandatory checking...`,
+                }
+            ).toBeTruthy();
         }
+    }
+
+    public async checkAllMandatoryInputErrors(
+        formSchema: ObjectDto
+    ): Promise<void> {
+        for (const [name, fieldSchema] of Object.entries(formSchema)) {
+            if (!fieldSchema?.required) continue;
+            await this.checkInputError(name, fieldSchema);
+        }
+    }
+
+    public async checkInputError(
+        name: string,
+        schema: ObjectDto,
+        message?: string
+    ) {
+        const errorMessage = await this.checkInputErrorMessage(
+            {
+                name,
+            },
+            schema?.type === 'textarea' ? 'textarea' : 'input'
+        );
+
+        expect(await errorMessage.isVisible()).toBe(true);
+        if (message) await this.matchedInputErrorMessage(message, errorMessage);
+    }
+
+    public async matchedInputErrorMessage(
+        message: string,
+        element: any
+    ): Promise<void> {
+        await this._page.waitForLoadState('networkidle');
+
+        // for comparing two error message
+        if (!message || !element) return;
+
+        let textContent = await element.textContent();
+        textContent = textContent.trim();
+
+        if (textContent === message) return console.log(chalk.red(textContent));
+        throw console.log(
+            chalk.red(
+                `"${textContent}" is not a valid error !! valid valid error should be "${message}"`
+            )
+        );
     }
 }

@@ -5,7 +5,8 @@
         "gstin",
         "networkidle",
         "Recko",
-        "selectbox"
+        "selectbox",
+        "tablist"
     ],
     "cSpell.ignoreWords": ["TECF002"]
 }

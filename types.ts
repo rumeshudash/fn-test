@@ -122,6 +122,7 @@ interface ExpenseDetailInputs {
     expense_head?: string;
     poc?: string;
     pay_to?: string;
+    employee?: string;
     desc?: string;
 }
 
@@ -223,4 +224,18 @@ interface UserGroupData {
     member?: string;
     memberEmail?: string;
     role?: string;
+}
+
+interface BankDetails {
+    'ACCOUNT NUMBER'?: string;
+    'IFSC CODE'?: string;
+    NAME?: string;
+}
+
+interface ApprovalDelegationData {
+    DELEGATOR?: string;
+    'START TIME'?: string;
+    'END TIME'?: string;
+    'ADDED AT'?: string;
+    COMMENTS?: string;
 }

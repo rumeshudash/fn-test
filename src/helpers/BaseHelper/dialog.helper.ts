@@ -26,7 +26,7 @@ export class DialogHelper extends BaseHelper {
     }
 
     public async checkFormIsOpen() {
-        const element = await this.getDialogContainer();
+        const element = this.getDialogContainer();
         expect(await element.isVisible(), {
             message: 'checking  form is open or not.',
         }).toBe(true);
@@ -74,7 +74,7 @@ export class DialogHelper extends BaseHelper {
     public async checkConfirmDialogOpenOrNot() {
         await this.closeDialog();
 
-        const dialog = await this.locateByText(
+        const dialog = this.locateByText(
             'Do you want to exit? The details you have entered will be deleted.'
         );
         await this._page.waitForLoadState('domcontentloaded');

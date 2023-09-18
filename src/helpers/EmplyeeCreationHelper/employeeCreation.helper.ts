@@ -1,20 +1,32 @@
 import { expect } from '@playwright/test';
 import { ListingHelper } from '../BaseHelper/listing.helper';
-import { bankAccountInfo } from '@/utils/required_data';
 import { FormHelper } from '../BaseHelper/form.helper';
 import chalk from 'chalk';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { BaseHelper } from '../BaseHelper/base.helper';
+import { FileHelper } from '../BaseHelper/file.helper';
 
-export class EmployeeCreation extends ListingHelper {
-    public formHelper: FormHelper;
+export class EmployeeCreation extends BaseHelper {
+    public form: FormHelper;
     public notification: NotificationHelper;
     public breadCrumb: BreadCrumbHelper;
+    public tab: TabHelper;
+    public dialog: DialogHelper;
+    public listing: ListingHelper;
+    public file: FileHelper;
+
     constructor(page: any) {
         super(page);
         this.notification = new NotificationHelper(page);
-        this.formHelper = new FormHelper(page);
+        this.form = new FormHelper(page);
         this.breadCrumb = new BreadCrumbHelper(page);
+        this.tab = new TabHelper(page);
+        this.dialog = new DialogHelper(page);
+        this.listing = new ListingHelper(page);
+        this.file = new FileHelper(page);
     }
 
     public async init() {
@@ -28,21 +40,37 @@ export class EmployeeCreation extends ListingHelper {
             .click();
     }
     public async clickEmployeeInfo(title: string, columnName: string) {
-        const row = await this.findRowInTable(title, columnName);
-        const clickCell = (await this.getCell(row, columnName)).locator('a');
+        const row = await this.listing.findRowInTable(title, columnName);
+        const clickCell = (await this.listing.getCell(row, columnName)).locator(
+            'a'
+        );
         await clickCell.click();
         await this._page.waitForTimeout(2000);
     }
 }
 
-export class AddEmployeeCreation extends EmployeeCreation {
+export class AddEmployeeCreation extends BaseHelper {
     public employeeInfo;
+    public form: FormHelper;
+    public notification: NotificationHelper;
+    public breadCrumb: BreadCrumbHelper;
+    public tab: TabHelper;
+    public dialog: DialogHelper;
+    public listing: ListingHelper;
+    public file: FileHelper;
     constructor(employeeInfo, page: any) {
         super(page);
         this.employeeInfo = employeeInfo;
+        this.notification = new NotificationHelper(page);
+        this.form = new FormHelper(page);
+        this.breadCrumb = new BreadCrumbHelper(page);
+        this.tab = new TabHelper(page);
+        this.dialog = new DialogHelper(page);
+        this.listing = new ListingHelper(page);
+        this.file = new FileHelper(page);
     }
     public async employeeRowLocator() {
-        const row = await this.findRowInTable(
+        const row = await this.listing.findRowInTable(
             this.employeeInfo.identifier,
             'EMPLOYEE CODE'
         );
@@ -51,51 +79,57 @@ export class AddEmployeeCreation extends EmployeeCreation {
 
     public async getEmployeeCode() {
         const parentRow = await this.employeeRowLocator();
-        const cellCode = await this.getCell(parentRow, 'EMPLOYEE CODE');
+        const cellCode = await this.listing.getCell(parentRow, 'EMPLOYEE CODE');
         return cellCode;
     }
 
     public async getEmployeeName() {
         const parentRow = await this.employeeRowLocator();
-        const cellName = await this.getCell(parentRow, 'NAME');
+        const cellName = await this.listing.getCell(parentRow, 'NAME');
         return cellName;
     }
 
     public async getEmployeeEmail() {
         const parentRow = await this.employeeRowLocator();
-        const cellEmail = await this.getCell(parentRow, 'EMAIL');
+        const cellEmail = await this.listing.getCell(parentRow, 'EMAIL');
         return cellEmail;
     }
 
     public async getEmployeeStatus() {
         const parentRow = await this.employeeRowLocator();
         const cellStatus = (
-            await this.getCell(parentRow, 'STATUS')
+            await this.listing.getCell(parentRow, 'STATUS')
         ).innerText();
         return cellStatus;
     }
 
     public async getEmployeeDepartment() {
         const parentRow = await this.employeeRowLocator();
-        const cellDepartment = await this.getCell(parentRow, 'DEPARTMENT');
+        const cellDepartment = await this.listing.getCell(
+            parentRow,
+            'DEPARTMENT'
+        );
         return cellDepartment;
     }
 
     public async getEmployeeDesignation() {
         const parentRow = await this.employeeRowLocator();
-        const cellDesignation = await this.getCell(parentRow, 'DESIGNATION');
+        const cellDesignation = await this.listing.getCell(
+            parentRow,
+            'DESIGNATION'
+        );
         return cellDesignation;
     }
 
     public async getEmployeeGrade() {
         const parentRow = await this.employeeRowLocator();
-        const cellGrade = await this.getCell(parentRow, 'GRADE');
+        const cellGrade = await this.listing.getCell(parentRow, 'GRADE');
         return cellGrade;
     }
 
     public async getEmployeeReportingManager() {
         const parentRow = await this.employeeRowLocator();
-        const cellReportingManager = await this.getCell(
+        const cellReportingManager = await this.listing.getCell(
             parentRow,
             'REPORTING MANAGER'
         );
@@ -104,7 +138,7 @@ export class AddEmployeeCreation extends EmployeeCreation {
 
     public async getEmployeeApprovalManager() {
         const parentRow = await this.employeeRowLocator();
-        const cellApprovalManager = await this.getCell(
+        const cellApprovalManager = await this.listing.getCell(
             parentRow,
             'APPROVAL MANAGER'
         );
@@ -255,11 +289,25 @@ export class AddEmployeeCreation extends EmployeeCreation {
     }
 }
 
-export class EmployeeDetailsPage extends EmployeeCreation {
+export class EmployeeDetailsPage extends BaseHelper {
     public employeeCreationInfo;
+    public form: FormHelper;
+    public notification: NotificationHelper;
+    public breadCrumb: BreadCrumbHelper;
+    public tab: TabHelper;
+    public dialog: DialogHelper;
+    public listing: ListingHelper;
+    public file: FileHelper;
     constructor(employeeCreationInfo, page: any) {
         super(page);
         this.employeeCreationInfo = employeeCreationInfo;
+        this.notification = new NotificationHelper(page);
+        this.form = new FormHelper(page);
+        this.breadCrumb = new BreadCrumbHelper(page);
+        this.tab = new TabHelper(page);
+        this.dialog = new DialogHelper(page);
+        this.listing = new ListingHelper(page);
+        this.file = new FileHelper(page);
     }
     public async parentEmployeeDetails() {
         return this.locate('//div[contains(@class,"h-full overflow-hidden")]')
@@ -294,11 +342,8 @@ export class EmployeeDetailsPage extends EmployeeCreation {
     public async clickEditIcon() {
         await this._page.locator("//button[@data-title='Edit']").click();
     }
-    public async checkBankInfo() {
-        const row = await this.findRowInTable(
-            bankAccountInfo.ifsc_code,
-            'IFSC CODE'
-        );
+    public async checkBankInfo(ifsc: string) {
+        const row = await this.listing.findRowInTable(ifsc, 'IFSC CODE');
         expect(await row.isVisible(), 'Check row of IFSC Code').toBe(true);
     }
     public async setRole(title: string) {
