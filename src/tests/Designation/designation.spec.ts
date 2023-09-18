@@ -64,16 +64,16 @@ describe('HR-Designations', () => {
             required: true,
         },
         department_id: {
-            type: 'select',
+            type: 'reference_select',
         },
         grade_id: {
-            type: 'select',
+            type: 'reference_select',
         },
         manager_id: {
-            type: 'select',
+            type: 'reference_select',
         },
         approval_manager_id: {
-            type: 'select',
+            type: 'reference_select',
         },
     };
     const notes_info = {
