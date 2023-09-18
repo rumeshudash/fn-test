@@ -147,7 +147,7 @@ export class FormHelper extends BaseHelper {
         data: ObjectDto,
         targetClick?: string
     ): Promise<void> {
-        console.log(chalk.blue('Filling form input information ....'));
+        console.log(chalk.blue('Filling form TextArea information ....'));
         for (const [key, value] of Object.entries(data)) {
             await this.fillText(value, {
                 name: key,
