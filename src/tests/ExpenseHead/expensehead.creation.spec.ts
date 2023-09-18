@@ -27,8 +27,9 @@ test.describe('Configuration - Expense Head', () => {
         'TEH001 - Expense Head Creation  -  Negative case',
         async ({ page }) => {
             const expenseHead = new ExpenseHeadHelper(page);
+            const dialog = expenseHead.dialogHelper;
+            const notification = expenseHead.notificationHelper;
             await expenseHead.init();
-            const dialog = await expenseHead.dialogHelper;
 
             await PROCESS_TEST.step('Check the page opening', async () => {
                 await expenseHead.breadcrumbHelper.checkBreadCrumbTitle(
@@ -47,16 +48,11 @@ test.describe('Configuration - Expense Head', () => {
 
             await PROCESS_TEST.step('Click On Add Expense Head', async () => {
                 await expenseHead.clickButton('Add Expense Head');
-
-                const dialog = await expenseHead.dialogHelper;
-
                 await dialog.checkDialogTitle('Add Expense Head');
             });
 
             await PROCESS_TEST.step('Check empty Name feild', async () => {
                 await expenseHead.addExpenseHead('');
-
-                const notification = await expenseHead.notificationHelper;
 
                 expect(await notification.getErrorMessage()).toBe(
                     'Name is required'
@@ -186,9 +182,7 @@ test.describe('Configuration - Expense Head', () => {
 
                     expenseHeadData.Name = NewName;
 
-                    expect(await notification.getToastSuccess()).toBe(
-                        'Successfully saved'
-                    );
+                    notification.checkToastSuccess('Successfully saved');
                 }
             );
 

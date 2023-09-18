@@ -435,6 +435,7 @@ export class BaseHelper {
 
         Logger.info(`Click: ${button} click in ${this._getSelector(options)}`);
         await this._locator.click({ button });
+        await this._page.waitForTimeout(100);
         await this._page.waitForLoadState('networkidle');
         Logger.success(
             `Click: ${button} click in ${this._getSelector(options)}`
@@ -592,6 +593,7 @@ export class BaseHelper {
         }).toBe(true);
         if (isButtonEnabled) {
             await btnClick.click();
+            await this._page.waitForTimeout(100);
             await this._page.waitForLoadState('networkidle');
         } else {
             Logger.error(buttonName, ' button is not clickable or disabled');
