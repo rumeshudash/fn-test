@@ -1,10 +1,7 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { BreadCrumbHelper } from '@/helpers/BaseHelper/breadCrumb.helper';
-import {
-    AddEmployeeCreation,
-    EmployeeCreation,
-    EmployeeDetailsPage,
-} from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
+import { EmployeeDetailsPage } from '@/helpers/EmplyeeCreationHelper/EmployeeDetails.helper';
+import { EmployeeCreation } from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
 import { generateRandomName, generateRandomNumber } from '@/utils/common.utils';
 import { DocumentInfo } from '@/utils/required_data';
 
@@ -106,12 +103,15 @@ describe('Expense Creation>Finops Portal', () => {
         },
     };
     PROCESS_TEST('TEC001', async ({ page }) => {
-        const employeeCreation = new EmployeeCreation(page);
-
-        const addEmployeeCreationForm = new AddEmployeeCreation(
+        const employeeCreation = new EmployeeCreation(
             employeeCreationInfo,
             page
         );
+
+        // const addEmployeeCreationForm = new AddEmployeeCreation(
+        //     employeeCreationInfo,
+        //     page
+        // );
 
         await PROCESS_TEST.step(
             'Navigate to Employee Creation Page',
@@ -164,42 +164,45 @@ describe('Expense Creation>Finops Portal', () => {
         await PROCESS_TEST.step(
             'Search then Verify Employee Details',
             async () => {
-                const employeeCreationPage = new EmployeeCreation(page);
-                const addEmployeeCreationForm = new AddEmployeeCreation(
-                    employeeCreationInfo,
-                    page
-                );
+                // const employeeCreation = new EmployeeCreation(
+                //     employeeCreationInfo,
+                //     page
+                // );
+                // const addEmployeeCreationForm = new AddEmployeeCreation(
+                //     employeeCreationInfo,
+                //     page
+                // );
 
-                await employeeCreationPage.listing.searchInList(
+                await employeeCreation.listing.searchInList(
                     employeeCreationInfo.name
                 );
-                await addEmployeeCreationForm.verifyEmployeeDetails();
+                await employeeCreation.verifyEmployeeDetails();
             }
         );
 
         await PROCESS_TEST.step('Check Name ', async () => {
-            const addEmployeeCreationForm = new AddEmployeeCreation(
-                employeeCreationInfo,
-                page
-            );
+            // const employeeCreation = new AddEmployeeCreation(
+            //     employeeCreationInfo,
+            //     page
+            // );
 
-            await addEmployeeCreationForm.checkEmployeeNameLink();
-            await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
+            await employeeCreation.checkEmployeeNameLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
                 'Employee Detail'
             );
             await employeeCreation.breadCrumb.clickBreadCrumbsLink('Employees');
         });
 
         await PROCESS_TEST.step('Check Email', async () => {
-            const addEmployeeCreationForm = new AddEmployeeCreation(
-                employeeCreationInfo,
-                page
-            );
+            // const addEmployeeCreationForm = new AddEmployeeCreation(
+            //     employeeCreationInfo,
+            //     page
+            // );
 
             await employeeCreation.listing.searchInList(
                 employeeCreationInfo.name
             );
-            await addEmployeeCreationForm.checkEmployeeEmailLink();
+            await employeeCreation.checkEmployeeEmailLink();
             await employeeCreation.breadCrumb.checkBreadCrumbTitle(
                 'Employee Detail'
             );
@@ -212,8 +215,8 @@ describe('Expense Creation>Finops Portal', () => {
             await employeeCreation.listing.searchInList(
                 employeeCreationInfo.name
             );
-            await addEmployeeCreationForm.checkEmployeeDepartmentLink();
-            await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
+            await employeeCreation.checkEmployeeDepartmentLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
                 'Department Detail'
             );
         });
@@ -224,8 +227,8 @@ describe('Expense Creation>Finops Portal', () => {
             await employeeCreation.listing.searchInList(
                 employeeCreationInfo.name
             );
-            await addEmployeeCreationForm.checkEmployeeDesignationLink();
-            await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
+            await employeeCreation.checkEmployeeDesignationLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
                 'Designation Detail'
             );
         });
@@ -236,8 +239,8 @@ describe('Expense Creation>Finops Portal', () => {
             await employeeCreation.listing.searchInList(
                 employeeCreationInfo.name
             );
-            await addEmployeeCreationForm.checkApprovalManagerLink();
-            await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
+            await employeeCreation.checkApprovalManagerLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
                 'Employee Detail'
             );
         });
@@ -248,8 +251,8 @@ describe('Expense Creation>Finops Portal', () => {
             await employeeCreation.listing.searchInList(
                 employeeCreationInfo.name
             );
-            await addEmployeeCreationForm.checkReportingManagerLink();
-            await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
+            await employeeCreation.checkReportingManagerLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
                 'Employee Detail'
             );
         });
@@ -260,29 +263,27 @@ describe('Expense Creation>Finops Portal', () => {
             await employeeCreation.listing.searchInList(
                 employeeCreationInfo.name
             );
-            await addEmployeeCreationForm.checkEmployeeNameLink();
-            await addEmployeeCreationForm.clickButton('Actions');
+            await employeeCreation.checkEmployeeNameLink();
+            await employeeCreation.clickButton('Actions');
         });
         await PROCESS_TEST.step('Deactivate Status', async () => {
             const breadcrumbHelper = new BreadCrumbHelper(page);
-            await addEmployeeCreationForm.clickActionOption('Deactivate');
-            await addEmployeeCreationForm.clickButton('Yes!');
+            await employeeCreation.clickActionOption('Deactivate');
+            await employeeCreation.clickButton('Yes!');
             await employeeCreation.notification.checkToastSuccess(
                 'Status Changed'
             );
 
             await breadcrumbHelper.clickBreadCrumbsLink('Employees');
             await employeeCreation.tab.clickTab('Inactive');
-            expect(await addEmployeeCreationForm.getEmployeeStatus()).toBe(
-                'Inactive'
-            );
+            expect(await employeeCreation.getEmployeeStatus()).toBe('Inactive');
         });
 
         await PROCESS_TEST.step('Activate Status', async () => {
-            await addEmployeeCreationForm.checkEmployeeNameLink();
-            await addEmployeeCreationForm.clickButton('Actions');
-            await addEmployeeCreationForm.clickActionOption('Activate');
-            await addEmployeeCreationForm.clickButton('Yes!');
+            await employeeCreation.checkEmployeeNameLink();
+            await employeeCreation.clickButton('Actions');
+            await employeeCreation.clickActionOption('Activate');
+            await employeeCreation.clickButton('Yes!');
             await employeeCreation.notification.checkToastSuccess(
                 'Status Changed'
             );
@@ -292,14 +293,15 @@ describe('Expense Creation>Finops Portal', () => {
                 employeeCreationInfo.name
             );
             await employeeCreation.tab.clickTab('Active');
-            expect(await addEmployeeCreationForm.getEmployeeStatus()).toBe(
-                'Active'
-            );
+            expect(await employeeCreation.getEmployeeStatus()).toBe('Active');
         });
     });
 
     PROCESS_TEST('TED001', async ({ page }) => {
-        const employeeCreation = new EmployeeCreation(page);
+        const employeeCreation = new EmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
         const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
         await employeeCreation.init();
         await employeeCreation.listing.searchInList(

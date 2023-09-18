@@ -126,6 +126,7 @@ export class FormHelper extends BaseHelper {
                         name,
 
                         option: value ? String(value) : '',
+                        exact: true,
                     });
 
                     break;

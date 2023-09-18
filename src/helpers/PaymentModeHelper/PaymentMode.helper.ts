@@ -1,16 +1,22 @@
-import { expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 
 export class PaymentModesHelper extends BaseHelper {
     public PaymentModeInfo;
     public PaymentMode_Update_Info;
     public notification: NotificationHelper;
-    constructor(PaymentModeInfo, page) {
+    public form: FormHelper;
+    public dialog: DialogHelper;
+    constructor(PaymentModeInfo, page: any) {
         super(page);
         this.PaymentModeInfo = PaymentModeInfo;
         this.notification = new NotificationHelper(page);
+        this.form = new FormHelper(page);
+        this.dialog = new DialogHelper(page);
     }
 
     public async init() {
@@ -51,6 +57,11 @@ export class PaymentModesHelper extends BaseHelper {
         ).toContain('Add payment mode');
     }
 
+    /**
+     * Fills the payment mode form with the provided information.
+     *
+     * @return {Promise<void>} A promise that resolves once the form is filled.
+     */
     public async fillPaymentModeForm() {
         await this.fillText(this.PaymentModeInfo.name, { name: 'name' });
         await this.selectOption({

@@ -637,12 +637,15 @@ export class BaseHelper {
         expect(await btnClick.isEnabled(), {
             message: 'Button is not enabled to click',
         }).toBe(true);
-        if (await btnClick.isEnabled()) {
+        const btnEnabled = await btnClick.isEnabled();
+        if (btnEnabled) {
             await btnClick.click();
+            await this._page.waitForTimeout(300);
             await this._page.waitForLoadState('networkidle');
         } else {
-            return console.log(
-                chalk.red(buttonName, ' button is not clickable or disabled')
+            return Logger.error(
+                buttonName,
+                ' button is not clickable or disabled'
             );
         }
     }
