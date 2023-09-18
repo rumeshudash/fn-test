@@ -228,7 +228,6 @@ export class ListingHelper extends PageHelper {
      * @param columnItems - The array of key value pairs of column name and value.
      * @return {Promise<void>} - Promise that resolves when the validation is complete.
      */
-
     public async validateRow(row: Locator, columnItems: any): Promise<void> {
         for (const key in columnItems) {
             if (Object.prototype.hasOwnProperty.call(columnItems, key)) {
