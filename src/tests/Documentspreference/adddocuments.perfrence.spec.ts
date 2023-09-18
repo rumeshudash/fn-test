@@ -101,7 +101,7 @@ test.describe('Add Documents Prefrence', () => {
 
         await documents_preference.init();
 
-        await documents_preference.addDocumentMendatory('Pan Card'); // Running this test case again may give the issue since we caant use same name
+        await documents_preference.addDocumentMendatory('GSTIN'); // Running this test case again may give the issue since we caant use same name
 
         const notification = await documents_preference.notificationHelper;
 

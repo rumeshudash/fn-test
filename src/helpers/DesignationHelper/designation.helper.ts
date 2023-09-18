@@ -2,14 +2,17 @@ import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
 
 export class DesignationHelper extends BaseHelper {
     public designationInfo;
     public notification: NotificationHelper;
+    public breadCrumb: BreadCrumbHelper;
     constructor(designationInfo, page) {
         super(page);
         this.designationInfo = designationInfo;
         this.notification = new NotificationHelper(page);
+        this.breadCrumb = new BreadCrumbHelper(page);
     }
     async init() {
         await this.navigateTo('DESIGNATIONS');
@@ -91,27 +94,27 @@ export class DesignationHelper extends BaseHelper {
         ).toBeVisible();
     }
 
-    async verifyDesignationPage() {
-        await expect(
-            this._page.locator("(//p[text()='Designation Detail'])[1]"),
-            chalk.red('Designation page visibility')
-        ).toBeVisible();
-        const designationListItem = this._page.locator(
-            '//div[contains(@class,"text-base font-semibold")]'
-        );
-        expect(
-            await designationListItem.textContent(),
-            chalk.red('Designation Name match')
-        ).toBe(this.designationInfo.name);
+    // async verifyDesignationPage() {
+    //     await expect(
+    //         this._page.locator("(//p[text()='Designation Detail'])[1]"),
+    //         chalk.red('Designation page visibility')
+    //     ).toBeVisible();
+    //     const designationListItem = this._page.locator(
+    //         '//div[contains(@class,"text-base font-semibold")]'
+    //     );
+    //     expect(
+    //         await designationListItem.textContent(),
+    //         chalk.red('Designation Name match')
+    //     ).toBe(this.designationInfo.name);
 
-        const identifier = this.locate('span', {
-            id: 'has-Identifier',
-        })._locator;
-        await expect(
-            identifier,
-            chalk.red('Identifier visibility')
-        ).toBeVisible();
-    }
+    //     const identifier = this.locate('span', {
+    //         id: 'has-Identifier',
+    //     })._locator;
+    //     await expect(
+    //         identifier,
+    //         chalk.red('Identifier visibility')
+    //     ).toBeVisible();
+    // }
 
     async clickDesignationName() {
         await this.verifyItemInList();
@@ -222,7 +225,7 @@ export class DesignationDetailsPageHelper extends BaseHelper {
     async verifyEmployeeTabDetails() {
         await this.locate('//button[text()="Employee"]')._locator.click();
         const parentHelper = this.locate(
-            `//a[text()="${this.employeeInfo.employee_code}"]/parent::div/parent::div`
+            `//a[text()="${this.employeeInfo.identifier}"]/parent::div/parent::div`
         )._locator;
 
         const employee_name = parentHelper.locator(
@@ -232,7 +235,7 @@ export class DesignationDetailsPageHelper extends BaseHelper {
             `//p[text()="${this.employeeInfo.email}"]`
         );
         const employee_department = parentHelper.locator(
-            `//a[text()="${this.employeeInfo.department}"]`
+            `//a[text()="${this.employeeInfo.department_id}"]`
         );
 
         await expect(

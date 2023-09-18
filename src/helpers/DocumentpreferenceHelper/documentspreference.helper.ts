@@ -61,7 +61,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
+            await this.selectOption({
+                option: Document,
                 name: 'document_id',
             });
         }
@@ -78,7 +79,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
+            await this.selectOption({
+                option: Document,
                 name: 'document_id',
             });
         }
@@ -98,7 +100,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
+            await this.selectOption({
+                option: Document,
                 name: 'document_id',
             });
         }
@@ -119,11 +122,11 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
+            await this.selectOption({
+                option: Document,
                 name: 'document_id',
             });
         }
-
         await this._page
             .locator('label')
             .filter({ hasText: 'Document Mandatory' })
@@ -146,11 +149,11 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickAddBtn();
         if (Document) {
-            await this.fillText(Document, {
+            await this.selectOption({
+                option: Document,
                 name: 'document_id',
             });
         }
-
         await this._page
             .locator('label')
             .filter({ hasText: 'save and create another' })

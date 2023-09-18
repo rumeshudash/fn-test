@@ -3,10 +3,6 @@ import { expect } from '@playwright/test';
 import chalk from 'chalk';
 
 export class NotificationHelper extends BaseHelper {
-    constructor(page: any) {
-        super(page);
-    }
-
     async getToastSuccess(): Promise<string> {
         await this._page.waitForSelector('div.ct-toast-success');
         const toast = this.locate('div', {

@@ -138,7 +138,7 @@ export class ListingHelper extends PageHelper {
     }
 
     public async openDialogFormByButtonText(text: string) {
-        const button = await this.locateByText(text);
+        const button = this.locateByText(text);
 
         expect(await button.isVisible(), {
             message: `opening "${text}" dialog form`,

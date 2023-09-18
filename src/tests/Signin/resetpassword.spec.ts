@@ -2,13 +2,15 @@ import { ResetPasswordHelper } from '@/helpers/SigninHelper/resetpassword.helper
 import { test, expect } from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
-test.describe('Reset Password', () => {
+test.describe('TRP001', () => {
     PROCESS_TEST('Reset Password page is open', async ({ page }) => {
         const resetPassword = new ResetPasswordHelper(page);
         await resetPassword.init();
         await resetPassword.resetPasswordPage();
 
-        await expect(page.getByText('Change Password')).toHaveCount(1);
+        const dialog = await resetPassword._dialogHelper;
+
+        await expect(await dialog.getDialogTitle()).toBe('Change Password');
     });
     PROCESS_TEST('Reset Password with empty password', async ({ page }) => {
         const resetPassword = new ResetPasswordHelper(page);
@@ -57,7 +59,7 @@ test.describe('Reset Password', () => {
         }
     );
     PROCESS_TEST(
-        'PROCESS_TEST with valid old password and  valid new password',
+        ' with valid old password and  valid new password',
         async ({ page }) => {
             const resetPassword = new ResetPasswordHelper(page);
             await resetPassword.init();
@@ -67,4 +69,21 @@ test.describe('Reset Password', () => {
             );
         }
     );
+
+    PROCESS_TEST('Check with Invalid Old password', async ({ page }) => {
+        const resetPassword = new ResetPasswordHelper(page);
+        await resetPassword.init();
+        await resetPassword.resetPassword('12345677887', '123456', '123456');
+
+        await page.waitForTimeout(1000);
+
+        const dialog = await resetPassword._dialogHelper;
+
+        await expect(await dialog.getDialogTitle()).toBe('Change Password');
+
+        await page.waitForTimeout(1000);
+        expect(await resetPassword.getToastError()).toBe(
+            'Invalid old password'
+        );
+    });
 });
