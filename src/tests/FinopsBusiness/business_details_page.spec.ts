@@ -1,8 +1,6 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { BusinessDetailsPageHelper } from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
-import { BANKDETAILS } from '@/utils/required_data';
 import chalk from 'chalk';
-import { tr } from 'date-fns/locale';
 
 const { expect, describe } = PROCESS_TEST;
 
@@ -16,27 +14,27 @@ const businessInfo = {
     pan_number: 'AABCF8078M',
 };
 
-const updated_BusinessInfo = {
+export const updated_BusinessInfo = {
     email: 'updateduser@testing.com',
     mobile: '9876032123',
 };
-const AddNotes = {
+export const AddNotes = {
     comments: 'Notes to be addded',
 };
-const notesSchema = {
+export const notesSchema = {
     notes: {
         type: 'textarea',
         required: true,
     },
 };
 
-const BankInformation = {
+export const BankInformation = {
     account_number: '123456789',
     re_account_number: '123456789',
     ifsc_code: 'ICIC0000004',
 };
 
-const BankInformationSchema = {
+export const BankInformationSchema = {
     account_number: {
         type: 'password',
         required: true,
@@ -51,7 +49,7 @@ const BankInformationSchema = {
     },
 };
 
-const businessInfoSchema = {
+export const businessInfoSchema = {
     email: {
         type: 'email',
         required: true,
