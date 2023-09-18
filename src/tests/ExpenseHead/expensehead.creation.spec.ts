@@ -4,9 +4,23 @@ import { ExpenseHeadDetailsHelper } from '@/helpers/ExpenseHeadHelpef/expensehea
 import { PROCESS_TEST } from '@/fixtures';
 
 import { test, expect } from '@playwright/test';
+import { generateRandomNumber } from '@/utils/common.utils';
 
 test.describe('Configuration - Expense Head', () => {
-    const expenseHeadData = {};
+    const expenseHeadData = {
+        // Name: 'test' + generateRandomNumber(),
+        // Parent: 'Time',
+        // Manager: 'Ravi',
+        // Notes: 'test' + generateRandomNumber(),
+        // NewName: 'test' + generateRandomNumber(),
+        // NewNotes: 'test' + generateRandomNumber(),
+    };
+    let document = {
+        imagePath: 'pan-card.jpg',
+
+        comment: 'test' + generateRandomNumber(),
+        date: new Date(),
+    };
 
     PROCESS_TEST(
         'TEH001 - Expense Head Creation  -  Negative case',
@@ -271,8 +285,16 @@ test.describe('Configuration - Expense Head', () => {
         //     await page.goBack();
         //     await expenseHeadDetails.clickOnTab('Expenses');
         // });
+    });
 
+    PROCESS_TEST('TEH004-Expense Head Details Notes Tab', async ({ page }) => {
+        const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        await expenseHeadDetails.init();
         await PROCESS_TEST.step('Click on Notes Tab', async () => {
+            await expenseHeadDetails.clickOnExpenseHead(
+                expenseHeadData['Name']
+            );
+
             await expenseHeadDetails.clickOnTab('Notes');
         });
 
@@ -280,6 +302,139 @@ test.describe('Configuration - Expense Head', () => {
             const notes = await ExpenseHeadHelper.generateRandomGradeName();
 
             await expenseHeadDetails.clickOnAddNotes(notes);
+
+            expenseHeadData['Notes'] = notes;
+        });
+
+        await PROCESS_TEST.step('Verify Notes', async () => {
+            await expenseHeadDetails.verifyNoteAddition({
+                title: expenseHeadData['Notes'],
+                date: new Date(),
+            });
+        });
+
+        await PROCESS_TEST.step('Edit Notes', async () => {
+            const notes = await ExpenseHeadHelper.generateRandomGradeName();
+
+            await expenseHeadDetails.editNotes(
+                {
+                    title: expenseHeadData['Notes'],
+                    date: new Date(),
+                },
+                notes
+            );
+
+            expenseHeadData['Notes'] = notes;
+        });
+
+        await PROCESS_TEST.step('Delete Notes', async () => {
+            await expenseHeadDetails.deleteNotes({
+                title: expenseHeadData['Notes'],
+                date: new Date(),
+            });
         });
     });
+
+    PROCESS_TEST(
+        'TEH005-Expense Head Details Documents Tab',
+        async ({ page }) => {
+            const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+            await expenseHeadDetails.init();
+
+            await PROCESS_TEST.step('Click on Documents Tab', async () => {
+                await expenseHeadDetails.clickOnExpenseHead(
+                    expenseHeadData['Name']
+                );
+
+                await expenseHeadDetails.clickOnTab('Documents');
+            });
+
+            await PROCESS_TEST.step('Add Document', async () => {
+                await expenseHeadDetails.addDocument(document);
+            });
+
+            await PROCESS_TEST.step('Verify Document', async () => {
+                await expenseHeadDetails.verifyDocumentAddition(document);
+            });
+
+            await PROCESS_TEST.step('Check Zoom of documents', async () => {
+                await expenseHeadDetails.checkZoom();
+            });
+
+            await PROCESS_TEST.step('Check Paginations', async () => {
+                await expenseHeadDetails.checkPagination();
+            });
+
+            await PROCESS_TEST.step('Delete Document', async () => {
+                await expenseHeadDetails.checkDocumentDelete(document);
+            });
+        }
+    );
+    PROCESS_TEST(
+        'TEH006-Expense Head Details Expense Tab',
+        async ({ page }) => {
+            const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+            await expenseHeadDetails.init();
+
+            const expenseHead = {
+                name: 'Foods & Accommodations',
+                manager: 'Abhishek Gupta',
+            };
+
+            await PROCESS_TEST.step('Click on Expense Tab', async () => {
+                await expenseHeadDetails.clickOnExpenseHead(expenseHead.name);
+
+                await expenseHeadDetails.clickOnTab('Expenses');
+            });
+
+            await PROCESS_TEST.step(
+                'Check Expense from expense Tab',
+                async () => {
+                    await expenseHeadDetails.checkExpense(
+                        'EXPVN614',
+                        'EXPENSE NO.'
+                    );
+
+                    const breadCrumb = expenseHeadDetails.breadCrumbHelper;
+
+                    await expect(await breadCrumb.getBreadCrumbSubTitle()).toBe(
+                        '#EXPVN614'
+                    );
+                }
+            );
+            await PROCESS_TEST.step('Back to the page', async () => {
+                await page.goBack();
+                await expenseHeadDetails.clickOnTab('Expenses');
+            });
+
+            await PROCESS_TEST.step('Check on Bill Form', async () => {
+                await expenseHeadDetails.checkExpense('EXPVN614', 'BILL FROM');
+
+                const breadCrumb = expenseHeadDetails.breadCrumbHelper;
+
+                await expect(await breadCrumb.getBreadCrumbTitle()).toBe(
+                    'Vendor Detail'
+                );
+            });
+
+            await PROCESS_TEST.step('Back to the page', async () => {
+                await page.goBack();
+                await expenseHeadDetails.clickOnTab('Expenses');
+            });
+            await PROCESS_TEST.step('Check on Bill To', async () => {
+                await expenseHeadDetails.checkExpense('EXPVN614', 'BILL TO');
+
+                const breadCrumb = expenseHeadDetails.breadCrumbHelper;
+
+                await expect(await breadCrumb.getBreadCrumbTitle()).toBe(
+                    'Business Details'
+                );
+            });
+
+            await PROCESS_TEST.step('Back to the page', async () => {
+                await page.goBack();
+                await expenseHeadDetails.clickOnTab('Expenses');
+            });
+        }
+    );
 });

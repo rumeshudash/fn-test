@@ -7,6 +7,7 @@ import { ListingHelper } from '../BaseHelper/listing.helper';
 import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
 import { DocumentHelper } from '../BaseHelper/document.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { DetailsPageHelper } from '../BaseHelper/details.helper';
 
 export class ExpenseHeadDetailsHelper extends ListingHelper {
     public noteHelper: NotesHelper;
@@ -20,6 +21,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
     public documentHelper: DocumentHelper;
 
     public dialogHelper: DialogHelper;
+
+    public detailsHelper: DetailsPageHelper;
 
     constructor(page: any) {
         super(page);
@@ -104,18 +107,24 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    public async addDocument() {
-        // await this.clickButton('Upload Documents');
-        await this.documentHelper.uploadDocument(false);
-
-        this._page.waitForTimeout(1000);
-
+    public async addDocument(document: { comment: string; imagePath: string }) {
+        await this.detailsHelper.openActionButtonItem('Add Documents');
+        await this.documentHelper.uploadDocument(true);
+        await this.fillText(document.comment, { name: 'comments' });
         await this.clickButton('Save');
+        await this._page.waitForTimeout(1000);
     }
-
-    public async checkDocuments() {
+    public async verifyDocumentAddition(document: {
+        comment: string;
+        imagePath: string;
+        date: Date;
+    }) {
+        await this.tabHelper.clickTab('Documents');
         await this.documentHelper.toggleDocumentView('Table View');
-        await this.documentHelper.checkDocument('testTest495235');
+        await this.documentHelper.checkDocument(
+            document.comment,
+            document.date
+        );
     }
 
     public async checkZoom() {
@@ -131,9 +140,12 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
             title: note.title,
         });
     }
-    public async checkDocumentDelete() {
+    public async checkDocumentDelete(document: {
+        comment: string;
+        date: Date;
+    }) {
         await this.documentHelper.checkDocumentDelete({
-            comment: 'testTest626555',
+            comment: document.comment,
         });
     }
 
