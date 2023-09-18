@@ -94,6 +94,7 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
 
     public async clickBusinessNameCell(cell: any): Promise<void> {
         await cell.click();
+        await this._page.waitForTimeout(1000);
     }
 
     public async verifyTableData(

@@ -1,15 +1,21 @@
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import chalk from 'chalk';
+import { FormHelper } from '../BaseHelper/form.helper';
 
 export class CustofeildHelper extends ListingHelper {
     public tabHelper: TabHelper;
     public notificationHelper: NotificationHelper;
 
+    public formHelper: FormHelper;
+
     constructor(page: any) {
         super(page);
         this.tabHelper = new TabHelper(page);
         this.notificationHelper = new NotificationHelper(page);
+
+        this.formHelper = new FormHelper(page);
     }
     public async init() {
         await this.navigateTo('CUSTOMEFEILDS');
@@ -31,7 +37,7 @@ export class CustofeildHelper extends ListingHelper {
         });
         await this.selectOption({
             option: type,
-            hasText: 'Select Field Type',
+            name: 'column_type_id',
         });
         await this.fillText(priority, {
             name: 'priority',
@@ -50,14 +56,14 @@ export class CustofeildHelper extends ListingHelper {
         });
         await this.selectOption({
             option: type,
-            hasText: 'Select Field Type',
+            name: 'column_type_id',
         });
         await this.fillText(priority, {
             name: 'priority',
         });
         if (defaultValue) {
             await this.fillText(defaultValue, {
-                text: 'Default Value',
+                placeholder: 'Default Value',
             });
         }
 
@@ -75,7 +81,7 @@ export class CustofeildHelper extends ListingHelper {
         });
         await this.selectOption({
             option: type,
-            hasText: 'Select Field Type',
+            name: 'column_type_id',
         });
         await this.fillText(priority, {
             name: 'priority',
@@ -97,7 +103,7 @@ export class CustofeildHelper extends ListingHelper {
         });
         await this.selectOption({
             option: type,
-            hasText: 'Select Field Type',
+            name: 'column_type_id',
         });
         await this.fillText(priority, {
             name: 'priority',
@@ -142,17 +148,36 @@ export class CustofeildHelper extends ListingHelper {
     // }
 
     public async changeStatus(name: string) {
-        const row = await this.findRowInTable(name, 'NAME');
-        await this.clickButtonInTable(row, 'ACTION');
+        await this.searchInList(name);
+        const row = await this.findRowInTable(name, 'FIELD NAME');
+        await this.clickButtonInTable(row, 'STATUS');
+
+        await this._page.waitForTimeout(1000);
+
+        const status = await this.getCellText(row, 'STATUS');
+
+        console.log(chalk.green('Status is changed to ' + status));
     }
 
     public async changeMendatory(name: string) {
-        const row = await this.findRowInTable(name, 'NAME');
-        await this.clickButtonInTable(row, 'MEANDATORY');
+        await this.searchInList(name);
+
+        await this._page.waitForTimeout(1000);
+        const row = await this.findRowInTable(name, 'FIELD NAME');
+        await this.clickButtonInTable(row, 'MANDATORY');
+
+        await this._page.waitForTimeout(1000);
+
+        const status = await this.getCellText(row, 'MANDATORY');
+
+        console.log(chalk.green('Status is changed to ' + status));
     }
 
     public async checkEdit(name: string) {
-        const row = await this.findRowInTable(name, 'NAME');
+        await this.searchInList(name);
+
+        await this._page.waitForTimeout(1000);
+        const row = await this.findRowInTable(name, 'FIELD NAME');
         await this.clickButtonInTable(row, 'ACTION');
     }
 
@@ -182,5 +207,9 @@ export class CustofeildHelper extends ListingHelper {
         }
 
         await this.click({ role: 'button', name: 'save' });
+
+        await this._page.waitForTimeout(1000);
+
+        await this.searchInList(newname);
     }
 }

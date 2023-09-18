@@ -13,11 +13,11 @@ export class MenucardHelper extends PageHelper {
     }
 
     public async getSideBarItems() {
-        const items = await this._page.locator(
-            `//div[contains(@class,'sidebar')]//p`
+        const locator = await this.locate(
+            `//div[contains(@class,'sidebar-items')]`
         );
-        const itemTexts = await items.evaluate((item) => item.textContent);
-        console.log(chalk.greenBright(itemTexts));
-        return itemTexts;
+        const items = await locator.getLocator();
+
+        const itemsText = await items.innerText();
     }
 }
