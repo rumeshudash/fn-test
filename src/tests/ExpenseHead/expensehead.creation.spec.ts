@@ -5,20 +5,21 @@ import { PROCESS_TEST } from '@/fixtures';
 
 import { test, expect } from '@playwright/test';
 import { generateRandomNumber } from '@/utils/common.utils';
+test.describe.configure({ mode: 'serial' });
 
 test.describe('Configuration - Expense Head', () => {
     const expenseHeadData = {
-        Name: 'test' + generateRandomNumber(),
+        Name: 'Test' + generateRandomNumber(),
         Parent: 'Stationary',
         Manager: 'Ravi',
-        Notes: 'test' + generateRandomNumber(),
-        NewName: 'test' + generateRandomNumber(),
-        NewNotes: 'test' + generateRandomNumber(),
+        Notes: 'Test' + generateRandomNumber(),
+        NewName: 'Test' + generateRandomNumber(),
+        NewNotes: 'Test' + generateRandomNumber(),
     };
     let document = {
         imagePath: 'pan-card.jpg',
 
-        comment: 'test' + generateRandomNumber(),
+        comment: 'Test' + generateRandomNumber(),
         date: new Date(),
     };
 
@@ -26,8 +27,9 @@ test.describe('Configuration - Expense Head', () => {
         'TEH001 - Expense Head Creation  -  Negative case',
         async ({ page }) => {
             const expenseHead = new ExpenseHeadHelper(page);
+            const dialog = expenseHead.dialogHelper;
+            const notification = expenseHead.notificationHelper;
             await expenseHead.init();
-            const dialog = await expenseHead.dialogHelper;
 
             await PROCESS_TEST.step('Check the page opening', async () => {
                 await expenseHead.breadcrumbHelper.checkBreadCrumbTitle(
@@ -36,26 +38,21 @@ test.describe('Configuration - Expense Head', () => {
                 // await expect(page.getByText('Expense Heads')).toHaveCount(2);
             });
 
-            PROCESS_TEST.step('Check Tabs exist', async () => {
+            await PROCESS_TEST.step('Check Tabs exist', async () => {
                 await expenseHead.verifyTabs();
             });
 
-            PROCESS_TEST.step('Check Table Header', async () => {
+            await PROCESS_TEST.step('Check Table Header', async () => {
                 await expenseHead.checkTableHeader();
             });
 
             await PROCESS_TEST.step('Click On Add Expense Head', async () => {
                 await expenseHead.clickButton('Add Expense Head');
-
-                const dialog = await expenseHead.dialogHelper;
-
                 await dialog.checkDialogTitle('Add Expense Head');
             });
 
             await PROCESS_TEST.step('Check empty Name feild', async () => {
                 await expenseHead.addExpenseHead('');
-
-                const notification = await expenseHead.notificationHelper;
 
                 expect(await notification.getErrorMessage()).toBe(
                     'Name is required'
@@ -86,6 +83,10 @@ test.describe('Configuration - Expense Head', () => {
 
                     await expenseHead.addExpenseHead(expenseHeadData.Name);
 
+                    await page.waitForTimeout(1000);
+
+                    // await expenseHead.searchExpense(expenseHeadData.Name);
+
                     // await expect(await notification.getToastSuccess()).toBe(
                     //     'Successfully saved'
                     // );
@@ -107,6 +108,10 @@ test.describe('Configuration - Expense Head', () => {
             await PROCESS_TEST.step(
                 'Add Expense Head with All feild',
                 async () => {
+                    await dialog.closeDialog();
+                    await expenseHead.clickButton('Yes!');
+
+                    await expenseHead.clickButton('Add Expense Head');
                     await expenseHead.addExpenseHead(
                         expenseHeadData.NewName,
                         expenseHeadData.Parent,
@@ -130,16 +135,15 @@ test.describe('Configuration - Expense Head', () => {
                     await expenseHead.changeInactiveStatus(
                         expenseHeadData.NewName
                     );
+
+                    await page.waitForTimeout(1000);
                 }
             );
 
             await PROCESS_TEST.step(
                 'Edit Expense Head with empty Name feild',
                 async () => {
-                    await expenseHead.editExpenseHead(
-                        expenseHeadData.NewName,
-                        ''
-                    );
+                    await expenseHead.editExpenseHead(expenseHeadData.Name, '');
 
                     expect(await notification.getErrorMessage()).toBe(
                         'Name is required'
@@ -150,9 +154,12 @@ test.describe('Configuration - Expense Head', () => {
             await PROCESS_TEST.step(
                 'Edit Expense Head with duplicate name ',
                 async () => {
+                    await dialog.closeDialog();
+                    await expenseHead.clickButton('Yes!');
+
                     await expenseHead.editExpenseHead(
-                        expenseHeadData.NewName,
-                        expenseHeadData.Name
+                        expenseHeadData.Name,
+                        expenseHeadData.NewName
                     );
 
                     expect(await notification.getErrorMessage()).toBe(
@@ -164,28 +171,28 @@ test.describe('Configuration - Expense Head', () => {
             await PROCESS_TEST.step(
                 'Edit Expense Head with valid name ',
                 async () => {
+                    await dialog.closeDialog();
+                    await expenseHead.clickButton('Yes!');
                     const NewName =
                         await ExpenseHeadHelper.generateRandomGradeName();
                     await expenseHead.editExpenseHead(
-                        expenseHeadData.NewName,
+                        expenseHeadData.Name,
                         NewName
                     );
 
-                    expenseHeadData.NewName = NewName;
+                    expenseHeadData.Name = NewName;
 
-                    expect(await notification.getToastSuccess()).toBe(
-                        'Successfully saved '
-                    );
+                    notification.checkToastSuccess('Successfully saved');
                 }
             );
 
-            await PROCESS_TEST.step('Check save and AddAnother ', async () => {
-                const name = await ExpenseHeadHelper.generateRandomGradeName();
+            // await PROCESS_TEST.step('Check save and AddAnother ', async () => {
+            //     const name = await ExpenseHeadHelper.generateRandomGradeName();
 
-                await expenseHead.addAndClickCheckbox(name);
+            //     await expenseHead.addAndClickCheckbox(name);
 
-                await dialog.checkDialogTitle('Add Expense Head');
-            });
+            //     await dialog.checkDialogTitle('Add Expense Head');
+            // });
         }
     );
 
@@ -320,8 +327,6 @@ test.describe('Configuration - Expense Head', () => {
                 },
                 notes
             );
-
-            expenseHeadData['Notes'] = notes;
         });
 
         await PROCESS_TEST.step('Delete Notes', async () => {

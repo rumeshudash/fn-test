@@ -5,6 +5,7 @@ import { NotesHelper } from '../BaseHelper/notes.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { expect } from '@playwright/test';
 import chalk from 'chalk';
+import { StatusHelper } from '../BaseHelper/status.helper';
 
 export class ExpenseHeadHelper extends ListingHelper {
     public noteHelper: NotesHelper;
@@ -14,6 +15,8 @@ export class ExpenseHeadHelper extends ListingHelper {
     public notificationHelper: NotificationHelper;
 
     public dialogHelper: DialogHelper;
+
+    public statusHelper: StatusHelper;
 
     constructor(page: any) {
         super(page);
@@ -41,13 +44,13 @@ export class ExpenseHeadHelper extends ListingHelper {
         });
         if (parent) {
             await this.selectOption({
-                option: parent,
+                input: parent,
                 name: 'parent_id',
             });
         }
         if (manager) {
             await this.selectOption({
-                option: manager,
+                input: manager,
                 name: 'manager_id',
             });
         }
@@ -57,7 +60,10 @@ export class ExpenseHeadHelper extends ListingHelper {
             });
         }
         await this.clickButton('Save');
+    }
 
+    public async searchExpense(name: string) {
+        await this.searchInList(name);
         await this._page.waitForTimeout(1000);
         await this.searchInList(name);
     }
@@ -83,6 +89,8 @@ export class ExpenseHeadHelper extends ListingHelper {
 
         await this.tabHelper.clickTab('Inactive');
 
+        await this._page.waitForTimeout(2000);
+
         await this.searchInList(name);
 
         await this._page.waitForTimeout(2000);
@@ -107,17 +115,12 @@ export class ExpenseHeadHelper extends ListingHelper {
 
         await this.clickButtonInTable(row, 'ACTION');
 
-        this.fillText(newname, {
+        await this.fillText(newname, {
             name: 'name',
         });
 
         await this.click({ role: 'button', name: 'save' });
-
-        await this.tabHelper.clickTab('All');
-
-        await this.searchInList(newname);
-
-        this._page.waitForTimeout(1000);
+        // await this.tabHelper.clickTab('All');
     }
 
     public async addAndClickCheckbox(name: string) {

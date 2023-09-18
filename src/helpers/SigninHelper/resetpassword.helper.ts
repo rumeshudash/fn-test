@@ -2,11 +2,11 @@ import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
 
 export class ResetPasswordHelper extends NotificationHelper {
-    public _dialogHelper: DialogHelper;
+    public dialogHelper: DialogHelper;
 
     constructor(page: any) {
         super(page);
-        this._dialogHelper = new DialogHelper(page);
+        this.dialogHelper = new DialogHelper(page);
     }
     public async init() {
         await this.navigateTo('MYPROFILE');
@@ -23,7 +23,7 @@ export class ResetPasswordHelper extends NotificationHelper {
     }
     public async resetPassword(
         password: string,
-        newpassword: string,
+        newPassword: string,
         confirm: string
     ) {
         this.clickButton('Actions');
@@ -35,19 +35,18 @@ export class ResetPasswordHelper extends NotificationHelper {
         await this.fillText(password, {
             id: 'old_password',
         });
-        await this.fillText(newpassword, {
+        await this.fillText(newPassword, {
             id: 'password',
         });
         await this.fillText(confirm, {
             id: 'confirm_password',
         });
         await this.click({ role: 'button', name: 'Save' });
-        await this.click({ role: 'button', name: 'Yes' });
     }
 
     public async resetPasswordsameoldAndNewPassword(
         password: string,
-        newpassword: string
+        newPassword: string
     ) {
         this.clickButton('Actions');
         await this._page.waitForTimeout(1000);
@@ -58,7 +57,7 @@ export class ResetPasswordHelper extends NotificationHelper {
         await this.fillText(password, {
             id: 'old_password',
         });
-        await this.fillText(newpassword, {
+        await this.fillText(newPassword, {
             id: 'password',
         });
 

@@ -31,10 +31,7 @@ test.describe('Verify Phone', () => {
 
         await page.waitForTimeout(1000);
 
-        expect(
-            await verifyPhone.getToastError(),
-            chalk.red('Error Message match ')
-        ).toBe('Invalid otp');
+        await verifyPhone.checkToastError('Invalid otp');
     });
 
     test('with valid OTP', async ({ page }) => {
@@ -58,8 +55,6 @@ test.describe('Verify Phone', () => {
         const number = '9816934348';
         await verifyPhone.init(number);
 
-        await page.waitForTimeout(4000);
-
         await verifyPhone.clickResendOTP();
     });
 
@@ -72,10 +67,7 @@ test.describe('Verify Phone', () => {
 
         await verifyPhone.clickVerify();
 
-        expect(
-            await verifyPhone.getToastError(),
-            chalk.red('Error Message match ')
-        ).toBe('Invalid otp');
+        await verifyPhone.checkToastError('Invalid otp');
     });
 
     test('Maximum Invalid OTP', async ({ page }) => {

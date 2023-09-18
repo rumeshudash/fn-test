@@ -328,97 +328,6 @@ export class BaseHelper {
     }
 
     /**
-     * Retrieves the tab list element.
-     *
-     * @return {this} The tab list element.
-     */
-    public getTabListContainer(): this {
-        return this.locate('div', { role: 'tablist' });
-    }
-
-    /**
-     * Retrieves a list of tab items from the tab list container.
-     *
-     * @return {Promise<string[]>} An array of strings representing the text of each tab item.
-     *
-     * @deprecated Use `TabHelper.getTabListItems()` instead.
-     */
-    public async getTabListItems(): Promise<string[]> {
-        return this.locateByRole('tab').allInnerTexts();
-    }
-
-    /**
-     * Checks if the given tab or tabs exist in the tab list.
-     *
-     * @param {string | string[]} tabName - The name or names of the tab(s) to check.
-     * @return {Promise<void>} No return value.
-     *
-     * @deprecated Use `TabHelper.checkTabExists()` instead.
-     */
-    public async checkTabExists(tabName: string | string[]): Promise<void> {
-        let tabNames = tabName;
-        if (typeof tabNames === 'string') tabNames = [tabNames];
-
-        const tabList = await this.getTabListItems();
-
-        for (const tab of tabNames) {
-            expect(tabList, {
-                message: `Tab existence check: ${tab}`,
-            }).toContainEqual(tab);
-        }
-    }
-
-    /**
-     * Clicks on the specified tab. Also check if the tab is selected
-     *
-     * @param {string} tabName - The name of the tab to be clicked.
-     * @return {Promise<void>} - A Promise that resolves when the tab is clicked.
-     *
-     * @deprecated Use `TabHelper.clickTab()` instead.
-     */
-    public async clickTab(tabName: string): Promise<void> {
-        await this.click({
-            role: 'tab',
-            text: tabName,
-            exactText: true,
-        });
-
-        await this.checkTabSelected(tabName);
-    }
-
-    /**
-     * Gives the value of the 'aria-selected' attribute of the specified tab.
-     *
-     * @param {string} tabName - The name of the tab to check.
-     * @return {Promise<string>} The value of the 'aria-selected' attribute of the tab.
-     *
-     * @deprecated Use `TabHelper.isTabSelected()` instead.
-     */
-    public async isTabSelected(tabName: string): Promise<string> {
-        const container = this.getTabListContainer();
-        return await container
-            .locateByRole('tab', {
-                text: tabName,
-                exactText: true,
-            })
-            .getAttribute('aria-selected');
-    }
-
-    /**
-     * Checks if the specified tab is currently selected.
-     *
-     * @param {string} tabName - The name of the tab to check.
-     * @return {Promise<void>} - A Promise that resolves when the check is complete.
-     *
-     * @deprecated Use `TabHelper.checkTabSelected()` instead.
-     */
-    public async checkTabSelected(tabName: string): Promise<void> {
-        expect(await this.isTabSelected(tabName), {
-            message: `Tab selection check: ${tabName}`,
-        }).toBe('true');
-    }
-
-    /**
      * Clicks the specified element or coordinates with the specified button.
      *
      * @param {LocatorOptions & { selector?: string; button?: "left" | "right" | "middle" | undefined; }} options - The options for the click action.
@@ -427,7 +336,7 @@ export class BaseHelper {
     public async click(
         options?: LocatorOptions & {
             selector?: string;
-            button?: 'left' | 'right' | 'middle' | undefined;
+            button?: 'left' | 'right' | 'middle';
         }
     ): Promise<void> {
         const { selector, button = 'left', ...rest } = options || {};
@@ -435,6 +344,7 @@ export class BaseHelper {
 
         Logger.info(`Click: ${button} click in ${this._getSelector(options)}`);
         await this._locator.click({ button });
+        await this._page.waitForTimeout(500);
         await this._page.waitForLoadState('networkidle');
         Logger.success(
             `Click: ${button} click in ${this._getSelector(options)}`
@@ -583,58 +493,11 @@ export class BaseHelper {
         return this._locator.isVisible({ timeout });
     }
 
-    //     const btnCheck = this._page.locator(`//button[text()='${buttonName}']`);
-    //     return await btnCheck.isEnabled();
-    // }
-
-    // public async errorMsg() {
-    //     const error = this.locate('span.label.text-error')._locator;
-    //     const errorCount = await error.count();
-    //     if (errorCount > 0) {
-    //         console.log(chalk.red(`Error ocurred: ${errorCount}`));
-    //         for (let i = 0; i < errorCount; i++) {
-    //             const errorMsg = await error.nth(i).textContent();
-    //             console.log(`Error (error ${i}): `, chalk.red(errorMsg));
-    //         }
-    //     }
-    // }
-
-    // public async toastSuccess() {
-    //     const toast = this._page.locator('div.ct-toast-success');
-    //     const toastCount = await toast.count();
-    //     if (toastCount > 0) {
-    //         for (let i = 0; i < toastCount; i++) {
-    //             const successMsg = await toast.last().textContent();
-    //             return successMsg;
-    //         }
-    //     }
-    // }
-    // public async toastWarn() {
-    //     const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
-    //     const toastWarnCount = await toastWarn.count();
-    //     if (toastWarnCount > 0) {
-    //         for (let i = 0; i < toastWarnCount; i++) {
-    //             const successMsg = await toastWarn.last().textContent();
-    //             return successMsg;
-    //         }
-    //     }
-    // }
-
-    // public async toastError() {
-    //     const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-    //     const toastErrorCount = await toastError.count();
-    //     if (toastErrorCount > 0) {
-    //         for (let i = 0; i < toastErrorCount; i++) {
-    //             const successMsg = await toastError.last().textContent();
-    //             return successMsg;
-    //         }
-    //     }
-    // }
-
-    // public async toastLoad() {}
     public async clickButton(buttonName: string) {
         const btnClick = this._page.getByRole('button', { name: buttonName });
-        expect(await btnClick.isEnabled(), {
+        const isButtonEnabled = await btnClick.isEnabled();
+
+        expect(isButtonEnabled, {
             message: 'Button is not enabled to click',
         }).toBe(true);
         const btnEnabled = await btnClick.isEnabled();

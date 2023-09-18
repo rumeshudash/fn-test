@@ -1,43 +1,42 @@
 import { ForgotPasswordHelper } from '@/helpers/SigninHelper/forgotpassword.helper';
 import { expect, test } from '@playwright/test';
-import chalk from 'chalk';
 
 test.describe('Forgot Password', () => {
     test('without details', async ({ page }) => {
-        const forgotpassword = new ForgotPasswordHelper(page);
-        await forgotpassword.init();
-        await forgotpassword.click({ role: 'button', name: 'Next →' });
+        const forgotPassword = new ForgotPasswordHelper(page);
+        await forgotPassword.init();
+        await forgotPassword.click({ role: 'button', name: 'Next →' });
 
-        await forgotpassword.checkIsInputHasError('Invalid Email Address', {
+        await forgotPassword.checkIsInputHasError('Invalid Email Address', {
             name: 'email',
         });
     });
     test('without Email Field', async ({ page }) => {
-        const forgotpassword = new ForgotPasswordHelper(page);
-        await forgotpassword.init();
-        await forgotpassword.forgotPasswordPage('');
+        const forgotPassword = new ForgotPasswordHelper(page);
+        await forgotPassword.init();
+        await forgotPassword.forgotPasswordPage('');
 
-        const notification = await forgotpassword.notificationHelper;
-
-        expect(
-            await notification.getErrorMessage(),
-            chalk.red('Error Message match ')
-        ).toBe('Invalid Email Address');
+        await forgotPassword.checkIsInputHasError('Invalid Email Address', {
+            name: 'email',
+        });
     });
     test('with invalid Email Field', async ({ page }) => {
-        const forgotpassword = new ForgotPasswordHelper(page);
-        await forgotpassword.init();
-        await forgotpassword.forgotPasswordPage('test');
-        const notification = await forgotpassword.notificationHelper;
+        const forgotPassword = new ForgotPasswordHelper(page);
+        await forgotPassword.init();
+        await forgotPassword.forgotPasswordPage('test');
 
-        expect(
-            await notification.getErrorMessage(),
-            chalk.red('Error Message match ')
-        ).toBe('Invalid Email Address');
+        await forgotPassword.checkIsInputHasError('Invalid Email Address', {
+            name: 'email',
+        });
     });
     test('with valid Email Field', async ({ page }) => {
-        const forgotpassword = new ForgotPasswordHelper(page);
-        await forgotpassword.init();
-        await forgotpassword.forgotPasswordPage('test@gmail.com');
+        const forgotPassword = new ForgotPasswordHelper(page);
+        await forgotPassword.init();
+        await forgotPassword.forgotPasswordPage('test@gmail.com');
+
+        expect(
+            page.locator('h1', { hasText: 'Check Your Email !!' }),
+            'Check your email page open?'
+        ).toBeVisible();
     });
 });
