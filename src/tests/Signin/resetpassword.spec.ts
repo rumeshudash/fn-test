@@ -2,15 +2,16 @@ import { ResetPasswordHelper } from '@/helpers/SigninHelper/resetpassword.helper
 import { test, expect } from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
+test.describe.configure({ mode: 'serial' });
 test.describe('TRP001', () => {
     PROCESS_TEST('Reset Password page is open', async ({ page }) => {
         const resetPassword = new ResetPasswordHelper(page);
         await resetPassword.init();
         await resetPassword.resetPasswordPage();
 
-        const dialog = await resetPassword._dialogHelper;
-
-        await expect(await dialog.getDialogTitle()).toBe('Change Password');
+        expect(await resetPassword.dialogHelper.getDialogTitle()).toBe(
+            'Change Password'
+        );
     });
     PROCESS_TEST('Reset Password with empty password', async ({ page }) => {
         const resetPassword = new ResetPasswordHelper(page);
@@ -58,32 +59,37 @@ test.describe('TRP001', () => {
             );
         }
     );
-    PROCESS_TEST(
-        ' with valid old password and  valid new password',
-        async ({ page }) => {
-            const resetPassword = new ResetPasswordHelper(page);
-            await resetPassword.init();
-            await resetPassword.resetPassword('123456', '1234567', '1234567');
-            expect(await resetPassword.getToastSuccess()).toBe(
-                'Successfully changed password'
-            );
-        }
-    );
 
     PROCESS_TEST('Check with Invalid Old password', async ({ page }) => {
         const resetPassword = new ResetPasswordHelper(page);
         await resetPassword.init();
         await resetPassword.resetPassword('12345677887', '123456', '123456');
+        await resetPassword.click({ role: 'button', name: 'Yes' });
 
-        await page.waitForTimeout(1000);
-
-        const dialog = await resetPassword._dialogHelper;
-
-        await expect(await dialog.getDialogTitle()).toBe('Change Password');
-
-        await page.waitForTimeout(1000);
-        expect(await resetPassword.getToastError()).toBe(
-            'Invalid old password'
-        );
+        await resetPassword.checkToastError('Invalid old password');
     });
+
+    PROCESS_TEST(
+        'with valid old password and valid new password',
+        async ({ page }) => {
+            const resetPassword = new ResetPasswordHelper(page);
+            await resetPassword.init();
+            await resetPassword.resetPassword('123456', '1234567', '1234567');
+            await resetPassword.click({ role: 'button', name: 'Yes' });
+
+            await resetPassword.checkToastSuccess(
+                'Successfully changed password'
+            );
+
+            await PROCESS_TEST.step('Reset to default password', async () => {
+                await resetPassword.init();
+                await resetPassword.resetPassword(
+                    '1234567',
+                    '123456',
+                    '123456'
+                );
+                await resetPassword.click({ role: 'button', name: 'Yes' });
+            });
+        }
+    );
 });
