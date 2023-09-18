@@ -116,7 +116,7 @@ export class FormHelper extends BaseHelper {
                 case 'select':
                     await this.selectOption({
                         name,
-                        input: value ? String(value) : '',
+
                         option: value ? String(value) : '',
                     });
 
@@ -155,25 +155,40 @@ export class FormHelper extends BaseHelper {
         });
     }
 
+    private async _clickSubmitButton(button: any) {
+        expect(await button.isEnabled(), {
+            message: 'check save button enabled',
+        }).toBe(true);
+        await button.click();
+        const button_title = await button.textContent();
+        console.log(chalk.yellow(`${button_title} is clicked`));
+        await this._page.waitForTimeout(300);
+        await this._page.waitForLoadState('networkidle');
+    }
     /**
      * it helps to submit the form
      */
-    public async submitButton(button_title: string = 'Save') {
+    public async submitButton(
+        button_title: string = 'Save',
+        options?: {
+            waitForNetwork?: boolean;
+            clickSubmit?: boolean;
+        }
+    ) {
+        const { waitForNetwork, clickSubmit = true } = options || {};
+        if (waitForNetwork) await this._page.waitForTimeout(300);
         const btnClick = this._page.getByRole('button', { name: button_title });
-        expect(await btnClick.isEnabled(), {
-            message: 'check save button enabled',
-        }).toBe(true);
+        if (clickSubmit) await this._clickSubmitButton(btnClick);
 
-        await btnClick.click();
-        await this._page.waitForTimeout(300);
-        await this._page.waitForLoadState('networkidle');
         return btnClick;
     }
 
     public async checkDisableSubmit(
         button_title: string = 'Save'
     ): Promise<void> {
-        const submitButton = await this.submitButton(button_title);
+        const submitButton = await this.submitButton(button_title, {
+            clickSubmit: false,
+        });
         await this._page.waitForLoadState('networkidle');
         await expect(await submitButton.isEnabled(), {
             message: 'check save button disabled',

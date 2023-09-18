@@ -6,6 +6,7 @@ import {
 import { PROCESS_TEST } from '@/fixtures';
 import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
+import chalk from 'chalk';
 
 const businessInformation = {
     name: 'Finops Non Gstin Business',
@@ -63,6 +64,7 @@ const { describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
 describe(`Non Gst Business Creation`, () => {
     PROCESS_TEST('TBA002 ', async ({ page }) => {
+        console.log(chalk.blue('Initial Business Data Setup', `\n`));
         const helper = await createInit(page);
         const nonGstBusiness = {
             ...businessInformation,
@@ -70,22 +72,40 @@ describe(`Non Gst Business Creation`, () => {
         };
 
         await PROCESS_TEST.step('Check Confirm Pop Up Modal', async () => {
+            console.log(
+                chalk.blue(`\nstep-1-->Check Confirm Pop Up Modal`, `\n`)
+            );
             await helper.formHelper.fillFormInputInformation(formSchema, {});
             await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
             await helper.formHelper.dialogHelper.clickConfirmDialogAction('No');
         });
 
         await PROCESS_TEST.step('Check Mandatory Fields', async () => {
+            console.log(chalk.blue(`\nstep-2-->Check Mandatory Fields`, `\n`));
             await helper.formHelper.checkMandatoryFields(formSchema);
         });
 
         await PROCESS_TEST.step('Fill Form Without  Data', async () => {
+            console.log(chalk.blue(`\nstep-3-->Fill Form Without  Data`, `\n`));
             await helper.formHelper.fillFormInputInformation(formSchema, {});
             await helper.formHelper.submitButton();
             await helper.formHelper.checkAllMandatoryInputErrors(formSchema);
         });
+        await PROCESS_TEST.step('Without Business Type', async () => {
+            console.log(chalk.blue(`\nstep-6-->Without Business Type`, `\n`));
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                type_id: '',
+            });
+
+            await helper.formHelper.checkInputError(
+                'type_id',
+                formSchema['type_id']
+            );
+        });
 
         await PROCESS_TEST.step('Without Business Name', async () => {
+            console.log(chalk.blue(`\nstep-4-->Without Business Name`, `\n`));
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 name: '',
@@ -94,6 +114,9 @@ describe(`Non Gst Business Creation`, () => {
         });
 
         await PROCESS_TEST.step('With Invalid Business Name ', async () => {
+            console.log(
+                chalk.blue(`\nstep-5-->With Invalid Business Name`, `\n`)
+            );
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 name: '1224556',
@@ -107,36 +130,27 @@ describe(`Non Gst Business Creation`, () => {
             await helper.formHelper.checkInputError('name', formSchema['name']);
         });
 
-        await PROCESS_TEST.step('Without Business Type', async () => {
-            await helper.formHelper.fillFormInputInformation(formSchema, {
-                ...nonGstBusiness,
-                type_id: '',
-            });
-            await helper.formHelper.submitButton();
-            await helper.formHelper.checkInputError(
-                'type_id',
-                formSchema['type_id']
-            );
-        });
-
         await PROCESS_TEST.step('Without Pin code', async () => {
+            console.log(chalk.blue(`\nstep-7-->Without Pin code`, `\n`));
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 pincode: '',
             });
-            await helper.formHelper.submitButton();
+
             await helper.formHelper.checkInputError(
                 'pincode',
                 formSchema['pincode']
             );
         });
 
-        await PROCESS_TEST.step('Without Invalid Pin code', async () => {
+        await PROCESS_TEST.step('With Invalid Pin code', async () => {
+            console.log(chalk.blue(`\nstep-8-->With Invalid Pin code`, `\n`));
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 pincode: '452',
             });
-            await helper.formHelper.submitButton();
+
+            await helper.formHelper.checkDisableSubmit();
             await helper.formHelper.checkInputError(
                 'pincode',
                 formSchema['pincode'],
@@ -145,11 +159,12 @@ describe(`Non Gst Business Creation`, () => {
         });
 
         await PROCESS_TEST.step('Without Address ', async () => {
+            console.log(chalk.blue(`\nstep-9-->Without Address`, `\n`));
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 address: '',
             });
-            await helper.formHelper.submitButton();
+
             await helper.formHelper.checkInputError(
                 'address',
                 formSchema['address']
@@ -157,11 +172,12 @@ describe(`Non Gst Business Creation`, () => {
         });
 
         await PROCESS_TEST.step('Without Email ', async () => {
+            console.log(chalk.blue(`\nstep-10-->Without Email`, `\n`));
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 email: '',
             });
-            await helper.formHelper.submitButton();
+
             await helper.formHelper.checkInputError(
                 'email',
                 formSchema['email']
@@ -169,11 +185,12 @@ describe(`Non Gst Business Creation`, () => {
         });
 
         await PROCESS_TEST.step('With Invalid Email  ', async () => {
+            console.log(chalk.blue(`\nstep-11-->With Invalid Email`, `\n`));
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 email: 'usergmail.com',
             });
-            await helper.formHelper.submitButton();
+
             await helper.formHelper.checkInputError(
                 'email',
                 formSchema['email'],
@@ -181,11 +198,12 @@ describe(`Non Gst Business Creation`, () => {
             );
         });
         await PROCESS_TEST.step('Without Mobile ', async () => {
+            console.log(chalk.blue(`\nstep-12-->Without Mobile`, `\n`));
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 mobile: '',
             });
-            await helper.formHelper.submitButton();
+
             await helper.formHelper.checkInputError(
                 'mobile',
                 formSchema['mobile']
@@ -193,11 +211,14 @@ describe(`Non Gst Business Creation`, () => {
         });
 
         await PROCESS_TEST.step('With Invalid Mobile Number ', async () => {
+            console.log(
+                chalk.blue(`\nstep-13-->With Invalid Mobile Number`, `\n`)
+            );
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 mobile: '98456123',
             });
-            await helper.formHelper.submitButton();
+
             await helper.formHelper.checkInputError(
                 'mobile',
                 formSchema['mobile'],
@@ -208,21 +229,32 @@ describe(`Non Gst Business Creation`, () => {
         await PROCESS_TEST.step(
             'fill form with valid information ',
             async () => {
-                await helper.formHelper.fillFormInputInformation(formSchema, {
-                    ...nonGstBusiness,
-                });
+                console.log(
+                    chalk.blue(
+                        `\nstep-14-->fill form with valid information`,
+                        `\n`
+                    )
+                );
+                await helper.formHelper.fillFormInputInformation(
+                    formSchema,
+                    {
+                        ...nonGstBusiness,
+                    },
+                    'name'
+                );
 
-                await helper.formHelper.submitButton();
+                await helper.formHelper.submitButton('Save', {
+                    waitForNetwork: true,
+                });
+                await helper.checkToastSuccess('Successfully Saved');
             }
         );
 
         await PROCESS_TEST.step('verify create data in table ', async () => {
-            await helper.formHelper.fillFormInputInformation(formSchema, {
-                ...nonGstBusiness,
-            });
-
-            await helper.formHelper.submitButton();
-            await helper.checkToastSuccess('Saved Successfully !!');
+            console.log(
+                chalk.blue(`\nstep-15-->verify create data in table`, `\n`)
+            );
+            await helper.listHelper.searchInList(nonGstBusiness.name);
 
             await helper.verifyTableData(nonGstBusiness);
         });
