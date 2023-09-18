@@ -441,9 +441,12 @@ export class BaseHelper {
         );
     }
 
-    public async isInputMandatory(options?: InputFieldLocatorOptions) {
+    public async isInputMandatory(
+        options?: InputFieldLocatorOptions,
+        selector?: 'input' | 'textarea'
+    ) {
         if (options && Object.keys(options).length)
-            this.locate('input', options);
+            this.locate(selector || 'input', options);
 
         return this._locator
             .locator('//ancestor::div[contains(@class,"form-control")]/label')
@@ -452,9 +455,12 @@ export class BaseHelper {
             })
             .isVisible();
     }
-    public async checkInputErrorMessage(options?: InputFieldLocatorOptions) {
+    public async checkInputErrorMessage(
+        options?: InputFieldLocatorOptions,
+        selector?: 'input' | 'textarea'
+    ) {
         if (options && Object.keys(options).length)
-            this.locate('input', options);
+            this.locate(selector || 'input', options);
 
         const errorElement = this._locator
             .locator('//ancestor::div[contains(@class,"form-control")]')
