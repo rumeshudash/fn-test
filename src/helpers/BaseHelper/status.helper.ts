@@ -19,10 +19,10 @@ export class StatusHelper extends BaseHelper {
      * @param {string} name - Identifier of the row.
      * @return {Locator} Toggle Button element.
      */
-    private async _getStatusButton(name: string) {
+    private async _getStatusButton(name: string, colName: string) {
         await this._listHelper.searchInList(name);
         const row = await this._listHelper.findRowInTable(name, 'NAME');
-        const statusCell = await this._listHelper.getCell(row, 'STATUS');
+        const statusCell = await this._listHelper.getCell(row, colName);
         const toggleButton = statusCell.locator('button').first();
         return toggleButton;
     }
@@ -34,8 +34,12 @@ export class StatusHelper extends BaseHelper {
      * @param {string} status - Status to be set for the row.
      * @return {Promise<void>} Promise that resolves once the status is set.
      */
-    public async setStatus(name: string, status: string) {
-        const toggleButton = await this._getStatusButton(name);
+    public async setStatus(
+        name: string,
+        status: string,
+        colName: string = 'STATUS'
+    ) {
+        const toggleButton = await this._getStatusButton(name, colName);
         const currentStatus = await toggleButton.textContent();
         if (currentStatus !== status) {
             await toggleButton.click();
