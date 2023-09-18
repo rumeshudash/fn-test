@@ -174,4 +174,19 @@ test.describe('Custom Feilds', () => {
 
         await expect(page.getByText(name)).toHaveCount(1);
     });
+
+    PROCESS_TEST('Check with existing name and type ', async ({ page }) => {
+        const customefeild = new CustofeildHelper(page);
+        await customefeild.init();
+
+        await customefeild.clickExpenseTab('My Bussinesses');
+
+        await customefeild.addExpenseWithTextType('Test1', 'Text', 1, 'Test1');
+
+        const notification = await customefeild.notificationHelper;
+
+        expect(await notification.getErrorMessage()).toBe(
+            'There is already a column with similar name'
+        );
+    });
 });
