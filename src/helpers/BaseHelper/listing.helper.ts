@@ -166,9 +166,8 @@ export class ListingHelper extends PageHelper {
     ): Promise<void> {
         if (isSearch) await this.searchInList(id);
         const row = await this.findRowInTable(id, columnName);
-        let filter = '';
+        let filter = columnName;
         if (linkColumn) filter = linkColumn;
-        else filter = columnName;
 
         const cell = await this.getCell(row, filter);
         await cell.locator(elementType).click();
