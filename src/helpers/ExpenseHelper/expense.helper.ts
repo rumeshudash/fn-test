@@ -184,6 +184,13 @@ export class ExpenseHelper extends BaseHelper {
                     option: expData.pay_to,
                     name: 'pay_to',
                 });
+            if (expData.employee) {
+                await this._page.waitForTimeout(300);
+                await helper.selectOption({
+                    option: expData.employee,
+                    placeholder: 'Select Employee',
+                });
+            }
             await helper.fillText(expData.desc, { name: 'description' });
         }
     }

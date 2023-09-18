@@ -178,11 +178,7 @@ export class UserCreation extends BaseHelper {
     }
 
     public async openDetailsPage(name: string) {
-        console.log(chalk.blue('Opening user group details'));
-        await this._page.waitForSelector('div.table-row.body-row');
-        const row = await this.listHelper.findRowInTable(name, 'NAME');
-        const cell = await this.listHelper.getCell(row, 'NAME');
-        await cell.locator('a').click();
+        await this.listHelper.openDetailsPage(name, 'NAME', true);
     }
 
     // verify user group details page

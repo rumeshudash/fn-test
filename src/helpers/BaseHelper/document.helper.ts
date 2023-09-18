@@ -121,6 +121,23 @@ export class DocumentHelper extends BaseHelper {
     }
 
     /**
+     * Check if the document title is visible.
+     *
+     * @param {string} name - Name of the document to be checked.
+     * @return {Promise<void>} Promise that resolves once the document title is checked.
+     */
+    public async checkDocumentTitle(name: string) {
+        const title = this._dialogHelper
+            .getDialogContainer()
+            .getLocator()
+            .locator(
+                "//div[@class='overflow-hidden font-medium overflow-ellipsis whitespace-nowrap']"
+            );
+        const titleText = await title.textContent();
+        expect(titleText).toBe(name);
+    }
+
+    /**
      * Checks if the zoom button is working.
      *
      *
@@ -185,8 +202,6 @@ export class DocumentHelper extends BaseHelper {
         comment: string;
         date?: Date;
     }) {
-        await this.toggleDocumentView('Table View');
-
         const container = this.getDocumentContainer().getLocator();
         // delete the document
         const row = container
@@ -202,6 +217,8 @@ export class DocumentHelper extends BaseHelper {
         await this._page
             .locator('div.ct-toast-success')
             .waitFor({ state: 'visible' });
+
+        await this._page.waitForTimeout(500);
 
         const deletedRow = await container
             .locator("//div[contains(@class,'flex gap-4')]")
