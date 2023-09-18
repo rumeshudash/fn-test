@@ -100,8 +100,9 @@ export class DetailsPageHelper extends BaseHelper {
     /**
      * Checks if the options are present in action button.
      *
-     * @param {string[]} options - Options to be checked inside action button.
-     * @return {Promise<void>} Promise that resolves once the options are checked.
+     * @param {string} pageTitle - Breadcrumb title of the page
+     * @param {DetailInfo[]} details - Options to be checked inside details page.
+     * @return {Promise<void>} Promise that resolves once the detais are checked.
      */
     public async validateDetailsPageInfo(
         pageTitle: string,
