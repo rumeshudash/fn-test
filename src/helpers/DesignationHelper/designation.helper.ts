@@ -40,26 +40,26 @@ export class DesignationHelper extends BaseHelper {
             )
             .click();
     }
-    public async verifyDialog() {
-        expect(
-            this._page.getByRole('dialog'),
-            chalk.red('dialog visibility')
-        ).toBeVisible();
-    }
+    // public async verifyDialog() {
+    //     expect(
+    //         this._page.getByRole('dialog'),
+    //         chalk.red('dialog visibility')
+    //     ).toBeVisible();
+    // }
 
-    public async verifyNameField() {
-        await this._page.waitForTimeout(1000);
-        const name_field = this.locate('input', { name: 'name' })._locator;
-        expect(
-            await name_field.isVisible(),
-            chalk.red('Name field visibility')
-        ).toBe(true);
-    }
+    // public async verifyNameField() {
+    //     await this._page.waitForTimeout(1000);
+    //     const name_field = this.locate('input', { name: 'name' })._locator;
+    //     expect(
+    //         await name_field.isVisible(),
+    //         chalk.red('Name field visibility')
+    //     ).toBe(true);
+    // }
     // async fillNameField() {
     //     await this.verifyNameField();
     //     await this.fillText(this.designationInfo.name, { name: 'name' });
     // }
-    async verifyChangeStatus(status: string) {
+    public async verifyChangeStatus(status: string) {
         const itemStatus = this._page
             .getByRole('button', {
                 name: status,
@@ -109,55 +109,55 @@ export class DesignationHelper extends BaseHelper {
         await buttonColumn.click();
     }
 
-    private async _parentTable(title: string) {
-        return this.locate(`//a[text()="${title}"]/parent::div/parent::div`, {
-            exactText: true,
-        })._locator;
-    }
+    // private async _parentTable(title: string) {
+    //     return this.locate(`//a[text()="${title}"]/parent::div/parent::div`, {
+    //         exactText: true,
+    //     })._locator;
+    // }
 
-    async verifyItemInList(title: string) {
-        const parentTableLocator = await this._parentTable(title);
-        const designation_name = parentTableLocator.locator('//a');
+    // public async verifyItemInList(title: string) {
+    //     const parentTableLocator = await this._parentTable(title);
+    //     const designation_name = parentTableLocator.locator('//a');
 
-        const designation_status = parentTableLocator
-            .locator('//button', {
-                hasText: 'Active',
-            })
-            .first();
+    //     const designation_status = parentTableLocator
+    //         .locator('//button', {
+    //             hasText: 'Active',
+    //         })
+    //         .first();
 
-        const designation_date = parentTableLocator
-            .locator(
-                '//div[@class="table-cell align-middle"]/following-sibling::div'
-            )
-            .first();
-        const itemAction = parentTableLocator
-            .locator(
-                '//div[contains(@class,"icon-container transition-all")]//div'
-            )
-            .first();
+    //     const designation_date = parentTableLocator
+    //         .locator(
+    //             '//div[@class="table-cell align-middle"]/following-sibling::div'
+    //         )
+    //         .first();
+    //     const itemAction = parentTableLocator
+    //         .locator(
+    //             '//div[contains(@class,"icon-container transition-all")]//div'
+    //         )
+    //         .first();
 
-        await expect(
-            designation_name,
-            chalk.red('Designation Name visibility')
-        ).toBeVisible();
+    //     await expect(
+    //         designation_name,
+    //         chalk.red('Designation Name visibility')
+    //     ).toBeVisible();
 
-        await expect(
-            designation_status,
-            chalk.red('Designation Status visibility')
-        ).toBeVisible();
+    //     await expect(
+    //         designation_status,
+    //         chalk.red('Designation Status visibility')
+    //     ).toBeVisible();
 
-        await expect(
-            designation_date,
-            chalk.red('Designation date visibility')
-        ).toBeVisible();
+    //     await expect(
+    //         designation_date,
+    //         chalk.red('Designation date visibility')
+    //     ).toBeVisible();
 
-        await expect(
-            itemAction,
-            chalk.red('Designation action visibility')
-        ).toBeVisible();
-    }
+    //     await expect(
+    //         itemAction,
+    //         chalk.red('Designation action visibility')
+    //     ).toBeVisible();
+    // }
 
-    // async verifyDesignationPage() {
+    //public async verifyDesignationPage() {
     //     await expect(
     //         this._page.locator("(//p[text()='Designation Detail'])[1]"),
     //         chalk.red('Designation page visibility')
@@ -179,7 +179,7 @@ export class DesignationHelper extends BaseHelper {
     //     ).toBeVisible();
     // }
 
-    async clickDesignationRowLink(cellText: string) {
+    public async clickDesignationRowLink(cellText: string) {
         const row = await this.listing.findRowInTable(cellText, 'NAME');
         const link = await this.listing.getCellText(row, 'NAME');
         // await this.verifyItemInList(title);
@@ -191,19 +191,33 @@ export class DesignationHelper extends BaseHelper {
         await this.click({ role: 'link', text: link });
     }
 
-    public async clickAction() {
-        const itemAction = this.locate(
-            '(//div[contains(@class,"icon-container transition-all")]//div)[1]'
-        );
-        await itemAction.click();
-    }
+    // public async clickAction() {
+    //     const itemAction = this.locate(
+    //         '(//div[contains(@class,"icon-container transition-all")]//div)[1]'
+    //     );
+    //     await itemAction.click();
+    // }
 }
 
-export class DesignationDetailsPageHelper extends DesignationHelper {
+export class DesignationDetailsPageHelper extends BaseHelper {
     public employeeInfo;
-    constructor(employeeInfo, page) {
+    public notification: NotificationHelper;
+    public breadCrumb: BreadCrumbHelper;
+    public tab: TabHelper;
+    public form: FormHelper;
+    public dialog: DialogHelper;
+    public listing: ListingHelper;
+    public status: StatusHelper;
+    constructor(employeeInfo, page: any) {
         super(page);
         this.employeeInfo = employeeInfo;
+        this.notification = new NotificationHelper(page);
+        this.breadCrumb = new BreadCrumbHelper(page);
+        this.tab = new TabHelper(page);
+        this.form = new FormHelper(page);
+        this.dialog = new DialogHelper(page);
+        this.listing = new ListingHelper(page);
+        this.status = new StatusHelper(page);
     }
 
     public async optionsParentLocator() {

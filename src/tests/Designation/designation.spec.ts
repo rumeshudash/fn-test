@@ -1,5 +1,4 @@
 import { PROCESS_TEST } from '@/fixtures';
-import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
 import {
     DesignationDetailsPageHelper,
@@ -8,7 +7,7 @@ import {
 import { generateRandomNumber } from '@/utils/common.utils';
 let save_and_create: string;
 
-const { expect, describe } = PROCESS_TEST;
+const { describe } = PROCESS_TEST;
 const Save_And_Create_Info = {
     name: 'sc' + generateRandomNumber(),
 };
@@ -19,7 +18,7 @@ const designationUpdateInfo = {
     name: 'update' + generateRandomNumber(),
 };
 describe.configure({ mode: 'serial' });
-describe('HR-Designations ', () => {
+describe('HR-Designations', () => {
     save_and_create = Save_And_Create_Info.name;
     //Create Designation Info
 
@@ -240,11 +239,11 @@ describe('HR-Designations ', () => {
             // await dialog.verifyInputField('Name');
             // await dialog.verifyInputField('Email');
             // await dialog.verifyInputField('Employee Code');
-            // await dialog.verifyInputField('Department');
-            // await dialog.verifyInputField('Designation');
-            // await dialog.verifyInputField('Grade');
-            // await dialog.verifyInputField('Reporting Manager');
-            // await dialog.verifyInputField('Approval Manager');
+            await designation.dialog.verifyInputField('Department');
+            await designation.dialog.verifyInputField('Designation');
+            await designation.dialog.verifyInputField('Grade');
+            await designation.dialog.verifyInputField('Reporting Manager');
+            await designation.dialog.verifyInputField('Approval Manager');
         });
 
         await PROCESS_TEST.step('Fill Employee Form Field', async () => {

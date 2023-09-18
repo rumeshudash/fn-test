@@ -127,21 +127,6 @@ export const paymentModeInfo = {
 
 //For Employee Creation in HR
 
-export const EditEmployeeCreationInfo = {
-    name: 'Edited Admin Create7',
-    // grade: 'E4',
-    // department_id: 'Sales',
-    // designation: 'Admin Manager',
-    identifier: 'edit EC07',
-};
-
-//Bank Account Details for Employee Details Page
-export const bankAccountInfo = {
-    account_number: '12345678',
-    re_account_number: '12345678',
-    ifsc_code: 'ICIC0000005',
-};
-
 //Add Documents
 export const DocumentInfo = {
     comment: {
