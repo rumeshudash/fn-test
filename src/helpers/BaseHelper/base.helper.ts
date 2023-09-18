@@ -583,67 +583,18 @@ export class BaseHelper {
         return this._locator.isVisible({ timeout });
     }
 
-    //     const btnCheck = this._page.locator(`//button[text()='${buttonName}']`);
-    //     return await btnCheck.isEnabled();
-    // }
-
-    // public async errorMsg() {
-    //     const error = this.locate('span.label.text-error')._locator;
-    //     const errorCount = await error.count();
-    //     if (errorCount > 0) {
-    //         console.log(chalk.red(`Error ocurred: ${errorCount}`));
-    //         for (let i = 0; i < errorCount; i++) {
-    //             const errorMsg = await error.nth(i).textContent();
-    //             console.log(`Error (error ${i}): `, chalk.red(errorMsg));
-    //         }
-    //     }
-    // }
-
-    // public async toastSuccess() {
-    //     const toast = this._page.locator('div.ct-toast-success');
-    //     const toastCount = await toast.count();
-    //     if (toastCount > 0) {
-    //         for (let i = 0; i < toastCount; i++) {
-    //             const successMsg = await toast.last().textContent();
-    //             return successMsg;
-    //         }
-    //     }
-    // }
-    // public async toastWarn() {
-    //     const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
-    //     const toastWarnCount = await toastWarn.count();
-    //     if (toastWarnCount > 0) {
-    //         for (let i = 0; i < toastWarnCount; i++) {
-    //             const successMsg = await toastWarn.last().textContent();
-    //             return successMsg;
-    //         }
-    //     }
-    // }
-
-    // public async toastError() {
-    //     const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-    //     const toastErrorCount = await toastError.count();
-    //     if (toastErrorCount > 0) {
-    //         for (let i = 0; i < toastErrorCount; i++) {
-    //             const successMsg = await toastError.last().textContent();
-    //             return successMsg;
-    //         }
-    //     }
-    // }
-
-    // public async toastLoad() {}
     public async clickButton(buttonName: string) {
         const btnClick = this._page.getByRole('button', { name: buttonName });
-        expect(await btnClick.isEnabled(), {
+        const isButtonEnabled = await btnClick.isEnabled();
+
+        expect(isButtonEnabled, {
             message: 'Button is not enabled to click',
         }).toBe(true);
-        if (await btnClick.isEnabled()) {
+        if (isButtonEnabled) {
             await btnClick.click();
             await this._page.waitForLoadState('networkidle');
         } else {
-            return console.log(
-                chalk.red(buttonName, ' button is not clickable or disabled')
-            );
+            Logger.error(buttonName, ' button is not clickable or disabled');
         }
     }
 

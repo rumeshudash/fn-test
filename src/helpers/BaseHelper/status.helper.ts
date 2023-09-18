@@ -44,7 +44,9 @@ export class StatusHelper extends BaseHelper {
         const currentStatus = await toggleButton.textContent();
         if (currentStatus !== status) {
             await toggleButton.click();
+            await this._page.waitForTimeout(500);
+            await this._page.waitForLoadState('networkidle');
+            await this._notficationHelper.checkToastSuccess(`Status Changed`);
         }
-        await this._notficationHelper.checkToastSuccess(`Status Changed`);
     }
 }

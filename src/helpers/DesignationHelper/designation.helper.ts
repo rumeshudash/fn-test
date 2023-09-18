@@ -1,14 +1,13 @@
 import { expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
-import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { BaseHelper } from '../BaseHelper/base.helper';
 import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
-import { TabHelper } from '../BaseHelper/tab.helper';
-import { FormHelper } from '../BaseHelper/form.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
-import { Locator } from 'playwright';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { StatusHelper } from '../BaseHelper/status.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
 
 export class DesignationHelper extends BaseHelper {
     // public designationInfo;

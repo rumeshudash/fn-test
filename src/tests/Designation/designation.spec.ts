@@ -163,6 +163,7 @@ describe('HR-Designations', () => {
                 designationUpdateInfo
             );
             await designation.clickButton('Save');
+            await page.waitForTimeout(500);
             await designation.notification.checkToastSuccess(
                 'Successfully saved'
             );
