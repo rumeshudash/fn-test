@@ -3,153 +3,85 @@ import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 
 import { test, expect } from '@playwright/test';
 
-test.describe('Add Documents Prefrence', () => {
-    test('Adding Documents Preference with new login', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        await signin.checkDashboard({
-            username: 'resetpassword@company.com',
-            password: '123456',
-        });
-
-        const documents_preference = new DocumentspreferenceHelper(page);
-
-        await documents_preference.init();
-
-        await documents_preference.clickAddBtn();
-    });
-
-    test('Adding Documents Preference with empty Documents', async ({
+test.describe('Configuration - Document Preference', () => {
+    test('TDP001 -   Create Document Preference - Negative Case ', async ({
         page,
     }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         await signin.checkDashboard({
-            username: 'resetpassword@company.com',
+            username: 'document@company.com',
             password: '123456',
         });
 
         const documents_preference = new DocumentspreferenceHelper(page);
 
-        await documents_preference.init();
-
-        await documents_preference.addDocumentPreference('');
-
         const notification = await documents_preference.notificationHelper;
 
-        expect(await notification.getErrorMessage()).toBe(
-            'Document is required'
-        );
+        await documents_preference.init();
+
+        test.step('click On Add Button', async () => {
+            await documents_preference.clickAddBtn();
+        });
+        test.step('Add Document Preference with empty Documents', async () => {
+            await documents_preference.clickButton('Save');
+
+            expect(await notification.getErrorMessage()).toBe(
+                'Document is required'
+            );
+        });
     });
-    test('Adding Documents Preference Valid Document Name', async ({
+
+    test('TDP002 - Create Document Preference - Positive Case', async ({
         page,
     }) => {
         const signin = new SignInHelper(page);
         await signin.init();
         await signin.checkDashboard({
-            username: 'resetpassword@company.com',
+            username: 'document@company.com',
             password: '123456',
         });
 
         const documents_preference = new DocumentspreferenceHelper(page);
+        const notification = documents_preference.notificationHelper;
 
         await documents_preference.init();
 
-        await documents_preference.addDocumentPreference('Pan Card'); // Running this test case again may give the issue since we caant use same name
+        test.step('Add Document Preference', async () => {
+            await documents_preference.addDocumentPreference(); // Running this test case again may give the issue since we caant use same name
 
-        const notification = await documents_preference.notificationHelper;
-
-        expect(await notification.getToastSuccess()).toBe(
-            'Successfully created document preference'
-        );
-    });
-
-    test('Adding Documents Preference with same Document Name', async ({
-        page,
-    }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        await signin.checkDashboard({
-            username: 'resetpassword@company.com',
-            password: '123456',
+            expect(await notification.getToastSuccess()).toBe(
+                'Successfully created document preference'
+            );
         });
 
-        const documents_preference = new DocumentspreferenceHelper(page);
+        test.step('Add with Both Mandatory', async () => {
+            await documents_preference.addWithBothMandatory(); // Running this test case again may give the issue since we caant use same name
 
-        await documents_preference.init();
-
-        await documents_preference.addWithBothMandatory('Pan Card'); // Running this test case again may give the issue since we caant use same name
-
-        const notification = await documents_preference.notificationHelper;
-
-        expect(await notification.getToastSuccess()).toBe(
-            'Successfully created document preference'
-        );
-    });
-
-    test('Adding Documents Preference with Documents Mandatory', async ({
-        page,
-    }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        await signin.checkDashboard({
-            username: 'resetpassword@company.com',
-            password: '123456',
+            expect(await notification.getToastSuccess()).toBe(
+                'Successfully created document preference'
+            );
         });
+        test.step('Add With Document Mandatory', async () => {
+            await documents_preference.addDocumentMendatory(); // Running this test case again may give the issue since we caant use same name
 
-        const documents_preference = new DocumentspreferenceHelper(page);
-
-        await documents_preference.init();
-
-        await documents_preference.addDocumentMendatory('GSTIN'); // Running this test case again may give the issue since we caant use same name
-
-        const notification = await documents_preference.notificationHelper;
-
-        expect(await notification.getToastSuccess()).toBe(
-            'Successfully created document preference'
-        );
-    });
-
-    test('Adding Documents Preference with Documents Files Mandatory', async ({
-        page,
-    }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        await signin.checkDashboard({
-            username: 'resetpassword@company.com',
-            password: '123456',
+            expect(await notification.getToastSuccess()).toBe(
+                'Successfully created document preference'
+            );
         });
+        test.step('Add With Document File Mandatory', async () => {
+            await documents_preference.addDocumentFileMendatory(); // Running this test case again may give the issue since we caant use same name
 
-        const documents_preference = new DocumentspreferenceHelper(page);
-
-        await documents_preference.init();
-
-        await documents_preference.addDocumentFileMendatory('Pan Card'); // Running this test case again may give the issue since we caant use same name
-
-        const notification = await documents_preference.notificationHelper;
-
-        expect(await notification.getToastSuccess()).toBe(
-            'Successfully created document preference'
-        );
-    });
-    test('Check Add and Save Another ', async ({ page }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        await signin.checkDashboard({
-            username: 'resetpassword@company.com',
-            password: '123456',
+            expect(await notification.getToastSuccess()).toBe(
+                'Successfully created document preference'
+            );
         });
+        test.step('Check Add and Save Another ', async () => {
+            await documents_preference.addAndClickCheck(); // Running this test case again may give the issue since we caant use same name
 
-        const documents_preference = new DocumentspreferenceHelper(page);
-
-        await documents_preference.init();
-
-        await documents_preference.addAndClickCheck('Pan Card'); // Running this test case again may give the issue since we caant use same name
-
-        const notification = await documents_preference.notificationHelper;
-
-        expect(await notification.getToastSuccess()).toBe(
-            'Successfully created document preference'
-        );
+            expect(await notification.getToastSuccess()).toBe(
+                'Successfully created document preference'
+            );
+        });
     });
 });
