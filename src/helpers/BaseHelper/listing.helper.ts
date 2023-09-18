@@ -166,9 +166,8 @@ export class ListingHelper extends PageHelper {
     ): Promise<void> {
         if (isSearch) await this.searchInList(id);
         const row = await this.findRowInTable(id, columnName);
-        let filter = '';
+        let filter = columnName;
         if (linkColumn) filter = linkColumn;
-        else filter = columnName;
 
         const cell = await this.getCell(row, filter);
         await cell.locator(elementType).click();
@@ -230,12 +229,10 @@ export class ListingHelper extends PageHelper {
      */
 
     public async validateRow(row: Locator, columnItems: any): Promise<void> {
-        for (const key in columnItems) {
-            if (Object.prototype.hasOwnProperty.call(columnItems, key)) {
-                const element = columnItems[key];
-                const cell = await this.getCell(row, key);
-                await expect(cell).toContainText(element);
-            }
+        const keys = Object.keys(columnItems);
+        for (const key of keys) {
+            const cell = await this.getCell(row, key);
+            await expect(cell).toContainText(columnItems[key]);
         }
     }
 }
