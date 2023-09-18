@@ -9,7 +9,6 @@ import CreateFinopsBusinessHelper, {
     BusinessDetailsPageHelper,
 } from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
-import { expect } from '@playwright/test';
 import chalk from 'chalk';
 
 const businessInformation = {
