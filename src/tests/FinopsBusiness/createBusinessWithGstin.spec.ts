@@ -14,12 +14,12 @@ import { expect } from '@playwright/test';
 import chalk from 'chalk';
 
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Ravechi Builder India Private Limited',
-    value: '27AAHCR8293A2Z6',
+    trade_name: 'Venkatesh Infratech Private Limited',
+    value: '27AAECV2994B1Z8',
     business_type: 'Private Limited',
-    pan_number: 'AAHCR8293A',
+    pan_number: 'AAECV2994B',
     address:
-        'SHELTON TOWER, PLOT NO 87,SECTOR 15, CBD-BELAPUR,NAVI MUMBAI, OFFICE NO 807, Thane, 400614, Maharashtra, NA',
+        'BIMA COMPLEX, PANVEL MUMBRA ROAD, KALAMBOLI, D5111, Raigad, 410218, Maharashtra, NA',
     status: 'Active',
 };
 
@@ -38,8 +38,8 @@ const notesSchema = {
 };
 
 const BankInformation = {
-    account_number: '12345678',
-    re_account_number: '12345678',
+    account_number: '1234567889',
+    re_account_number: '1234567889',
     ifsc_code: 'ICIC0000004',
 };
 
@@ -59,7 +59,7 @@ const BankInformationSchema = {
 };
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '27AAHCR8293A2Z6',
+    gstin: '27AAECV2994B1Z8',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
@@ -365,6 +365,7 @@ describe('Business Detail', () => {
                     await businessDetails.formHelper.submitButton(undefined, {
                         waitForNetwork: true,
                     });
+
                     await page.waitForLoadState('networkidle');
                     await businessDetails.checkToastSuccess(
                         'Successfully saved'
@@ -397,12 +398,14 @@ describe('Business Detail', () => {
                 BankInformation,
                 'account_number'
             );
+            await page.waitForTimeout(1000);
             await page.waitForLoadState('networkidle');
             await businessDetails.fileUpload.setFileInput({ isDialog: true });
             await businessDetails.formHelper.submitButton(undefined, {
                 waitForNetwork: true,
             });
 
+            await page.waitForTimeout(1000);
             await page.waitForLoadState('networkidle');
             await businessDetails.checkToastSuccess('Successfully saved');
         });
