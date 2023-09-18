@@ -35,7 +35,7 @@ export class ExpenseHeadHelper extends ListingHelper {
         manager?: string,
         abc?: string
     ) {
-        await this.clickButton('Add Expense Head');
+        // await this.clickButton('Add Expense Head');
         await this.fillText(name, {
             name: 'name',
         });
@@ -140,8 +140,9 @@ export class ExpenseHeadHelper extends ListingHelper {
         const headers = await this.getTableColumnNames();
 
         expect(headers).toEqual([
+            'S.N',
             'NAME',
-            'MANAGER',
+            'APPROVAL MANAGER',
             'STATUS',
             'PARENT',
             'ACTION',
@@ -159,7 +160,7 @@ export class ExpenseHeadHelper extends ListingHelper {
     }
 
     public async checkWarning(name: string) {
-        await this.clickButton('Add Expense Head');
+        // await this.clickButton('Add Expense Head');
 
         await this.fillText(name, {
             name: 'name',
