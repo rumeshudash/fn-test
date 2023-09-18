@@ -7,6 +7,7 @@ import { DetailsPageHelper } from '../BaseHelper/details.helper';
 import { DocumentHelper } from '../BaseHelper/document.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class UserDetails extends UserCreation {
     public fileHelper: FileHelper;
@@ -14,6 +15,7 @@ export class UserDetails extends UserCreation {
     public documentHelper: DocumentHelper;
     public dialogHelper: DialogHelper;
     public tabHelper: TabHelper;
+    public notificationHelper: NotificationHelper;
 
     constructor(page: Page) {
         super(page);
@@ -22,6 +24,7 @@ export class UserDetails extends UserCreation {
         this.documentHelper = new DocumentHelper(page);
         this.dialogHelper = new DialogHelper(page);
         this.tabHelper = new TabHelper(page);
+        this.notificationHelper = new NotificationHelper(page);
     }
 
     public async addMember(data: UserGroupData) {
@@ -52,6 +55,7 @@ export class UserDetails extends UserCreation {
         await this.documentHelper.uploadDocument(true);
         await this.fillText(document.comment, { name: 'comments' });
         await this.clickButton('Save');
+        await this._page.waitForTimeout(1000);
     }
 
     public async verifyDocumentAddition(document: {

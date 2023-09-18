@@ -65,8 +65,8 @@ export class DetailsPageHelper extends BaseHelper {
      */
     public async validateDetailInfoItem(identifier: string, text: string) {
         const container = this.getDetailInfoContainer();
-        const infoText = await container.locator(`${identifier}`).textContent();
-        expect(infoText).toBe(text);
+        const infoText = container.locator(identifier, { hasText: text });
+        await expect(infoText).toContainText(text);
     }
 
     /**

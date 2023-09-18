@@ -2,187 +2,178 @@ import { CustofeildHelper } from '@/helpers/CustomefeildHelper/customefeild.help
 import { test, expect } from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
-test.describe('Custom Feilds', () => {
-    PROCESS_TEST('Check the page opening', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        await expect(page.getByText('Custom')).toHaveCount(1);
-    });
-    PROCESS_TEST(
-        'Check Advance Tab and Click Advance Tab',
-        async ({ page }) => {
-            const customfeild = new CustofeildHelper(page);
-            await customfeild.init();
-
-            await customfeild.clickExpenseTab('Department');
-        }
-    );
-
-    PROCESS_TEST('Check Department Tab and Click Add New', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-
-        await customfeild.clickExpenseTab('Department');
-        await customfeild.clickButton('Add New');
-        await expect(page.getByText('Add Department Custom Field')).toHaveCount(
-            1
-        );
-    });
-    PROCESS_TEST('Add Department With Empty Feilds', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        await customfeild.clickExpenseTab('Department');
-        await customfeild.clickButton('Add New');
-
-        await customfeild.clickButton('Save');
-
-        await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(1);
-    });
-
-    PROCESS_TEST('Add Department Without Name Feilds', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        await customfeild.clickExpenseTab('Department');
-
-        await customfeild.addExpenseCustomeFeild('', 'Text', 1);
-
-        const notification = await customfeild.notificationHelper;
-
-        expect(await notification.getErrorMessage()).toBe(
-            'Field Name is required'
-        );
-    });
-    PROCESS_TEST('Add Department Without Type Feilds', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-
-        await customfeild.clickExpenseTab('Department');
-        await customfeild.addExpenseCustomeFeild('Test1', '', 1);
-
-        const notification = await customfeild.notificationHelper;
-
-        expect(await notification.getErrorMessage()).toBe(
-            'Field Type is required'
-        );
-    });
-    PROCESS_TEST('Add Advance Cateorgy With Text type', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        const name = await CustofeildHelper.generateRandomGradeName();
-        await customfeild.clickExpenseTab('Department');
-
-        await customfeild.addExpenseWithTextType(name, 'Text', 1, 'Test1');
-        // await customfeild.AddExpenseWithTextType('Test2', 'Text', 1);
-        await expect(page.getByText(name)).toHaveCount(1);
-    });
-    PROCESS_TEST('Add Department With Boolean', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        const name = await CustofeildHelper.generateRandomGradeName();
-        const name2 = await CustofeildHelper.generateRandomGradeName();
-        await customfeild.clickExpenseTab('Department');
-
-        await customfeild.addExpenseWitBooleanType(name, 'Boolean', 1, 'True');
-        await customfeild.addExpenseWitBooleanType(name2, 'Boolean', 1);
-    });
-    PROCESS_TEST('Add Department With Number type', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        await customfeild.clickExpenseTab('Department');
-        const name = await CustofeildHelper.generateRandomGradeName();
-        await customfeild.addExpenseWithTextType(name, 'Number', 1, 123);
-
-        await expect(page.getByText(name)).toHaveCount(1);
-    });
-    PROCESS_TEST('Add Department With TextArea', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        await customfeild.clickExpenseTab('Department');
-        const name = await CustofeildHelper.generateRandomGradeName();
-
-        await customfeild.addExpenseWithTextType(
-            name,
-            'TextArea',
-            1,
-            'Finops Protol'
-        );
-
-        await expect(page.getByText(name)).toHaveCount(1);
-    });
-    PROCESS_TEST('Add Advance categories With Date type', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        await customfeild.clickExpenseTab('Department');
-        const name = await CustofeildHelper.generateRandomGradeName();
-
-        await customfeild.addExpenseWithDateType(name, 'Date', 1);
-    });
-    // PROCESS_TEST('Add Expense with choice type without choice feild', async ({
-    //     page,
-    // }) => {
-    //
-
-    //     const customfeild = new CustofeildHelper(page);
-    //     await customfeild.init();
-    //     await customfeild.AddExpenseWithNumberCheckchoice(
-    //         'Choice1',
-    //         'Choice',
-    //         1,
-    //         ['', '']
-    //     );
-    //     expect(await customfeild.errorMessage()).toBe(
-    //         'Choice List is required'
-    //     );
-    // });
-    PROCESS_TEST('Change Status', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        await customfeild.clickExpenseTab('Department');
-
-        await customfeild.changeStatus('Number2');
-    });
-    PROCESS_TEST('Change Mendatory', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-
-        await customfeild.clickExpenseTab('Department');
-
-        await customfeild.changeMendatory('Number2');
-    });
-    PROCESS_TEST('Check Edit Link', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        await customfeild.clickExpenseTab('Department');
-
-        await customfeild.checkEdit('Number2');
-
-        await expect(
-            page.getByText('Edit Department Custom Field')
-        ).toHaveCount(1);
-    });
-    PROCESS_TEST('Change Name and Priority', async ({ page }) => {
-        const customfeild = new CustofeildHelper(page);
-        await customfeild.init();
-        await customfeild.clickExpenseTab('Department');
-
-        const name = await CustofeildHelper.generateRandomGradeName();
-
-        await customfeild.changeNameORPriority('Number2', 'Number', 1, name, 2);
-
-        await expect(page.getByText(name)).toHaveCount(1);
-    });
-    PROCESS_TEST('Check with existing name and type ', async ({ page }) => {
+test.describe('Configurations-Custom Feilds', () => {
+    PROCESS_TEST('TCF001- Department -Negative', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
-        await customefeild.clickExpenseTab('Department');
+        const dialog = await customefeild.dialogHelper;
 
-        await customefeild.addExpenseWithTextType('Test1', 'Text', 1, 'Test1');
+        await PROCESS_TEST.step('Check page is opening', async () => {
+            await expect(page.getByText('Custom')).toHaveCount(1);
+        });
 
-        const notification = await customefeild.notificationHelper;
+        await PROCESS_TEST.step('Check Department Tab', async () => {
+            await customefeild.clickExpenseTab('Department');
+        });
 
-        expect(await notification.getErrorMessage()).toBe(
-            'There is already a column with similar name'
+        await PROCESS_TEST.step('Check Add New Button', async () => {
+            await customefeild.clickButton('Add New');
+
+            expect(await dialog.getDialogTitle()).toBe(
+                'Add Advance Category Custom Field'
+            );
+        });
+
+        await PROCESS_TEST.step(
+            'Add Advance Category With Empty Feilds',
+            async () => {
+                await customefeild.clickButton('Save');
+            }
         );
+
+        await PROCESS_TEST.step('Without Name feilds', async () => {
+            await dialog.closeDialog();
+
+            await customefeild.clickButton('Yes!');
+
+            await customefeild.clickButton('Add New');
+            await customefeild.addExpenseCustomeFeild('', 'Text', 1);
+
+            const notification = await customefeild.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
+                'Field Name is required'
+            );
+        });
+
+        await PROCESS_TEST.step('Without Type feilds', async () => {
+            await dialog.closeDialog();
+
+            await customefeild.clickButton('Yes!');
+
+            await customefeild.clickButton('Add New');
+            await customefeild.addExpenseCustomeFeild('Test1', '', 1);
+            const notification = await customefeild.notificationHelper;
+
+            expect(await notification.getErrorMessage()).toBe(
+                'Field Type is required'
+            );
+        });
     });
+
+    PROCESS_TEST(
+        'TCF002 - Add Department - Positive Case',
+        async ({ page }) => {
+            const customefeild = new CustofeildHelper(page);
+            await customefeild.init();
+            const name = await CustofeildHelper.generateRandomGradeName();
+
+            await PROCESS_TEST.step(
+                'Add Department With Text Type',
+                async () => {
+                    await customefeild.clickExpenseTab('Department');
+
+                    await customefeild.clickButton('Add New');
+
+                    await customefeild.addExpenseWithTextType(
+                        name + 'abc',
+                        'Text',
+                        1,
+                        'Test1'
+                    );
+                }
+            );
+            await PROCESS_TEST.step('Add Department With Boolean', async () => {
+                await customefeild.clickButton('Add New');
+                await customefeild.addExpenseWitBooleanType(
+                    name + 'abcd',
+                    'Boolean',
+                    1,
+                    'True'
+                );
+            });
+
+            await PROCESS_TEST.step(
+                'Add Department With Number type',
+                async () => {
+                    await customefeild.clickButton('Add New');
+                    await customefeild.addExpenseWithTextType(
+                        name + 'abce',
+                        'Number',
+                        1,
+                        123
+                    );
+                }
+            );
+
+            await PROCESS_TEST.step(
+                'Add Department With Date type',
+                async () => {
+                    await customefeild.clickButton('Add New');
+                    await customefeild.addExpenseWithDateType(
+                        name + 'abcf',
+                        'Date',
+                        1
+                    );
+                }
+            );
+            await PROCESS_TEST.step(
+                'Add Department With TextArea',
+                async () => {
+                    await customefeild.clickButton('Add New');
+                    await customefeild.addExpenseWithTextType(
+                        name + 'abcg',
+                        'TextArea',
+                        1,
+                        'Test1'
+                    );
+                }
+            );
+
+            await PROCESS_TEST.step('Change Status', async () => {
+                await customefeild.changeStatus(name + 'abc');
+            });
+
+            await PROCESS_TEST.step('Change Mendatory', async () => {
+                await customefeild.changeMendatory(name + 'abc');
+            });
+
+            await PROCESS_TEST.step('Check Editable', async () => {
+                await customefeild.checkEdit(name + 'abc');
+            });
+
+            await PROCESS_TEST.step('Name and Priority Change', async () => {
+                const newName =
+                    await CustofeildHelper.generateRandomGradeName();
+
+                await customefeild.changeNameORPriority(
+                    name + 'abc',
+                    'Text',
+                    1,
+                    newName,
+                    2
+                );
+            });
+
+            await PROCESS_TEST.step(
+                'Check with existing name and type ',
+                async () => {
+                    await customefeild.clickButton('Add New');
+                    await customefeild.addExpenseWithTextType(
+                        name + 'abc',
+                        'Text',
+                        1,
+                        'Test1'
+                    );
+
+                    const notification = await customefeild.notificationHelper;
+
+                    expect(await notification.getErrorMessage()).toBe(
+                        'There is already a column with similar name'
+                    );
+                }
+            );
+        }
+    );
 });

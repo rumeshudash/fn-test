@@ -1,9 +1,10 @@
 import { BaseHelper } from '@/baseHelper';
+import { ObjectDto } from '@/types/common.types';
 import { Locator, Page, expect } from '@playwright/test';
+import chalk from 'chalk';
 import { BreadCrumbHelper } from './breadCrumb.helper';
 import { DialogHelper } from './dialog.helper';
-import chalk from 'chalk';
-import { ObjectDto } from '@/types/common.types';
+import { Logger } from './log.helper';
 
 export class FormHelper extends BaseHelper {
     public breadcrumbHelper: BreadCrumbHelper;
@@ -42,7 +43,10 @@ export class FormHelper extends BaseHelper {
      * @return {Locator} The locator of the input element.
      */
     public getInputElement(options: InputFieldLocatorOptions): Locator {
-        return this.locate('input', options).getLocator();
+        return this.locate(
+            options.type === 'textarea' ? 'textarea' : 'input',
+            options
+        ).getLocator();
     }
 
     /**
@@ -126,10 +130,14 @@ export class FormHelper extends BaseHelper {
                 case 'select':
                     await this.selectOption({
                         name,
-
                         option: value ? String(value) : '',
                     });
-
+                    break;
+                case 'reference_select':
+                    await this.selectOption({
+                        name,
+                        input: value ? String(value) : '',
+                    });
                     break;
 
                 case 'textarea':
@@ -152,7 +160,7 @@ export class FormHelper extends BaseHelper {
         data: ObjectDto,
         targetClick?: string
     ): Promise<void> {
-        console.log(chalk.blue('Filling form input information ....'));
+        console.log(chalk.blue('Filling form TextArea information ....'));
         for (const [key, value] of Object.entries(data)) {
             await this.fillText(value, {
                 name: key,
@@ -171,7 +179,9 @@ export class FormHelper extends BaseHelper {
         }).toBe(true);
         await button.click();
         const button_title = await button.textContent();
-        console.log(chalk.yellow(`${button_title} is clicked`));
+
+        Logger.info(`${button_title} is clicked`);
+
         await this._page.waitForTimeout(300);
         await this._page.waitForLoadState('networkidle');
     }
@@ -186,8 +196,11 @@ export class FormHelper extends BaseHelper {
         }
     ) {
         const { waitForNetwork, clickSubmit = true } = options || {};
+
         if (waitForNetwork) await this._page.waitForTimeout(300);
+
         const btnClick = this._page.getByRole('button', { name: button_title });
+
         if (clickSubmit) await this._clickSubmitButton(btnClick);
 
         return btnClick;

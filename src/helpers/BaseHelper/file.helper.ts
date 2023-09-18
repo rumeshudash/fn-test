@@ -1,6 +1,6 @@
 import { BaseHelper } from '@/baseHelper';
 import { DialogHelper } from './dialog.helper';
-import { Locator } from '@playwright/test';
+import { Locator, expect } from '@playwright/test';
 
 export class FileHelper extends BaseHelper {
     private _dialogHelper: DialogHelper;
@@ -45,8 +45,7 @@ export class FileHelper extends BaseHelper {
         await this._page.waitForLoadState('networkidle');
         await this._page.waitForTimeout(2000);
 
-        await this._page
-            .locator('div.ct-toast-success')
-            .waitFor({ state: 'visible' });
+        const response = await this._page.waitForResponse('**/upload-files');
+        expect(response.status()).toBe(201);
     }
 }
