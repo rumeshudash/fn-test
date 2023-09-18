@@ -3,6 +3,7 @@ import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import chalk from 'chalk';
 import { FormHelper } from '../BaseHelper/form.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 
 export class CustofeildHelper extends ListingHelper {
     public tabHelper: TabHelper;
@@ -10,12 +11,15 @@ export class CustofeildHelper extends ListingHelper {
 
     public formHelper: FormHelper;
 
+    public dialogHelper: DialogHelper;
+
     constructor(page: any) {
         super(page);
         this.tabHelper = new TabHelper(page);
         this.notificationHelper = new NotificationHelper(page);
 
         this.formHelper = new FormHelper(page);
+        this.dialogHelper = new DialogHelper(page);
     }
     public async init() {
         await this.navigateTo('CUSTOMEFEILDS');
@@ -31,7 +35,7 @@ export class CustofeildHelper extends ListingHelper {
         type: string,
         priority: number
     ) {
-        await this.clickButton('Add New');
+        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
@@ -50,7 +54,7 @@ export class CustofeildHelper extends ListingHelper {
         priority: number,
         defaultValue?: string | number
     ) {
-        await this.clickButton('Add New');
+        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
@@ -75,7 +79,7 @@ export class CustofeildHelper extends ListingHelper {
         priority: number,
         defaultValue?: string
     ) {
-        await this.clickButton('Add New');
+        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
@@ -97,7 +101,7 @@ export class CustofeildHelper extends ListingHelper {
         priority: number,
         defaultValue?: Date
     ) {
-        await this.clickButton('Add New');
+        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
@@ -109,12 +113,12 @@ export class CustofeildHelper extends ListingHelper {
             name: 'priority',
         });
 
-        await this._page.locator(`//input[@id='date']`).click();
-        const dateFeild = await this._page.locator(
-            `//div[@class='rdrInfiniteMonths rdrMonthsVertical']//div[2]//div[2]`
-        );
-        const dateCheck = await dateFeild.getByRole('button', { name: '15' });
-        await dateCheck.click();
+        // await this._page.locator(`//input[@id='date']`).click();
+        // const dateFeild = await this._page.locator(
+        //     `//div[@class='rdrInfiniteMonths rdrMonthsVertical']//div[2]//div[2]`
+        // );
+        // const dateCheck = await dateFeild.getByRole('button', { name: '15' });
+        // await dateCheck.click();
 
         await this.click({ role: 'button', name: 'save' });
     }
