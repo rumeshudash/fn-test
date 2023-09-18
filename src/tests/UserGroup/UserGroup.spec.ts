@@ -1,5 +1,6 @@
 import { LISTING_ROUTES } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
+import { Logger } from '@/helpers/BaseHelper/log.helper';
 import { UserCreation } from '@/helpers/UserGroupHelper/UserGroup.helper';
 import { UserDetails } from '@/helpers/UserGroupHelper/UserGroupDetails.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
@@ -32,12 +33,13 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
 
         await test.step('Check User Group Form Opening', async () => {
             await userCreation.verifyCancelPopup();
+            await userCreation.fillInput('', { name: 'name' });
         });
 
         await test.step('Check User Group Form Error', async () => {
-            console.log(chalk.blue('Checking User Group Form Error'));
+            Logger.info('Checking User Group Form Error');
             await userCreation.fillUserGroupForm(userData);
-            console.log(chalk.green('User Group Form Error is visible'));
+            Logger.success('User Group Form Error is visible');
         });
 
         userData.name = `Test User Group ${generateRandomNumber()}`;
