@@ -35,7 +35,6 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
         const errorMessage = await this.checkInputErrorMessage({
             name: 'email',
         });
-
         await this.ErrorMessageHandle(message, errorMessage);
     }
     public async checkMobileError(message?: string): Promise<void> {
@@ -95,6 +94,15 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
     public async clickBusinessNameCell(cell: any): Promise<void> {
         await cell.click();
         await this._page.waitForTimeout(1000);
+    }
+    public async redirectDetailPage(
+        columnName: string,
+        text: string
+    ): Promise<void> {
+        const row = await this.listHelper.findRowInTable(text, columnName);
+        const name_cell = await this.listHelper.getCell(row, 'NAME');
+        await name_cell.click();
+        await this._page.waitForLoadState('networkidle');
     }
 
     public async verifyTableData(
@@ -187,6 +195,17 @@ export class BusinessDetailsPageHelper extends CreateFinopsBusinessHelper {
         return this.locate("//div[@data-title='detail_information']")._locator;
     }
 
+    public async getHeading() {
+        const parentContainer = await this.informationDetailsLocator();
+        return await parentContainer.locator('h3');
+    }
+    public async verifyHeading(heading: string) {
+        const heading_element = await this.getHeading();
+        expect(heading_element, {
+            message: 'Verifying Heading',
+        }).toHaveText(heading);
+    }
+
     public async checkInformation(title: string) {
         const parentContainer = await this.informationDetailsLocator();
         const titleLocator = await parentContainer
@@ -195,6 +214,12 @@ export class BusinessDetailsPageHelper extends CreateFinopsBusinessHelper {
             )
             .innerText();
         return titleLocator;
+    }
+    public async verifyInformation(title: string, value: string) {
+        const title_element = await this.checkInformation(title);
+        expect(title_element, {
+            message: 'Verify Information',
+        }).toBe(value);
     }
 
     public async editInformation(title: string) {

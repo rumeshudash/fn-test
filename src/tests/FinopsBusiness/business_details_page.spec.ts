@@ -171,19 +171,9 @@ describe('Business Detail', () => {
             }
         );
 
-        // PROCESS_TEST.skip('Connected Vendors - tab', async () => {
-        //     await businessDetails.init();
-        //     await businessDetails.clickBusiness('NAME');
-        //     await businessDetails.tab.clickTab('Connected Vendors');
-        //     const trade_name = await businessDetails.getBusiness('NAME');
-        //     expect(trade_name, chalk.red('Connected Vendor check')).toBe(
-        //         businessInfo.trade_name
-        //     );
-        // });
-
         await PROCESS_TEST.step('Bank Account - tab', async () => {
             await businessDetails.tab.clickTab('Bank Accounts');
-            // await businessDetails.clickButton('Add Bank Account');
+
             await businessDetails.clickActionButton();
             await businessDetails.clickActionOption('Add Bank Account');
             await businessDetails.dialog.checkDialogTitle('Add Bank Account');
@@ -199,7 +189,7 @@ describe('Business Detail', () => {
 
         await PROCESS_TEST.step('Contact Person - tab', async () => {
             await businessDetails.tab.clickTab('Contact Persons');
-            // await businessDetails.clickButton('Add Contact Person');
+
             await businessDetails.clickActionButton();
             await businessDetails.clickActionOption('Add Contact Person');
             await businessDetails.dialog.checkDialogTitle('Add Contact Person');
@@ -226,13 +216,12 @@ describe('Business Detail', () => {
 
         await PROCESS_TEST.step('Add Notes - tab', async () => {
             await businessDetails.tab.clickTab('Notes');
-            // await businessDetails.clickButton('Add Notes');
+
             await businessDetails.clickActionButton();
             await businessDetails.clickActionOption('Add Notes');
             await businessDetails.dialog.checkDialogTitle('Add Notes');
             await businessDetails.formHelper.fillTextAreaForm(AddNotes);
             await businessDetails.clickButton('Save');
-            // await businessDetails.checkToastSuccess('Successfully saved');
 
             await PROCESS_TEST.step('Verify Added Notes', async () => {
                 await businessDetails.getNotesAuthor(AddNotes.comments);

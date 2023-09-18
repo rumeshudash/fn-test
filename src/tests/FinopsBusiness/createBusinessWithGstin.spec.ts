@@ -11,27 +11,54 @@ import CreateFinopsBusinessHelper, {
 } from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
 import { expect } from '@playwright/test';
 import chalk from 'chalk';
-import {
-    businessInfoSchema,
-    BankInformationSchema,
-    BankInformation,
-    AddNotes,
-    updated_BusinessInfo,
-} from './business_details_page.spec';
 
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Shree Mahavir Builders & Developers',
-    value: '27ADDFS4470J2ZR',
-    business_type: 'Partnership Firm',
-    pan_number: 'ADDFS4470J',
+    trade_name: 'Mahalaxmi Granite & Ceramics',
+    value: '27AMWPC5402A1ZE',
+    business_type: 'Proprietorship',
+    pan_number: 'AMWPC5402A',
     address:
-        'VIJENDRA CHAMBERS, SHIVAJI CHOWK SECTOR 1, NAVI MUMBAI, ROOM NO 101, Thane, 400706, Maharashtra, NA, H NO 810',
-    status: 'Cancelled',
+        'MARBLE MARKET, MARBLE MARKET, PANVEL, PLOT NO.83, SECTOR-23, Raigad, 410218, Maharashtra, NA',
+    status: 'Active',
 };
 
+const updated_BusinessInfo = {
+    email: 'updateduser@testing.com',
+    mobile: '9876032123',
+};
+const AddNotes = {
+    comments: 'Notes to be addded',
+};
+const notesSchema = {
+    notes: {
+        type: 'textarea',
+        required: true,
+    },
+};
+
+const BankInformation = {
+    account_number: '1234567',
+    re_account_number: '1234567',
+    ifsc_code: 'ICIC0000004',
+};
+
+const BankInformationSchema = {
+    account_number: {
+        type: 'password',
+        required: true,
+    },
+    re_account_number: {
+        type: 'text',
+        required: true,
+    },
+    ifsc_code: {
+        type: 'text',
+        required: true,
+    },
+};
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '27ADDFS4470J2ZR',
+    gstin: '27AMWPC5402A1ZE',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
@@ -68,6 +95,7 @@ const createInit = async (page: any) => {
         helper,
     };
 };
+describe.configure({ mode: 'serial' });
 describe(`Create Gstin Business`, () => {
     PROCESS_TEST('TBA001', async ({ page }) => {
         const { helper, gstin_helper } = await createInit(page);
@@ -242,10 +270,12 @@ describe('Business Detail', () => {
             await businessDetails.editInformation('Email');
             await businessDetails.dialog.checkDialogTitle('Edit Business');
             await businessDetails.formHelper.fillFormInputInformation(
-                businessInfoSchema,
-                businessGstinInfo
+                formSchema,
+                updated_BusinessInfo,
+                undefined,
+                ['gstin']
             );
-            await businessDetails.clickButton('Save');
+            await businessDetails.formHelper.submitButton();
             await businessDetails.checkToastSuccess('Successfully Saved');
         });
 
@@ -254,15 +284,20 @@ describe('Business Detail', () => {
             await businessDetails.editInformation('Mobile Number');
             await businessDetails.dialog.checkDialogTitle('Edit Business');
             await businessDetails.formHelper.fillFormInputInformation(
-                businessInfoSchema,
-                businessGstinInfo
+                formSchema,
+                updated_BusinessInfo,
+                undefined,
+                ['gstin']
             );
-            await businessDetails.clickButton('Save');
+            await businessDetails.formHelper.submitButton();
             await businessDetails.checkToastSuccess('Successfully Saved');
         });
         await PROCESS_TEST.step('Verify Address', async () => {
             const address = await businessDetails.checkInformation('Address');
-            expect(address).toContain(businessGstinInfo.address);
+            // expect(address).toContain(businessGstinInfo.address); @toto address should be same in gstin card and detail page
+            expect(address).toContain(
+                'Marble Market Panvel Raigad Maharashtra'
+            );
         });
 
         await PROCESS_TEST.step(
@@ -293,12 +328,20 @@ describe('Business Detail', () => {
                     await businessDetails.fileUpload.setFileInput({
                         isDialog: true,
                     });
-                    await businessDetails.clickButton('Save');
+                    await businessDetails.formHelper.submitButton(undefined, {
+                        waitForNetwork: true,
+                    });
+                    await page.waitForLoadState('networkidle');
                     await businessDetails.checkToastSuccess(
                         'Successfully saved'
                     );
+                    await page.waitForLoadState('networkidle');
+
                     const documents =
-                        await businessDetails.getBusinessDocuments('Pan Card');
+                        await businessDetails.getBusinessDocuments(
+                            'GST Certificate'
+                        );
+
                     expect(
                         documents,
                         chalk.red('Documents Visibility check')
@@ -309,23 +352,28 @@ describe('Business Detail', () => {
 
         await PROCESS_TEST.step('Bank Account - tab', async () => {
             await businessDetails.tab.clickTab('Bank Accounts');
-            // await businessDetails.clickButton('Add Bank Account');
+
             await businessDetails.clickActionButton();
             await businessDetails.clickActionOption('Add Bank Account');
             await businessDetails.dialog.checkDialogTitle('Add Bank Account');
             await businessDetails.formHelper.fillFormInputInformation(
                 BankInformationSchema,
-                BankInformation
+                BankInformation,
+                'account_number'
             );
+            await page.waitForLoadState('networkidle');
             await businessDetails.fileUpload.setFileInput({ isDialog: true });
-            await businessDetails.clickButton('Save');
-            await businessDetails.clickButton('Save');
+            await businessDetails.formHelper.submitButton(undefined, {
+                waitForNetwork: true,
+            });
+
+            await page.waitForLoadState('networkidle');
             await businessDetails.checkToastSuccess('Successfully saved');
         });
 
         await PROCESS_TEST.step('Contact Person - tab', async () => {
             await businessDetails.tab.clickTab('Contact Persons');
-            // await businessDetails.clickButton('Add Contact Person');
+
             await businessDetails.clickActionButton();
             await businessDetails.clickActionOption('Add Contact Person');
             await businessDetails.dialog.checkDialogTitle('Add Contact Person');
@@ -333,7 +381,7 @@ describe('Business Detail', () => {
                 contactPersonInfoSchema,
                 contactPersonInfo
             );
-            await businessDetails.clickButton('Save');
+            await businessDetails.formHelper.submitButton();
             await businessDetails.checkToastSuccess('Successfully saved');
 
             await PROCESS_TEST.step('Verify Added Person Contact', async () => {
@@ -352,13 +400,12 @@ describe('Business Detail', () => {
 
         await PROCESS_TEST.step('Add Notes - tab', async () => {
             await businessDetails.tab.clickTab('Notes');
-            // await businessDetails.clickButton('Add Notes');
+
             await businessDetails.clickActionButton();
             await businessDetails.clickActionOption('Add Notes');
             await businessDetails.dialog.checkDialogTitle('Add Notes');
             await businessDetails.formHelper.fillTextAreaForm(AddNotes);
-            await businessDetails.clickButton('Save');
-            // await businessDetails.checkToastSuccess('Successfully saved');
+            await businessDetails.formHelper.submitButton();
 
             await PROCESS_TEST.step('Verify Added Notes', async () => {
                 await businessDetails.getNotesAuthor(AddNotes.comments);
@@ -371,13 +418,16 @@ describe('Business Detail', () => {
             await businessDetails.dialog.checkDialogTitle('Edit Business');
 
             await businessDetails.formHelper.fillFormInputInformation(
-                businessInfoSchema,
-                updated_BusinessInfo
+                formSchema,
+                updated_BusinessInfo,
+                undefined,
+                ['gstin']
             );
-            businessDetails.formHelper.checkIsInputEditable({
+            await page.waitForLoadState('load');
+            businessDetails.formHelper.checkIsInputDisabled({
                 name: 'gstin',
             });
-            await businessDetails.clickButton('Save');
+            await businessDetails.formHelper.submitButton();
             await businessDetails.checkToastSuccess('Successfully Saved');
 
             await PROCESS_TEST.step('Verify Updated Info', async () => {

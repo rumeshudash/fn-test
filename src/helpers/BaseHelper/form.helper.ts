@@ -116,9 +116,11 @@ export class FormHelper extends BaseHelper {
     public async fillFormInputInformation(
         formSchema: ObjectDto,
         data: ObjectDto,
-        targetClick?: string
+        targetClick?: string,
+        ignoreFields: string[] = []
     ): Promise<void> {
         for (const [name, schema] of Object.entries(formSchema)) {
+            if (ignoreFields.includes(name)) continue;
             const value = data[name] || '';
             switch (schema?.type) {
                 case 'select':
@@ -198,7 +200,7 @@ export class FormHelper extends BaseHelper {
             clickSubmit: false,
         });
         await this._page.waitForLoadState('networkidle');
-        await expect(await submitButton.isEnabled(), {
+        await expect(submitButton.isEnabled(), {
             message: 'check save button disabled',
         }).toBeFalsy();
     }
