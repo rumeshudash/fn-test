@@ -152,22 +152,32 @@ export class ListingHelper extends PageHelper {
      *
      * @param {string} id - The identifier of the row.
      * @param {string} columnName - The columnName to search for in the table row.
+     * @param {boolean} isSearch - Whether to search in the search input for the row or not.
+     * @param {string} linkColumn - The columnName of the column that contains the link.
+     * @param {string} elementType - The type of element to click on (eg: span, a).
      * @return {Promise<void>} - Promise that resolves when the link is clicked.
      */
     public async openDetailsPage(
         id: string,
-        columnName: string
+        columnName: string,
+        isSearch: boolean = true,
+        linkColumn: string = '',
+        elementType: string = 'a'
     ): Promise<void> {
-        await this.searchInList(id);
+        if (isSearch) await this.searchInList(id);
         const row = await this.findRowInTable(id, columnName);
-        const cell = await this.getCell(row, columnName);
-        await cell.locator('a').click();
+        let filter = '';
+        if (linkColumn) filter = linkColumn;
+        else filter = columnName;
+
+        const cell = await this.getCell(row, filter);
+        await cell.locator(elementType).click();
     }
 
     /**
      * This function helps to get Locator of the text element in the cell.
-     * @param {Locator} row - The locator of the table row.
      *
+     * @param {Locator} row - The locator of the table row.
      * @param {string} columnName - The columnName to search for in the table row.
      * @return {Promise<Locator>} - The locator of the text element in the cell.
      */
@@ -210,5 +220,22 @@ export class ListingHelper extends PageHelper {
         const row = await this.findRowInTable(query, columnName);
 
         return row.isVisible();
+    }
+
+    /**
+     * This function helps to validate each column values in the table row.
+     * @param {Locator} row - The locator of the table row.
+     * @param columnItems - The array of key value pairs of column name and value.
+     * @return {Promise<void>} - Promise that resolves when the validation is complete.
+     */
+
+    public async validateRow(row: Locator, columnItems: any): Promise<void> {
+        for (const key in columnItems) {
+            if (Object.prototype.hasOwnProperty.call(columnItems, key)) {
+                const element = columnItems[key];
+                const cell = await this.getCell(row, key);
+                await expect(cell).toContainText(element);
+            }
+        }
     }
 }
