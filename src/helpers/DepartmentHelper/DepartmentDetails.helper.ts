@@ -69,7 +69,6 @@ export class DepartmentDetails extends DepartmentCreation {
         await this.documentHelper.uploadDocument(true);
         await this.fillText(document.comment, { name: 'comments' });
         await this.clickButton('Save');
-        await this._page.waitForTimeout(1000);
     }
 
     public async verifyDocumentAddition(document: {

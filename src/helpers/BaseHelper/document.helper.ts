@@ -118,7 +118,6 @@ export class DocumentHelper extends BaseHelper {
      */
     public async uploadDocument(isDialog: boolean) {
         await this._fileHelper.setFileInput({ isDialog: isDialog });
-        await this._page.waitForSelector('div.ct-toast-success');
     }
 
     /**

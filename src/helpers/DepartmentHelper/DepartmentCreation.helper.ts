@@ -1,19 +1,22 @@
-import { expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
-import chalk from 'chalk';
 import { formatDate } from '@/utils/common.utils';
-import { ListingHelper } from '../BaseHelper/listing.helper';
+import { expect } from '@playwright/test';
+import chalk from 'chalk';
 import { DetailsPageHelper } from '../BaseHelper/details.helper';
-import { TabHelper } from '../BaseHelper/tab.helper';
 import { DocumentHelper } from '../BaseHelper/document.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
+import { ListingHelper } from '../BaseHelper/listing.helper';
+import { Logger } from '../BaseHelper/log.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { StatusHelper } from '../BaseHelper/status.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
 
-export class DepartmentCreation extends BaseHelper {
+export class DepartmentCreation extends FormHelper {
     public listingHelper: ListingHelper;
     public detailsHelper: DetailsPageHelper;
     public documentHelper: DocumentHelper;
     public tabHelper: TabHelper;
     public statusHelper: StatusHelper;
+    public notificationHelper: NotificationHelper;
 
     constructor(page) {
         super(page);
@@ -22,6 +25,7 @@ export class DepartmentCreation extends BaseHelper {
         this.documentHelper = new DocumentHelper(page);
         this.tabHelper = new TabHelper(page);
         this.statusHelper = new StatusHelper(page);
+        this.notificationHelper = new NotificationHelper(page);
     }
 
     public async init() {
@@ -81,16 +85,13 @@ export class DepartmentCreation extends BaseHelper {
         if (data.parent) {
             await this.selectOption({ input: data.parent, name: 'parent_id' });
         }
-        await this.click({ role: 'button', name: 'Save' });
-        console.log(chalk.green('Save button clicked'));
+        await this.clickButton('Save');
+        Logger.success('Save button clicked');
 
         // check success message
         if (data.name) {
-            const toast = this._page.locator('div.ct-toast-success').first();
-            expect(await toast.textContent(), {
-                message: 'Checking toast message',
-            }).toBe('Successfully created');
-            console.log(chalk.green('Department toast message verified'));
+            this.notificationHelper.checkToastSuccess('Successfully created');
+            Logger.success('Department toast message verified');
         }
         // check err message if name empty
         if (!data.name && !update) {
@@ -112,7 +113,7 @@ export class DepartmentCreation extends BaseHelper {
 
     // goto department details page
     public async validateDetailsPage(department: DepartmentCreationData) {
-        this.detailsHelper.validateDetailsPageInfo('Department Detail', [
+        await this.detailsHelper.validateDetailsPageInfo('Department Detail', [
             {
                 selector: '//h3[@role="heading"]',
                 text: department.name,

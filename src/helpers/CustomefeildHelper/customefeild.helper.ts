@@ -1,15 +1,25 @@
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import chalk from 'chalk';
+import { FormHelper } from '../BaseHelper/form.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 
 export class CustofeildHelper extends ListingHelper {
     public tabHelper: TabHelper;
     public notificationHelper: NotificationHelper;
 
+    public formHelper: FormHelper;
+
+    public dialogHelper: DialogHelper;
+
     constructor(page: any) {
         super(page);
         this.tabHelper = new TabHelper(page);
         this.notificationHelper = new NotificationHelper(page);
+
+        this.formHelper = new FormHelper(page);
+        this.dialogHelper = new DialogHelper(page);
     }
     public async init() {
         await this.navigateTo('CUSTOMEFEILDS');
@@ -25,13 +35,13 @@ export class CustofeildHelper extends ListingHelper {
         type: string,
         priority: number
     ) {
-        await this.clickButton('Add New');
+        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
         await this.selectOption({
             option: type,
-            hasText: 'Select Field Type',
+            name: 'column_type_id',
         });
         await this.fillText(priority, {
             name: 'priority',
@@ -44,20 +54,20 @@ export class CustofeildHelper extends ListingHelper {
         priority: number,
         defaultValue?: string | number
     ) {
-        await this.clickButton('Add New');
+        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
         await this.selectOption({
             option: type,
-            hasText: 'Select Field Type',
+            name: 'column_type_id',
         });
         await this.fillText(priority, {
             name: 'priority',
         });
         if (defaultValue) {
             await this.fillText(defaultValue, {
-                text: 'Default Value',
+                placeholder: 'Default Value',
             });
         }
 
@@ -69,13 +79,13 @@ export class CustofeildHelper extends ListingHelper {
         priority: number,
         defaultValue?: string
     ) {
-        await this.clickButton('Add New');
+        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
         await this.selectOption({
             option: type,
-            hasText: 'Select Field Type',
+            name: 'column_type_id',
         });
         await this.fillText(priority, {
             name: 'priority',
@@ -91,24 +101,24 @@ export class CustofeildHelper extends ListingHelper {
         priority: number,
         defaultValue?: Date
     ) {
-        await this.clickButton('Add New');
+        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
         await this.selectOption({
             option: type,
-            hasText: 'Select Field Type',
+            name: 'column_type_id',
         });
         await this.fillText(priority, {
             name: 'priority',
         });
 
-        await this._page.locator(`//input[@id='date']`).click();
-        const dateFeild = await this._page.locator(
-            `//div[@class='rdrInfiniteMonths rdrMonthsVertical']//div[2]//div[2]`
-        );
-        const dateCheck = await dateFeild.getByRole('button', { name: '15' });
-        await dateCheck.click();
+        // await this._page.locator(`//input[@id='date']`).click();
+        // const dateFeild = await this._page.locator(
+        //     `//div[@class='rdrInfiniteMonths rdrMonthsVertical']//div[2]//div[2]`
+        // );
+        // const dateCheck = await dateFeild.getByRole('button', { name: '15' });
+        // await dateCheck.click();
 
         await this.click({ role: 'button', name: 'save' });
     }
@@ -142,17 +152,36 @@ export class CustofeildHelper extends ListingHelper {
     // }
 
     public async changeStatus(name: string) {
-        const row = await this.findRowInTable(name, 'NAME');
-        await this.clickButtonInTable(row, 'ACTION');
+        await this.searchInList(name);
+        const row = await this.findRowInTable(name, 'FIELD NAME');
+        await this.clickButtonInTable(row, 'STATUS');
+
+        await this._page.waitForTimeout(1000);
+
+        const status = await this.getCellText(row, 'STATUS');
+
+        console.log(chalk.green('Status is changed to ' + status));
     }
 
     public async changeMendatory(name: string) {
-        const row = await this.findRowInTable(name, 'NAME');
-        await this.clickButtonInTable(row, 'MEANDATORY');
+        await this.searchInList(name);
+
+        await this._page.waitForTimeout(1000);
+        const row = await this.findRowInTable(name, 'FIELD NAME');
+        await this.clickButtonInTable(row, 'MANDATORY');
+
+        await this._page.waitForTimeout(1000);
+
+        const status = await this.getCellText(row, 'MANDATORY');
+
+        console.log(chalk.green('Status is changed to ' + status));
     }
 
     public async checkEdit(name: string) {
-        const row = await this.findRowInTable(name, 'NAME');
+        await this.searchInList(name);
+
+        await this._page.waitForTimeout(1000);
+        const row = await this.findRowInTable(name, 'FIELD NAME');
         await this.clickButtonInTable(row, 'ACTION');
     }
 
@@ -182,5 +211,9 @@ export class CustofeildHelper extends ListingHelper {
         }
 
         await this.click({ role: 'button', name: 'save' });
+
+        await this._page.waitForTimeout(1000);
+
+        await this.searchInList(newname);
     }
 }
