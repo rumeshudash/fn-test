@@ -32,6 +32,7 @@ export class StatusHelper extends BaseHelper {
      *
      * @param {string} name - Identifier of the row.
      * @param {string} status - Status to be set for the row.
+     * @param {string} colName - Column name of the status button.
      * @return {Promise<void>} Promise that resolves once the status is set.
      */
     public async setStatus(
