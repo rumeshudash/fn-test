@@ -57,7 +57,7 @@ export class ExpenseHeadHelper extends ListingHelper {
             });
         }
         await this._page.waitForTimeout(1000);
-        await this.click({ role: 'button', name: 'save' });
+        await this.clickButton('Save');
 
         await this.searchInList(name);
 

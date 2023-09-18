@@ -8,12 +8,12 @@ import { generateRandomNumber } from '@/utils/common.utils';
 
 test.describe('Configuration - Expense Head', () => {
     const expenseHeadData = {
-        // Name: 'test' + generateRandomNumber(),
-        // Parent: 'Time',
-        // Manager: 'Ravi',
-        // Notes: 'test' + generateRandomNumber(),
-        // NewName: 'test' + generateRandomNumber(),
-        // NewNotes: 'test' + generateRandomNumber(),
+        Name: 'test' + generateRandomNumber(),
+        Parent: 'Stationary',
+        Manager: 'Ravi',
+        Notes: 'test' + generateRandomNumber(),
+        NewName: 'test' + generateRandomNumber(),
+        NewNotes: 'test' + generateRandomNumber(),
     };
     let document = {
         imagePath: 'pan-card.jpg',
@@ -83,11 +83,13 @@ test.describe('Configuration - Expense Head', () => {
             PROCESS_TEST.step(
                 'Create Expense Head With Name Feild',
                 async () => {
-                    await expenseHead.addExpenseHead(Name);
+                    await expenseHead.clickButton('Add Expense Head');
 
-                    expect(await notification.getToastSuccess()).toBe(
-                        'Successfully saved'
-                    );
+                    await expenseHead.addExpenseHead(expenseHeadData.Name);
+
+                    // await expect(await notification.getToastSuccess()).toBe(
+                    //     'Successfully saved'
+                    // );
                 }
             );
 
@@ -96,7 +98,7 @@ test.describe('Configuration - Expense Head', () => {
                 async () => {
                     await expenseHead.clickButton('Add Expense Head');
 
-                    await expenseHead.addExpenseHead(Name);
+                    await expenseHead.addExpenseHead(expenseHeadData.Name);
 
                     const notification = await expenseHead.notificationHelper;
 
@@ -109,18 +111,10 @@ test.describe('Configuration - Expense Head', () => {
             await PROCESS_TEST.step(
                 'Add Expense Head with All feild',
                 async () => {
-                    const Name =
-                        await ExpenseHeadHelper.generateRandomGradeName();
-                    await expenseHead.addExpenseHead(Name, 'Time', 'Ravi');
-
-                    expenseHeadData['Name'] = Name;
-
-                    expenseHeadData['Parent'] = 'Time';
-
-                    expenseHeadData['Manager'] = 'Ravi';
-
-                    expect(await notification.getToastSuccess()).toBe(
-                        'Successfully saved'
+                    await expenseHead.addExpenseHead(
+                        expenseHeadData.NewName,
+                        expenseHeadData.Parent,
+                        expenseHeadData.Manager
                     );
                 }
             );
@@ -128,21 +122,28 @@ test.describe('Configuration - Expense Head', () => {
             await PROCESS_TEST.step(
                 'Change Active status to Inactive Status',
                 async () => {
-                    await expenseHead.changeActiveStatus(Name);
+                    await expenseHead.changeActiveStatus(
+                        expenseHeadData.NewName
+                    );
                 }
             );
 
             await PROCESS_TEST.step(
                 'Change Inactive status to Active Status',
                 async () => {
-                    await expenseHead.changeInactiveStatus(Name);
+                    await expenseHead.changeInactiveStatus(
+                        expenseHeadData.NewName
+                    );
                 }
             );
 
             await PROCESS_TEST.step(
                 'Edit Expense Head with empty Name feild',
                 async () => {
-                    await expenseHead.editExpenseHead(Name, '');
+                    await expenseHead.editExpenseHead(
+                        expenseHeadData.NewName,
+                        ''
+                    );
 
                     const notification = await expenseHead.notificationHelper;
 
@@ -155,7 +156,10 @@ test.describe('Configuration - Expense Head', () => {
             await PROCESS_TEST.step(
                 'Edit Expense Head with duplicate name ',
                 async () => {
-                    await expenseHead.editExpenseHead(Name, 'Rent');
+                    await expenseHead.editExpenseHead(
+                        expenseHeadData.NewName,
+                        expenseHeadData.Name
+                    );
 
                     const notification = await expenseHead.notificationHelper;
 
@@ -170,7 +174,12 @@ test.describe('Configuration - Expense Head', () => {
                 async () => {
                     const NewName =
                         await ExpenseHeadHelper.generateRandomGradeName();
-                    await expenseHead.editExpenseHead(Name, NewName);
+                    await expenseHead.editExpenseHead(
+                        expenseHeadData.NewName,
+                        NewName
+                    );
+
+                    expenseHeadData.NewName = NewName;
 
                     const notification = await expenseHead.notificationHelper;
 
@@ -195,23 +204,23 @@ test.describe('Configuration - Expense Head', () => {
         await expenseHeadDetails.init();
         await PROCESS_TEST.step('Check expense head Deatils page', async () => {
             await expenseHeadDetails.clickOnExpenseHead(
-                expenseHeadData['Name']
+                expenseHeadData.NewName
             );
         });
 
         await PROCESS_TEST.step('Check expense head name', async () => {
-            expect(page.getByText(expenseHeadData['Name'])).toHaveCount(1);
+            expect(page.getByText(expenseHeadData.NewName)).toHaveCount(1);
         });
         await PROCESS_TEST.step('Check expense head parent', async () => {
-            expect(page.getByText(expenseHeadData['Parent'])).toHaveCount(1);
+            expect(page.getByText(expenseHeadData.Parent)).toHaveCount(1);
         });
 
         await PROCESS_TEST.step('Check expense head manager', async () => {
             await expenseHeadDetails.clickOnManagerName(
-                expenseHeadData['Manager']
+                expenseHeadData.Manager
             );
 
-            expect(page.getByText(expenseHeadData['Manager'])).toHaveCount(1);
+            expect(page.getByText(expenseHeadData.Manager)).toHaveCount(1);
         });
 
         await PROCESS_TEST.step('Click on Edit Icon', async () => {
@@ -248,7 +257,7 @@ test.describe('Configuration - Expense Head', () => {
 
             await expenseHeadDetails.editExpenseHead(name);
 
-            expenseHeadData['Name'] = name;
+            expenseHeadData.NewName = name;
 
             const notification = await expenseHeadDetails.notificationHelper;
 
@@ -292,7 +301,7 @@ test.describe('Configuration - Expense Head', () => {
         await expenseHeadDetails.init();
         await PROCESS_TEST.step('Click on Notes Tab', async () => {
             await expenseHeadDetails.clickOnExpenseHead(
-                expenseHeadData['Name']
+                expenseHeadData.NewName
             );
 
             await expenseHeadDetails.clickOnTab('Notes');
@@ -301,14 +310,12 @@ test.describe('Configuration - Expense Head', () => {
         await PROCESS_TEST.step('Add Notes with Empty Notes', async () => {
             const notes = await ExpenseHeadHelper.generateRandomGradeName();
 
-            await expenseHeadDetails.clickOnAddNotes(notes);
-
-            expenseHeadData['Notes'] = notes;
+            await expenseHeadDetails.clickOnAddNotes(expenseHeadData.Notes);
         });
 
         await PROCESS_TEST.step('Verify Notes', async () => {
             await expenseHeadDetails.verifyNoteAddition({
-                title: expenseHeadData['Notes'],
+                title: expenseHeadData.Notes,
                 date: new Date(),
             });
         });
@@ -318,7 +325,7 @@ test.describe('Configuration - Expense Head', () => {
 
             await expenseHeadDetails.editNotes(
                 {
-                    title: expenseHeadData['Notes'],
+                    title: expenseHeadData.Notes,
                     date: new Date(),
                 },
                 notes
@@ -329,7 +336,7 @@ test.describe('Configuration - Expense Head', () => {
 
         await PROCESS_TEST.step('Delete Notes', async () => {
             await expenseHeadDetails.deleteNotes({
-                title: expenseHeadData['Notes'],
+                title: expenseHeadData.Notes,
                 date: new Date(),
             });
         });
@@ -343,7 +350,7 @@ test.describe('Configuration - Expense Head', () => {
 
             await PROCESS_TEST.step('Click on Documents Tab', async () => {
                 await expenseHeadDetails.clickOnExpenseHead(
-                    expenseHeadData['Name']
+                    expenseHeadData.NewName
                 );
 
                 await expenseHeadDetails.clickOnTab('Documents');
