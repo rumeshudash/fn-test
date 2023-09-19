@@ -32,8 +32,8 @@ test.describe('Menu Crad', () => {
         await PROCESS_TEST.step('Click on Sidebar menu', async () => {
             await menucard.clickOnSideBarMenu('Transactions');
         });
-        // PROCESS_TEST.step('Scroll the menu', async () => {
-        //     await menucard.scrollDown();
-        // });
+        PROCESS_TEST.step('Scroll the menu', async () => {
+            await menucard.scrollDown();
+        });
     });
 });

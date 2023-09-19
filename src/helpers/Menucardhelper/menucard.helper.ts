@@ -52,6 +52,16 @@ export class MenucardHelper extends PageHelper {
             .locator(`//div[contains(@class,'hamburger_button')]`)
             .click();
     }
+    public async getMenuLocator(menuName: string) {
+        const locator = await this._page
+            .locator(
+                `//div[contains(@class,'sidebar-items')]//p[contains(@class,'sidebar-item-title')]`
+            )
+            .filter({
+                hasText: menuName,
+            });
+        return locator;
+    }
 
     public async checkSideBarItems() {
         const itemsText = await this._page
@@ -88,32 +98,20 @@ export class MenucardHelper extends PageHelper {
     }
 
     public async checkSpaceInMenu(menuName: string) {
-        const locator = await this._page
-            .locator(
-                `//div[contains(@class,'sidebar-items')]//p[contains(@class,'sidebar-item-title')]`
-            )
-            .filter({
-                hasText: menuName,
-            });
-
+        const locator = await this.getMenuLocator(menuName);
         expect(
             locator.locator(`//ancestor::div[contains(@class,'submenu mt-3')]`)
         ).toBeTruthy();
     }
 
     public async checkSubMenuItems(menuName: string) {
-        const locator = await this._page
-            .locator(
-                `//div[contains(@class,'sidebar-items')]//p[contains(@class,'sidebar-item-title')]`
-            )
-            .filter({
-                hasText: menuName,
-            });
-        const getAncestor = await locator.locator(
+        const locator = await this.getMenuLocator(menuName);
+
+        const ancestor = await locator.locator(
             `//ancestor::div[contains(@class,'submenu')]`
         );
 
-        const menus = await getAncestor
+        const menus = await ancestor
             .locator(
                 `//div[contains(@class,'menus')]//a[contains(@class,'sidebar-item')]`
             )
@@ -127,13 +125,7 @@ export class MenucardHelper extends PageHelper {
     }
 
     public async checkSpaceOnSidebard(menuName: string) {
-        const locator = await this._page
-            .locator(
-                `//div[contains(@class,'sidebar-items')]//p[contains(@class,'sidebar-item-title')]`
-            )
-            .filter({
-                hasText: menuName,
-            });
+        const locator = await this.getMenuLocator(menuName);
 
         expect(
             locator.locator(
@@ -142,12 +134,19 @@ export class MenucardHelper extends PageHelper {
         ).toBeTruthy();
     }
 
-    // public async scrollDown() {
-    //     const locator = await this._page.locator(
-    //         `//div[contains(@class,'sidebar-items')]`
-    //     );
-    //     await locator.evaluate(() => {
-    //         window.scrollBy(0, 500);
-    //     });
-    // }
+    public async scrollDown() {
+        const locator = await this._page.locator(
+            `//div[contains(@class,'sidebar-items')]`
+        );
+
+        await locator.evaluate(() => {
+            window.scrollBy(0, 500);
+        });
+
+        const isScrolled = await locator.evaluate(() => {
+            return window.scrollY > 0;
+        });
+
+        expect(isScrolled).toBeTruthy();
+    }
 }
