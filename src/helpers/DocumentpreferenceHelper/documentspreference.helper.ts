@@ -67,13 +67,13 @@ export class DocumentspreferenceHelper extends ListingHelper {
                 `(//div[contains(@class,'selectbox-control !bg-base-100')])[2]`
             )
             .click();
-        const elements = await this._page
+        const elements = await locator
             .locator(`//div[contains(@class,"MenuList")]`)
             .innerText();
 
         const newArray = elements.split('\n');
 
-        console.log('newArray', newArray);
+        return newArray;
     }
     public async addDocumentPreference() {
         await this.clickAddBtn();
