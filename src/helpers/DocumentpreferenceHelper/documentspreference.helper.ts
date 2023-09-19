@@ -168,4 +168,13 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickButton('Save');
     }
+
+    public async checkDocument() {
+        await this.clickAddBtn();
+
+        await this.fillInput('COI', {
+            name: 'document_id',
+        });
+        await this.clickButton('Save');
+    }
 }

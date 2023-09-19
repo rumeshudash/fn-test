@@ -31,6 +31,15 @@ test.describe('Configuration - Document Preference', () => {
                 'Document is required'
             );
         });
+        await test.step('Check it allow to add same name', async () => {
+            await dialog.closeDialog();
+
+            await documents_preference.clickButton('Yes!');
+            await documents_preference.checkDocument();
+            expect(await notification.getErrorMessage()).toBe(
+                'Document is required'
+            );
+        });
     });
 
     test('TDP002 - Create Document Preference - Positive Case', async ({
