@@ -124,11 +124,9 @@ export class MenucardHelper extends PageHelper {
 
         const menus = await getAncestor
             .locator(`//div[contains(@class,'menus')]`)
-            .textContent(); // Use textContent instead of innerText
+            .allInnerTexts(); // Use textContent instead of innerText
 
-        const newMenu = menus.split('\n');
-
-        const filteredItems = newMenu.filter((item) => item.trim() !== '');
+        const filteredItems = menus.filter((item) => item.trim() !== '');
 
         expect(filteredItems).toEqual(submenuObject[menuName]);
     }
