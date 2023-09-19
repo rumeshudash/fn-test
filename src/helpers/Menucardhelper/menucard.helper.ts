@@ -52,9 +52,18 @@ export class MenucardHelper extends PageHelper {
             .locator(`//div[contains(@class,'hamburger_button')]`)
             .click();
     }
+    public async getMenuLocator(menuName: string) {
+        const locator = await this._page
+            .locator(
+                `//div[contains(@class,'sidebar-items')]//p[contains(@class,'sidebar-item-title')]`
+            )
+            .filter({
+                hasText: menuName,
+            });
+        return locator;
+    }
 
     public async checkSideBarItems() {
-        await this.openAndCloseMenuCard();
         const itemsText = await this._page
             .locator(`//div[contains(@class,'sidebar-items')]`)
             .innerText();
@@ -88,57 +97,35 @@ export class MenucardHelper extends PageHelper {
             .click();
     }
 
-    public async getSidebarSubMenu(menuName: string) {
-        await this.clickOnSideBarMenu(menuName);
-        const submenu = await this._page
-            .locator(`(//div[contains(@class,'menus hover')]//a)`)
-            .innerText();
-
-        console.log('sub menu', submenu);
-    }
     public async checkSpaceInMenu(menuName: string) {
-        const locator = await this._page
-            .locator(
-                `//div[contains(@class,'sidebar-items')]//p[contains(@class,'sidebar-item-title')]`
-            )
-            .filter({
-                hasText: menuName,
-            });
-
+        const locator = await this.getMenuLocator(menuName);
         expect(
             locator.locator(`//ancestor::div[contains(@class,'submenu mt-3')]`)
         ).toBeTruthy();
     }
 
     public async checkSubMenuItems(menuName: string) {
-        const locator = await this._page
-            .locator(
-                `//div[contains(@class,'sidebar-items')]//p[contains(@class,'sidebar-item-title')]`
-            )
-            .filter({
-                hasText: menuName,
-            });
-        const getAncestor = await locator.locator(
+        const locator = await this.getMenuLocator(menuName);
+
+        const ancestor = await locator.locator(
             `//ancestor::div[contains(@class,'submenu')]`
         );
 
-        const menus = await getAncestor
-            .locator(`//div[contains(@class,'menus')]`)
+        const menus = await ancestor
+            .locator(
+                `//div[contains(@class,'menus')]//a[contains(@class,'sidebar-item')]`
+            )
             .allInnerTexts(); // Use textContent instead of innerText
 
         const filteredItems = menus.filter((item) => item.trim() !== '');
+
+        console.log('filteredItems:', filteredItems);
 
         expect(filteredItems).toEqual(submenuObject[menuName]);
     }
 
     public async checkSpaceOnSidebard(menuName: string) {
-        const locator = await this._page
-            .locator(
-                `//div[contains(@class,'sidebar-items')]//p[contains(@class,'sidebar-item-title')]`
-            )
-            .filter({
-                hasText: menuName,
-            });
+        const locator = await this.getMenuLocator(menuName);
 
         expect(
             locator.locator(
@@ -151,8 +138,15 @@ export class MenucardHelper extends PageHelper {
         const locator = await this._page.locator(
             `//div[contains(@class,'sidebar-items')]`
         );
+
         await locator.evaluate(() => {
             window.scrollBy(0, 500);
         });
+
+        const isScrolled = await locator.evaluate(() => {
+            return window.scrollY > 0;
+        });
+
+        expect(isScrolled).toBeTruthy();
     }
 }
