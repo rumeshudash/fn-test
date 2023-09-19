@@ -4,7 +4,7 @@ import { test } from '@playwright/test';
 
 const { describe } = PROCESS_TEST;
 
-describe('TPM001', () => {
+describe('Configuration>Payment Mode', () => {
     //For Payment Modes in Configuration
     const paymentMode_Save_And_Create = {
         name: 'Test Payment SnC2',
@@ -33,9 +33,9 @@ describe('TPM001', () => {
             required: true,
         },
     };
-    PROCESS_TEST('Verify Payment Modes Page', async ({ page }) => {
+    PROCESS_TEST('TPM001', async ({ page }) => {
         const paymentMode = new PaymentModesHelper(paymentModeInfo, page);
-        await test.step('Verify page', async () => {
+        await PROCESS_TEST.step('Verify page', async () => {
             await paymentMode.init();
             await paymentMode.breadCrumb.checkBreadCrumbTitle('Payment Modes');
         });
