@@ -1,5 +1,3 @@
-import { Locator } from '@playwright/test';
-
 interface LocatorOptions {
     role?: LocatorRoles;
     id?: string;
@@ -195,15 +193,10 @@ interface VENDORDOCUMENTDETAILS {
     msme?: string;
 }
 
-// interface BANKACCOUNTDETAILS {
-//     bankAccount: string;
-//     ifsc: string;
-// }
-
 interface DepartmentCreationData {
     name?: string;
-    parent?: string;
-    manager?: string;
+    parent_id?: string;
+    manager_id?: string;
     date?: string;
     identifier?: string;
 }
@@ -221,11 +214,11 @@ interface EmployeeCreationData {
 
 interface UserGroupData {
     name?: string;
-    manager?: string;
+    manager_id?: string;
     description?: string;
     member?: string;
     memberEmail?: string;
-    role?: string;
+    role_id?: string;
 }
 
 interface BankDetails {
@@ -246,6 +239,6 @@ interface StatusChangeData {
     name?: string;
     status?: string;
     colName?: string;
-    row?: Locator;
+    // row?: LocatorRoles;
     hasDialog?: boolean;
 }

@@ -76,14 +76,17 @@ export class DepartmentCreation extends FormHelper {
                 name: 'name',
             });
         }
-        if (data.manager) {
+        if (data.manager_id) {
             await this.selectOption({
-                input: data.manager,
+                input: data.manager_id,
                 name: 'manager_id',
             });
         }
-        if (data.parent) {
-            await this.selectOption({ input: data.parent, name: 'parent_id' });
+        if (data.parent_id) {
+            await this.selectOption({
+                input: data.parent_id,
+                name: 'parent_id',
+            });
         }
         await this.clickButton('Save');
         Logger.success('Save button clicked');
@@ -118,8 +121,8 @@ export class DepartmentCreation extends FormHelper {
                 selector: '//h3[@role="heading"]',
                 text: department.name,
             },
-            { selector: '#has-Manager', text: department.manager },
-            { selector: '#has-Parent', text: department.parent },
+            { selector: '#has-Manager', text: department.manager_id },
+            { selector: '#has-Parent', text: department.parent_id },
         ]);
     }
 
@@ -130,9 +133,9 @@ export class DepartmentCreation extends FormHelper {
         status: string
     ) {
         expect(department).not.toBeNull();
-        const parentDepartment = await department.getByText(data.parent);
+        const parentDepartment = await department.getByText(data.parent_id);
         expect(parentDepartment).not.toBeNull();
-        const manager = await department.getByText(data.manager);
+        const manager = await department.getByText(data.manager_id);
         expect(manager).not.toBeNull();
         const statusButton = await department.locator('button').first();
         expect(await statusButton.textContent()).toBe(status);

@@ -12,11 +12,25 @@ describe.configure({ mode: 'serial' });
 
 describe('HR -> Department Creation and Details Verification', () => {
     let data: DepartmentCreationData = {
-        name: 'Department' + generateRandomNumber(),
-        parent: 'Sales',
-        manager: 'Ravi',
+        name: '',
+        parent_id: 'Sales',
+        manager_id: 'Ravi',
         date: new Date().toDateString(),
     };
+
+    const departmentSchema = {
+        name: {
+            type: 'text',
+            required: true,
+        },
+        manager_id: {
+            type: 'reference_select',
+        },
+        parent_id: {
+            type: 'reference_select',
+        },
+    };
+
     PROCESS_TEST('TDC001', async ({ page }) => {
         const department = new DepartmentCreation(page);
         await department.init();
@@ -24,20 +38,16 @@ describe('HR -> Department Creation and Details Verification', () => {
         // check name error
         await test.step('Check errors', async () => {
             await department.openDepartmentAddForm();
-            await department.fillDepartment({
-                name: '',
-                parent: data.parent,
-                manager: data.manager,
-            });
+            await department.fillFormInputInformation(departmentSchema, {});
+            await department.submitButton();
+            await department.checkAllMandatoryInputErrors(departmentSchema);
         });
 
         // add new department
         await test.step('Add Department with valid details', async () => {
-            await department.fillDepartment({
-                name: data.name,
-                parent: data.parent,
-                manager: data.manager,
-            });
+            data.name = 'Test' + generateRandomNumber();
+            await department.fillFormInputInformation(departmentSchema, data);
+            await department.submitButton();
             data.date = new Date().toDateString();
         });
 
@@ -129,9 +139,17 @@ describe('HR -> Department Creation and Details Verification', () => {
             for (let i = 0; i < 2; i++) {
                 await department.fillDepartment({
                     name: data.name + generateRandomNumber(),
-                    parent: data.parent,
-                    manager: data.manager,
+                    parent_id: data.parent_id,
+                    manager_id: data.manager_id,
                 });
+
+                await department.fillFormInputInformation(departmentSchema, {
+                    name: data.name + generateRandomNumber(),
+                    parent_id: data.parent_id,
+                    manager_id: data.manager_id,
+                });
+
+                await department.submitButton();
                 await department.checkSaveAndCreateAnother();
                 await page.waitForTimeout(1000);
             }
@@ -173,19 +191,16 @@ describe('HR -> Department Creation and Details Verification', () => {
             await departmentDetails.openEditForm();
             const newDepartmentData: DepartmentCreationData = {
                 name: 'Test' + generateRandomNumber(),
-                manager: 'Vasant kishore',
-                parent: 'Test',
+                manager_id: 'Vasant kishore',
+                parent_id: 'Test',
             };
 
             // fill update form
-            await departmentDetails.fillDepartment(
-                {
-                    name: newDepartmentData.name,
-                    parent: newDepartmentData.parent,
-                    manager: newDepartmentData.manager,
-                },
-                true
+            await departmentDetails.fillFormInputInformation(
+                departmentSchema,
+                newDepartmentData
             );
+
             await page.waitForTimeout(100);
             await page.waitForLoadState('networkidle');
             await departmentDetails.validateDetailsPage(newDepartmentData);
