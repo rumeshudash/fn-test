@@ -124,6 +124,7 @@ export class ListingHelper extends PageHelper {
         columnName: string
     ): Promise<void> {
         await (await this.getCellButton(row, columnName)).click();
+        await this._page.waitForLoadState('networkidle');
     }
 
     /**
@@ -203,6 +204,7 @@ export class ListingHelper extends PageHelper {
     ): Promise<void> {
         const text = await this.getTextLocator(row, columnName);
         await text.click();
+        await this._page.waitForLoadState('networkidle');
     }
 
     /**

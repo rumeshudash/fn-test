@@ -1,16 +1,18 @@
 import { Locator, expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
-import { ListingHelper } from '../BaseHelper/listing.helper';
 import { DetailsPageHelper } from '../BaseHelper/details.helper';
-import { TabHelper } from '../BaseHelper/tab.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
+import { ListingHelper } from '../BaseHelper/listing.helper';
 import { StatusHelper } from '../BaseHelper/status.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
 
-export class UserCreation extends BaseHelper {
+export class UserCreation extends FormHelper {
     public listHelper: ListingHelper;
     public detailsHelper: DetailsPageHelper;
     public tabHelper: TabHelper;
     public statusHelper: StatusHelper;
+    public dialogHelper: DialogHelper;
 
     constructor(page: any) {
         super(page);
@@ -18,6 +20,7 @@ export class UserCreation extends BaseHelper {
         this.detailsHelper = new DetailsPageHelper(page);
         this.tabHelper = new TabHelper(page);
         this.statusHelper = new StatusHelper(page);
+        this.dialogHelper = new DialogHelper(page);
     }
 
     public async init() {
@@ -55,48 +58,21 @@ export class UserCreation extends BaseHelper {
     // verify popup on form
     public async verifyCancelPopup() {
         await this.fillInput('Test User Group', { name: 'name' });
-        await this._page
-            .getByRole('dialog')
-            .locator('button')
-            .filter({ hasText: 'Close' })
-            .click();
-
-        // check form popup options
-        await this._page.waitForSelector("(//div[@role='dialog'])[2]");
-        const dialog = this._page.locator("(//div[@role='dialog'])[2]");
-        const yesButton = dialog.locator('button').getByText('Yes!');
-        const noButton = dialog.locator('button').getByText('No');
-        await expect(yesButton).toBeVisible();
-        await expect(noButton).toBeVisible();
-
-        // check if form is closed
-        await yesButton.click();
-        await expect(this._page.getByRole('dialog')).not.toBeVisible();
+        await this.dialogHelper.checkConfirmDialogOpenOrNot();
+        await this.dialogHelper.clickConfirmDialogAction('Yes!');
 
         // open form and check if data is cleared on cancel
         await this.openUserGroupForm();
         await this.fillInput('Test User Group', { name: 'name' });
-        await this._page
-            .getByRole('dialog')
-            .locator('button')
-            .filter({ hasText: 'Close' })
-            .click();
-        await noButton.click();
-        await expect(this._page.getByRole('dialog').first()).toBeVisible();
-        await expect(this._page.locator('input[name="name"]')).toHaveValue(
+        await this.dialogHelper.checkConfirmDialogOpenOrNot();
+        await this.dialogHelper.clickConfirmDialogAction('No');
+
+        await expect(
+            this.dialogHelper.getDialogContainer().getLocator()
+        ).toBeVisible();
+        await expect(this.getInputElement({ name: 'name' })).toHaveValue(
             'Test User Group'
         );
-        await this.fillInput('', { name: 'name' });
-    }
-
-    // check error
-    public async checkError(message: string, index: number) {
-        console.log(chalk.blue('Checking error message and button disabled'));
-        const error = this._page.locator('span.label.text-error').nth(index);
-        expect(await error.textContent(), {
-            message: `Checking: (${message}) error message`,
-        }).toBe(message);
-        console.log(chalk.green('Error message verified and button disabled'));
     }
 
     // check user group addition in the row
@@ -129,9 +105,8 @@ export class UserCreation extends BaseHelper {
         console.log('data is here');
         console.log(data);
 
-        await this._page.waitForSelector(
-            '//div[@role="dialog"]/descendant::form'
-        );
+        await this.dialogHelper.waitForDialogOpen();
+
         if (data.name) {
             await this.fillInput(data.name, {
                 name: 'name',
@@ -148,7 +123,8 @@ export class UserCreation extends BaseHelper {
                 name: 'description',
             });
         }
-        await this.click({ role: 'button', name: 'Save' });
+
+        await this.submitButton('Save', { clickSubmit: true });
         console.log(chalk.green('Save button clicked'));
 
         // check err message if name empty
@@ -156,17 +132,27 @@ export class UserCreation extends BaseHelper {
             console.log('check empty data');
 
             if (!data.name) {
-                await this.checkError('Name is required', 0);
+                await this.checkIsInputHasError('Name is required', {
+                    name: 'name',
+                });
             }
             if (!data.manager) {
-                await this.checkError('Manager is required', 1);
+                await this.checkIsInputHasError('Manager is required', {
+                    name: 'manager_id',
+                });
             }
             if (!data.description) {
-                await this.checkError('Description is required', 2);
+                await this.checkIsInputHasError('Description is required', {
+                    name: 'description',
+                    type: 'textarea',
+                });
             }
-            await expect(this._page.locator('//button[text()="Save"]'), {
-                message: 'Checking save button visibility',
-            }).toBeDisabled();
+            await expect(
+                await this.submitButton('Save', { clickSubmit: false }),
+                {
+                    message: 'Checking save button visibility',
+                }
+            ).toBeDisabled();
             return;
         }
 

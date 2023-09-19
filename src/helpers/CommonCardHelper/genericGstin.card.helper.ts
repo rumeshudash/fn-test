@@ -121,7 +121,7 @@ export default class GenericGstinCardHelper extends BaseHelper {
     }
     // it helps to expand gstin card
     async expandGstinCard() {
-        const element = await this.locate('div', {
+        const element = this.locate('div', {
             id: 'gstin_trade_name',
         });
 

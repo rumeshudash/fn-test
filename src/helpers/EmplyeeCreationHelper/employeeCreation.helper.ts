@@ -1,20 +1,55 @@
 import { expect } from '@playwright/test';
 import { ListingHelper } from '../BaseHelper/listing.helper';
-import { bankAccountInfo } from '@/utils/required_data';
 import { FormHelper } from '../BaseHelper/form.helper';
 import chalk from 'chalk';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { BaseHelper } from '../BaseHelper/base.helper';
+import { FileHelper } from '../BaseHelper/file.helper';
 
-export class EmployeeCreation extends ListingHelper {
-    public formHelper: FormHelper;
+// export class EmployeeCreation extends BaseHelper {
+//     public form: FormHelper;
+//     public notification: NotificationHelper;
+//     public breadCrumb: BreadCrumbHelper;
+//     public tab: TabHelper;
+//     public dialog: DialogHelper;
+//     public listing: ListingHelper;
+//     public file: FileHelper;
+
+//     constructor(page: any) {
+//         super(page);
+//         this.notification = new NotificationHelper(page);
+//         this.form = new FormHelper(page);
+//         this.breadCrumb = new BreadCrumbHelper(page);
+//         this.tab = new TabHelper(page);
+//         this.dialog = new DialogHelper(page);
+//         this.listing = new ListingHelper(page);
+//         this.file = new FileHelper(page);
+//     }
+
+// }
+
+export class EmployeeCreation extends BaseHelper {
+    public employeeInfo;
+    public form: FormHelper;
     public notification: NotificationHelper;
     public breadCrumb: BreadCrumbHelper;
-    constructor(page: any) {
+    public tab: TabHelper;
+    public dialog: DialogHelper;
+    public listing: ListingHelper;
+    public file: FileHelper;
+    constructor(employeeInfo, page: any) {
         super(page);
+        this.employeeInfo = employeeInfo;
         this.notification = new NotificationHelper(page);
-        this.formHelper = new FormHelper(page);
+        this.form = new FormHelper(page);
         this.breadCrumb = new BreadCrumbHelper(page);
+        this.tab = new TabHelper(page);
+        this.dialog = new DialogHelper(page);
+        this.listing = new ListingHelper(page);
+        this.file = new FileHelper(page);
     }
 
     public async init() {
@@ -28,21 +63,16 @@ export class EmployeeCreation extends ListingHelper {
             .click();
     }
     public async clickEmployeeInfo(title: string, columnName: string) {
-        const row = await this.findRowInTable(title, columnName);
-        const clickCell = (await this.getCell(row, columnName)).locator('a');
+        const row = await this.listing.findRowInTable(title, columnName);
+        const clickCell = (await this.listing.getCell(row, columnName)).locator(
+            'a'
+        );
         await clickCell.click();
         await this._page.waitForTimeout(2000);
     }
-}
 
-export class AddEmployeeCreation extends EmployeeCreation {
-    public employeeInfo;
-    constructor(employeeInfo, page: any) {
-        super(page);
-        this.employeeInfo = employeeInfo;
-    }
     public async employeeRowLocator() {
-        const row = await this.findRowInTable(
+        const row = await this.listing.findRowInTable(
             this.employeeInfo.identifier,
             'EMPLOYEE CODE'
         );
@@ -51,51 +81,57 @@ export class AddEmployeeCreation extends EmployeeCreation {
 
     public async getEmployeeCode() {
         const parentRow = await this.employeeRowLocator();
-        const cellCode = await this.getCell(parentRow, 'EMPLOYEE CODE');
+        const cellCode = await this.listing.getCell(parentRow, 'EMPLOYEE CODE');
         return cellCode;
     }
 
     public async getEmployeeName() {
         const parentRow = await this.employeeRowLocator();
-        const cellName = await this.getCell(parentRow, 'NAME');
+        const cellName = await this.listing.getCell(parentRow, 'NAME');
         return cellName;
     }
 
     public async getEmployeeEmail() {
         const parentRow = await this.employeeRowLocator();
-        const cellEmail = await this.getCell(parentRow, 'EMAIL');
+        const cellEmail = await this.listing.getCell(parentRow, 'EMAIL');
         return cellEmail;
     }
 
     public async getEmployeeStatus() {
         const parentRow = await this.employeeRowLocator();
         const cellStatus = (
-            await this.getCell(parentRow, 'STATUS')
+            await this.listing.getCell(parentRow, 'STATUS')
         ).innerText();
         return cellStatus;
     }
 
     public async getEmployeeDepartment() {
         const parentRow = await this.employeeRowLocator();
-        const cellDepartment = await this.getCell(parentRow, 'DEPARTMENT');
+        const cellDepartment = await this.listing.getCell(
+            parentRow,
+            'DEPARTMENT'
+        );
         return cellDepartment;
     }
 
     public async getEmployeeDesignation() {
         const parentRow = await this.employeeRowLocator();
-        const cellDesignation = await this.getCell(parentRow, 'DESIGNATION');
+        const cellDesignation = await this.listing.getCell(
+            parentRow,
+            'DESIGNATION'
+        );
         return cellDesignation;
     }
 
     public async getEmployeeGrade() {
         const parentRow = await this.employeeRowLocator();
-        const cellGrade = await this.getCell(parentRow, 'GRADE');
+        const cellGrade = await this.listing.getCell(parentRow, 'GRADE');
         return cellGrade;
     }
 
     public async getEmployeeReportingManager() {
         const parentRow = await this.employeeRowLocator();
-        const cellReportingManager = await this.getCell(
+        const cellReportingManager = await this.listing.getCell(
             parentRow,
             'REPORTING MANAGER'
         );
@@ -104,7 +140,7 @@ export class AddEmployeeCreation extends EmployeeCreation {
 
     public async getEmployeeApprovalManager() {
         const parentRow = await this.employeeRowLocator();
-        const cellApprovalManager = await this.getCell(
+        const cellApprovalManager = await this.listing.getCell(
             parentRow,
             'APPROVAL MANAGER'
         );
@@ -252,104 +288,5 @@ export class AddEmployeeCreation extends EmployeeCreation {
     public async clickActionOption(options: string) {
         const optionContainer = this.locate('div', { role: 'menu' })._locator;
         await optionContainer.getByRole('menuitem', { name: options }).click();
-    }
-}
-
-export class EmployeeDetailsPage extends EmployeeCreation {
-    public employeeCreationInfo;
-    constructor(employeeCreationInfo, page: any) {
-        super(page);
-        this.employeeCreationInfo = employeeCreationInfo;
-    }
-    public async parentEmployeeDetails() {
-        return this.locate('//div[contains(@class,"h-full overflow-hidden")]')
-            ._locator;
-    }
-
-    public async checkEmployeeName() {
-        const parentHelper = await this.parentEmployeeDetails();
-        const locateName = parentHelper.filter({
-            hasText: this.employeeCreationInfo.name,
-        });
-
-        await expect(locateName).toBeVisible();
-    }
-
-    public async checkEmployeeCode() {
-        const parentHelper = await this.parentEmployeeDetails();
-        const locateCode = parentHelper.locator(
-            "//div[@class='text-sm text-base-secondary']"
-        );
-        expect(await locateCode.innerText()).toBe(
-            this.employeeCreationInfo.identifier
-        );
-    }
-
-    public async checkEmployeeDetails(locator: string, text: string) {
-        const parentHelper = await this.parentEmployeeDetails();
-        const isVisible = await parentHelper.locator(locator).innerText();
-        expect(isVisible).toBe(text);
-    }
-
-    public async clickEditIcon() {
-        await this._page.locator("//button[@data-title='Edit']").click();
-    }
-    public async checkBankInfo() {
-        const row = await this.findRowInTable(
-            bankAccountInfo.ifsc_code,
-            'IFSC CODE'
-        );
-        expect(await row.isVisible(), 'Check row of IFSC Code').toBe(true);
-    }
-    public async setRole(title: string) {
-        const role = this.locate(
-            `//div[text()='${title}']/parent::div/parent::div`
-        )._locator;
-
-        await role.locator('//input').click();
-    }
-
-    public async addNotes(notes: string) {
-        await this.fillText(notes, {
-            selector: 'textarea',
-        });
-    }
-
-    public async checkNotes(notes: string) {
-        const notesParentLocator = this.locate(
-            `//div[text()='${notes}']/parent::div/parent::div`
-        )._locator.first();
-
-        expect(
-            await notesParentLocator.isVisible(),
-            chalk.red('Checking Notes visibility')
-        ).toBe(true);
-        const user = notesParentLocator.locator('//p[1]');
-        const date_time = notesParentLocator.locator('//p[2]');
-
-        await expect(user).toBeVisible();
-        await expect(date_time).toBeVisible();
-    }
-
-    public async checkInviteUserEmail() {
-        const email = this.locate(
-            `(//span[text()='${this.employeeCreationInfo.email}'])[2]`
-        )._locator;
-        await expect(
-            email,
-            chalk.red(`${this.employeeCreationInfo.email} Visibility check`)
-        ).toBeVisible();
-    }
-    public async checkDocumentName(name: string | number) {
-        const documentNameContainer = this.locate(
-            "//div[contains(@class,'absolute left-0')]"
-        )._locator;
-        const documentName = documentNameContainer.locator(
-            `//div[text()='${name}']`
-        );
-        await expect(
-            documentName,
-            chalk.red(`Document ${name} Visibility`)
-        ).toBeVisible();
     }
 }

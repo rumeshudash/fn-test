@@ -25,6 +25,21 @@ export class DialogHelper extends BaseHelper {
         return titleTexts[0];
     }
 
+    /**
+     * Waits for the dialog to open.
+     *
+     * @return {Promise<void>} A promise that resolves when the dialog is open.
+     */
+    public async waitForDialogOpen() {
+        const element = this.getDialogContainer().getLocator();
+        await element.waitFor({ state: 'visible', timeout: 5000 });
+    }
+
+    /**
+     * Checks if the form is open.
+     *
+     * @return {Promise<void>} Returns a promise that resolves when the form is open.
+     */
     public async checkFormIsOpen() {
         const element = this.getDialogContainer();
         expect(await element.isVisible(), {
@@ -70,22 +85,26 @@ export class DialogHelper extends BaseHelper {
         ).toBeVisible();
     }
 
-    //they handle confirm dialog
-    public async checkConfirmDialogOpenOrNot() {
-        await this.closeDialog();
-
+    public async isConfirmDialogOpen() {
         const dialog = this.locateByText(
             'Do you want to exit? The details you have entered will be deleted.'
         );
         await this._page.waitForLoadState('domcontentloaded');
+        return dialog.isVisible();
+    }
 
-        expect(await dialog.isVisible(), 'check confirm dialog open or not');
+    //they handle confirm dialog
+    public async checkConfirmDialogOpenOrNot() {
+        await this.closeDialog();
 
-        // await this.clickConfirmDialogAction('Yes!');
+        expect(
+            await this.isConfirmDialogOpen(),
+            'check confirm dialog open or not'
+        ).toBeTruthy();
     }
 
     public async clickConfirmDialogAction(option: string) {
         const dialogContainer = this.getDialogContainer().getLocator();
-        await dialogContainer.locator(`//span[text()='${option}']`).click();
+        await dialogContainer.locator('button', { hasText: option }).click();
     }
 }

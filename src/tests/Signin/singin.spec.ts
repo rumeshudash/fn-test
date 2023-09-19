@@ -60,11 +60,7 @@ test.describe('Signin', () => {
             password: '123456',
         });
         // await signin.clickButton('Submit');
-
-        expect(
-            await signin.getToastError(),
-            chalk.red('ToastMessage match ')
-        ).toBe(`Invalid username or password`);
+        await signin.checkToastError('Invalid username or password');
     });
     test('with invalid password', async ({ page }) => {
         const signin = new SignInHelper(page);

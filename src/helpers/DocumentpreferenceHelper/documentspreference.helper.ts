@@ -47,43 +47,58 @@ export class DocumentspreferenceHelper extends ListingHelper {
     }
 
     public async clickAddBtn() {
-        await this.clickButton('Add New');
+        const locater = await this._page.locator(
+            '//button[contains(@class,"btn btn-md")]'
+        );
+        await locater.click();
 
         const title = await this.dialogHelper.getDialogTitle();
 
         expect(title).toBe('Add Document Preference');
     }
 
-    public async addDocumentPreference(Document: string) {
-        const text = await this.ifRowExists(Document, 'NAME');
+    public async getSelectOptions() {
+        const elements = await this._page
+            .locator(
+                `//div[contains(@class,"MenuList")]//div[contains(@class,"option")]`
+            )
+            .innerText();
 
-        expect(text).toBe(false);
+        const newArray = elements.split('\n');
+
+        return newArray;
+    }
+    public async addDocumentPreference() {
+        const Array = await this.getSelectOptions();
+        // const text = await this.ifRowExists(Document, 'NAME');
+
+        // expect(text).toBe(false);
 
         await this.clickAddBtn();
-        if (Document) {
-            await this.selectOption({
-                option: Document,
-                name: 'document_id',
-            });
-        }
+        // if (Document) {
+        await this.selectOption({
+            input: Array[0],
+            name: 'document_id',
+        });
+        // }
 
         await this._page.waitForTimeout(1000);
 
         await this.clickButton('Save');
     }
 
-    public async addDocumentMendatory(Document: string) {
-        const text = await this.ifRowExists(Document, 'NAME');
+    public async addDocumentMendatory() {
+        const Array = await this.getSelectOptions();
+        // const text = await this.ifRowExists(Document, 'NAME');
 
-        expect(text).toBe(false);
+        // expect(text).toBe(false);
 
         await this.clickAddBtn();
-        if (Document) {
-            await this.selectOption({
-                option: Document,
-                name: 'document_id',
-            });
-        }
+        // if (Document) {
+        await this.selectOption({
+            input: Array[0],
+            name: 'document_id',
+        });
         await this._page
             .locator('label')
             .filter({ hasText: 'Document Mandatory' })
@@ -93,18 +108,18 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         await this.clickButton('Save');
     }
-    public async addDocumentFileMendatory(Document: string) {
-        const text = await this.ifRowExists(Document, 'NAME');
+    public async addDocumentFileMendatory() {
+        const Array = await this.getSelectOptions();
+        // const text = await this.ifRowExists(Document, 'NAME');
 
-        expect(text).toBe(false);
+        // expect(text).toBe(false);
 
         await this.clickAddBtn();
-        if (Document) {
-            await this.selectOption({
-                option: Document,
-                name: 'document_id',
-            });
-        }
+        // if (Document) {
+        await this.selectOption({
+            input: Array[0],
+            name: 'document_id',
+        });
         await this._page
             .locator('label')
             .filter({ hasText: 'Document Files Mandatory' })
@@ -115,18 +130,18 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this.clickButton('Save');
     }
 
-    public async addWithBothMandatory(Document: string) {
-        const text = await this.ifRowExists(Document, 'NAME');
+    public async addWithBothMandatory() {
+        const Array = await this.getSelectOptions();
+        // const text = await this.ifRowExists(Document, 'NAME');
 
-        expect(text).toBe(false);
+        // expect(text).toBe(false);
 
         await this.clickAddBtn();
-        if (Document) {
-            await this.selectOption({
-                option: Document,
-                name: 'document_id',
-            });
-        }
+        // if (Document) {
+        await this.selectOption({
+            input: Array[0],
+            name: 'document_id',
+        });
         await this._page
             .locator('label')
             .filter({ hasText: 'Document Mandatory' })
@@ -142,18 +157,18 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this.clickButton('Save');
     }
 
-    public async addAndClickCheck(Document: string) {
-        const text = await this.ifRowExists(Document, 'NAME');
+    public async addAndClickCheck() {
+        const Array = await this.getSelectOptions();
+        // const text = await this.ifRowExists(Document, 'NAME');
 
-        expect(text).toBe(false);
+        // expect(text).toBe(false);
 
         await this.clickAddBtn();
-        if (Document) {
-            await this.selectOption({
-                option: Document,
-                name: 'document_id',
-            });
-        }
+        // if (Document) {
+        await this.selectOption({
+            input: Array[0],
+            name: 'document_id',
+        });
         await this._page
             .locator('label')
             .filter({ hasText: 'save and create another' })

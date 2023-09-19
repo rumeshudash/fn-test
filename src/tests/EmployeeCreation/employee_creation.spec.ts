@@ -1,308 +1,485 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { BreadCrumbHelper } from '@/helpers/BaseHelper/breadCrumb.helper';
-import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
-import { TabHelper } from '@/helpers/BaseHelper/tab.helper';
-import {
-    AddEmployeeCreation,
-    EmployeeCreation,
-} from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
-import { FormHelper } from '@/helpers/BaseHelper/form.helper';
+import { EmployeeDetailsPage } from '@/helpers/EmplyeeCreationHelper/EmployeeDetails.helper';
+import { EmployeeCreation } from '@/helpers/EmplyeeCreationHelper/employeeCreation.helper';
+import { generateRandomName, generateRandomNumber } from '@/utils/common.utils';
+import { DocumentInfo } from '@/utils/required_data';
 
 const { expect, describe } = PROCESS_TEST;
+describe.configure({ mode: 'serial' });
+describe('Expense Creation>Finops Portal', () => {
+    const employeeCreationInfo_SaveAndCreate = {
+        name: `${generateRandomName()}`,
+        email: `scmail${generateRandomNumber()}@test.com`,
+        identifier: `emp${generateRandomNumber()}`,
+        department_id: 'Department172857764167',
+        designation_id: 'Admin Accountant',
+        grade_id: 'E3',
+        manager_id: 'Amit Raj',
+        approval_manager_id: 'Ravi',
+        notes: 'Adding Notes for testing',
+    };
 
-const employeeCreationInfo_SaveAndCreate = {
-    name: 'Shiv Narayan',
-    email: `workcreation@test.com`,
-    identifier: `emp0332`,
-    department_id: 'Test',
-    designation_id: 'Admin Accountant',
-    grade_id: 'E3',
-    manager_id: 'Amit Raj',
-    approval_manager_id: 'Ravi',
-    notes: 'Adding Notes for testing',
-};
+    const employeeCreationInfo = {
+        name: `${generateRandomName()}`,
+        email: `empcreation${generateRandomNumber()}@test.com`,
+        identifier: `emp${generateRandomNumber()}`,
+        status: 'Active',
+        department_id: 'Department172857764167',
+        designation_id: 'Admin Accountant',
+        grade_id: 'E3',
+        manager_id: 'Amit Raj',
+        approval_manager_id: 'Ravi',
+        notes: 'again with incorrect format',
+    };
 
-const employeeCreationInfo = {
-    name: 'Dhan Bahadur Singh',
-    email: `empcreationew1@test.com`,
-    identifier: `emp02223`,
-    status: 'Active',
-    department_id: 'Test857730457030',
-    designation_id: 'Admin Accountant',
-    grade_id: 'E3',
-    manager_id: 'Amit Raj',
-    approval_manager_id: 'Ravi',
-    notes: 'again with incorrect format',
-};
+    const employeeCreationSchema = {
+        name: {
+            type: 'text',
+            required: true,
+        },
+        email: {
+            type: 'text',
+            required: true,
+        },
+        identifier: {
+            type: 'text',
+            required: true,
+        },
+        department_id: {
+            type: 'select',
+        },
+        designation_id: {
+            type: 'select',
+        },
+        grade_id: {
+            type: 'select',
+        },
+        manager_id: {
+            type: 'select',
+        },
+        approval_manager_id: {
+            type: 'select',
+        },
+    };
 
-const employeeCreationSchema = {
-    name: {
-        type: 'text',
-        required: true,
-    },
-    email: {
-        type: 'text',
-        required: true,
-    },
-    identifier: {
-        type: 'text',
-        required: true,
-    },
-    department_id: {
-        type: 'select',
-    },
-    designation_id: {
-        type: 'select',
-    },
-    grade_id: {
-        type: 'select',
-    },
-    manager_id: {
-        type: 'select',
-    },
-    approval_manager_id: {
-        type: 'select',
-    },
-};
+    const EditEmployeeCreationInfo = {
+        name: `${generateRandomName()}`,
 
-describe('TEC001', () => {
-    PROCESS_TEST('Verify Employee Creation Page', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const dialogForm = new DialogHelper(page);
+        identifier: `edit${generateRandomNumber()}`,
+    };
+
+    //Bank Account Details for Employee Details Page
+
+    const EditedEmployeeCreationSchema = {
+        name: {
+            type: 'text',
+            required: true,
+        },
+
+        identifier: {
+            type: 'text',
+            required: true,
+        },
+    };
+
+    const bankAccountInfo = {
+        account_number: '12345678',
+        re_account_number: '12345678',
+        ifsc_code: 'ICIC0000005',
+    };
+    const bankAccountSchema = {
+        account_number: {
+            type: 'password',
+            required: true,
+        },
+        re_account_number: {
+            type: 'text',
+            required: true,
+        },
+        ifsc_code: {
+            type: 'text',
+            required: true,
+        },
+    };
+    PROCESS_TEST('TEC001', async ({ page }) => {
+        const employeeCreation = new EmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
+
+        // const addEmployeeCreationForm = new AddEmployeeCreation(
+        //     employeeCreationInfo,
+        //     page
+        // );
+
         await PROCESS_TEST.step(
             'Navigate to Employee Creation Page',
             async () => {
-                await employeeCreationPage.init();
-                await employeeCreationPage.clickAddIcon();
-                await dialogForm.checkDialogTitle('Add Employee');
+                await employeeCreation.init();
+                await employeeCreation.clickAddIcon();
+                await employeeCreation.dialog.checkDialogTitle('Add Employee');
             }
         );
-    });
 
-    PROCESS_TEST('Save and Create Another', async ({ page }) => {
-        const dialogForm = new DialogHelper(page);
-        const employeeCreationPage = new EmployeeCreation(page);
-        await employeeCreationPage.init();
-        await employeeCreationPage.clickAddIcon();
-        await dialogForm.checkDialogTitle('Add Employee');
-
-        await PROCESS_TEST.step('Verify then Fill Employee Form', async () => {
-            await dialogForm.verifyInputField('Name');
-            await dialogForm.verifyInputField('Email');
-            await dialogForm.verifyInputField('Employee Code');
-            await dialogForm.verifyInputField('Department');
-            await dialogForm.verifyInputField('Designation');
-            await dialogForm.verifyInputField('Grade');
-            await dialogForm.verifyInputField('Reporting Manager');
-            await dialogForm.verifyInputField('Approval Manager');
+        await PROCESS_TEST.step('Verify Employee Form', async () => {
+            await employeeCreation.dialog.verifyInputField('Name');
+            await employeeCreation.dialog.verifyInputField('Email');
+            await employeeCreation.dialog.verifyInputField('Employee Code');
+            await employeeCreation.dialog.verifyInputField('Department');
+            await employeeCreation.dialog.verifyInputField('Designation');
+            await employeeCreation.dialog.verifyInputField('Grade');
+            await employeeCreation.dialog.verifyInputField('Reporting Manager');
+            await employeeCreation.dialog.verifyInputField('Approval Manager');
         });
 
-        await PROCESS_TEST.step('Fill Employee Form', async () => {
-            await employeeCreationPage.formHelper.fillFormInputInformation(
+        await PROCESS_TEST.step('Save And Create Employee Form', async () => {
+            await employeeCreation.form.fillFormInputInformation(
                 employeeCreationSchema,
                 employeeCreationInfo_SaveAndCreate
             );
-            await employeeCreationPage.saveAndCreateCheckbox();
-            await employeeCreationPage.clickButton('Save');
-            await employeeCreationPage.notification.checkToastSuccess(
+            await employeeCreation.saveAndCreateCheckbox();
+            await employeeCreation.clickButton('Save');
+            await employeeCreation.notification.checkToastSuccess(
                 'Successfully created'
             );
 
-            await employeeCreationPage.formHelper.isInputFieldEmpty('name');
-            await dialogForm.closeDialog();
+            await employeeCreation.form.isInputFieldEmpty('name');
+            await employeeCreation.dialog.closeDialog();
         });
-    });
 
-    PROCESS_TEST('Fill Employee Form', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
-        );
-        const formHelper = new FormHelper(page);
-        const dialog = new DialogHelper(page);
-        await employeeCreationPage.init();
-        await addEmployeeCreationForm.clickAddIcon();
-        await dialog.checkDialogTitle('Add Employee');
+        await PROCESS_TEST.step('Fill Employee Form - 2 ', async () => {
+            await employeeCreation.clickAddIcon();
 
-        await PROCESS_TEST.step('Fill Employee Form', async () => {
-            await formHelper.fillFormInputInformation(
+            await employeeCreation.form.fillFormInputInformation(
                 employeeCreationSchema,
                 employeeCreationInfo
             );
-            await employeeCreationPage.clickButton('Save');
-            await employeeCreationPage.notification.checkToastSuccess(
+            await employeeCreation.clickButton('Save');
+            await employeeCreation.notification.checkToastSuccess(
                 'Successfully created'
             );
         });
-    });
 
-    PROCESS_TEST('Search then Verify Employee Details', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
+        await PROCESS_TEST.step(
+            'Search then Verify Employee Details',
+            async () => {
+                // const employeeCreation = new EmployeeCreation(
+                //     employeeCreationInfo,
+                //     page
+                // );
+                // const addEmployeeCreationForm = new AddEmployeeCreation(
+                //     employeeCreationInfo,
+                //     page
+                // );
+
+                await employeeCreation.listing.searchInList(
+                    employeeCreationInfo.name
+                );
+                await employeeCreation.verifyEmployeeDetails();
+            }
         );
 
-        await PROCESS_TEST.step('Verify Added Employee Details', async () => {
-            await employeeCreationPage.init();
-            await employeeCreationPage.searchInList(employeeCreationInfo.name);
-            await addEmployeeCreationForm.verifyEmployeeDetails();
+        await PROCESS_TEST.step('Check Name ', async () => {
+            // const employeeCreation = new AddEmployeeCreation(
+            //     employeeCreationInfo,
+            //     page
+            // );
+
+            await employeeCreation.checkEmployeeNameLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
+                'Employee Detail'
+            );
+            await employeeCreation.breadCrumb.clickBreadCrumbsLink('Employees');
         });
-    });
 
-    PROCESS_TEST('Check Employee Code', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
-        );
-        await employeeCreationPage.init();
-        await employeeCreationPage.searchInList(employeeCreationInfo.name);
+        await PROCESS_TEST.step('Check Email', async () => {
+            // const addEmployeeCreationForm = new AddEmployeeCreation(
+            //     employeeCreationInfo,
+            //     page
+            // );
 
-        await addEmployeeCreationForm.checkEmployeeCodeLink();
-        await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
-            'Employee Detail'
-        );
-    });
+            await employeeCreation.listing.searchInList(
+                employeeCreationInfo.name
+            );
+            await employeeCreation.checkEmployeeEmailLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
+                'Employee Detail'
+            );
+            await employeeCreation.breadCrumb.clickBreadCrumbsLink('Employees');
+        });
 
-    PROCESS_TEST('Check Name ', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
-        );
+        await PROCESS_TEST.step('Check Department', async () => {
+            await employeeCreation.init();
 
-        await employeeCreationPage.init();
-        await employeeCreationPage.searchInList(employeeCreationInfo.name);
-        await addEmployeeCreationForm.checkEmployeeNameLink();
-        await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
-            'Employee Detail'
-        );
-    });
+            await employeeCreation.listing.searchInList(
+                employeeCreationInfo.name
+            );
+            await employeeCreation.checkEmployeeDepartmentLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
+                'Department Detail'
+            );
+        });
 
-    PROCESS_TEST('Check Email', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
-        );
+        await PROCESS_TEST.step('Check Designation', async () => {
+            await employeeCreation.init();
 
-        await employeeCreationPage.init();
-        await employeeCreationPage.searchInList(employeeCreationInfo.name);
-        await addEmployeeCreationForm.checkEmployeeEmailLink();
-        await employeeCreationPage.breadCrumb.checkBreadCrumbTitle(
-            'Employee Detail'
-        );
-    });
+            await employeeCreation.listing.searchInList(
+                employeeCreationInfo.name
+            );
+            await employeeCreation.checkEmployeeDesignationLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
+                'Designation Detail'
+            );
+        });
 
-    PROCESS_TEST('Check Department', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
-        );
+        await PROCESS_TEST.step('Check Approval Manager', async () => {
+            await employeeCreation.init();
 
-        await employeeCreationPage.init();
-        await employeeCreationPage.searchInList(employeeCreationInfo.name);
-        await addEmployeeCreationForm.checkEmployeeDepartmentLink();
-        await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
-            'Department Detail'
-        );
-    });
+            await employeeCreation.listing.searchInList(
+                employeeCreationInfo.name
+            );
+            await employeeCreation.checkApprovalManagerLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
+                'Employee Detail'
+            );
+        });
 
-    PROCESS_TEST('Check Designation', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
-        );
+        await PROCESS_TEST.step('Check Reporting Manager', async () => {
+            await employeeCreation.init();
 
-        await employeeCreationPage.init();
-        await employeeCreationPage.searchInList(employeeCreationInfo.name);
-        await addEmployeeCreationForm.checkEmployeeDesignationLink();
-        await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
-            'Designation Detail'
-        );
-    });
+            await employeeCreation.listing.searchInList(
+                employeeCreationInfo.name
+            );
+            await employeeCreation.checkReportingManagerLink();
+            await employeeCreation.breadCrumb.checkBreadCrumbTitle(
+                'Employee Detail'
+            );
+        });
 
-    PROCESS_TEST('Check Approval Manager', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
-        );
+        await PROCESS_TEST.step('Change Employee Status', async () => {
+            await employeeCreation.init();
 
-        await employeeCreationPage.init();
-        await employeeCreationPage.searchInList(employeeCreationInfo.name);
-        await addEmployeeCreationForm.checkApprovalManagerLink();
-        await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
-            'Employee Detail'
-        );
-    });
-
-    PROCESS_TEST('Check Reporting Manager', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
-        );
-
-        await employeeCreationPage.init();
-        await employeeCreationPage.searchInList(employeeCreationInfo.name);
-        await addEmployeeCreationForm.checkReportingManagerLink();
-        await addEmployeeCreationForm.breadCrumb.checkBreadCrumbTitle(
-            'Employee Detail'
-        );
-    });
-
-    PROCESS_TEST('Change Employee Status', async ({ page }) => {
-        const employeeCreationPage = new EmployeeCreation(page);
-        const addEmployeeCreationForm = new AddEmployeeCreation(
-            employeeCreationInfo,
-            page
-        );
-        const tabHelper = new TabHelper(page);
-
-        await employeeCreationPage.init();
-        await employeeCreationPage.searchInList(employeeCreationInfo.name);
-        await addEmployeeCreationForm.checkEmployeeNameLink();
-        await addEmployeeCreationForm.clickButton('Actions');
-
+            await employeeCreation.listing.searchInList(
+                employeeCreationInfo.name
+            );
+            await employeeCreation.checkEmployeeNameLink();
+            await employeeCreation.clickButton('Actions');
+        });
         await PROCESS_TEST.step('Deactivate Status', async () => {
             const breadcrumbHelper = new BreadCrumbHelper(page);
-            await addEmployeeCreationForm.clickActionOption('Deactivate');
-            await addEmployeeCreationForm.clickButton('Yes!');
-            await employeeCreationPage.notification.checkToastSuccess(
+            await employeeCreation.clickActionOption('Deactivate');
+            await employeeCreation.clickButton('Yes!');
+            await employeeCreation.notification.checkToastSuccess(
                 'Status Changed'
             );
-            // await expect(await addEmployeeCreationForm.toastSuccess()).toBe(
-            //     'Status Changed'
-            // );
+
             await breadcrumbHelper.clickBreadCrumbsLink('Employees');
-            await tabHelper.clickTab('Inactive');
-            expect(await addEmployeeCreationForm.getEmployeeStatus()).toBe(
-                'Inactive'
-            );
+            await employeeCreation.tab.clickTab('Inactive');
+            expect(await employeeCreation.getEmployeeStatus()).toBe('Inactive');
         });
 
         await PROCESS_TEST.step('Activate Status', async () => {
-            const tabHelper = new TabHelper(page);
-            const breadcrumbHelper = new BreadCrumbHelper(page);
-            await addEmployeeCreationForm.checkEmployeeNameLink();
-            await addEmployeeCreationForm.clickButton('Actions');
-            await addEmployeeCreationForm.clickActionOption('Activate');
-            await addEmployeeCreationForm.clickButton('Yes!');
-            await employeeCreationPage.notification.checkToastSuccess(
+            await employeeCreation.checkEmployeeNameLink();
+            await employeeCreation.clickButton('Actions');
+            await employeeCreation.clickActionOption('Activate');
+            await employeeCreation.clickButton('Yes!');
+            await employeeCreation.notification.checkToastSuccess(
                 'Status Changed'
             );
 
-            await breadcrumbHelper.clickBreadCrumbsLink('Employees');
-            await employeeCreationPage.searchInList(employeeCreationInfo.name);
-            await tabHelper.clickTab('Active');
-            expect(await addEmployeeCreationForm.getEmployeeStatus()).toBe(
-                'Active'
+            await employeeCreation.breadCrumb.clickBreadCrumbsLink('Employees');
+            await employeeCreation.listing.searchInList(
+                employeeCreationInfo.name
             );
+            await employeeCreation.tab.clickTab('Active');
+            expect(await employeeCreation.getEmployeeStatus()).toBe('Active');
+        });
+    });
+
+    PROCESS_TEST('TED001', async ({ page }) => {
+        const employeeCreation = new EmployeeCreation(
+            employeeCreationInfo,
+            page
+        );
+        const detailsPage = new EmployeeDetailsPage(employeeCreationInfo, page);
+        await employeeCreation.init();
+        await employeeCreation.listing.searchInList(
+            employeeCreationInfo.identifier
+        );
+
+        await employeeCreation.clickEmployeeInfo(
+            employeeCreationInfo.identifier,
+            'EMPLOYEE CODE'
+        );
+        await employeeCreation.breadCrumb.checkBreadCrumbTitle(
+            'Employee Detail'
+        );
+        await detailsPage.checkEmployeeName();
+        await detailsPage.checkEmployeeCode();
+        await detailsPage.checkEmployeeDetails(
+            '#has-Account\\ Status',
+            'Active'
+        );
+        await detailsPage.checkEmployeeDetails(
+            '#has-Department',
+            employeeCreationInfo.department_id
+        );
+        await detailsPage.checkEmployeeDetails(
+            '#has-Designation',
+            employeeCreationInfo.designation_id
+        );
+        await detailsPage.checkEmployeeDetails(
+            '#has-Reporting\\ Manager',
+            employeeCreationInfo.manager_id
+        );
+        await detailsPage.checkEmployeeDetails(
+            '#has-Approval\\ Manager',
+            employeeCreationInfo.approval_manager_id
+        );
+        await detailsPage.checkEmployeeDetails(
+            '#has-Email',
+            employeeCreationInfo.email
+        );
+        await detailsPage.checkEmployeeDetails(
+            '#has-Grade',
+            employeeCreationInfo.grade_id
+        );
+
+        await PROCESS_TEST.step('Edit Employee Info', async () => {
+            await employeeCreation.init();
+            await employeeCreation.listing.searchInList(
+                employeeCreationInfo.identifier
+            );
+            await employeeCreation.clickEmployeeInfo(
+                employeeCreationInfo.email,
+                'EMAIL'
+            );
+            await detailsPage.clickEditIcon();
+            await employeeCreation.dialog.checkDialogTitle('Edit Employee');
+            await employeeCreation.form.fillFormInputInformation(
+                EditedEmployeeCreationSchema,
+                EditEmployeeCreationInfo
+            );
+            await detailsPage.clickButton('Save');
+            await employeeCreation.notification.checkToastSuccess(
+                'Successfully created'
+            );
+        });
+
+        await PROCESS_TEST.step('Verify Action Options', async () => {
+            await employeeCreation.init();
+            await employeeCreation.listing.searchInList(
+                EditEmployeeCreationInfo.identifier
+            );
+            await employeeCreation.clickEmployeeInfo(
+                employeeCreationInfo.email,
+                'EMAIL'
+            );
+            await detailsPage.clickActionButton();
+            await detailsPage.verifyActionOptions('Invite User');
+            await detailsPage.verifyActionOptions('Add Bank Account');
+            await detailsPage.verifyActionOptions('Add Notes');
+            await detailsPage.verifyActionOptions('Add Documents');
+            await detailsPage.verifyActionOptions('Deactivate');
+        });
+
+        await PROCESS_TEST.step(
+            'Add Bank Account - Action Options',
+            async () => {
+                await employeeCreation.init();
+                await employeeCreation.listing.searchInList(
+                    EditEmployeeCreationInfo.identifier
+                );
+                await employeeCreation.clickEmployeeInfo(
+                    employeeCreationInfo.email,
+                    'EMAIL'
+                );
+                await detailsPage.clickActionButton();
+                await detailsPage.clickActionOption('Add Bank Account');
+                await employeeCreation.form.fillFormInputInformation(
+                    bankAccountSchema,
+                    bankAccountInfo
+                );
+                await employeeCreation.form.submitButton();
+                await employeeCreation.form.submitButton();
+                await employeeCreation.notification.checkToastSuccess(
+                    'Successfully saved'
+                );
+                await employeeCreation.notification.getErrorMessage();
+            }
+        );
+        await PROCESS_TEST.step('Verify Bank Account', async () => {
+            await employeeCreation.tab.clickTab('Bank');
+            await detailsPage.checkBankInfo(bankAccountInfo.ifsc_code);
+        });
+
+        await PROCESS_TEST.step('Add Documents - Action Options', async () => {
+            await employeeCreation.init();
+            await employeeCreation.listing.searchInList(
+                EditEmployeeCreationInfo.identifier
+            );
+            await employeeCreation.clickEmployeeInfo(
+                employeeCreationInfo.email,
+                'EMAIL'
+            );
+            await detailsPage.clickActionButton();
+            await detailsPage.clickActionOption('Add Documents');
+            await employeeCreation.file.setFileInput({ isDialog: true });
+            await employeeCreation.form.fillTextAreaForm(DocumentInfo.comment);
+            await employeeCreation.form.submitButton();
+            await employeeCreation.notification.getToastSuccess();
+        });
+        await PROCESS_TEST.step('Verify Uploaded Documents', async () => {
+            await employeeCreation.tab.clickTab('Documents');
+            await detailsPage.checkDocumentName(DocumentInfo.document.file);
+        });
+
+        await PROCESS_TEST.step('Invite User - Action Options', async () => {
+            await employeeCreation.init();
+            await employeeCreation.listing.searchInList(
+                EditEmployeeCreationInfo.identifier
+            );
+            await employeeCreation.clickEmployeeInfo(
+                employeeCreationInfo.email,
+                'EMAIL'
+            );
+            await detailsPage.clickActionButton();
+            await detailsPage.clickActionOption('Invite User');
+            await employeeCreation.dialog.checkDialogTitle('Invite User');
+            await detailsPage.checkInviteUserEmail();
+            await detailsPage.setRole('AP Manager');
+            await detailsPage.setRole('Finops Admin');
+            await detailsPage.setRole('Vendor Manager');
+            await employeeCreation.clickButton('Save');
+            await employeeCreation.notification.checkToastSuccess(
+                'Successfully Invited User'
+            );
+        });
+
+        await PROCESS_TEST.step(
+            'Add Notes and Verify - Action Options',
+            async () => {
+                await employeeCreation.init();
+                await employeeCreation.listing.searchInList(
+                    EditEmployeeCreationInfo.identifier
+                );
+                await employeeCreation.clickEmployeeInfo(
+                    employeeCreationInfo.email,
+                    'EMAIL'
+                );
+                await detailsPage.clickActionButton();
+                await detailsPage.clickActionOption('Add Notes');
+                await employeeCreation.dialog.checkDialogTitle('Add Notes');
+
+                //Add Notes
+                await detailsPage.addNotes(employeeCreationInfo.notes);
+                await detailsPage.clickButton('Save');
+            }
+        );
+        await PROCESS_TEST.step('Verify Added Notes', async () => {
+            await employeeCreation.tab.clickTab('Notes');
+            await detailsPage.checkNotes(employeeCreationInfo.notes);
         });
     });
 });

@@ -112,35 +112,7 @@ export const VendorInfo_NonGstin = {
 //For Designation Info
 //Click Checkout Create and Save Another Designation
 
-//For Payment Modes in Configuration
-export const paymentMode_Save_And_Create = {
-    name: 'Test Payment SnC1',
-    type: 'Cheque',
-    bank: '111111',
-};
-export const paymentModeInfo = {
-    name: 'Test Payment0',
-    type: 'Cash',
-    bank: paymentMode_Save_And_Create.bank,
-    updateName: 'Test Mode Update',
-};
-
 //For Employee Creation in HR
-
-export const EditEmployeeCreationInfo = {
-    name: 'Edited Admin Create7',
-    // grade: 'E4',
-    // department_id: 'Sales',
-    // designation: 'Admin Manager',
-    identifier: 'edit EC07',
-};
-
-//Bank Account Details for Employee Details Page
-export const bankAccountInfo = {
-    account_number: '12345678',
-    re_account_number: '12345678',
-    ifsc_code: 'ICIC0000005',
-};
 
 //Add Documents
 export const DocumentInfo = {
