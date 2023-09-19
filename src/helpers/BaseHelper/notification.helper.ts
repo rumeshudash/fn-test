@@ -107,11 +107,11 @@ export class NotificationHelper extends BaseHelper {
         })._locator;
         const errorCount = await error.count();
 
-        Logger.error(`Error ocurred: ${errorCount}`);
+        Logger.warning(`Error ocurred: ${errorCount}`);
         if (errorCount > 0) {
             for (let i = 0; i < errorCount; i++) {
                 const errorMsg = await error.nth(i).innerText();
-                console.log('Error: ', chalk.red(errorMsg));
+                Logger.error('Error: ', chalk.red(errorMsg));
                 return errorMsg;
             }
         }

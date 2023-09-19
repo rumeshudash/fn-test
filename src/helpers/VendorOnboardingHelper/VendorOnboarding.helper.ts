@@ -15,15 +15,24 @@ import GenericNonGstinCardHelper, {
     nonGstinDataType,
 } from '../CommonCardHelper/genericNonGstin.card.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
+import { FileHelper } from '../BaseHelper/file.helper';
 
 let getDate: string;
 export class VendorOnboarding extends BaseHelper {
     public lowerTDS;
     public notification: NotificationHelper;
+    public dialog: DialogHelper;
+    public form: FormHelper;
+    public file: FileHelper;
     constructor(lowerTDS, page) {
         super(page);
         this.lowerTDS = lowerTDS;
         this.notification = new NotificationHelper(page);
+        this.dialog = new DialogHelper(page);
+        this.form = new FormHelper(page);
+        this.file = new FileHelper(page);
     }
     private BUSINESS_DETAILS_DOM =
         "//div[@class='input-addon-group input-group-md']/following-sibling::div[1]";
@@ -33,12 +42,9 @@ export class VendorOnboarding extends BaseHelper {
             role: 'button',
             name: 'Invite Vendor',
         });
-        const linkDialog = this._page.getByRole('dialog');
-        expect(
-            await linkDialog.isVisible(),
-            chalk.red('Link Dialog visibility')
-        ).toBe(true);
-        if (await linkDialog.isVisible()) {
+        const linkDialog = await this._page.getByRole('dialog').isVisible();
+        expect(linkDialog, chalk.red('Link Dialog visibility')).toBe(true);
+        if (linkDialog) {
             await this._page
                 .locator(
                     "//span[contains(@class,'px-3 overflow-hidden')]/following-sibling::div[1]"
@@ -227,7 +233,7 @@ export class VendorOnboarding extends BaseHelper {
         }
         if (await gstinDropdown.isVisible()) {
             await this.selectOption({
-                input: clientGstinInfo.value,
+                input: clientGstinInfo.gstin,
                 placeholder: 'Select client business',
             });
         }
@@ -341,16 +347,16 @@ export class VendorOnboardingWithGSTIN extends GenericGstinCardHelper {
             this._page.getByPlaceholder('ENTER GSTIN NUMBER'),
             chalk.red('Gstin input field visibility')
         ).toBeVisible();
-        await this.fillText(this.gstin_data.value, {
+        await this.fillText(this.gstin_data.gstin, {
             placeholder: 'ENTER GSTIN NUMBER',
         });
     }
-    public async gstinDisplayName() {
+    public async gstinDisplayName(displayName: string): Promise<void> {
         const display_name = await this._page
             .locator('#display_name')
             .inputValue();
         expect(display_name, chalk.red('Display name match with vendor')).toBe(
-            vendorGstinInfo.trade_name
+            displayName
         );
     }
 }

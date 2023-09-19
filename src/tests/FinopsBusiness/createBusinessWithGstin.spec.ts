@@ -15,7 +15,7 @@ import chalk from 'chalk';
 
 const businessGstinInfo: gstinDataType = {
     trade_name: 'Venkatesh Infratech Private Limited',
-    value: '27AAECV2994B1Z8',
+    gstin: '27AAECV2994B1Z8',
     business_type: 'Private Limited',
     pan_number: 'AAECV2994B',
     address:
@@ -257,11 +257,11 @@ describe('Business Detail', () => {
         await businessDetails.breadCrumb.checkBreadCrumbTitle('My Businesses');
         await PROCESS_TEST.step('redirect detail page', async () => {
             await businessDetails.listHelper.searchInList(
-                businessGstinInfo.value
+                businessGstinInfo.gstin
             );
             await businessDetails.redirectDetailPage(
                 'GSTIN',
-                businessGstinInfo.value
+                businessGstinInfo.gstin
             );
         });
 
@@ -346,7 +346,7 @@ describe('Business Detail', () => {
                 );
 
                 expect(gstinCert, chalk.red('Gst Certificate check')).toContain(
-                    businessGstinInfo.value
+                    businessGstinInfo.gstin
                 );
                 expect(panCard, chalk.red('Pan Card check')).toContain(
                     businessGstinInfo.pan_number

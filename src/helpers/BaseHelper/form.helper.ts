@@ -272,8 +272,8 @@ export class FormHelper extends BaseHelper {
         let textContent = await element.textContent();
         textContent = textContent.trim();
 
-        if (textContent === message) return console.log(chalk.red(textContent));
-        throw console.log(
+        if (textContent === message) return Logger.error(textContent);
+        throw Logger.info(
             chalk.red(
                 `"${textContent}" is not a valid error !! valid valid error should be "${message}"`
             )

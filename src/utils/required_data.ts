@@ -3,7 +3,7 @@ import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.help
 //Vendor Onboarding with GSTIN Vendor Info Card
 export const vendorGstinInfo: gstinDataType = {
     trade_name: 'Cloudtail India Private Limited',
-    value: '27AAQCS4259Q1ZA',
+    gstin: '27AAQCS4259Q1ZA',
     pan_number: 'AAQCS4259Q',
     business_type: 'Private Limited',
     address:
@@ -14,20 +14,12 @@ export const vendorGstinInfo: gstinDataType = {
 //Vendor Onboarding with GSTIN Clinet Info Card
 export const clientGstinInfo: gstinDataType = {
     trade_name: 'Hidesign India Pvt Ltd',
-    value: '33AACCH0586R1Z6',
+    gstin: '33AACCH0586R1Z6',
     business_type: 'Private Limited',
     address:
         'EXPRESS AVENUE, 49/50 L-WHITES ROAD, ROYAPETTAH, SHOP NO.S 161 B, Chennai, , , 600014, , Tamil Nadu, NA, FIRST FLOOR, ',
     pan_number: 'AACCH0586R',
     status: 'Active',
-};
-
-//For Vendor Managed Onboarding GSTIN
-export const LOWER_TDS_DETAILS = {
-    selectInput: 'Lower TDS',
-    tdsCertNumber: '333333333',
-    tdsPercentage: '22',
-    date: '22-02-2023',
 };
 
 export const NON_GSTIN_LOWER_TDS_DETAILS = {
@@ -71,7 +63,7 @@ export const PAN_CODE_ADDRESS = 'New Delhi Central, Delhi';
 //Data used in Business Managed Onboarding with GSTIN
 export const businessVendorGstin: gstinDataType = {
     trade_name: 'D Mart',
-    value: '29AKAPD8772G1Z0',
+    gstin: '29AKAPD8772G1Z0',
     pan_number: 'AKAPD8772G',
     business_type: 'Proprietorship',
     address:
@@ -83,14 +75,14 @@ export const businessVendorGstin: gstinDataType = {
 export const VendorClientInfo = {
     trade_name: 'Hidesign India Pvt Ltd', //Client Business Name
     displayName: businessVendorGstin.trade_name.slice(5),
-    value: businessVendorGstin.value, //Vendor GSTIN
+    value: businessVendorGstin.gstin, //Vendor GSTIN
     vendorEmail: 'meatshop@gmail.com',
     vendorNumber: '9876543210',
 };
 //For checking client info from card
 export const ClientBusinessDetails: gstinDataType = {
     trade_name: 'Hidesign India Pvt Ltd',
-    value: '33AACCH0586R1Z6',
+    gstin: '33AACCH0586R1Z6',
     status: 'Active',
     pan_number: '',
     business_type: '',
