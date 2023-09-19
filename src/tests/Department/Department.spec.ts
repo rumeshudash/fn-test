@@ -174,7 +174,7 @@ describe('HR -> Department Creation and Details Verification', () => {
             const newDepartmentData: DepartmentCreationData = {
                 name: 'Test' + generateRandomNumber(),
                 manager: 'Vasant kishore',
-                parent: 'Test',
+                parent: 'Marketing',
             };
 
             // fill update form

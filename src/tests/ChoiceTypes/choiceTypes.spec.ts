@@ -33,7 +33,7 @@ describe('Configuration -> Choice Types', () => {
             });
             await formHelper.submitButton();
 
-            await formHelper.checkIsInputHasError('Name is required', {
+            await formHelper.checkIsInputHasErrorMessage('Name is required', {
                 name: 'name',
             });
             await formHelper.closeForm();
@@ -48,10 +48,13 @@ describe('Configuration -> Choice Types', () => {
             });
             await formHelper.submitButton();
 
-            await formHelper.checkIsInputHasError('Description is required', {
-                name: 'description',
-                type: 'textarea',
-            });
+            await formHelper.checkIsInputHasErrorMessage(
+                'Description is required',
+                {
+                    name: 'description',
+                    type: 'textarea',
+                }
+            );
 
             await formHelper.closeForm();
             await formHelper.dialogHelper.clickConfirmDialogAction('Yes!');
@@ -62,13 +65,16 @@ describe('Configuration -> Choice Types', () => {
             await choiceTypeHelper.openChoiceTypeForm();
             await formHelper.submitButton();
 
-            await formHelper.checkIsInputHasError('Name is required', {
+            await formHelper.checkIsInputHasErrorMessage('Name is required', {
                 name: 'name',
             });
-            await formHelper.checkIsInputHasError('Description is required', {
-                name: 'description',
-                type: 'textarea',
-            });
+            await formHelper.checkIsInputHasErrorMessage(
+                'Description is required',
+                {
+                    name: 'description',
+                    type: 'textarea',
+                }
+            );
 
             await formHelper.closeForm();
             await formHelper.dialogHelper.clickConfirmDialogAction('Yes!');

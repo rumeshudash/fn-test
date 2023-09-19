@@ -365,6 +365,9 @@ export class BaseHelper {
             })
             .isVisible();
     }
+    /**
+     * @deprecated Use `FormHelper.getInputError() instead;
+     */
     public async getInputErrorMessageElement(
         options?: InputFieldLocatorOptions,
         selector?: 'input' | 'textarea'

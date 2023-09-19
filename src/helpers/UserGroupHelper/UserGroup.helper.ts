@@ -132,20 +132,23 @@ export class UserCreation extends FormHelper {
             console.log('check empty data');
 
             if (!data.name) {
-                await this.checkIsInputHasError('Name is required', {
+                await this.checkIsInputHasErrorMessage('Name is required', {
                     name: 'name',
                 });
             }
             if (!data.manager) {
-                await this.checkIsInputHasError('Manager is required', {
+                await this.checkIsInputHasErrorMessage('Manager is required', {
                     name: 'manager_id',
                 });
             }
             if (!data.description) {
-                await this.checkIsInputHasError('Description is required', {
-                    name: 'description',
-                    type: 'textarea',
-                });
+                await this.checkIsInputHasErrorMessage(
+                    'Description is required',
+                    {
+                        name: 'description',
+                        type: 'textarea',
+                    }
+                );
             }
             await expect(
                 await this.submitButton('Save', { clickSubmit: false }),

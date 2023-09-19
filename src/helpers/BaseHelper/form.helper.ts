@@ -88,7 +88,7 @@ export class FormHelper extends BaseHelper {
      * @param {string} message - The error message to check.
      * @param {InputFieldLocatorOptions} options - Options for locating the input field.
      */
-    public async checkIsInputHasError(
+    public async checkIsInputHasErrorMessage(
         message: string,
         options: InputFieldLocatorOptions
     ) {
@@ -246,7 +246,9 @@ export class FormHelper extends BaseHelper {
             await this.checkInputError(name, fieldSchema);
         }
     }
-
+    /**
+     * @deprecated User FormHelper.checkIsInputHasError() instead.
+     */
     public async checkInputError(
         name: string,
         schema: ObjectDto,

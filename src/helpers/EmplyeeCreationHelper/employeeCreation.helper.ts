@@ -40,6 +40,37 @@ export class EmployeeCreation extends BaseHelper {
     public dialog: DialogHelper;
     public listing: ListingHelper;
     public file: FileHelper;
+
+    public employeeCreationSchema = {
+        name: {
+            type: 'text',
+            required: true,
+        },
+        email: {
+            type: 'text',
+            required: true,
+        },
+        identifier: {
+            type: 'text',
+            required: true,
+        },
+        department_id: {
+            type: 'reference_select',
+        },
+        designation_id: {
+            type: 'reference_select',
+        },
+        grade_id: {
+            type: 'reference_select',
+        },
+        manager_id: {
+            type: 'reference_select',
+        },
+        approval_manager_id: {
+            type: 'reference_select',
+        },
+    };
+
     constructor(employeeInfo, page: any) {
         super(page);
         this.employeeInfo = employeeInfo;
