@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import { BreadCrumbHelper } from './breadCrumb.helper';
 import { DialogHelper } from './dialog.helper';
 import { Logger } from './log.helper';
+import { AccessNestedObject } from '@/utils/common.utils';
 
 export class FormHelper extends BaseHelper {
     public breadcrumbHelper: BreadCrumbHelper;
@@ -123,9 +124,10 @@ export class FormHelper extends BaseHelper {
         targetClick?: string,
         ignoreFields: string[] = []
     ): Promise<void> {
-        for (const [name, schema] of Object.entries(formSchema)) {
+        for (const [key, schema] of Object.entries(formSchema)) {
+            const name = formSchema?.name ?? key;
             if (ignoreFields.includes(name)) continue;
-            const value = data[name] || '';
+            const value = AccessNestedObject(data, name) || '';
             switch (schema?.type) {
                 case 'select':
                     await this.selectOption({
@@ -221,7 +223,8 @@ export class FormHelper extends BaseHelper {
     }
 
     public async checkMandatoryFields(formSchema: ObjectDto): Promise<void> {
-        for (const [name, fieldSchema] of Object.entries(formSchema)) {
+        for (const [key, fieldSchema] of Object.entries(formSchema)) {
+            const name = fieldSchema?.name ?? key;
             if (!fieldSchema?.required) continue;
             expect(
                 await this.isInputMandatory(
@@ -238,7 +241,8 @@ export class FormHelper extends BaseHelper {
     public async checkAllMandatoryInputErrors(
         formSchema: ObjectDto
     ): Promise<void> {
-        for (const [name, fieldSchema] of Object.entries(formSchema)) {
+        for (const [key, fieldSchema] of Object.entries(formSchema)) {
+            const name = fieldSchema?.name ?? key;
             if (!fieldSchema?.required) continue;
             await this.checkInputError(name, fieldSchema);
         }

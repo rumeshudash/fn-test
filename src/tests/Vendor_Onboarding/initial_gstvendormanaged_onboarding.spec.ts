@@ -42,8 +42,11 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
     const LOWER_TDS_DETAILS = {
         type_id: 'Lower TDS',
         identifier: '333333333',
-        percentage: '22',
+
         expiry_date: '22-02-2023',
+        custom_field_data: {
+            percentage: '22',
+        },
     };
 
     const LOWER_TDS_DETAILS_SCHEMA = {
