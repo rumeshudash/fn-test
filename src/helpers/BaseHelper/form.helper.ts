@@ -131,6 +131,7 @@ export class FormHelper extends BaseHelper {
                     await this.selectOption({
                         name,
                         option: value ? String(value) : '',
+                        exact: true,
                     });
                     break;
                 case 'reference_select':

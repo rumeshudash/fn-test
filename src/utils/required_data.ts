@@ -112,19 +112,6 @@ export const VendorInfo_NonGstin = {
 //For Designation Info
 //Click Checkout Create and Save Another Designation
 
-//For Payment Modes in Configuration
-export const paymentMode_Save_And_Create = {
-    name: 'Test Payment SnC1',
-    type: 'Cheque',
-    bank: '111111',
-};
-export const paymentModeInfo = {
-    name: 'Test Payment0',
-    type: 'Cash',
-    bank: paymentMode_Save_And_Create.bank,
-    updateName: 'Test Mode Update',
-};
-
 //For Employee Creation in HR
 
 //Add Documents
