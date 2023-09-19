@@ -98,7 +98,7 @@ describe('HR-Designations', () => {
                 'Successfully saved'
             );
 
-            await formHelper.isInputFieldEmpty('name');
+            await formHelper.checkIsInputFieldEmpty('name');
         });
 
         await PROCESS_TEST.step('Create Designation', async () => {

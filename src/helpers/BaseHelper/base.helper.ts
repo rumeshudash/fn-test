@@ -365,7 +365,7 @@ export class BaseHelper {
             })
             .isVisible();
     }
-    public async checkInputErrorMessage(
+    public async getInputErrorMessageElement(
         options?: InputFieldLocatorOptions,
         selector?: 'input' | 'textarea'
     ) {
@@ -493,8 +493,13 @@ export class BaseHelper {
         return this._locator.isVisible({ timeout });
     }
 
-    public async clickButton(buttonName: string) {
-        const btnClick = this._page.getByRole('button', { name: buttonName });
+    public async clickButton(buttonName: string, exact?: boolean) {
+        const btnClick = this._page
+            .getByRole('button', {
+                name: buttonName,
+                exact,
+            })
+            .first();
         const isButtonEnabled = await btnClick.isEnabled();
 
         expect(isButtonEnabled, {

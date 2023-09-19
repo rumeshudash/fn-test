@@ -144,7 +144,7 @@ describe('Expense Creation>Finops Portal', () => {
                 'Successfully created'
             );
 
-            await employeeCreation.form.isInputFieldEmpty('name');
+            await employeeCreation.form.checkIsInputFieldEmpty('name');
             await employeeCreation.dialog.closeDialog();
         });
 

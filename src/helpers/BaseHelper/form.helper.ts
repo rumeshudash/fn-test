@@ -107,11 +107,14 @@ export class FormHelper extends BaseHelper {
      * @param inputName - The name of the input field to check.
      * @returns A promise that resolves when the input field is confirmed to be empty.
      */
-    async isInputFieldEmpty(inputName: string): Promise<void> {
-        const nameField: string = await this.locate('input', {
-            name: inputName,
-        })._locator.inputValue();
-        expect(nameField, chalk.red(`${inputName} field check`)).toBe('');
+    async checkIsInputFieldEmpty(
+        inputName: string,
+        type?: string
+    ): Promise<void> {
+        await expect(
+            this.getInputElement({ name: inputName, type }),
+            `Check ${inputName} field is empty`
+        ).toBeEmpty();
     }
 
     /**
@@ -249,7 +252,7 @@ export class FormHelper extends BaseHelper {
         schema: ObjectDto,
         message?: string
     ) {
-        const errorMessage = await this.checkInputErrorMessage(
+        const errorMessage = await this.getInputErrorMessageElement(
             {
                 name,
             },
@@ -278,5 +281,9 @@ export class FormHelper extends BaseHelper {
                 `"${textContent}" is not a valid error !! valid valid error should be "${message}"`
             )
         );
+    }
+
+    public async closeForm() {
+        await this.dialogHelper.closeDialog();
     }
 }
