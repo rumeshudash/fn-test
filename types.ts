@@ -1,3 +1,5 @@
+import { Locator } from '@playwright/test';
+
 interface LocatorOptions {
     role?: LocatorRoles;
     id?: string;
@@ -238,4 +240,12 @@ interface ApprovalDelegationData {
     'END TIME'?: string;
     'ADDED AT'?: string;
     COMMENTS?: string;
+}
+
+interface StatusChangeData {
+    name?: string;
+    status?: string;
+    colName?: string;
+    row?: Locator;
+    hasDialog?: boolean;
 }

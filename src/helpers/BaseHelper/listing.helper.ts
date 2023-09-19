@@ -234,4 +234,28 @@ export class ListingHelper extends PageHelper {
             await expect(cell).toContainText(columnItems[key]);
         }
     }
+
+    /**
+     * Find row in the table based on two column values.
+     * @param {string} query1 - The first query to search for in the table row.
+     * @param {string} query2 - The second query to search for in the table row.
+     * @return {Promise<Locator>} - The element handle of the row that matches the query.
+     */
+    public async findRowInTableByTwoQueries(
+        query1: string,
+        query2: string
+    ): Promise<Locator> {
+        const table = this.getTableContainer();
+        await this._page.waitForSelector('div.table-row.body-row');
+        const row = table
+            .locator('div.table-row.body-row')
+            .filter({
+                hasText: query1,
+            })
+            .filter({
+                hasText: query2,
+            });
+        console.log(chalk.blue('Row', row));
+        return row;
+    }
 }

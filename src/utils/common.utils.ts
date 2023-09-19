@@ -78,3 +78,12 @@ export const GetDateValue = (date: any, format?: string) => {
     }
     return new Date(date);
 };
+
+export const formatDateProfile = (date: string) => {
+    // Parse the input date string into a Date object
+    const inputDate = parse(date, 'dd-MM-yyyy', new Date());
+
+    // Format the parsed date as "dd MMM, yyyy"
+    const formattedDate = format(inputDate, 'dd MMM, yyyy');
+    return formattedDate;
+};
