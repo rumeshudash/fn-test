@@ -49,8 +49,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
     public async clickAddBtn() {
         await this._page
-            .getByRole('button', { name: 'add_circle_outline Add New' })
-            .click();
+            .locator(
+                `//div[contains(@class,'flex-wrap justify-end')]//button[1]`
+            )
+            .click(); //During Empty list there is 2 button so we are using 1st button
 
         await this._page.waitForTimeout(1000);
 
