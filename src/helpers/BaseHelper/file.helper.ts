@@ -42,10 +42,10 @@ export class FileHelper extends BaseHelper {
         await dialogLocator
             .locator("//input[@type='file']")
             .setInputFiles(`images/pan-card.jpg`);
+        const response = await this._page.waitForResponse('**/upload-files');
         await this._page.waitForLoadState('networkidle');
         await this._page.waitForTimeout(2000);
 
-        const response = await this._page.waitForResponse('**/upload-files');
         expect(response.status()).toBe(201);
     }
 }
