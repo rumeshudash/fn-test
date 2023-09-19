@@ -57,8 +57,6 @@ export class GradesHelper extends ListingHelper {
     }
 
     public async checkWithCheckbox(name: string, priority: number) {
-        await this.clickButton('Add Grade');
-
         await this._page.waitForTimeout(1000);
         await this.fillText(name, {
             name: 'name',
