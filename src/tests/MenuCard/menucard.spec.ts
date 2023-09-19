@@ -7,28 +7,29 @@ test.describe('Menu Crad', () => {
         const menucard = new MenucardHelper(page);
         await menucard.init();
 
-        PROCESS_TEST.step('Check Page Title', async () => {
+        await PROCESS_TEST.step('Check Page Title', async () => {
             await menucard.checkPageTitle('AP Dashboard');
-
-            await page.waitForTimeout(1000);
+        });
+        await PROCESS_TEST.step('Open Menu Card', async () => {
+            await menucard.openAndCloseMenuCard();
         });
 
-        PROCESS_TEST.step('Check SideBar Items', async () => {
+        await PROCESS_TEST.step('Check SideBar Items', async () => {
             await menucard.checkSideBarItems();
         });
-        PROCESS_TEST.step('Check Space in submeny', async () => {
+        await PROCESS_TEST.step('Check Space in submeny', async () => {
             await menucard.checkSpaceInMenu('Parties');
         });
 
-        PROCESS_TEST.step('Check Space on sidebar-item', async () => {
+        await PROCESS_TEST.step('Check Space on sidebar-item', async () => {
             await menucard.checkSpaceInMenu('Work Flows');
         });
 
-        PROCESS_TEST.step('Check SubMenu Items', async () => {
+        await PROCESS_TEST.step('Check SubMenu Items', async () => {
             await menucard.checkSubMenuItems('Dashboard');
         });
 
-        PROCESS_TEST.step('Click on Sidebar menu', async () => {
+        await PROCESS_TEST.step('Click on Sidebar menu', async () => {
             await menucard.clickOnSideBarMenu('Transactions');
         });
         // PROCESS_TEST.step('Scroll the menu', async () => {

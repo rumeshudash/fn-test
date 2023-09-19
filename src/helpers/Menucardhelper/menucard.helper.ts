@@ -54,7 +54,6 @@ export class MenucardHelper extends PageHelper {
     }
 
     public async checkSideBarItems() {
-        await this.openAndCloseMenuCard();
         const itemsText = await this._page
             .locator(`//div[contains(@class,'sidebar-items')]`)
             .innerText();
@@ -116,11 +115,13 @@ export class MenucardHelper extends PageHelper {
 
         const menus = await getAncestor
             .locator(
-                `//div[contains(@class,'menus')]//div[contains(@class,'sidebar-item')]]`
+                `//div[contains(@class,'menus')]//a[contains(@class,'sidebar-item')]`
             )
             .allInnerTexts(); // Use textContent instead of innerText
 
         const filteredItems = menus.filter((item) => item.trim() !== '');
+
+        console.log('filteredItems:', filteredItems);
 
         expect(filteredItems).toEqual(submenuObject[menuName]);
     }
@@ -141,12 +142,12 @@ export class MenucardHelper extends PageHelper {
         ).toBeTruthy();
     }
 
-    public async scrollDown() {
-        const locator = await this._page.locator(
-            `//div[contains(@class,'sidebar-items')]`
-        );
-        await locator.evaluate(() => {
-            window.scrollBy(0, 500);
-        });
-    }
+    // public async scrollDown() {
+    //     const locator = await this._page.locator(
+    //         `//div[contains(@class,'sidebar-items')]`
+    //     );
+    //     await locator.evaluate(() => {
+    //         window.scrollBy(0, 500);
+    //     });
+    // }
 }
