@@ -88,14 +88,6 @@ export class MenucardHelper extends PageHelper {
             .click();
     }
 
-    public async getSidebarSubMenu(menuName: string) {
-        await this.clickOnSideBarMenu(menuName);
-        const submenu = await this._page
-            .locator(`(//div[contains(@class,'menus hover')]//a)`)
-            .innerText();
-
-        console.log('sub menu', submenu);
-    }
     public async checkSpaceInMenu(menuName: string) {
         const locator = await this._page
             .locator(
@@ -123,7 +115,9 @@ export class MenucardHelper extends PageHelper {
         );
 
         const menus = await getAncestor
-            .locator(`//div[contains(@class,'menus')]`)
+            .locator(
+                `//div[contains(@class,'menus')]//div[contains(@class,'sidebar-item')]]`
+            )
             .allInnerTexts(); // Use textContent instead of innerText
 
         const filteredItems = menus.filter((item) => item.trim() !== '');
