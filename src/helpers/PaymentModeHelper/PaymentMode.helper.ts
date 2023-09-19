@@ -4,6 +4,9 @@ import chalk from 'chalk';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { FormHelper } from '../BaseHelper/form.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { ListingHelper } from '../BaseHelper/listing.helper';
+import { StatusHelper } from '../BaseHelper/status.helper';
+import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
 
 export class PaymentModesHelper extends BaseHelper {
     public PaymentModeInfo;
@@ -11,26 +14,22 @@ export class PaymentModesHelper extends BaseHelper {
     public notification: NotificationHelper;
     public form: FormHelper;
     public dialog: DialogHelper;
+    public listing: ListingHelper;
+    public status: StatusHelper;
+    public breadCrumb: BreadCrumbHelper;
     constructor(PaymentModeInfo, page: any) {
         super(page);
         this.PaymentModeInfo = PaymentModeInfo;
         this.notification = new NotificationHelper(page);
         this.form = new FormHelper(page);
         this.dialog = new DialogHelper(page);
+        this.listing = new ListingHelper(page);
+        this.status = new StatusHelper(page);
+        this.breadCrumb = new BreadCrumbHelper(page);
     }
 
     public async init() {
         await this.navigateTo('PAYMENTMODES');
-    }
-
-    public async verifyPaymentPage() {
-        const getBreadcrumb = this.locate(
-            '//div[contains(@class,"breadcrumbs")]'
-        )._locator;
-        expect(
-            await getBreadcrumb.locator('//h1').textContent(),
-            chalk.red('Payment Modes Page check')
-        ).toContain('Payment Modes');
     }
 
     public async addNewPaymentMode() {
@@ -39,12 +38,6 @@ export class PaymentModesHelper extends BaseHelper {
             await this._page.getByRole('dialog').isVisible(),
             'dialog visibility'
         ).toBe(true);
-    }
-    public async verifyEmptyField() {
-        const name_field = await this.locate('input', {
-            name: 'name',
-        })._locator.inputValue();
-        expect(name_field, chalk.red('Name field value')).toBe('');
     }
 
     public async verifyAddNewPaymentMode() {
@@ -57,83 +50,14 @@ export class PaymentModesHelper extends BaseHelper {
         ).toContain('Add payment mode');
     }
 
-    /**
-     * Fills the payment mode form with the provided information.
-     *
-     * @return {Promise<void>} A promise that resolves once the form is filled.
-     */
-    public async fillPaymentModeForm() {
-        await this.fillText(this.PaymentModeInfo.name, { name: 'name' });
-        await this.selectOption({
-            input: this.PaymentModeInfo.type ? this.PaymentModeInfo.type : '',
-            placeholder: 'Select type',
-        });
-
-        const bankOption = await this.locate(
-            '//div[@role="dialog"]//div[text()="Select Bank Account"]'
-        )._locator.isVisible();
-
-        if (bankOption == true) {
-            await this.selectOption({
-                input: this.PaymentModeInfo.bank,
-                placeholder: 'Select Bank Account',
-            });
-        }
+    private _parentRow(name: string) {
+        const row = this.listing.findRowInTable(name, 'NAME');
+        return row;
     }
-
-    public async searchPaymentMode() {
-        await this.fillText(this.PaymentModeInfo.name, {
-            placeholder: 'Search ( min: 3 characters )',
-        });
-        await this._page.waitForTimeout(2000);
-    }
-
-    public async verifyPaymentDetails() {
-        const parentHelper = this.locate(
-            `//p[text()="${this.PaymentModeInfo.name}"]/parent::div/parent::div`
-        )._locator.first();
-        const bank_type = parentHelper.locator(
-            `//p[text()="${this.PaymentModeInfo.type}"]`
-        );
-
-        if (
-            ((await bank_type.innerText()) != 'Cash') == false ||
-            ((await bank_type.innerText()) != 'Ledger') == false
-        ) {
-            const bank = parentHelper.locator(
-                `//p[text()=${this.PaymentModeInfo.bank}]`
-            );
-
-            expect(
-                await bank.isVisible(),
-                chalk.red('Added Bank visibility')
-            ).toBe(false);
-        }
-
-        const bank_status = parentHelper.locator('//button[text()="Active"]');
-        const bank_added_date = parentHelper.locator('//div[@class="text-sm"]');
-        const bank_action = parentHelper.locator('//button[@data-state]');
-
-        await expect(bank_status, chalk.red('Status visibility')).toBeVisible();
-        await expect(
-            bank_added_date,
-            chalk.red('Added Date visibility')
-        ).toBeVisible();
-
-        await expect(bank_action, chalk.red('Action visibility')).toBeVisible();
-    }
-
-    public async changeBankStatus(status: string) {
-        const parentHelper = this.locate(
-            `//p[text()="${this.PaymentModeInfo.name}"]/parent::div/parent::div`
-        )._locator.first();
-        await parentHelper.locator(`//button[text()="${status}"]`).click();
-
-        const dialogBox = this.locate('//div[@role="dialog"]');
-        if (await dialogBox.isVisible()) {
-            await this.click({ role: 'button', text: 'Yes!' });
-        }
-        await this._page.waitForTimeout(1000);
+    public async verifyPaymentDetails(name: string, columnName: string) {
+        const parentRow = (await this._parentRow(name)).first();
+        const cell = await this.listing.getCell(parentRow, columnName);
+        await expect(cell).toBeVisible();
     }
 
     public async verifyBankStatus(status: string) {
@@ -144,20 +68,5 @@ export class PaymentModesHelper extends BaseHelper {
             .locator(`//button[text()="${status}"]`)
             .isVisible();
         expect(bank_status, chalk.red('Bank status visibility')).toBe(true);
-    }
-
-    public async editPaymentModeName() {
-        const parentHelper = this.locate(
-            `//p[text()="${this.PaymentModeInfo.name}"]/parent::div/parent::div`
-        )._locator.first();
-        await parentHelper.locator('//button[@data-state]').click();
-
-        const dialogBox = this.locate('//div[@role="dialog"]');
-        if (await dialogBox.isVisible()) {
-            await this.fillInput(this.PaymentModeInfo.updateName, {
-                name: 'name',
-            });
-        }
-        await this._page.waitForTimeout(1000);
     }
 }
