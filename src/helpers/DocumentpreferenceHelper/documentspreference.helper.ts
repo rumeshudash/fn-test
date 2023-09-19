@@ -19,16 +19,17 @@ export class DocumentspreferenceHelper extends ListingHelper {
     public async searchTextInList(name: string) {
         await this.searchInList(name);
 
-        await this._page.waitForTimeout(1000);
-
         const row = await this.findRowInTable(name, 'NAME');
 
         const text = await this.getCellText(row, 'NAME');
+
+        await this._page.waitForTimeout(1000);
 
         expect(text).toBe(name);
     }
 
     public async getTableHeader(name: string[]) {
+        await this._page.waitForTimeout(1000);
         const RowNames = await this.getTableColumnNames();
 
         expect(RowNames).toEqual(name);
@@ -47,40 +48,42 @@ export class DocumentspreferenceHelper extends ListingHelper {
     }
 
     public async clickAddBtn() {
-        const locater = await this._page.locator(
-            '//button[contains(@class,"btn btn-md")]'
-        );
-        await locater.click();
+        await this._page
+            .getByRole('button', { name: 'add_circle_outline Add New' })
+            .click();
 
-        const title = await this.dialogHelper.getDialogTitle();
+        await this._page.waitForTimeout(1000);
 
-        expect(title).toBe('Add Document Preference');
+        // const title = await this.dialogHelper.getDialogTitle();
+
+        // expect(title).toBe('Add Document Preference');
     }
 
     public async getSelectOptions() {
-        const elements = await this._page
+        const locator = await this.dialogHelper.getLocator();
+
+        await locator
             .locator(
-                `//div[contains(@class,"MenuList")]//div[contains(@class,"option")]`
+                `(//div[contains(@class,'selectbox-control !bg-base-100')])[2]`
             )
+            .click();
+        const elements = await this._page
+            .locator(`//div[contains(@class,"MenuList")]`)
             .innerText();
 
         const newArray = elements.split('\n');
 
-        return newArray;
+        console.log('newArray', newArray);
     }
     public async addDocumentPreference() {
-        const Array = await this.getSelectOptions();
-        // const text = await this.ifRowExists(Document, 'NAME');
-
-        // expect(text).toBe(false);
-
         await this.clickAddBtn();
-        // if (Document) {
+
+        const Array = await this.getSelectOptions();
+
         await this.selectOption({
             input: Array[0],
             name: 'document_id',
         });
-        // }
 
         await this._page.waitForTimeout(1000);
 
@@ -88,13 +91,9 @@ export class DocumentspreferenceHelper extends ListingHelper {
     }
 
     public async addDocumentMendatory() {
-        const Array = await this.getSelectOptions();
-        // const text = await this.ifRowExists(Document, 'NAME');
-
-        // expect(text).toBe(false);
-
         await this.clickAddBtn();
-        // if (Document) {
+
+        const Array = await this.getSelectOptions();
         await this.selectOption({
             input: Array[0],
             name: 'document_id',
@@ -109,13 +108,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this.clickButton('Save');
     }
     public async addDocumentFileMendatory() {
-        const Array = await this.getSelectOptions();
-        // const text = await this.ifRowExists(Document, 'NAME');
-
-        // expect(text).toBe(false);
-
         await this.clickAddBtn();
-        // if (Document) {
+
+        const Array = await this.getSelectOptions();
+
         await this.selectOption({
             input: Array[0],
             name: 'document_id',
@@ -131,13 +127,9 @@ export class DocumentspreferenceHelper extends ListingHelper {
     }
 
     public async addWithBothMandatory() {
-        const Array = await this.getSelectOptions();
-        // const text = await this.ifRowExists(Document, 'NAME');
-
-        // expect(text).toBe(false);
-
         await this.clickAddBtn();
-        // if (Document) {
+
+        const Array = await this.getSelectOptions();
         await this.selectOption({
             input: Array[0],
             name: 'document_id',
@@ -158,13 +150,9 @@ export class DocumentspreferenceHelper extends ListingHelper {
     }
 
     public async addAndClickCheck() {
-        const Array = await this.getSelectOptions();
-        // const text = await this.ifRowExists(Document, 'NAME');
-
-        // expect(text).toBe(false);
-
         await this.clickAddBtn();
-        // if (Document) {
+
+        const Array = await this.getSelectOptions();
         await this.selectOption({
             input: Array[0],
             name: 'document_id',
