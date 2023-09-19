@@ -351,20 +351,6 @@ export class BaseHelper {
         );
     }
 
-    public async isInputMandatory(
-        options?: InputFieldLocatorOptions,
-        selector?: 'input' | 'textarea'
-    ) {
-        if (options && Object.keys(options).length)
-            this.locate(selector || 'input', options);
-
-        return this._locator
-            .locator('//ancestor::div[contains(@class,"form-control")]/label')
-            .locator('//span/span[contains(@class,"text-error")]', {
-                hasText: '*',
-            })
-            .isVisible();
-    }
     /**
      * @deprecated Use `FormHelper.getInputError() instead;
      */
