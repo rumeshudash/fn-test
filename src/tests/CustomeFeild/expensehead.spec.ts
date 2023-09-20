@@ -82,6 +82,8 @@ test.describe('Configurations-Custom Feilds', () => {
                         1,
                         'Test1'
                     );
+
+                    await customefeild.checkNameAndType(name + 'abc', 'Text');
                 }
             );
             await PROCESS_TEST.step(
@@ -93,6 +95,11 @@ test.describe('Configurations-Custom Feilds', () => {
                         'Boolean',
                         1,
                         'True'
+                    );
+
+                    await customefeild.checkNameAndType(
+                        name + 'abcd',
+                        'Boolean'
                     );
                 }
             );
@@ -107,6 +114,11 @@ test.describe('Configurations-Custom Feilds', () => {
                         1,
                         123
                     );
+
+                    await customefeild.checkNameAndType(
+                        name + 'abce',
+                        'Number'
+                    );
                 }
             );
 
@@ -119,6 +131,8 @@ test.describe('Configurations-Custom Feilds', () => {
                         'Date',
                         1
                     );
+
+                    await customefeild.checkNameAndType(name + 'abcf', 'Date');
                 }
             );
             await PROCESS_TEST.step(
@@ -130,6 +144,11 @@ test.describe('Configurations-Custom Feilds', () => {
                         'TextArea',
                         1,
                         'Test1'
+                    );
+
+                    await customefeild.checkNameAndType(
+                        name + 'abcg',
+                        'TextArea'
                     );
                 }
             );
