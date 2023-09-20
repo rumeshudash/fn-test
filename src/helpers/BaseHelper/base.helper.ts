@@ -526,7 +526,7 @@ export class BaseHelper {
         await partyClick.click();
         await this._page.waitForTimeout(2000);
     }
-    async validateCheckbox(checked) {
+    async validateCheckbox(checked?: boolean) {
         const checkbox = this.locate('label', {
             text: 'save and create another',
         })._locator;
