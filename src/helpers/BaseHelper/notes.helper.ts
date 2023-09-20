@@ -125,8 +125,6 @@ export class NotesHelper extends DialogHelper {
         await this._dialogHelper.clickConfirmDialogAction('Yes!');
 
         await this._page.waitForTimeout(1000);
-
-        this.notificationHelper.checkToastSuccess('Successfully Deleted ');
     }
 
     /**

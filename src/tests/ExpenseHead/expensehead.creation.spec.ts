@@ -357,6 +357,8 @@ test.describe('Configuration - Expense Head', () => {
                 title: expenseHeadData.NewNotes,
                 date: new Date(),
             });
+
+            notification.checkToastSuccess('Successfully deleted');
         });
     });
 
