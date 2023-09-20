@@ -351,21 +351,10 @@ export class BaseHelper {
         );
     }
 
-    public async isInputMandatory(
-        options?: InputFieldLocatorOptions,
-        selector?: 'input' | 'textarea'
-    ) {
-        if (options && Object.keys(options).length)
-            this.locate(selector || 'input', options);
-
-        return this._locator
-            .locator('//ancestor::div[contains(@class,"form-control")]/label')
-            .locator('//span/span[contains(@class,"text-error")]', {
-                hasText: '*',
-            })
-            .isVisible();
-    }
-    public async checkInputErrorMessage(
+    /**
+     * @deprecated Use `FormHelper.getInputError() instead;
+     */
+    public async getInputErrorMessageElement(
         options?: InputFieldLocatorOptions,
         selector?: 'input' | 'textarea'
     ) {
@@ -493,8 +482,13 @@ export class BaseHelper {
         return this._locator.isVisible({ timeout });
     }
 
-    public async clickButton(buttonName: string) {
-        const btnClick = this._page.getByRole('button', { name: buttonName });
+    public async clickButton(buttonName: string, exact?: boolean) {
+        const btnClick = this._page
+            .getByRole('button', {
+                name: buttonName,
+                exact,
+            })
+            .first();
         const isButtonEnabled = await btnClick.isEnabled();
 
         expect(isButtonEnabled, {

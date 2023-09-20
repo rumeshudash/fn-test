@@ -1,9 +1,6 @@
-import { LISTING_ROUTES } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
 import { SwitchOrg } from '@/helpers/SetOrganizationHelper/SwitchOrg.helper';
-import { formatDate, generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
-import chalk from 'chalk';
 
 const { describe } = PROCESS_TEST;
 

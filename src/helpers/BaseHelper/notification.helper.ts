@@ -134,7 +134,7 @@ export class NotificationHelper extends BaseHelper {
     ) {
         expect(
             toastMessages,
-            chalk.red(`Checking toast message: ${message}`)
+            `Checking toast message: ${message}`
         ).toContainEqual(message);
     }
 }

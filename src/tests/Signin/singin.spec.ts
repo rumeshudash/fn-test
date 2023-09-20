@@ -98,7 +98,7 @@ test.describe('Signin', () => {
         const checklogin = new SignInHelper(page);
         await checklogin.init();
 
-        await signin.CheckLogin({
+        await checklogin.CheckLogin({
             username: username,
             password: '123456',
         });

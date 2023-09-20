@@ -13,12 +13,34 @@ describe.configure({ mode: 'serial' });
 
 describe('Configuration -> User Group Creation and Details Verification', () => {
     let userData: UserGroupData = {
-        name: ``,
-        manager: '',
-        description: '',
+        name: `Test User Group ${generateRandomNumber()}`,
+        manager_id: 'Amit Raj',
+        description: 'Test User Group Description',
         member: 'Admin Create',
         memberEmail: 'employeecreation1@test.com',
-        role: 'Advance Manager',
+        role_id: 'Advance Manager',
+    };
+
+    let validationData: UserGroupData = {
+        name: userData.name,
+        manager: userData.manager_id,
+        description: 'Test User Group Description',
+        status: 'Active',
+    };
+
+    const formSchema = {
+        name: {
+            type: 'text',
+            required: true,
+        },
+        manager_id: {
+            type: 'reference_select',
+            required: true,
+        },
+        description: {
+            type: 'textarea',
+            required: true,
+        },
     };
 
     PROCESS_TEST('TUA001', async ({ page }) => {
@@ -26,32 +48,34 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
         await userCreation.navigateTo('USERGROUPS');
 
         await test.step('Check User Group Form Opening', async () => {
-            console.log(chalk.blue('Checking User Group Form Opening'));
+            Logger.info('Checking User Group Form Opening');
             await userCreation.openUserGroupForm();
-            console.log(chalk.green('User Group Form is visible'));
+            Logger.success('User Group Form Opening Checked');
         });
 
         await test.step('Check User Group Form Opening', async () => {
             await userCreation.verifyCancelPopup();
-            await userCreation.fillInput('', { name: 'name' });
+            await userCreation.fillFormInputInformation(formSchema, {
+                name: '',
+            });
         });
 
         await test.step('Check User Group Form Error', async () => {
             Logger.info('Checking User Group Form Error');
-            await userCreation.fillUserGroupForm(userData);
+            await userCreation.fillFormInputInformation(formSchema, {});
+            await userCreation.submitButton();
+            await userCreation.checkAllMandatoryInputErrors(formSchema);
             Logger.success('User Group Form Error is visible');
         });
 
-        userData.name = `Test User Group ${generateRandomNumber()}`;
-        userData.manager = 'Amit Raj';
-        userData.description = 'Test User Group Description';
-
         await test.step('Check User Group Addition', async () => {
-            console.log(
-                chalk.blue('Checking User Group Addition with valid details')
+            Logger.info('Checking User Group Addition with valid details');
+            await userCreation.fillFormInputInformation(formSchema, userData);
+            await userCreation.submitButton();
+            await userCreation.notificationHelper.checkToastSuccess(
+                'Successfully saved'
             );
-            await userCreation.fillUserGroupForm(userData);
-            console.log(chalk.green('User Group Added Successfully'));
+            Logger.success('User Group Added Successfully');
         });
 
         await test.step('Check User Group in Table', async () => {
@@ -76,103 +100,99 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
         await test.step('Check Group Status Toggle', async () => {
             // toggle status of the department
             await userCreation.setStatus(userData.name, 'Inactive');
+            validationData.status = 'Inactive';
 
             // verify usergroup is not present in active tab
             await userCreation.tabHelper.clickTab('Active');
             await userCreation.verifyIfPresent({
-                data: userData,
+                data: validationData,
                 present: false,
-                status: 'Inactive',
             });
 
             // verify usergroup is present in inactive tab
             await userCreation.tabHelper.clickTab('Inactive');
             await userCreation.verifyIfPresent({
-                data: userData,
+                data: validationData,
                 present: true,
-                status: 'Inactive',
             });
 
             // toggle status of the userCreation
             await userCreation.setStatus(userData.name, 'Active');
+            validationData.status = 'Active';
 
             // verify usergroup is present in active tab
             await userCreation.tabHelper.clickTab('Active');
             await userCreation.verifyIfPresent({
-                data: userData,
+                data: validationData,
                 present: true,
-                status: 'Active',
             });
 
             // verify usergroup is not present in inactive tab
             await userCreation.tabHelper.clickTab('Inactive');
             await userCreation.verifyIfPresent({
-                data: userData,
+                data: validationData,
                 present: false,
-                status: 'Active',
             });
         });
     });
 
     PROCESS_TEST('TUAD001', async ({ page }) => {
         const userDetails = new UserDetails(page);
-        // await userCreation.init();
         await userDetails.navigateTo('USERGROUPS');
         await page.waitForURL(LISTING_ROUTES.USERGROUPS);
 
         await test.step('Check User Group Details', async () => {
-            console.log(chalk.blue('User Group Details Page Info Checking'));
+            Logger.info('Checking User Group Details Page Info');
             await userDetails.openDetailsPage(userData.name);
             await userDetails.validateDetailsPage(userData);
-            console.log(chalk.green('User Group Details Page Info Checked'));
+            Logger.success('User Group Details Page Info Checked');
         });
 
         await test.step('Check Edit Department', async () => {
-            console.log(chalk.blue('Department Details Edit Checking'));
+            Logger.info('Checking Department Details Edit');
 
             await userDetails.detailsHelper.openEditForm();
             const newUserData: UserGroupData = {
                 name: 'Test' + generateRandomNumber(),
-                manager: 'Abhishek Gupta',
+                manager_id: 'Abhishek Gupta',
                 description: 'test' + generateRandomNumber(),
             };
 
-            await userDetails.fillUserGroupForm({
-                name: newUserData.name,
-                manager: newUserData.manager,
-                description: newUserData.description,
-            });
+            await userDetails.fillFormInputInformation(formSchema, newUserData);
+            await userDetails.submitButton();
+            await userDetails.notificationHelper.checkToastSuccess(
+                'Successfully saved'
+            );
             await userDetails.validateDetailsPage(newUserData);
-
-            console.log(chalk.green('Department Details Edit Checked'));
+            Logger.success('Department Details Edit Checked');
         });
 
         await test.step('Check Action Button', async () => {
-            console.log(chalk.blue('Action Button Checking'));
+            Logger.info('Checking Action Button');
             await userDetails.detailsHelper.checkActionButtonOptions([
                 'Add Member',
                 'Add Group Role',
                 'Add Notes',
                 'Add Documents',
             ]);
-            console.log(chalk.green('Action Button Checked'));
+            Logger.success('Action Button Checked');
         });
 
         await test.step('Check Member Addition', async () => {
-            console.log(chalk.blue('Member Addition Checking'));
+            Logger.info('Checking Member Addition');
             await userDetails.addMember(userData);
             await userDetails.verifyMemberAddition(userData);
-            console.log(chalk.green('Member Addition Checked'));
+            Logger.success('Member Addition Checked');
         });
 
         await test.step('Check Documents Addition', async () => {
-            console.log(chalk.blue('Documents Addition Checking'));
+            Logger.info('Checking Documents Addition');
             let document = {
                 comment: 'test' + generateRandomNumber(),
                 date: new Date(),
             };
-            await userDetails.tabHelper.clickTab('Documents');
 
+            await userDetails.tabHelper.clickTab('Documents');
             await userDetails.addDocument(document);
             document.comment = 'test' + generateRandomNumber();
             await userDetails.addDocument(document);
@@ -181,29 +201,59 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
             await userDetails.documentHelper.checkPagination();
             await userDetails.verifyDocumentAddition(document);
             await userDetails.documentHelper.checkDocumentDelete(document);
-            console.log(chalk.green('Documents Addition Checked'));
+            Logger.success('Documents Addition Checked');
         });
 
         await test.step('Check Notes Addition and Errors', async () => {
-            console.log(chalk.blue('Notes Addition and Errors Checking'));
+            Logger.info('Checking Notes Addition and Errors');
             let note = {
-                title: '',
+                comments: '',
                 date: new Date(),
             };
-            await userDetails.addNotes(note, false);
-            note.title = 'test' + generateRandomNumber();
-            await userDetails.addNotes(note, true);
+            const notesSchema = {
+                comments: {
+                    type: 'textarea',
+                    required: true,
+                },
+            };
+            await userDetails.detailsHelper.openActionButtonItem('Add Notes');
+
+            // check errors
+            await userDetails.fillFormInputInformation(notesSchema, note);
+            await userDetails.submitButton();
+            await userDetails.checkMandatoryFields(notesSchema);
+
+            // check addition
+            note.comments = 'test' + generateRandomNumber();
+            await userDetails.fillFormInputInformation(notesSchema, note);
+            await userDetails.submitButton();
+
             await userDetails.verifyNoteAddition(note);
-            console.log(chalk.green('Notes Addition and Errors Checked'));
+            Logger.success('Notes Addition and Errors Checked');
         });
 
         await test.step('Check Role Addition and Deletion', async () => {
-            console.log(chalk.blue('Role Addition Checking'));
-            await userDetails.addRole(userData);
+            Logger.info('Checking Role Addition and Deletion');
+
+            const roleSchema = {
+                role_id: {
+                    type: 'reference_select',
+                    required: true,
+                },
+            };
+
+            await userDetails.detailsHelper.openActionButtonItem(
+                'Add Group Role'
+            );
+            await userDetails.fillFormInputInformation(roleSchema, {
+                role_id: userData.role_id,
+            });
+            await userDetails.submitButton();
+
             await userDetails.verifyRoleAddition(userData);
             await userDetails.deleteRole(userData);
             await userDetails.verifyRoleDeletion(userData);
-            console.log(chalk.green('Role Addition Checked'));
+            Logger.success('Role Addition and Deletion Checked');
         });
     });
 });

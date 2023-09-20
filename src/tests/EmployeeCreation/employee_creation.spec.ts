@@ -12,7 +12,7 @@ describe('Expense Creation>Finops Portal', () => {
         name: `${generateRandomName()}`,
         email: `scmail${generateRandomNumber()}@test.com`,
         identifier: `emp${generateRandomNumber()}`,
-        department_id: 'Department172857764167',
+        department_id: 'Marketing',
         designation_id: 'Admin Accountant',
         grade_id: 'E3',
         manager_id: 'Amit Raj',
@@ -25,42 +25,12 @@ describe('Expense Creation>Finops Portal', () => {
         email: `empcreation${generateRandomNumber()}@test.com`,
         identifier: `emp${generateRandomNumber()}`,
         status: 'Active',
-        department_id: 'Department172857764167',
+        department_id: 'Sales',
         designation_id: 'Admin Accountant',
         grade_id: 'E3',
         manager_id: 'Amit Raj',
         approval_manager_id: 'Ravi',
         notes: 'again with incorrect format',
-    };
-
-    const employeeCreationSchema = {
-        name: {
-            type: 'text',
-            required: true,
-        },
-        email: {
-            type: 'text',
-            required: true,
-        },
-        identifier: {
-            type: 'text',
-            required: true,
-        },
-        department_id: {
-            type: 'select',
-        },
-        designation_id: {
-            type: 'select',
-        },
-        grade_id: {
-            type: 'select',
-        },
-        manager_id: {
-            type: 'select',
-        },
-        approval_manager_id: {
-            type: 'select',
-        },
     };
 
     const EditEmployeeCreationInfo = {
@@ -135,7 +105,7 @@ describe('Expense Creation>Finops Portal', () => {
 
         await PROCESS_TEST.step('Save And Create Employee Form', async () => {
             await employeeCreation.form.fillFormInputInformation(
-                employeeCreationSchema,
+                employeeCreation.employeeCreationSchema,
                 employeeCreationInfo_SaveAndCreate
             );
             await employeeCreation.saveAndCreateCheckbox();
@@ -144,7 +114,7 @@ describe('Expense Creation>Finops Portal', () => {
                 'Successfully created'
             );
 
-            await employeeCreation.form.isInputFieldEmpty('name');
+            await employeeCreation.form.checkIsInputFieldEmpty('name');
             await employeeCreation.dialog.closeDialog();
         });
 
@@ -152,7 +122,7 @@ describe('Expense Creation>Finops Portal', () => {
             await employeeCreation.clickAddIcon();
 
             await employeeCreation.form.fillFormInputInformation(
-                employeeCreationSchema,
+                employeeCreation.employeeCreationSchema,
                 employeeCreationInfo
             );
             await employeeCreation.clickButton('Save');

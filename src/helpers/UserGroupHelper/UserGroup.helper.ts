@@ -6,6 +6,8 @@ import { FormHelper } from '../BaseHelper/form.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { StatusHelper } from '../BaseHelper/status.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
+import { Logger } from '../BaseHelper/log.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class UserCreation extends FormHelper {
     public listHelper: ListingHelper;
@@ -13,6 +15,7 @@ export class UserCreation extends FormHelper {
     public tabHelper: TabHelper;
     public statusHelper: StatusHelper;
     public dialogHelper: DialogHelper;
+    public notificationHelper: NotificationHelper;
 
     constructor(page: any) {
         super(page);
@@ -21,6 +24,7 @@ export class UserCreation extends FormHelper {
         this.tabHelper = new TabHelper(page);
         this.statusHelper = new StatusHelper(page);
         this.dialogHelper = new DialogHelper(page);
+        this.notificationHelper = new NotificationHelper(page);
     }
 
     public async init() {
@@ -48,11 +52,14 @@ export class UserCreation extends FormHelper {
             role: 'button',
             name: 'add_circle_outline Add User Group',
         });
-        console.log(chalk.green('Add User Group button clicked'));
-        await expect(this._page.locator('//button[text()="Save"]'), {
+        Logger.info('Add User Group button clicked');
+        const submitBtn = await this.submitButton('Save', {
+            clickSubmit: false,
+        });
+        await expect(submitBtn, {
             message: 'Checking save button visibility',
         }).toBeVisible();
-        console.log(chalk.green('Add User Group form is visible'));
+        Logger.success('Add User Group form is visible');
     }
 
     // verify popup on form
@@ -86,7 +93,7 @@ export class UserCreation extends FormHelper {
 
         // verify manager
         const manager = await this.listHelper.getCellText(group, 'MANAGER');
-        expect(manager).toBe(data.manager);
+        expect(manager).toBe(data.manager_id);
 
         // verify status
         const statusButton = await this.listHelper.getCellText(group, 'STATUS');
@@ -98,69 +105,6 @@ export class UserCreation extends FormHelper {
             'DESCRIPTION'
         );
         expect(description).toBe(data.description);
-    }
-
-    // fill user group form
-    public async fillUserGroupForm(data: UserGroupData) {
-        console.log('data is here');
-        console.log(data);
-
-        await this.dialogHelper.waitForDialogOpen();
-
-        if (data.name) {
-            await this.fillInput(data.name, {
-                name: 'name',
-            });
-        }
-        if (data.manager) {
-            await this.selectOption({
-                input: data.manager,
-                name: 'manager_id',
-            });
-        }
-        if (data.description) {
-            await this.fillText(data.description, {
-                name: 'description',
-            });
-        }
-
-        await this.submitButton('Save', { clickSubmit: true });
-        console.log(chalk.green('Save button clicked'));
-
-        // check err message if name empty
-        if (!data.name || !data.manager || !data.description) {
-            console.log('check empty data');
-
-            if (!data.name) {
-                await this.checkIsInputHasError('Name is required', {
-                    name: 'name',
-                });
-            }
-            if (!data.manager) {
-                await this.checkIsInputHasError('Manager is required', {
-                    name: 'manager_id',
-                });
-            }
-            if (!data.description) {
-                await this.checkIsInputHasError('Description is required', {
-                    name: 'description',
-                    type: 'textarea',
-                });
-            }
-            await expect(
-                await this.submitButton('Save', { clickSubmit: false }),
-                {
-                    message: 'Checking save button visibility',
-                }
-            ).toBeDisabled();
-            return;
-        }
-
-        const toast = this._page.locator('div.ct-toast-success').first();
-        expect(await toast.textContent(), {
-            message: 'Checking toast message',
-        }).toBe('Successfully saved');
-        console.log(chalk.green('User Group toast message verified'));
     }
 
     public async openDetailsPage(name: string) {
@@ -177,7 +121,7 @@ export class UserCreation extends FormHelper {
             },
             {
                 selector: '#has-Manager',
-                text: data.manager,
+                text: data.manager_id,
             },
             {
                 selector: '#has-Description',
@@ -186,36 +130,24 @@ export class UserCreation extends FormHelper {
         ]);
     }
 
-    // navigate to tabs based on status
-    public async navigateToTab(status: string) {
-        console.log(chalk.blue('Navigating to tab:' + status));
-        await this._page
-            .locator('//button[@role="tab"]')
-            .getByText(status, { exact: true })
-            .click();
-        await this._page.waitForTimeout(1000);
-    }
-
     // toggle user group status from the row
     public async setStatus(name: string, status: string) {
-        console.log(chalk.blue('Toggling group status'));
+        Logger.info('Toggling group status');
         await this.navigateTo('USERGROUPS');
         await this.tabHelper.clickTab('All');
         await this.statusHelper.setStatus(name, status);
-        console.log(chalk.green('Group status toggled'));
+        Logger.success('Group status toggled');
     }
 
     // verify if the user group is present in the table
     public async verifyIfPresent({
         data,
         present,
-        status,
     }: {
         data: UserGroupData;
         present: boolean;
-        status: string;
     }) {
-        console.log(chalk.blue('user group listing page opened'));
+        Logger.info('Searching user group in table');
 
         await this.listHelper.searchInList(data.name);
         const addedGroup = await this.listHelper.findRowInTable(
@@ -229,6 +161,6 @@ export class UserCreation extends FormHelper {
             return;
         }
 
-        await this.verifyUserGroupDetails(addedGroup, data, status);
+        await this.listHelper.validateRow(addedGroup, data);
     }
 }
