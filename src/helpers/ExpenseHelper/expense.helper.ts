@@ -1,8 +1,14 @@
 import { expect } from '@playwright/test';
 import { uuidV4 } from '../../utils/common.utils';
 import { BaseHelper } from '.././BaseHelper/base.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
 
 export class ExpenseHelper extends BaseHelper {
+    public form: FormHelper;
+    constructor(page: any) {
+        super(page);
+        this.form = new FormHelper(page);
+    }
     // private static DOM_SELECTOR =
     //     '//div[text()='Details']/parent::div/parent::div';
     private static DETAIL_DOM_SELECTOR = '//div[text()="Details"]/parent::div';
@@ -117,6 +123,7 @@ export class ExpenseHelper extends BaseHelper {
      * @param {ExpenseDetailInputs[]} data - The array of expense detail inputs.
      * @return {Promise<void>} A promise that resolves when the expenses are filled.
      */
+
     public async fillExpenses(data: ExpenseDetailInputs[] = []) {
         const helper = this.locate(ExpenseHelper.DETAIL_DOM_SELECTOR);
 
