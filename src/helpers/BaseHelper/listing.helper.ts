@@ -1,7 +1,7 @@
 import { Locator, Page, expect } from '@playwright/test';
+import chalk from 'chalk';
 import { PageHelper } from './page.helper';
 import { TabHelper } from './tab.helper';
-import chalk from 'chalk';
 
 export class ListingHelper extends PageHelper {
     public tabHelper: TabHelper;
@@ -44,6 +44,19 @@ export class ListingHelper extends PageHelper {
         return table
             .locator('div.table-header-group > div.table-row > div.table-cell')
             .allInnerTexts();
+    }
+
+    /**
+     * Checks if the specified columns exist in the table.
+     *
+     * @param {string[]} columns - The names of the columns to check.
+     * @return {Promise<void>} A promise that resolves when all columns are found.
+     */
+    public async checkTableColumnsExist(columns: string[]): Promise<void> {
+        const columnNames = await this.getTableColumnNames();
+        for (const columnName of columns) {
+            expect(columnNames).toContainEqual(columnName);
+        }
     }
 
     /**
