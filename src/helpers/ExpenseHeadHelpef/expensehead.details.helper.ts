@@ -35,6 +35,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         this.documentHelper = new DocumentHelper(page);
 
         this.dialogHelper = new DialogHelper(page);
+
+        this.detailsHelper = new DetailsPageHelper(page);
     }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
@@ -105,6 +107,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
             name: 'comments',
         });
         await this._page.waitForTimeout(1000);
+
+        await this.clickButton('Save');
     }
 
     public async addDocument(document: { comment: string; imagePath: string }) {

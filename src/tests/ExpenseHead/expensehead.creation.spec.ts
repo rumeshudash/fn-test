@@ -199,6 +199,7 @@ test.describe('Configuration - Expense Head', () => {
     PROCESS_TEST('TEH003-Expense Head Deatails', async ({ page }) => {
         const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
         const dialog = expenseHeadDetails.dialogHelper;
+        const details = expenseHeadDetails.detailsHelper;
         await expenseHeadDetails.init();
         await PROCESS_TEST.step('Check expense head Deatils page', async () => {
             await expenseHeadDetails.clickOnExpenseHead(
@@ -280,16 +281,15 @@ test.describe('Configuration - Expense Head', () => {
             const notification = await expenseHeadDetails.notificationHelper;
 
             await notification.checkToastSuccess('Successfully saved');
+            await page.waitForLoadState('networkidle');
         });
 
         await PROCESS_TEST.step('Click on Actions Button', async () => {
-            await expenseHeadDetails.clickOnActions();
-
-            const dialog = await expenseHeadDetails.dialogHelper;
-
-            expect(
-                await dialog.getLocator().getByText('Add Notes')
-            ).toHaveCount(1);
+            details.checkActionButtonOptions([
+                'Raise Expense',
+                'Add Notes',
+                'Add Documents',
+            ]);
         });
 
         await PROCESS_TEST.step('Click on Expense Tab', async () => {
@@ -314,6 +314,7 @@ test.describe('Configuration - Expense Head', () => {
 
     PROCESS_TEST('TEH004-Expense Head Details Notes Tab', async ({ page }) => {
         const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        const notification = expenseHeadDetails.notificationHelper;
         await expenseHeadDetails.init();
         await PROCESS_TEST.step('Click on Notes Tab', async () => {
             await expenseHeadDetails.clickOnExpenseHead(
@@ -324,8 +325,12 @@ test.describe('Configuration - Expense Head', () => {
         });
 
         await PROCESS_TEST.step('Add Notes with Empty Notes', async () => {
-            const notes = await ExpenseHeadHelper.generateRandomGradeName();
+            await expenseHeadDetails.clickOnAddNotes('');
 
+            notification.checkErrorMessage('Note is required');
+        });
+
+        await PROCESS_TEST.step('Add Notes with Valid Notes', async () => {
             await expenseHeadDetails.clickOnAddNotes(expenseHeadData.Notes);
         });
 
