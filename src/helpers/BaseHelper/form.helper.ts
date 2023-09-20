@@ -44,10 +44,10 @@ export class FormHelper extends BaseHelper {
      * @return {Locator} The locator of the input element.
      */
     public getInputElement(options: InputFieldLocatorOptions): Locator {
-        return this.locate(
-            options.type === 'textarea' ? 'textarea' : 'input',
-            options
-        ).getLocator();
+        return this.locate(options.type === 'textarea' ? 'textarea' : 'input', {
+            ...options,
+            type: undefined,
+        }).getLocator();
     }
 
     /**
@@ -272,9 +272,13 @@ export class FormHelper extends BaseHelper {
      * @param {ObjectDto} formSchema - The form schema to check.
      * @return {Promise<void>} - A promise that resolves when the mandatory fields have been checked.
      */
-    public async checkMandatoryFields(formSchema: ObjectDto): Promise<void> {
+    public async checkMandatoryFields(
+        formSchema: ObjectDto,
+        ignoreFields: string[] = []
+    ): Promise<void> {
         for (const [name, fieldSchema] of Object.entries(formSchema)) {
             if (!fieldSchema?.required) continue;
+            if (ignoreFields.includes(name)) continue;
             expect(
                 await this.isInputMandatory({ name, type: fieldSchema?.type }),
                 {

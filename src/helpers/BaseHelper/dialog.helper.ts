@@ -40,11 +40,11 @@ export class DialogHelper extends BaseHelper {
      *
      * @return {Promise<void>} Returns a promise that resolves when the form is open.
      */
-    public async checkFormIsOpen() {
+    public async checkFormIsOpen(isOpen: boolean = true) {
         const element = this.getDialogContainer();
         expect(await element.isVisible(), {
             message: 'checking  form is open or not.',
-        }).toBe(true);
+        }).toBe(isOpen);
     }
 
     /**

@@ -526,22 +526,17 @@ export class BaseHelper {
         await partyClick.click();
         await this._page.waitForTimeout(2000);
     }
-    async validateCheckbox() {
+    async validateCheckbox(checked?: boolean) {
         const checkbox = this.locate('label', {
             text: 'save and create another',
         })._locator;
         expect(!(await checkbox.isChecked()), 'Checkbox default state').toBe(
-            true
+            checked
         );
     }
 
-    /**
-     * Clicks on the checkbox named with save and create another.
-     *
-     * @return {Promise<void>} Resolves when the checkbox is saved and created.
-     */
-    async saveAndCreateCheckbox() {
-        await this.validateCheckbox();
+    async saveAndCreateCheckbox(checked: boolean = true) {
+        await this.validateCheckbox(checked);
         const checkbox = this.locate('label', {
             text: 'save and create another',
         })._locator;

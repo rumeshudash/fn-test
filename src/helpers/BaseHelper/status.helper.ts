@@ -48,11 +48,11 @@ export class StatusHelper extends BaseHelper {
         const currentStatus = await toggleButton.textContent();
         if (currentStatus !== status) {
             await toggleButton.click();
-            const dialog = await this.locate(
-                '//div[@role="dialog"]//div[text()="Do you want to Inactive?"]'
-            )._locator.isVisible();
+            const dialog = this.locate('div', { role: 'dialog' })
+                .locate('button', { text: 'Yes!' })
+                .getLocator();
 
-            if (dialog) {
+            if (await dialog.isVisible()) {
                 await this.click({ role: 'button', name: 'Yes!' });
             }
 

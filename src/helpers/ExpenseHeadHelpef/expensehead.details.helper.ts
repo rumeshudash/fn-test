@@ -35,6 +35,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         this.documentHelper = new DocumentHelper(page);
 
         this.dialogHelper = new DialogHelper(page);
+
+        this.detailsHelper = new DetailsPageHelper(page);
     }
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
@@ -105,6 +107,8 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
             name: 'comments',
         });
         await this._page.waitForTimeout(1000);
+
+        await this.clickButton('Save');
     }
 
     public async addDocument(document: { comment: string; imagePath: string }) {
@@ -128,6 +132,7 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
     }
 
     public async checkZoom() {
+        await this.documentHelper.toggleDocumentView('Document View');
         await this.documentHelper.checkZoom();
     }
 
@@ -144,6 +149,7 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         comment: string;
         date: Date;
     }) {
+        await this.documentHelper.toggleDocumentView('Table View');
         await this.documentHelper.checkDocumentDelete({
             comment: document.comment,
         });
