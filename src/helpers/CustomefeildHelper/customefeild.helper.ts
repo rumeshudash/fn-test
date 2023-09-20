@@ -4,6 +4,7 @@ import { NotificationHelper } from '../BaseHelper/notification.helper';
 import chalk from 'chalk';
 import { FormHelper } from '../BaseHelper/form.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { expect } from '@playwright/test';
 
 export class CustofeildHelper extends ListingHelper {
     public tabHelper: TabHelper;
@@ -28,6 +29,18 @@ export class CustofeildHelper extends ListingHelper {
     public async clickOnTab(TabName: string) {
         await this.tabHelper.checkTabExists(TabName);
         await this.tabHelper.clickTab(TabName);
+    }
+
+    public async checkNameAndType(name: string, type: string) {
+        await this.searchInList(name);
+        const row = await this.findRowInTable(name, 'FIELD NAME');
+        const textName = await this.getCellText(row, 'FIELD NAME');
+
+        const textType = await this.getCellText(row, 'FIELD TYPE');
+
+        expect(textName).toEqual(name);
+
+        expect(textType).toEqual(type);
     }
 
     public async addWithChoiceType(
@@ -100,7 +113,6 @@ export class CustofeildHelper extends ListingHelper {
         priority: number,
         defaultValue?: string
     ) {
-        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
@@ -134,43 +146,8 @@ export class CustofeildHelper extends ListingHelper {
             name: 'priority',
         });
 
-        // await this._page.locator(`//input[@id='date']`).click();
-        // const dateFeild = await this._page.locator(
-        //     `//div[@class='rdrInfiniteMonths rdrMonthsVertical']//div[2]//div[2]`
-        // );
-        // const dateCheck = await dateFeild.getByRole('button', { name: '15' });
-        // await dateCheck.click();
-
         await this.click({ role: 'button', name: 'save' });
     }
-
-    // public async AddExpenseWithNumberCheckchoice(
-    //     name: string,
-    //     type: string,
-    //     priority: number,
-    //     choicelist: string[]
-    // ) {
-    //     await this.clickExpenseTab();
-
-    //     await this.clickButton('Add New');
-    //     await this.fillText(name, {
-    //         name: 'name',
-    //     });
-    //     await this.selectOption({
-    //         option: type,
-    //         hasText: 'Select Field Type',
-    //     });
-    //     await this.fillText(priority, {
-    //         name: 'priority',
-    //     });
-
-    //     await this.selectOption({
-    //         option: choicelist,
-    //         hasText: 'Search...',
-    //     });
-
-    //     await this.click({ role: 'button', name: 'save' });
-    // }
 
     public async changeStatus(name: string) {
         await this.searchInList(name);
