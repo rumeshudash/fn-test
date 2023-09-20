@@ -125,7 +125,7 @@ export class FormHelper extends BaseHelper {
         ignoreFields: string[] = []
     ): Promise<void> {
         for (const [key, schema] of Object.entries(formSchema)) {
-            const name = formSchema?.name ?? key;
+            const name = schema?.name ?? key;
             if (ignoreFields.includes(name)) continue;
             const value = AccessNestedObject(data, name) || '';
             switch (schema?.type) {
@@ -222,9 +222,19 @@ export class FormHelper extends BaseHelper {
         }).toBeFalsy();
     }
 
-    public async checkMandatoryFields(formSchema: ObjectDto): Promise<void> {
+    /**
+     * Check if all mandatory fields in the form schema have been filled.
+     *
+     * @param {ObjectDto} formSchema - The form schema object.
+     * @return {Promise<void>} A promise that resolves with no value.
+     */
+    public async checkMandatoryFields(
+        formSchema: ObjectDto,
+        ignoreFields: string[] = []
+    ): Promise<void> {
         for (const [key, fieldSchema] of Object.entries(formSchema)) {
             const name = fieldSchema?.name ?? key;
+            if (ignoreFields.includes(name)) continue;
             if (!fieldSchema?.required) continue;
             expect(
                 await this.isInputMandatory(
@@ -239,10 +249,12 @@ export class FormHelper extends BaseHelper {
     }
 
     public async checkAllMandatoryInputErrors(
-        formSchema: ObjectDto
+        formSchema: ObjectDto,
+        ignoreFields: string[] = []
     ): Promise<void> {
         for (const [key, fieldSchema] of Object.entries(formSchema)) {
             const name = fieldSchema?.name ?? key;
+            if (ignoreFields.includes(name)) continue;
             if (!fieldSchema?.required) continue;
             await this.checkInputError(name, fieldSchema);
         }

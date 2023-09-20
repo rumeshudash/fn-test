@@ -12,29 +12,12 @@ export const vendorGstinInfo: gstinDataType = {
 };
 
 //Vendor Onboarding with GSTIN Clinet Info Card
-export const clientGstinInfo: gstinDataType = {
-    trade_name: 'Hidesign India Pvt Ltd',
-    gstin: '33AACCH0586R1Z6',
-    business_type: 'Private Limited',
-    address:
-        'EXPRESS AVENUE, 49/50 L-WHITES ROAD, ROYAPETTAH, SHOP NO.S 161 B, Chennai, , , 600014, , Tamil Nadu, NA, FIRST FLOOR, ',
-    pan_number: 'AACCH0586R',
-    status: 'Active',
-};
 
 export const NON_GSTIN_LOWER_TDS_DETAILS = {
     selectInput: 'Lower TDS',
     tdsCertNumber: '10',
     date: '22-02-2023',
     tdsPercentage: '20',
-};
-
-//For Vendor Managed Onboarding GSTIN
-export const BANKDETAILS = {
-    bankName: vendorGstinInfo.trade_name,
-    accountNumber: '1234567',
-    ifsc: 'HDFC0000002',
-    address: 'HDFC0000002,MUMBAI - KHAR WEST',
 };
 
 //For Vendor Managed Onboarding NON GSTIN
@@ -53,7 +36,7 @@ export const NON_GSTIN_BANK_DETAILS_TWO = {
     address: 'HDFC0000002,MUMBAI - KHAR WEST',
 };
 
-export const IMAGE_NAME = 'pan-card.jpg';
+export const IMAGE_NAME = 'invoice3.png';
 export const MSME_NUMBER = '22';
 export const PAN_CARD = '20';
 export const COI_NUMBER = '23332567';

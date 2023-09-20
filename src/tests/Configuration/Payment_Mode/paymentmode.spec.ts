@@ -1,19 +1,20 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { PaymentModesHelper } from '@/helpers/PaymentModeHelper/PaymentMode.helper';
-import { test } from '@playwright/test';
+import { generateRandomName, generateRandomNumber } from '@/utils/common.utils';
+import { expect, test } from '@playwright/test';
 
 const { describe } = PROCESS_TEST;
 
 describe('Configuration>Payment Mode', () => {
     //For Payment Modes in Configuration
     const paymentMode_Save_And_Create = {
-        name: 'Test Payment SnC2',
-        type_id: 'Cheque',
+        name: `sc${generateRandomNumber()}`,
+        type_id: 'Cash',
         bank_id: 'ICIC0000004',
     };
     const paymentModeInfo = {
-        name: 'Test Payment1',
-        type_id: 'Demand Draft',
+        name: `pay${generateRandomNumber()}`,
+        type_id: 'Cash',
         bank_id: 'ICIC0000003',
     };
     const Update_PaymentInfo = {
@@ -34,31 +35,61 @@ describe('Configuration>Payment Mode', () => {
         },
     };
     PROCESS_TEST('TPM001', async ({ page }) => {
-        const paymentMode = new PaymentModesHelper(paymentModeInfo, page);
+        const paymentMode = new PaymentModesHelper(page);
         await PROCESS_TEST.step('Verify page', async () => {
             await paymentMode.init();
             await paymentMode.breadCrumb.checkBreadCrumbTitle('Payment Modes');
         });
 
-        await test.step('Save and Create Another', async () => {
+        await PROCESS_TEST.step('Check Mandatory Fields', async () => {
             await paymentMode.addNewPaymentMode();
             await paymentMode.form.fillFormInputInformation(
                 paymentInfoSchema,
+                {},
+                undefined,
+                ['bank_id', 'type_id']
+            );
+            await paymentMode.form.submitButton();
+            await paymentMode.form.checkMandatoryFields(paymentInfoSchema, [
+                'bank_id',
+            ]);
+            await paymentMode.form.checkAllMandatoryInputErrors(
+                paymentInfoSchema,
+                ['bank_id']
+            );
+            await paymentMode.form.checkDisableSubmit();
+        });
+
+        await PROCESS_TEST.step('Save And Create', async () => {
+            // await paymentMode.form.fillFormInputInformation(
+            //     paymentInfoSchema,
+            //     paymentMode_Save_And_Create,
+            //     undefined,
+            //     ['bank_id']
+            // );
+            await paymentMode.fillPaymentMode(
+                paymentInfoSchema,
                 paymentMode_Save_And_Create
             );
-            await paymentMode.saveAndCreateCheckbox();
+            await paymentMode.verifyBankVisibility(
+                paymentMode_Save_And_Create.type_id
+            );
+            // await paymentMode.fillPaymentMode({ paymentMode_Save_And_Create });
             await paymentMode.form.submitButton();
-            await paymentMode.notification.getErrorMessage();
             await paymentMode.notification.checkToastSuccess(
                 'Successfully saved'
             );
-            await paymentMode.form.checkMandatoryFields(paymentInfoSchema);
-            await paymentMode.dialog.closeDialog();
         });
 
         await PROCESS_TEST.step('Add New Payment Mode', async () => {
             await paymentMode.addNewPaymentMode();
-            await paymentMode.form.fillFormInputInformation(
+            // await paymentMode.form.fillFormInputInformation(
+            //     paymentInfoSchema,
+            //     paymentModeInfo,
+            //     undefined,
+            //     ['bank_id']
+            // );
+            await paymentMode.fillPaymentMode(
                 paymentInfoSchema,
                 paymentModeInfo
             );
@@ -92,25 +123,28 @@ describe('Configuration>Payment Mode', () => {
             );
         });
 
-        await PROCESS_TEST.step('Change Bank Status', async () => {
+        await PROCESS_TEST.step('Change Status', async () => {
             await paymentMode.status.setStatus(
                 paymentModeInfo.name,
                 'Inactive'
             );
 
             await paymentMode.notification.checkToastSuccess('Status Changed');
-            await paymentMode.verifyBankStatus('Inactive');
+            await paymentMode.checkStatus(paymentModeInfo.name, 'Inactive');
 
             await paymentMode.status.setStatus(paymentModeInfo.name, 'Active');
-
             await paymentMode.notification.checkToastSuccess('Status Changed');
-            await paymentMode.verifyBankStatus('Active');
+
+            await paymentMode.checkStatus(paymentModeInfo.name, 'Active');
         });
 
         await PROCESS_TEST.step('Edit Payment Mode Name', async () => {
+            await paymentMode.clickPaymentAction(paymentModeInfo.name);
             await paymentMode.form.fillFormInputInformation(
                 paymentInfoSchema,
-                Update_PaymentInfo
+                Update_PaymentInfo,
+                undefined,
+                ['type_id', 'bank_id']
             );
             await paymentMode.form.submitButton();
 
@@ -122,23 +156,23 @@ describe('Configuration>Payment Mode', () => {
         await PROCESS_TEST.step('Verify Updated Payment Mode', async () => {
             await paymentMode.listing.searchInList(Update_PaymentInfo.name);
             await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
+                Update_PaymentInfo.name,
                 'TYPE'
             );
             await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
+                Update_PaymentInfo.name,
                 'BANK'
             );
             await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
+                Update_PaymentInfo.name,
                 'STATUS'
             );
             await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
+                Update_PaymentInfo.name,
                 'ADDED AT'
             );
             await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
+                Update_PaymentInfo.name,
                 'ACTION'
             );
         });

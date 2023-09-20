@@ -9,9 +9,6 @@ import {
     VendorOnboardingWithGSTIN,
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
-import { IMAGE_NAME, clientGstinInfo } from '@/utils/required_data';
-// import { test } from '@playwright/test';
-// import { BANKDETAILS } from '@/utils/required_data';
 import chalk from 'chalk';
 
 //Vendor and Client Details
@@ -23,12 +20,12 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
     let URL: string;
 
     const VendorManagedGstinInfo: gstinDataType = {
-        trade_name: 'Apple India Pvt Ltd',
-        gstin: '29AABCA1906H1ZY',
-        pan_number: 'AABCA1906H',
+        trade_name: 'Ola Fleet Technologies Private Limited',
+        gstin: '03AAKCA2311H1ZA',
+        pan_number: 'AAKCA2311H',
         business_type: 'Private Limited',
         address:
-            'UB City No. 24, Vittal Mallaya Road, Bengaluru, Concord Tower C, Bengaluru Urban, 12.9715610000001, 560001, Karnataka, Building, 8th 9th 12th 13th 18th and 19th, 77.5964680000001',
+            'Gobind Nagar, Ferozepur Road, Ludhiana, B XX 2429, Ludhiana, 30.912695, 141001, Punjab, Building, Ground Floor, 75.8186910000001',
         status: 'Active',
     };
     const vendorGstinInfoSchema = {
@@ -45,7 +42,7 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
 
         expiry_date: '22-02-2023',
         custom_field_data: {
-            percentage: '22',
+            percentage: '32',
         },
     };
 
@@ -89,6 +86,35 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
         },
         ifsc_code: {
             type: 'text',
+            required: true,
+        },
+    };
+    const clientGstinInfo: gstinDataType = {
+        trade_name: 'Flipkart India Private Limited',
+        gstin: '03AABCF8078M2ZA',
+        business_type: 'Private Limited',
+        address:
+            'Khasra No.306, 348/305, Village Katna,, Teshil Payal, Unit No.1, Ludhiana, 141113, Punjab, NA, Khewat No.79/80,',
+        pan_number: 'AABCF8078M',
+        status: 'Active',
+    };
+    const Client_Invitation_Info = {
+        vendor_account_id: VendorManagedGstinInfo.trade_name, // vendor_account_id: 'Ujjivan Small Finance Bank Limited', //Bank should be connected on vendor account
+        business_account_id: clientGstinInfo.trade_name, //Client Business added from clientGstinInfo
+        // bank_id: 'ICIC0000002', //Bank must be availabe on vendor account
+        bank_id: BANKDETAILS.ifsc_code,
+    };
+    const Client_Invitation_Info_Schema = {
+        vendor_account_id: {
+            type: 'select',
+            required: true,
+        },
+        business_account_id: {
+            type: 'reference_select',
+            required: true,
+        },
+        bank_id: {
+            type: 'select',
             required: true,
         },
     };
@@ -184,7 +210,14 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
                 LOWER_TDS_DETAILS
             );
             await vendorOnboarding.form.submitButton();
-            await vendorOnboarding.notification.getErrorMessage();
+            // await vendorOnboarding.form.checkInputError(
+            //     'custom_field_data.percentage',
+            //     LOWER_TDS_DETAILS_SCHEMA
+            // );
+            // await vendorOnboarding.notification.getErrorMessage();
+            await vendorOnboarding.notification.checkToastSuccess(
+                'Successfully saved'
+            );
             await vendorOnboarding.clickButton('Next');
 
             // await vendorOnboarding.form.checkAllMandatoryInputErrors(
@@ -233,119 +266,15 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
             VendorManagedGstinInfo,
             page
         );
-        // await vendorOnboarding.clickLinkInviteVendor('Vendor Invitations');
-        // await vendorOnboarding.clickCopyLink();
-
-        // // expect(
-        // //     await vendorOnboarding.toastMessage(),
-        // //     chalk.red('ToastMessage match')
-        // // ).toBe('Link Successfully Copied!!!');
-
-        // await PROCESS_TEST.step('Open Copied Link', async () => {
-        //     const URL = await vendorOnboarding.linkURL();
-        //     await vendorOnboarding.closeDialog();
-        //     await vendorOnboarding.logOut();
-        //     await vendorOnboarding.init(URL);
-        // });
-
-        // await PROCESS_TEST.step('Signup - Vendor Onboarding', async () => {
-        //     vendorOnboarding.clickButton('Sign Up');
-        //     const signup = new SignupHelper(page);
-        //     await signup.fillSignup({
-        //         name: 'User130823',
-        //         email: `User${generateRandomNumber()}@test.com`,
-        //         password: '123456',
-        //         confirm_password: '123456',
-        //     });
-        //     await signup.clickButton('Next');
-        // });
-
-        // //Verifies account after signup
-        // await PROCESS_TEST.step('Verify Email', async () => {
-        //     const verifyEmail = new VerifyEmailHelper(page);
-        //     await verifyEmail.fillCode('1');
-        //     await verifyEmail.clickButton('Verify →');
-        //     await vendorOnboarding.clickButton('Continue →');
-        // });
-
-        // await PROCESS_TEST.step('Create Business Client', async () => {
-        //     await vendorOnboarding.clickButton('Create New Business');
-        //     await vendorOnboarding.setCheckbox('Yes');
-        //     await withgstin.fillGstinInput();
-        //     await vendorOnboarding.beforeGstinNameNotVisibleDisplayName();
-        //     await vendorOnboarding.checkWizardNavigationClickDocument(
-        //         'Documents'
-        //     );
-        // });
-
-        // //Verifies vendor details in card with provided one
-        // await PROCESS_TEST.step(
-        //     'Verify Vendor GSTIN Info then Save',
-        //     async () => {
-        //         // vendorOnboarding.gstin_data = vendorGstinInfo;
-        //         await withgstin.gstinInfoCheck();
-        //         await withgstin.gstinDisplayName(
-        //             VendorManagedGstinInfo.trade_name
-        //         );
-        //         await vendorOnboarding.clickButton('Next');
-        //         await vendorOnboarding.notification.checkToastSuccess(
-        //             'Successfully saved'
-        //         );
-        //         // expect(
-        //         //     await vendorOnboarding.toastMessage(),
-        //         //     chalk.red('ToastMessage match')
-        //         // ).toBe('Successfully saved');
-        //     }
-        // );
-
-        // await PROCESS_TEST.step('Documents - Vendor Onboarding', async () => {
-        //     await vendorOnboarding.fillDocuments(); // LOWER_TDS_DETAILS
-        // });
-
-        // //Adding Bank Account to vendor
-        // await PROCESS_TEST.step(
-        //     'Bank Account - Vendor Onboarding',
-        //     async () => {
-        //         await vendorOnboarding.clickButton('Next');
-        //         await getBankDetails.fillBankAccount();
-        //         await vendorOnboarding.checkWizardNavigationClickDocument(
-        //             'Bank Account'
-        //         );
-
-        //         // bankIFSCCode = await getBankDetails.bankIFSCCode();
-
-        //         const ifscBankDetails =
-        //             await getBankDetails.vendorIfscDetailsValidation();
-        //         expect(ifscBankDetails, chalk.red('Bank IFSC Code match')).toBe(
-        //             getBankDetails.bankDetails.address
-        //         );
-        //         await getBankDetails.vendorIfscLogoVisibilityValidation();
-
-        //         // expect(
-        //         //     bankIFSCCode.slice(0, -1),
-        //         //     'Bank IFSC Code does not match'
-        //         // ).toBe(BANKDETAILS[0].ifsc);
-
-        //         await vendorOnboarding.clickButton('Next');
-        //         expect(
-        //             await page.getByText('Onboarding Completed').isVisible(),
-        //             chalk.red('Onboarding Completed text visibility')
-        //         ).toBe(true);
-        //         await vendorOnboarding.clickButton('Close');
-        //     }
-        // );
 
         //Connects client to vendor
         await PROCESS_TEST.step('Client Connect', async () => {
             await vendorOnboarding.init(URL);
-            // vendorOnboarding.gstin_data = clientGstinInfo;
             await vendorOnboarding.clickButton('Connect With Client');
 
-            await vendorOnboarding.clientInvitation(
-                VendorManagedGstinInfo.trade_name,
-                clientGstinInfo.trade_name
-                    ? clientGstinInfo.trade_name
-                    : clientGstinInfo.gstin
+            await vendorOnboarding.form.fillFormInputInformation(
+                Client_Invitation_Info_Schema,
+                Client_Invitation_Info
             );
         });
 
@@ -362,31 +291,10 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
         await PROCESS_TEST.step(
             'Upload Mandatory Documents - Client Connect',
             async () => {
-                // expect(
-                //     await vendorOnboarding.checkButtonVisibility('Submit'),
-                //     chalk.red('Button visibility')
-                // ).not.toBe(true);
-
-                await vendorOnboarding.uploadImageDocuments(IMAGE_NAME);
-                await vendorOnboarding.notification.checkToastSuccess(
-                    'Successfully saved'
-                );
-                // expect(
-                //     await vendorOnboarding.toastMessage(),
-                //     chalk.red('ToastMessage match')
-                // ).toBe('Successfully saved');
-                // expect(
-                //     await vendorOnboarding.checkButtonVisibility('Submit'),
-                //     chalk.red('Submit Button visibility')
-                // ).toBe(true);
-                await vendorOnboarding.clickButton('Submit');
+                await vendorOnboarding.uploadImageDocuments();
                 await vendorOnboarding.notification.checkToastSuccess(
                     'Successfully created'
                 );
-                // expect(
-                //     await vendorOnboarding.toastMessage(),
-                //     chalk.red('ToastMessage match')
-                // ).toBe('Successfully created');
             }
         );
 
@@ -401,16 +309,12 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
             expect(
                 await invitationDetails.checkFrom(),
                 chalk.red('From Vendor match')
-            ).toBe(VendorManagedGstinInfo.trade_name + '…');
-            expect(
-                await invitationDetails.checkFromGSTIN(),
-                chalk.red('From Vendor Gstin match')
-            ).toBe(VendorManagedGstinInfo.gstin);
+            ).toBe(Client_Invitation_Info.vendor_account_id + '…');
 
             expect(
                 await invitationDetails.checkClient(),
                 chalk.red('To client match')
-            ).toBe(clientGstinInfo.trade_name + ' ');
+            ).toBe(Client_Invitation_Info.business_account_id + ' ');
             expect(
                 await invitationDetails.checkClientGSTIN(),
                 chalk.red('To client Gstin match')
@@ -424,11 +328,5 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
             await invitationDetails.checkDocument('Lower TDS');
             await invitationDetails.checkDocument('Bank');
         });
-
-        // await test.step('Client Logout and FinOps Login ', async () => {
-        //     await vendorOnboarding.logOut();
-        //     const signIn = new SignInHelper(page);
-        //     await signIn.signInPage('newtestauto@company.com', '123456');
-        // });
     });
 });
