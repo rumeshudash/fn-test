@@ -5,10 +5,11 @@ import { DetailsPageHelper } from '../BaseHelper/details.helper';
 import { DocumentHelper } from '../BaseHelper/document.helper';
 import { FormHelper } from '../BaseHelper/form.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
-import { Logger } from '../BaseHelper/log.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { StatusHelper } from '../BaseHelper/status.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
+import { LISTING_ROUTES } from '@/constants/api.constants';
+import { Logger } from '../BaseHelper/log.helper';
 
 export class DepartmentCreation extends FormHelper {
     public listingHelper: ListingHelper;
@@ -44,6 +45,7 @@ export class DepartmentCreation extends FormHelper {
             .filter({ hasText: 'Departments' })
             .click();
         await this._page.waitForTimeout(1000);
+        await this._page.waitForURL(LISTING_ROUTES.DEPARTMENTS);
     }
 
     // open add department form
@@ -56,62 +58,14 @@ export class DepartmentCreation extends FormHelper {
                 name: 'add_circle_outline Add Department',
             })
             .click();
-        console.log(chalk.green('Add department button clicked'));
-        await expect(this._page.locator('//button[text()="Save"]'), {
+        Logger.success('Add department button clicked');
+        const saveBtn = await this.submitButton('Save', {
+            clickSubmit: false,
+        });
+        await expect(saveBtn, {
             message: 'Checking save button visibility',
         }).toBeVisible();
-        console.log(chalk.green('Add department form is visible'));
-    }
-
-    // fill department values
-    public async fillDepartment(
-        data: DepartmentCreationData,
-        update?: boolean
-    ) {
-        await this._page.waitForSelector(
-            '//div[@role="dialog"]/descendant::form'
-        );
-        if (data.name) {
-            await this.fillInput(data.name, {
-                name: 'name',
-            });
-        }
-        if (data.manager_id) {
-            await this.selectOption({
-                input: data.manager_id,
-                name: 'manager_id',
-            });
-        }
-        if (data.parent_id) {
-            await this.selectOption({
-                input: data.parent_id,
-                name: 'parent_id',
-            });
-        }
-        await this.clickButton('Save');
-        Logger.success('Save button clicked');
-
-        // check success message
-        if (data.name) {
-            this.notificationHelper.checkToastSuccess('Successfully created');
-            Logger.success('Department toast message verified');
-        }
-        // check err message if name empty
-        if (!data.name && !update) {
-            console.log(
-                chalk.blue('Checking error message and button disabled')
-            );
-            const error = this._page.locator('span.label.text-error').first();
-            expect(await error.textContent(), {
-                message: 'Checking error message',
-            }).toBe('Name is required');
-            await expect(this._page.locator('//button[text()="Save"]'), {
-                message: 'Checking save button visibility',
-            }).toBeDisabled();
-            console.log(
-                chalk.green('Error message verified and button disabled')
-            );
-        }
+        Logger.success('Add department form is visible');
     }
 
     // goto department details page
@@ -148,32 +102,32 @@ export class DepartmentCreation extends FormHelper {
     public async verifyIfPresent({
         data,
         present,
-        status,
     }: {
         data: DepartmentCreationData;
         present: boolean;
-        status: string;
     }) {
-        console.log(chalk.blue('Department listing page opened'));
+        Logger.info('Department listing page opened');
 
-        await this.listingHelper.searchInList(data.name);
+        await this.listingHelper.searchInList(data.NAME);
         const addedDepartmentRow = await this.listingHelper.findRowInTable(
-            data.name,
+            data.NAME,
             'NAME'
         );
 
         // if added department is not present
         if (!present) {
-            await expect(addedDepartmentRow).not.toBeVisible();
+            await expect(addedDepartmentRow, {
+                message: 'Checking department row visibility',
+            }).not.toBeVisible();
             return;
         }
 
-        await this.verifyDepartmentDetails(addedDepartmentRow, data, status);
+        await this.listingHelper.validateRow(addedDepartmentRow, data);
     }
 
     // navigate to tabs based on status
     public async navigateToTab(status: string) {
-        console.log(chalk.blue('Navigating to tab:' + status));
+        Logger.info('Navigating to tab:' + status);
         await this._page
             .locator('//button[@role="tab"]')
             .getByText(status, { exact: true })
@@ -183,11 +137,11 @@ export class DepartmentCreation extends FormHelper {
 
     // toggle department status from the row
     public async setStatus(name: string, status: string) {
-        console.log(chalk.blue('Toggling department status'));
+        Logger.info('Toggling department status');
         await this.navigateTo('DEPARTMENTS');
         await this.tabHelper.clickTab('All');
         await this.statusHelper.setStatus(name, status);
-        console.log(chalk.green('Department status toggled'));
+        Logger.success('Department status toggled');
     }
 
     // check parent department form field
@@ -195,16 +149,18 @@ export class DepartmentCreation extends FormHelper {
         const parentDepartment = this._page
             .locator('form')
             .getByText('Select a parent department');
-        await expect(parentDepartment).toBeVisible();
-        console.log(chalk.green('Parent department field is visible'));
+        await expect(parentDepartment, {
+            message: 'Checking parent department field visibility',
+        }).toBeVisible();
+        Logger.success('Parent department field is visible');
     }
 
     // check save and create another
     public async checkSaveAndCreateAnother() {
         const form = this._page.locator('form');
-        await expect(form).toBeVisible();
-        console.log(
-            chalk.green('Form is still open after save and create another')
-        );
+        await expect(form, {
+            message: 'Checking form visibility on save and create another',
+        }).toBeVisible();
+        Logger.success('Form is still open after save and create another');
     }
 }

@@ -195,19 +195,27 @@ interface VENDORDOCUMENTDETAILS {
 
 interface DepartmentCreationData {
     name?: string;
+    NAME?: string;
     parent_id?: string;
+    parent?: string;
+    'PARENT DEPARTMENT'?: string;
+    'APPROVAL MANAGER'?: string;
     manager_id?: string;
     date?: string;
+    'ADDED AT'?: string;
     identifier?: string;
+    status?: string;
 }
 
 interface EmployeeCreationData {
     name?: string;
     email?: string;
     department?: string;
+    designation_id?: string;
     designation?: string;
     date?: string;
     identifier?: string;
+    manager_id?: string;
     manager?: string;
     parent?: string;
 }
@@ -215,10 +223,12 @@ interface EmployeeCreationData {
 interface UserGroupData {
     name?: string;
     manager_id?: string;
+    manager?: string;
     description?: string;
     member?: string;
     memberEmail?: string;
     role_id?: string;
+    status?: string;
 }
 
 interface BankDetails {

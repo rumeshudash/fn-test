@@ -232,7 +232,7 @@ export class ListingHelper extends PageHelper {
     public async validateRow(row: Locator, columnItems: any): Promise<void> {
         const keys = Object.keys(columnItems);
         for (const key of keys) {
-            const cell = await this.getCell(row, key);
+            const cell = await this.getCell(row, key.toUpperCase());
             await expect(cell).toContainText(columnItems[key]);
         }
     }

@@ -86,6 +86,6 @@ export class ApprovalDelegation extends BaseHelper {
         const start_date = formatDateProfile(data['START TIME']);
         const end_date = formatDateProfile(data['END TIME']);
         const row = await this.getRowWithDates(start_date, end_date);
-        await this.statusHelper.setStatus('', 'Active', 'STATUS', row);
+        await this.statusHelper.setStatusWithRow('Active', row);
     }
 }

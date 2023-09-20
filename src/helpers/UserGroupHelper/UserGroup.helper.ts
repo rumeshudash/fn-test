@@ -143,11 +143,9 @@ export class UserCreation extends FormHelper {
     public async verifyIfPresent({
         data,
         present,
-        status,
     }: {
         data: UserGroupData;
         present: boolean;
-        status: string;
     }) {
         Logger.info('Searching user group in table');
 
@@ -163,6 +161,6 @@ export class UserCreation extends FormHelper {
             return;
         }
 
-        await this.verifyUserGroupDetails(addedGroup, data, status);
+        await this.listHelper.validateRow(addedGroup, data);
     }
 }

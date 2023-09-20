@@ -67,8 +67,13 @@ export function uuidV4() {
 export const formatDate = (date: string | Date, showTime?: boolean) => {
     return format(
         GetDateValue(date),
-        showTime ? 'dd MMM, yyyy hh:mm a' : 'dd MMM, yyyy'
+        showTime ? 'dd MMM, yyyy h:mm a' : 'dd MMM, yyyy'
     );
+};
+
+// in format 18-09-2023
+export const formatDateNew = (date: string | Date) => {
+    return format(GetDateValue(date), 'dd-MMM-yyyy');
 };
 
 export const GetDateValue = (date: any, format?: string) => {

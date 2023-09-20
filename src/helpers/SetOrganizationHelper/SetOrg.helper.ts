@@ -10,6 +10,7 @@ import { LISTING_ROUTES } from '@/constants/api.constants';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { ExpenseHelper } from '../ExpenseHelper/expense.helper';
+import { StatusHelper } from '../BaseHelper/status.helper';
 
 export class SetOrganization extends BaseHelper {
     private _documentHelper: DocumentHelper;
@@ -19,6 +20,7 @@ export class SetOrganization extends BaseHelper {
     private _listingHelper: ListingHelper;
     private _tabHelper: TabHelper;
     private _expenseHelper: ExpenseHelper;
+    private _statusHelper: StatusHelper;
 
     constructor(page: Page) {
         super(page);
@@ -29,6 +31,7 @@ export class SetOrganization extends BaseHelper {
         this._listingHelper = new ListingHelper(page);
         this._tabHelper = new TabHelper(page);
         this._expenseHelper = new ExpenseHelper(page);
+        this._statusHelper = new StatusHelper(page);
     }
 
     private async _toggleSidebar() {
@@ -83,10 +86,11 @@ export class SetOrganization extends BaseHelper {
             .getLocator()
             .getByRole('button', { name: 'Save' })
             .click();
-
-        await this._notificationHelper.checkToastSuccess(
-            'Successfully set profile image'
+        await this._page.waitForLoadState('networkidle');
+        const toastMsg = await this._notificationHelper.getToastMessage(
+            'success'
         );
+        expect(toastMsg).toContain('Successfully set profile image');
         await this._page.reload();
         await this._page.waitForLoadState('networkidle');
         await this._toggleSidebar();
@@ -123,7 +127,7 @@ export class SetOrganization extends BaseHelper {
             },
             {
                 selector: '#has-Mobile',
-                text: '8765434560',
+                text: '9936465791',
             },
         ]);
     }
@@ -335,16 +339,12 @@ export class SetOrganization extends BaseHelper {
             name: 'delegated_id',
         });
         await this.fillInput(data['START TIME'], {
-            placeholder: 'Enter start time',
+            name: 'start_time',
         });
         await this.fillInput(data['END TIME'], {
-            placeholder: 'Enter end time',
+            name: 'end_time',
         });
-        await this.fillInput(data.COMMENTS, { name: 'comments' });
-        await this.clickButton('Save');
-        await this._notificationHelper.checkToastSuccess(
-            'Successfully Added Approval Delegation'
-        );
+        await this.fillText(data.COMMENTS, { name: 'comments' });
         await this.clickButton('Save');
         await this._notificationHelper.checkToastSuccess('Successfully saved');
     }
@@ -364,6 +364,17 @@ export class SetOrganization extends BaseHelper {
         await this._checkPopulatedFields(roleCols);
     }
 
+    public async deactivateAll() {
+        const rows = this._listingHelper
+            .getTableContainer()
+            .locator('div.table-row.body-row');
+        const count = await rows.count();
+        for (let i = 0; i < count; i++) {
+            const row = rows.nth(i);
+            await this._statusHelper.setStatusWithRow('Inactive', row);
+        }
+    }
+
     public async validateActionButtons() {
         await this._detailsHelper.checkActionButtonOptions([
             'Change Password',
@@ -371,17 +382,5 @@ export class SetOrganization extends BaseHelper {
             'Add Bank Account',
             'Add Approval Delegation',
         ]);
-    }
-
-    public async changePassword() {
-        await this._detailsHelper.openActionButtonItem('Change Password');
-        await this.fillInput('123456', { name: 'old_password' });
-        await this.fillInput('12345678', { name: 'password' });
-        await this.fillInput('12345678', { name: 'confirm_password' });
-        await this.clickButton('Save');
-        await this.dialogHelper.clickConfirmDialogAction('Yes!');
-        await this._notificationHelper.checkToastSuccess(
-            'Successfully changed password'
-        );
     }
 }

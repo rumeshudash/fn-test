@@ -21,13 +21,20 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
         role_id: 'Advance Manager',
     };
 
+    let validationData: UserGroupData = {
+        name: userData.name,
+        manager: userData.manager_id,
+        description: 'Test User Group Description',
+        status: 'Active',
+    };
+
     const formSchema = {
         name: {
             type: 'text',
             required: true,
         },
         manager_id: {
-            type: 'select',
+            type: 'reference_select',
             required: true,
         },
         description: {
@@ -93,40 +100,38 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
         await test.step('Check Group Status Toggle', async () => {
             // toggle status of the department
             await userCreation.setStatus(userData.name, 'Inactive');
+            validationData.status = 'Inactive';
 
             // verify usergroup is not present in active tab
             await userCreation.tabHelper.clickTab('Active');
             await userCreation.verifyIfPresent({
-                data: userData,
+                data: validationData,
                 present: false,
-                status: 'Inactive',
             });
 
             // verify usergroup is present in inactive tab
             await userCreation.tabHelper.clickTab('Inactive');
             await userCreation.verifyIfPresent({
-                data: userData,
+                data: validationData,
                 present: true,
-                status: 'Inactive',
             });
 
             // toggle status of the userCreation
             await userCreation.setStatus(userData.name, 'Active');
+            validationData.status = 'Active';
 
             // verify usergroup is present in active tab
             await userCreation.tabHelper.clickTab('Active');
             await userCreation.verifyIfPresent({
-                data: userData,
+                data: validationData,
                 present: true,
-                status: 'Active',
             });
 
             // verify usergroup is not present in inactive tab
             await userCreation.tabHelper.clickTab('Inactive');
             await userCreation.verifyIfPresent({
-                data: userData,
+                data: validationData,
                 present: false,
-                status: 'Active',
             });
         });
     });
