@@ -222,9 +222,14 @@ test.describe('Configuration - Expense Head', () => {
         });
 
         await PROCESS_TEST.step('Go back', async () => {
-            await page.goBack();
+            await expenseHeadDetails.init();
 
-            await page.waitForTimeout(1000);
+            await expenseHeadDetails.clickOnExpenseHead(
+                expenseHeadData.NewName
+            );
+
+            await page.waitForLoadState('networkidle');
+            expect(page.getByText(expenseHeadData.NewName)).toHaveCount(1);
         });
 
         await PROCESS_TEST.step('Click on Edit Icon', async () => {
@@ -274,9 +279,7 @@ test.describe('Configuration - Expense Head', () => {
 
             const notification = await expenseHeadDetails.notificationHelper;
 
-            expect(await notification.getToastSuccess()).toBe(
-                'Successfully saved'
-            );
+            await notification.checkToastSuccess('Successfully saved');
         });
 
         await PROCESS_TEST.step('Click on Actions Button', async () => {
