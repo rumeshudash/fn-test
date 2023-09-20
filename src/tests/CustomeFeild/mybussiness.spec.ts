@@ -14,19 +14,19 @@ test.describe('Configurations-Custom Feilds', () => {
         });
 
         await PROCESS_TEST.step('Check My Businesses Tab', async () => {
-            await customefeild.clickExpenseTab('My Businesses');
+            await customefeild.clickOnTab('My Businesses');
         });
 
         await PROCESS_TEST.step('Check Add New Button', async () => {
             await customefeild.clickButton('Add New');
 
             expect(await dialog.getDialogTitle()).toBe(
-                'Add Advance Category Custom Field'
+                'Add My Businesses Custom Field'
             );
         });
 
         await PROCESS_TEST.step(
-            'Add Advance Category With Empty Feilds',
+            'Add My Businesses With Empty Feilds',
             async () => {
                 await customefeild.clickButton('Save');
             }
@@ -38,7 +38,7 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.clickButton('Yes!');
 
             await customefeild.clickButton('Add New');
-            await customefeild.addExpenseCustomeFeild('', 'Text', 1);
+            await customefeild.addCustomeFeild('', 'Text', 1);
 
             const notification = await customefeild.notificationHelper;
 
@@ -53,7 +53,7 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.clickButton('Yes!');
 
             await customefeild.clickButton('Add New');
-            await customefeild.addExpenseCustomeFeild('Test1', '', 1);
+            await customefeild.addCustomeFeild('Test1', '', 1);
             const notification = await customefeild.notificationHelper;
 
             expect(await notification.getErrorMessage()).toBe(
@@ -72,27 +72,34 @@ test.describe('Configurations-Custom Feilds', () => {
             await PROCESS_TEST.step(
                 'Add My Businesses With Text Type',
                 async () => {
-                    await customefeild.clickExpenseTab('My Businesses');
+                    await customefeild.clickOnTab('My Businesses');
 
                     await customefeild.clickButton('Add New');
 
-                    await customefeild.addExpenseWithTextType(
+                    await customefeild.addWithTextType(
                         name + 'abc',
                         'Text',
                         1,
                         'Test1'
                     );
+
+                    await customefeild.checkNameAndType(name + 'abc', 'Text');
                 }
             );
             await PROCESS_TEST.step(
                 'Add My Businesses With Boolean',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addExpenseWitBooleanType(
+                    await customefeild.addWitBooleanType(
                         name + 'abcd',
                         'Boolean',
                         1,
                         'True'
+                    );
+
+                    await customefeild.checkNameAndType(
+                        name + 'abcd',
+                        'Boolean'
                     );
                 }
             );
@@ -101,11 +108,16 @@ test.describe('Configurations-Custom Feilds', () => {
                 'Add My Businesses With Number type',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addExpenseWithTextType(
+                    await customefeild.addWithTextType(
                         name + 'abce',
                         'Number',
                         1,
                         123
+                    );
+
+                    await customefeild.checkNameAndType(
+                        name + 'abce',
+                        'Number'
                     );
                 }
             );
@@ -114,22 +126,29 @@ test.describe('Configurations-Custom Feilds', () => {
                 'Add My Businesses With Date type',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addExpenseWithDateType(
+                    await customefeild.addWithDateType(
                         name + 'abcf',
                         'Date',
                         1
                     );
+
+                    await customefeild.checkNameAndType(name + 'abcf', 'Date');
                 }
             );
             await PROCESS_TEST.step(
                 'Add My Businesses With TextArea',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addExpenseWithTextType(
+                    await customefeild.addWithTextType(
                         name + 'abcg',
                         'TextArea',
                         1,
                         'Test1'
+                    );
+
+                    await customefeild.checkNameAndType(
+                        name + 'abcg',
+                        'TextArea'
                     );
                 }
             );
@@ -158,12 +177,26 @@ test.describe('Configurations-Custom Feilds', () => {
                     2
                 );
             });
+            await PROCESS_TEST.step('Add with choice type', async () => {
+                await customefeild.clickButton('Add New');
+                await customefeild.addWithChoiceType(
+                    name + 'abcge',
+                    'Choicelist',
+                    'Choice-Type-101597106309',
+                    2
+                );
+
+                await customefeild.checkNameAndType(
+                    name + 'abcge',
+                    'Choicelist'
+                );
+            });
 
             await PROCESS_TEST.step(
                 'Check with existing name and type ',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addExpenseWithTextType(
+                    await customefeild.addWithTextType(
                         name + 'abc',
                         'Text',
                         1,
