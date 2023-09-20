@@ -75,6 +75,7 @@ test.describe('Configurations-Custom Feilds', () => {
                 1,
                 'Test1'
             );
+            await customefeild.checkNameAndType(name + 'abc', 'Text');
         });
         await PROCESS_TEST.step('Add Vendor With Boolean', async () => {
             await customefeild.clickButton('Add New');
@@ -84,16 +85,22 @@ test.describe('Configurations-Custom Feilds', () => {
                 1,
                 'True'
             );
+
+            await customefeild.checkNameAndType(name + 'abcd', 'Boolean');
         });
 
         await PROCESS_TEST.step('Add Vendor With Number type', async () => {
             await customefeild.clickButton('Add New');
             await customefeild.addWithTextType(name + 'abce', 'Number', 1, 123);
+
+            await customefeild.checkNameAndType(name + 'abce', 'Number');
         });
 
         await PROCESS_TEST.step('Add Vendor With Date type', async () => {
             await customefeild.clickButton('Add New');
             await customefeild.addWithDateType(name + 'abcf', 'Date', 1);
+
+            await customefeild.checkNameAndType(name + 'abcf', 'Date');
         });
         await PROCESS_TEST.step('Add Vendor With TextArea', async () => {
             await customefeild.clickButton('Add New');
@@ -103,6 +110,8 @@ test.describe('Configurations-Custom Feilds', () => {
                 1,
                 'Test1'
             );
+
+            await customefeild.checkNameAndType(name + 'abcg', 'TextArea');
         });
 
         await PROCESS_TEST.step('Change Status', async () => {
