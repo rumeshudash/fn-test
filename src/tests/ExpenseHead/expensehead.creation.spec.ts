@@ -11,7 +11,7 @@ test.describe('Configuration - Expense Head', () => {
     const expenseHeadData = {
         Name: 'Test' + generateRandomNumber(),
         Parent: 'Stationary',
-        Manager: 'Ravi',
+        Manager: 'Abhishek Gupta',
         Notes: 'Test' + generateRandomNumber(),
         NewName: 'Test' + generateRandomNumber(),
         NewNotes: 'Test' + generateRandomNumber(),
@@ -198,6 +198,7 @@ test.describe('Configuration - Expense Head', () => {
 
     PROCESS_TEST('TEH003-Expense Head Deatails', async ({ page }) => {
         const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        const dialog = expenseHeadDetails.dialogHelper;
         await expenseHeadDetails.init();
         await PROCESS_TEST.step('Check expense head Deatils page', async () => {
             await expenseHeadDetails.clickOnExpenseHead(
@@ -220,8 +221,13 @@ test.describe('Configuration - Expense Head', () => {
             expect(page.getByText(expenseHeadData.Manager)).toHaveCount(1);
         });
 
-        await PROCESS_TEST.step('Click on Edit Icon', async () => {
+        await PROCESS_TEST.step('Go back', async () => {
             await page.goBack();
+
+            await page.waitForTimeout(1000);
+        });
+
+        await PROCESS_TEST.step('Click on Edit Icon', async () => {
             await expenseHeadDetails.clickOnEditIcon();
 
             const dialog = await expenseHeadDetails.dialogHelper;
@@ -240,6 +246,11 @@ test.describe('Configuration - Expense Head', () => {
         });
 
         await PROCESS_TEST.step('Edit Name with Duplicate Name', async () => {
+            await dialog.closeDialog();
+
+            await expenseHeadDetails.clickButton('Yes!');
+
+            await expenseHeadDetails.clickOnEditIcon();
             await expenseHeadDetails.editExpenseHead('Rent');
 
             const notification = await expenseHeadDetails.notificationHelper;
@@ -250,6 +261,11 @@ test.describe('Configuration - Expense Head', () => {
         });
 
         await PROCESS_TEST.step('Edit Name with Valid Name', async () => {
+            await dialog.closeDialog();
+
+            await expenseHeadDetails.clickButton('Yes!');
+
+            await expenseHeadDetails.clickOnEditIcon();
             const name = await ExpenseHeadHelper.generateRandomGradeName();
 
             await expenseHeadDetails.editExpenseHead(name);
