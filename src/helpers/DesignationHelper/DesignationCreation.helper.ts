@@ -70,13 +70,23 @@ export class DesignationHelper extends BaseHelper {
         );
     }
 
-    // public async searchDesignation() {
-    //     await this.fillText(this.designationInfo.name, {
-    //         placeholder: 'Search ( min: 3 characters )',
-    //     });
-    //     await this._page.waitForTimeout(2000);
-    // }
+    public async closeDialogBox() {
+        await this.dialog.closeDialog();
+        const warningMsg = await this.locate(
+            '//div[@role="dialog"]//div[text()="Warning"]'
+        )._locator.isVisible();
 
+        if (warningMsg) {
+            await this.click({ role: 'button', name: 'Yes!' });
+        }
+    }
+
+    public async checkDetailsPage(name: string) {
+        const getName = await this.locate(
+            "//div[@data-title='detail_subtitle']"
+        )._locator.innerText();
+        expect(getName).toContain(name);
+    }
     private async _parentRow(name: string) {
         const row = await this.listing.findRowInTable(name, 'NAME');
         return row;
