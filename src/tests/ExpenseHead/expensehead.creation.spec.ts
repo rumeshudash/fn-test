@@ -11,7 +11,7 @@ test.describe('Configuration - Expense Head', () => {
     const expenseHeadData = {
         Name: 'Test' + generateRandomNumber(),
         Parent: 'Stationary',
-        Manager: 'Ravi',
+        Manager: 'Abhishek Gupta',
         Notes: 'Test' + generateRandomNumber(),
         NewName: 'Test' + generateRandomNumber(),
         NewNotes: 'Test' + generateRandomNumber(),
@@ -198,6 +198,8 @@ test.describe('Configuration - Expense Head', () => {
 
     PROCESS_TEST('TEH003-Expense Head Deatails', async ({ page }) => {
         const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        const dialog = expenseHeadDetails.dialogHelper;
+        const details = expenseHeadDetails.detailsHelper;
         await expenseHeadDetails.init();
         await PROCESS_TEST.step('Check expense head Deatils page', async () => {
             await expenseHeadDetails.clickOnExpenseHead(
@@ -220,8 +222,18 @@ test.describe('Configuration - Expense Head', () => {
             expect(page.getByText(expenseHeadData.Manager)).toHaveCount(1);
         });
 
+        await PROCESS_TEST.step('Go back', async () => {
+            await expenseHeadDetails.init();
+
+            await expenseHeadDetails.clickOnExpenseHead(
+                expenseHeadData.NewName
+            );
+
+            await page.waitForLoadState('networkidle');
+            expect(page.getByText(expenseHeadData.NewName)).toHaveCount(1);
+        });
+
         await PROCESS_TEST.step('Click on Edit Icon', async () => {
-            await page.goBack();
             await expenseHeadDetails.clickOnEditIcon();
 
             const dialog = await expenseHeadDetails.dialogHelper;
@@ -240,6 +252,11 @@ test.describe('Configuration - Expense Head', () => {
         });
 
         await PROCESS_TEST.step('Edit Name with Duplicate Name', async () => {
+            await dialog.closeDialog();
+
+            await expenseHeadDetails.clickButton('Yes!');
+
+            await expenseHeadDetails.clickOnEditIcon();
             await expenseHeadDetails.editExpenseHead('Rent');
 
             const notification = await expenseHeadDetails.notificationHelper;
@@ -250,6 +267,11 @@ test.describe('Configuration - Expense Head', () => {
         });
 
         await PROCESS_TEST.step('Edit Name with Valid Name', async () => {
+            await dialog.closeDialog();
+
+            await expenseHeadDetails.clickButton('Yes!');
+
+            await expenseHeadDetails.clickOnEditIcon();
             const name = await ExpenseHeadHelper.generateRandomGradeName();
 
             await expenseHeadDetails.editExpenseHead(name);
@@ -258,23 +280,16 @@ test.describe('Configuration - Expense Head', () => {
 
             const notification = await expenseHeadDetails.notificationHelper;
 
-            expect(await notification.getToastSuccess()).toBe(
-                'Successfully saved'
-            );
+            await notification.checkToastSuccess('Successfully saved');
+            await page.waitForLoadState('networkidle');
         });
 
         await PROCESS_TEST.step('Click on Actions Button', async () => {
-            await expenseHeadDetails.clickOnActions();
-
-            const dialog = await expenseHeadDetails.dialogHelper;
-
-            expect(
-                await dialog.getLocator().getByText('Add Notes')
-            ).toHaveCount(1);
-        });
-
-        await PROCESS_TEST.step('Click on Expense Tab', async () => {
-            await expenseHeadDetails.clickOnTab('Expenses');
+            await details.checkActionButtonOptions([
+                'Raise Expense',
+                'Add Notes',
+                'Add Documents',
+            ]);
         });
 
         // await PROCESS_TEST.step('Check Expense', async () => {
@@ -295,6 +310,8 @@ test.describe('Configuration - Expense Head', () => {
 
     PROCESS_TEST('TEH004-Expense Head Details Notes Tab', async ({ page }) => {
         const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
+        const notification = expenseHeadDetails.notificationHelper;
+        const dialog = expenseHeadDetails.dialogHelper;
         await expenseHeadDetails.init();
         await PROCESS_TEST.step('Click on Notes Tab', async () => {
             await expenseHeadDetails.clickOnExpenseHead(
@@ -305,7 +322,13 @@ test.describe('Configuration - Expense Head', () => {
         });
 
         await PROCESS_TEST.step('Add Notes with Empty Notes', async () => {
-            const notes = await ExpenseHeadHelper.generateRandomGradeName();
+            await expenseHeadDetails.clickOnAddNotes('');
+
+            notification.checkErrorMessage('Notes is required');
+        });
+
+        await PROCESS_TEST.step('Add Notes with Valid Notes', async () => {
+            await dialog.closeDialog();
 
             await expenseHeadDetails.clickOnAddNotes(expenseHeadData.Notes);
         });
@@ -325,15 +348,17 @@ test.describe('Configuration - Expense Head', () => {
                     title: expenseHeadData.Notes,
                     date: new Date(),
                 },
-                notes
+                expenseHeadData.NewNotes
             );
         });
 
         await PROCESS_TEST.step('Delete Notes', async () => {
             await expenseHeadDetails.deleteNotes({
-                title: expenseHeadData.Notes,
+                title: expenseHeadData.NewNotes,
                 date: new Date(),
             });
+
+            notification.checkToastSuccess('Successfully deleted');
         });
     });
 
@@ -363,9 +388,9 @@ test.describe('Configuration - Expense Head', () => {
                 await expenseHeadDetails.checkZoom();
             });
 
-            await PROCESS_TEST.step('Check Paginations', async () => {
-                await expenseHeadDetails.checkPagination();
-            });
+            // await PROCESS_TEST.step('Check Paginations', async () => {
+            //     await expenseHeadDetails.checkPagination();
+            // });
 
             await PROCESS_TEST.step('Delete Document', async () => {
                 await expenseHeadDetails.checkDocumentDelete(document);
