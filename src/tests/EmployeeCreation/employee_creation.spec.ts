@@ -295,6 +295,8 @@ describe('Expense Creation>Finops Portal', () => {
             });
 
             await employeeCreation.dialog.checkConfirmDialogOpenOrNot();
+            await employeeCreation.dialog.clickConfirmDialogAction('Yes');
+            await employeeCreation.dialog.checkFormIsOpen(false);
         });
     });
 
