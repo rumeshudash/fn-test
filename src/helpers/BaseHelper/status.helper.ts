@@ -55,6 +55,7 @@ export class StatusHelper extends BaseHelper {
             if (await dialog.isVisible()) {
                 await this.click({ role: 'button', name: 'Yes!' });
             }
+
             await this._page.waitForTimeout(500);
             await this._page.waitForLoadState('networkidle');
             await this._notficationHelper.checkToastSuccess(`Status Changed`);
