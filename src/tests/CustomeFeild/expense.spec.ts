@@ -95,6 +95,17 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.clickButton('Add New');
             await customefeild.addWithDateType(name + 'abcf', 'Date', 1);
         });
+        await PROCESS_TEST.step('Add with choice type', async () => {
+            await customefeild.clickButton('Add New');
+            await customefeild.addWithChoiceType(
+                name + 'abcge',
+                'Choicelist',
+                'Choice-Type-101597106309',
+                2
+            );
+
+            await customefeild.checkNameAndType(name + 'abcge', 'Choicelist');
+        });
         await PROCESS_TEST.step('Add Expense With TextArea', async () => {
             await customefeild.clickButton('Add New');
             await customefeild.addWithTextType(

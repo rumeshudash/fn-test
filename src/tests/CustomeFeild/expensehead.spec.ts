@@ -47,6 +47,18 @@ test.describe('Configurations-Custom Feilds', () => {
             );
         });
 
+        await PROCESS_TEST.step('Add with choice type', async () => {
+            await customefeild.clickButton('Add New');
+            await customefeild.addWithChoiceType(
+                name + 'abcge',
+                'Choicelist',
+                'Choice-Type-101597106309',
+                2
+            );
+
+            await customefeild.checkNameAndType(name + 'abcge', 'Choicelist');
+        });
+
         await PROCESS_TEST.step('Without Type feilds', async () => {
             await dialog.closeDialog();
 
