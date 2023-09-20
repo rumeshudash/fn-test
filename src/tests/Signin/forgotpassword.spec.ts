@@ -7,27 +7,36 @@ test.describe('Forgot Password', () => {
         await forgotPassword.init();
         await forgotPassword.click({ role: 'button', name: 'Next →' });
 
-        await forgotPassword.checkIsInputHasError('Invalid Email Address', {
-            name: 'email',
-        });
+        await forgotPassword.checkIsInputHasErrorMessage(
+            'Invalid Email Address',
+            {
+                name: 'email',
+            }
+        );
     });
     test('without Email Field', async ({ page }) => {
         const forgotPassword = new ForgotPasswordHelper(page);
         await forgotPassword.init();
         await forgotPassword.forgotPasswordPage('');
 
-        await forgotPassword.checkIsInputHasError('Invalid Email Address', {
-            name: 'email',
-        });
+        await forgotPassword.checkIsInputHasErrorMessage(
+            'Invalid Email Address',
+            {
+                name: 'email',
+            }
+        );
     });
     test('with invalid Email Field', async ({ page }) => {
         const forgotPassword = new ForgotPasswordHelper(page);
         await forgotPassword.init();
         await forgotPassword.forgotPasswordPage('test');
 
-        await forgotPassword.checkIsInputHasError('Invalid Email Address', {
-            name: 'email',
-        });
+        await forgotPassword.checkIsInputHasErrorMessage(
+            'Invalid Email Address',
+            {
+                name: 'email',
+            }
+        );
     });
     test('with valid Email Field', async ({ page }) => {
         const forgotPassword = new ForgotPasswordHelper(page);

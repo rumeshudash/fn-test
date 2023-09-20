@@ -42,7 +42,6 @@ export class FileHelper extends BaseHelper {
         await dialogLocator
             .locator("//input[@type='file']")
             .setInputFiles(`images/pan-card.jpg`);
-
         const response = await this._page.waitForResponse('**/upload-files');
         expect(response.status()).toBe(201);
     }

@@ -212,8 +212,8 @@ describe('HR -> Department Creation and Details Verification', () => {
             await departmentDetails.openEditForm();
             const newDepartmentData: DepartmentCreationData = {
                 name: 'Test' + generateRandomNumber(),
-                manager_id: 'Ravi',
-                parent_id: 'Sales',
+                manager_id: 'Vasant kishore',
+                parent_id: 'Marketing',
             };
 
             // fill update form
