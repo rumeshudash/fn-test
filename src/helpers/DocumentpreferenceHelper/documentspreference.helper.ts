@@ -94,6 +94,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
                 await this._page.waitForTimeout(1000);
 
                 await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
             }
         } else {
             console.log(chalk.red('Maximum Document Preference Added'));
@@ -120,6 +124,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
                 await this._page.waitForTimeout(1000);
 
                 await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
             }
         } else {
             console.log(chalk.red('Maximum Document Preference Added'));
@@ -146,6 +154,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
                 await this._page.waitForTimeout(1000);
 
                 await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
             }
         } else {
             console.log(chalk.red('Maximum Document Preference Added'));
@@ -177,6 +189,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
                 await this._page.waitForTimeout(1000);
 
                 await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
             }
         } else {
             console.log(chalk.red('Maximum Document Preference Added'));
@@ -204,6 +220,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
                 await this._page.waitForTimeout(1000);
 
                 await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
             }
         } else {
             console.log(chalk.red('Maximum Document Preference Added'));
@@ -214,6 +234,6 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this.searchInList('');
         const count = await this.getRowCount('NAME');
 
-        console.log(chalk.green('Total Row Count is ' + count));
+        return count;
     }
 }
