@@ -12,7 +12,7 @@ test.describe('Configuration - Document Preference', () => {
         const signin = new SignInHelper(page);
         await signin.init();
         await signin.checkDashboard({
-            username: 'documentprefrence@compan.com',
+            username: 'doc@finnoto.com',
             password: '123456',
         });
 
@@ -39,7 +39,7 @@ test.describe('Configuration - Document Preference', () => {
         const signin = new SignInHelper(page);
         await signin.init();
         await signin.checkDashboard({
-            username: 'documentprefrence@compan.com',
+            username: 'doc@finnoto.com',
             password: '123456',
         });
 
