@@ -8,6 +8,7 @@ import { DocumentHelper } from '../BaseHelper/document.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { Logger } from '../BaseHelper/log.helper';
 
 export class UserDetails extends UserCreation {
     public fileHelper: FileHelper;
@@ -50,11 +51,20 @@ export class UserDetails extends UserCreation {
         await expect(memberCell).toContainText(data.member);
     }
 
-    public async addDocument(document): Promise<void> {
+    public async addDocument(document: { comment: string }): Promise<void> {
+        const docSchema = {
+            comments: {
+                type: 'textarea',
+                required: true,
+            },
+        };
+
         await this.detailsHelper.openActionButtonItem('Add Documents');
         await this.documentHelper.uploadDocument(true);
-        await this.fillText(document.comment, { name: 'comments' });
-        await this.clickButton('Save');
+        await this.fillFormInputInformation(docSchema, {
+            comments: document.comment,
+        });
+        await this.submitButton();
         await this._page.waitForTimeout(1000);
     }
 
@@ -70,43 +80,14 @@ export class UserDetails extends UserCreation {
         );
     }
 
-    public async addNotes(
-        note: { title: string; date: Date },
-        open: boolean
-    ): Promise<void> {
-        if (!open) {
-            await this.detailsHelper.openActionButtonItem('Add Notes');
-        }
-
-        if (note.title) {
-            await this.fillText(note.title, { name: 'comments' });
-        }
-        await this.clickButton('Save');
-        if (!note.title) {
-            console.log(
-                chalk.blue('Checking error message and button disabled')
-            );
-            const error = this._page.locator('span.label.text-error').first();
-            expect(await error.textContent(), {
-                message: 'Checking error message',
-            }).toBe('Notes is required');
-            await expect(this._page.locator('//button[text()="Save"]'), {
-                message: 'Checking save button visibility',
-            }).toBeDisabled();
-            console.log(
-                chalk.green('Error message verified and button disabled')
-            );
-        }
-    }
-
     public async verifyNoteAddition(note: {
-        title: string;
+        comments: string;
         date: Date;
     }): Promise<void> {
         await this.tabHelper.clickTab('Notes');
         const notesTab = this._page.locator("//div[@role='tabpanel']").nth(2);
         const notesRow = notesTab.locator('div.flex.gap-4').filter({
-            hasText: note.title,
+            hasText: note.comments,
         });
         expect(notesRow).not.toBeNull();
         const formattedDate = formatDate(note.date, true);
@@ -114,43 +95,29 @@ export class UserDetails extends UserCreation {
         expect(noteDate).not.toBeNull();
     }
 
-    public async addRole(data: UserGroupData): Promise<void> {
-        await this.detailsHelper.openActionButtonItem('Add Group Role');
-        await this._page.waitForSelector("//span[contains(text(), 'Role')]");
-        await this.selectOption({
-            option: data.role,
-            name: 'role_id',
-        });
-        await this.clickButton('Save');
-    }
-
     public async deleteRole(data: UserGroupData) {
         await this.tabHelper.clickTab('Roles');
         const addedRole = await this.listHelper.findRowInTable(
-            data.role,
+            data.role_id,
             'NAME'
         );
         await addedRole.locator('svg').first().click();
-        await this._page
-            .locator("//div[@role='dialog']")
-            .locator('button')
-            .getByText('Yes!')
-            .click();
+        await this.dialogHelper.clickConfirmDialogAction('Yes!');
     }
 
     public async verifyRoleAddition(data: UserGroupData) {
         await this.tabHelper.clickTab('Roles');
         const addedRole = await this.listHelper.findRowInTable(
-            data.role,
+            data.role_id,
             'NAME'
         );
-        expect(addedRole).not.toBeNull();
+        await expect(addedRole).toBeVisible();
     }
 
     public async verifyRoleDeletion(data: UserGroupData) {
         await this.tabHelper.clickTab('Roles');
         const deletedRole = await this.listHelper.findRowInTable(
-            data.role,
+            data.role_id,
             'NAME'
         );
         await expect(deletedRole).not.toBeVisible();

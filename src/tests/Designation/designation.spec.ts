@@ -1,9 +1,7 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
-import {
-    DesignationDetailsPageHelper,
-    DesignationHelper,
-} from '@/helpers/DesignationHelper/designation.helper';
+import { DesignationDetailsPageHelper } from '@/helpers/DesignationHelper/DesignationDetails.helper';
+import { DesignationHelper } from '@/helpers/DesignationHelper/DesignationCreation.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 let save_and_create: string;
 
@@ -43,7 +41,7 @@ describe('HR-Designations', () => {
         name: 'CTO',
         email: `user${generateRandomNumber()}@test.com`,
         identifier: `emp${generateRandomNumber()}`,
-        department_id: 'Test857730457030',
+        department_id: 'Test710037676621',
         grade_id: 'E2',
         manager_id: 'Amit Raj',
         approval_manager_id: 'Ravi',
@@ -100,7 +98,7 @@ describe('HR-Designations', () => {
                 'Successfully saved'
             );
 
-            await formHelper.isInputFieldEmpty('name');
+            await formHelper.checkIsInputFieldEmpty('name');
         });
 
         await PROCESS_TEST.step('Create Designation', async () => {
@@ -258,26 +256,25 @@ describe('HR-Designations', () => {
             await designation.notification.checkToastSuccess(
                 'Successfully created'
             );
-
-            await PROCESS_TEST.step('Verify Employee Tab Details', async () => {
-                // await detailsPage.verifyEmployeeTabDetails();
-                await detailsPage.verifyEmployeeTab(
-                    employeeInfo.identifier,
-                    'IDENTIFIER'
-                );
-                await detailsPage.verifyEmployeeTab(
-                    employeeInfo.identifier,
-                    'NAME'
-                );
-                await detailsPage.verifyEmployeeTab(
-                    employeeInfo.identifier,
-                    'EMAIL'
-                );
-                await detailsPage.verifyEmployeeTab(
-                    employeeInfo.identifier,
-                    'DEPARTMENT'
-                );
-            });
+        });
+        await PROCESS_TEST.step('Verify Employee Tab Details', async () => {
+            // await detailsPage.verifyEmployeeTabDetails();
+            await detailsPage.verifyEmployeeTab(
+                employeeInfo.identifier,
+                'IDENTIFIER'
+            );
+            await detailsPage.verifyEmployeeTab(
+                employeeInfo.identifier,
+                'NAME'
+            );
+            await detailsPage.verifyEmployeeTab(
+                employeeInfo.identifier,
+                'EMAIL'
+            );
+            await detailsPage.verifyEmployeeTab(
+                employeeInfo.identifier,
+                'DEPARTMENT'
+            );
         });
 
         await PROCESS_TEST.step('Fill Notes', async () => {

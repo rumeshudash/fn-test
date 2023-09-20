@@ -50,6 +50,45 @@ export class FormHelper extends BaseHelper {
     }
 
     /**
+     * Returns the error element associated with the input field specified by the given options.
+     *
+     * @param {InputFieldLocatorOptions} options - The options to locate the input field.
+     * @return {Locator} - The error element locator.
+     */
+    public getInputError(options: InputFieldLocatorOptions): Locator {
+        const input = this.getInputElement(options);
+        return input
+            .locator('//ancestor::div[contains(@class,"form-control")]')
+            .locator('span.label.text-error');
+    }
+
+    /**
+     * Retrieves the error message associated with the input field.
+     *
+     * @param {InputFieldLocatorOptions} options - The options to locate the input field.
+     * @return {Promise<string>} The error message associated with the input field.
+     */
+    public async getInputErrorMessage(options: InputFieldLocatorOptions) {
+        return this.getInputError(options).innerText();
+    }
+
+    /**
+     * Checks if the input has an error.
+     *
+     * @param {string} message - The error message to check.
+     * @param {InputFieldLocatorOptions} options - Options for locating the input field.
+     */
+    public async checkIsInputHasErrorMessage(
+        message: string,
+        options: InputFieldLocatorOptions
+    ) {
+        const inputError = await this.getInputErrorMessage(options);
+        expect(inputError, `Check input has error message: ${message}`).toBe(
+            message
+        );
+    }
+
+    /**
      * Checks if the input field specified by the given options is editable.
      *
      * @param {InputFieldLocatorOptions} options - The options to locate the input field.
@@ -62,40 +101,17 @@ export class FormHelper extends BaseHelper {
         ).toBeEditable();
     }
 
+    /**
+     * Checks if the input field specified by the given options is disabled.
+     *
+     * @param {InputFieldLocatorOptions} options - The options to locate the input field.
+     */
     public checkIsInputDisabled(options: InputFieldLocatorOptions) {
         const input = this.getInputElement(options);
         expect(
             input,
             `Check input is disabled: ${this._tempSelector}`
         ).toBeDisabled();
-    }
-
-    /**
-     * Returns the error element associated with the input field specified by the given options.
-     *
-     * @param {InputFieldLocatorOptions} options - The options to locate the input field.
-     * @return {Locator} - The error element locator.
-     */
-    public getInputError(options: InputFieldLocatorOptions): Locator {
-        const input = this.getInputElement(options);
-        return input
-            .locator('//ancestor::div[contains(@class,"form-control")]')
-            .locator('span.label.text-error');
-    }
-    /**
-     * Checks if the input has an error.
-     *
-     * @param {string} message - The error message to check.
-     * @param {InputFieldLocatorOptions} options - Options for locating the input field.
-     */
-    public async checkIsInputHasError(
-        message: string,
-        options: InputFieldLocatorOptions
-    ) {
-        const inputError = await this.getInputError(options).innerText();
-        expect(inputError, `Check input has error message: ${message}`).toBe(
-            message
-        );
     }
 
     /**
@@ -107,11 +123,14 @@ export class FormHelper extends BaseHelper {
      * @param inputName - The name of the input field to check.
      * @returns A promise that resolves when the input field is confirmed to be empty.
      */
-    async isInputFieldEmpty(inputName: string): Promise<void> {
-        const nameField: string = await this.locate('input', {
-            name: inputName,
-        })._locator.inputValue();
-        expect(nameField, chalk.red(`${inputName} field check`)).toBe('');
+    async checkIsInputFieldEmpty(
+        inputName: string,
+        type?: string
+    ): Promise<void> {
+        await expect(
+            this.getInputElement({ name: inputName, type }),
+            `Check ${inputName} field is empty`
+        ).toBeEmpty();
     }
 
     /**
@@ -131,13 +150,15 @@ export class FormHelper extends BaseHelper {
                     await this.selectOption({
                         name,
                         option: value ? String(value) : '',
+                        exact: true,
                     });
                     break;
                 case 'reference_select':
-                    await this.selectOption({
-                        name,
-                        input: value ? String(value) : '',
-                    });
+                    if (!!value)
+                        await this.selectOption({
+                            name,
+                            input: value ? String(value) : '',
+                        });
                     break;
 
                 case 'textarea':
@@ -173,6 +194,12 @@ export class FormHelper extends BaseHelper {
         });
     }
 
+    /**
+     * Check and Click Submit Button if enabled.
+     *
+     * @param {any} button - The submit button element.
+     * @return {Promise<void>} - A promise that resolves when the actions are completed.
+     */
     private async _clickSubmitButton(button: any) {
         expect(await button.isEnabled(), {
             message: 'check save button enabled',
@@ -219,14 +246,34 @@ export class FormHelper extends BaseHelper {
         }).toBeFalsy();
     }
 
+    /**
+     * Checks if the input field is mandatory.
+     *
+     * @param {InputFieldLocatorOptions} options - The options for locating the input field.
+     * @return {Promise<boolean>} - Returns a promise that resolves to a boolean value indicating if the input field is mandatory.
+     */
+    public async isInputMandatory(options?: InputFieldLocatorOptions) {
+        const input = this.getInputElement(options);
+
+        return input
+            .locator('//ancestor::div[contains(@class,"form-control")]/label')
+            .locator('//span/span[contains(@class,"text-error")]', {
+                hasText: '*',
+            })
+            .isVisible();
+    }
+
+    /**
+     * Checks the mandatory fields in the given form schema.
+     *
+     * @param {ObjectDto} formSchema - The form schema to check.
+     * @return {Promise<void>} - A promise that resolves when the mandatory fields have been checked.
+     */
     public async checkMandatoryFields(formSchema: ObjectDto): Promise<void> {
         for (const [name, fieldSchema] of Object.entries(formSchema)) {
             if (!fieldSchema?.required) continue;
             expect(
-                await this.isInputMandatory(
-                    { name },
-                    fieldSchema?.type === 'textarea' ? 'textarea' : 'input'
-                ),
+                await this.isInputMandatory({ name, type: fieldSchema?.type }),
                 {
                     message: `${name} mandatory checking...`,
                 }
@@ -242,13 +289,15 @@ export class FormHelper extends BaseHelper {
             await this.checkInputError(name, fieldSchema);
         }
     }
-
+    /**
+     * @deprecated User FormHelper.checkIsInputHasError() instead.
+     */
     public async checkInputError(
         name: string,
         schema: ObjectDto,
         message?: string
     ) {
-        const errorMessage = await this.checkInputErrorMessage(
+        const errorMessage = await this.getInputErrorMessageElement(
             {
                 name,
             },
@@ -277,5 +326,9 @@ export class FormHelper extends BaseHelper {
                 `"${textContent}" is not a valid error !! valid valid error should be "${message}"`
             )
         );
+    }
+
+    public async closeForm() {
+        await this.dialogHelper.closeDialog();
     }
 }

@@ -7,9 +7,6 @@ import chalk from 'chalk';
 export class BusinessManagedOnboarding extends BaseHelper {
     public vendorBusiness;
     public ignore_next_page: string[] = [];
-    constructor(page) {
-        super(page);
-    }
 
     async clickVendor(linkName: string) {
         const partyHover = this._page.getByText('Partiesarrow_drop_down');

@@ -351,21 +351,10 @@ export class BaseHelper {
         );
     }
 
-    public async isInputMandatory(
-        options?: InputFieldLocatorOptions,
-        selector?: 'input' | 'textarea'
-    ) {
-        if (options && Object.keys(options).length)
-            this.locate(selector || 'input', options);
-
-        return this._locator
-            .locator('//ancestor::div[contains(@class,"form-control")]/label')
-            .locator('//span/span[contains(@class,"text-error")]', {
-                hasText: '*',
-            })
-            .isVisible();
-    }
-    public async checkInputErrorMessage(
+    /**
+     * @deprecated Use `FormHelper.getInputError() instead;
+     */
+    public async getInputErrorMessageElement(
         options?: InputFieldLocatorOptions,
         selector?: 'input' | 'textarea'
     ) {
@@ -493,19 +482,28 @@ export class BaseHelper {
         return this._locator.isVisible({ timeout });
     }
 
-    public async clickButton(buttonName: string) {
-        const btnClick = this._page.getByRole('button', { name: buttonName });
+    public async clickButton(buttonName: string, exact?: boolean) {
+        const btnClick = this._page
+            .getByRole('button', {
+                name: buttonName,
+                exact,
+            })
+            .first();
         const isButtonEnabled = await btnClick.isEnabled();
 
         expect(isButtonEnabled, {
             message: 'Button is not enabled to click',
         }).toBe(true);
-        if (isButtonEnabled) {
+        const btnEnabled = await btnClick.isEnabled();
+        if (btnEnabled) {
             await btnClick.click();
-            await this._page.waitForTimeout(500);
+            await this._page.waitForTimeout(300);
             await this._page.waitForLoadState('networkidle');
         } else {
-            Logger.error(buttonName, ' button is not clickable or disabled');
+            return Logger.error(
+                buttonName,
+                ' button is not clickable or disabled'
+            );
         }
     }
 

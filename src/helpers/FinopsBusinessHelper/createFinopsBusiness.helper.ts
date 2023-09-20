@@ -32,20 +32,20 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
     }
 
     public async checkEmailError(message?: string): Promise<void> {
-        const errorMessage = await this.checkInputErrorMessage({
+        const errorMessage = await this.getInputErrorMessageElement({
             name: 'email',
         });
         await this.ErrorMessageHandle(message, errorMessage);
     }
     public async checkMobileError(message?: string): Promise<void> {
-        const errorMessage = await this.checkInputErrorMessage({
+        const errorMessage = await this.getInputErrorMessageElement({
             name: 'mobile',
         });
 
         await this.ErrorMessageHandle(message, errorMessage);
     }
     public async checkGstinError(message?: string): Promise<void> {
-        const errorMessage = await this.checkInputErrorMessage({
+        const errorMessage = await this.getInputErrorMessageElement({
             name: 'gstin',
         });
 

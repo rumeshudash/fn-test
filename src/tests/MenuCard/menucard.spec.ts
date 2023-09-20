@@ -2,7 +2,7 @@ import { MenucardHelper } from '@/helpers/Menucardhelper/menucard.helper';
 import { test } from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
-test.describe('Menu Crad', () => {
+test.describe('Menu Card', () => {
     PROCESS_TEST('TFM001 - Checking Menu Card', async ({ page }) => {
         const menucard = new MenucardHelper(page);
         await menucard.init();
