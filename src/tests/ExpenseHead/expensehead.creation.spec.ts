@@ -352,13 +352,13 @@ test.describe('Configuration - Expense Head', () => {
                     title: expenseHeadData.Notes,
                     date: new Date(),
                 },
-                notes
+                expenseHeadData.NewNotes
             );
         });
 
         await PROCESS_TEST.step('Delete Notes', async () => {
             await expenseHeadDetails.deleteNotes({
-                title: expenseHeadData.Notes,
+                title: expenseHeadData.NewNotes,
                 date: new Date(),
             });
         });
