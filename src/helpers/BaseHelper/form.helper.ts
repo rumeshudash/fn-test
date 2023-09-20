@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import { BreadCrumbHelper } from './breadCrumb.helper';
 import { DialogHelper } from './dialog.helper';
 import { Logger } from './log.helper';
+import { AccessNestedObject } from '@/utils/common.utils';
 
 export class FormHelper extends BaseHelper {
     public breadcrumbHelper: BreadCrumbHelper;
@@ -142,9 +143,10 @@ export class FormHelper extends BaseHelper {
         targetClick?: string,
         ignoreFields: string[] = []
     ): Promise<void> {
-        for (const [name, schema] of Object.entries(formSchema)) {
+        for (const [key, schema] of Object.entries(formSchema)) {
+            const name = schema?.name ?? key;
             if (ignoreFields.includes(name)) continue;
-            const value = data[name] || '';
+            const value = AccessNestedObject(data, name) || '';
             switch (schema?.type) {
                 case 'select':
                     await this.selectOption({
@@ -247,6 +249,7 @@ export class FormHelper extends BaseHelper {
     }
 
     /**
+
      * Checks if the input field is mandatory.
      *
      * @param {InputFieldLocatorOptions} options - The options for locating the input field.
@@ -282,9 +285,12 @@ export class FormHelper extends BaseHelper {
     }
 
     public async checkAllMandatoryInputErrors(
-        formSchema: ObjectDto
+        formSchema: ObjectDto,
+        ignoreFields: string[] = []
     ): Promise<void> {
-        for (const [name, fieldSchema] of Object.entries(formSchema)) {
+        for (const [key, fieldSchema] of Object.entries(formSchema)) {
+            const name = fieldSchema?.name ?? key;
+            if (ignoreFields.includes(name)) continue;
             if (!fieldSchema?.required) continue;
             await this.checkInputError(name, fieldSchema);
         }
@@ -320,8 +326,8 @@ export class FormHelper extends BaseHelper {
         let textContent = await element.textContent();
         textContent = textContent.trim();
 
-        if (textContent === message) return console.log(chalk.red(textContent));
-        throw console.log(
+        if (textContent === message) return Logger.error(textContent);
+        throw Logger.info(
             chalk.red(
                 `"${textContent}" is not a valid error !! valid valid error should be "${message}"`
             )
