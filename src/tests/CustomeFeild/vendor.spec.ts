@@ -21,16 +21,13 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.clickButton('Add New');
 
             expect(await dialog.getDialogTitle()).toBe(
-                'Add Advance Category Custom Field'
+                'Add Vendor Custom Field'
             );
         });
 
-        await PROCESS_TEST.step(
-            'Add Advance Category With Empty Feilds',
-            async () => {
-                await customefeild.clickButton('Save');
-            }
-        );
+        await PROCESS_TEST.step('Add Vendor With Empty Feilds', async () => {
+            await customefeild.clickButton('Save');
+        });
 
         await PROCESS_TEST.step('Without Name feilds', async () => {
             await dialog.closeDialog();

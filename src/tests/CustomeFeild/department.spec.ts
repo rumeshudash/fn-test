@@ -14,19 +14,19 @@ test.describe('Configurations-Custom Feilds', () => {
         });
 
         await PROCESS_TEST.step('Check Department Tab', async () => {
-            await customefeild.clickExpenseTab('Department');
+            await customefeild.clickOnTab('Department');
         });
 
         await PROCESS_TEST.step('Check Add New Button', async () => {
             await customefeild.clickButton('Add New');
 
             expect(await dialog.getDialogTitle()).toBe(
-                'Add Advance Category Custom Field'
+                'Add Department Custom Field'
             );
         });
 
         await PROCESS_TEST.step(
-            'Add Advance Category With Empty Feilds',
+            'Add Department With Empty Feilds',
             async () => {
                 await customefeild.clickButton('Save');
             }
@@ -38,7 +38,7 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.clickButton('Yes!');
 
             await customefeild.clickButton('Add New');
-            await customefeild.addExpenseCustomeFeild('', 'Text', 1);
+            await customefeild.addCustomeFeild('', 'Text', 1);
 
             const notification = await customefeild.notificationHelper;
 
@@ -53,7 +53,7 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.clickButton('Yes!');
 
             await customefeild.clickButton('Add New');
-            await customefeild.addExpenseCustomeFeild('Test1', '', 1);
+            await customefeild.addCustomeFeild('Test1', '', 1);
             const notification = await customefeild.notificationHelper;
 
             expect(await notification.getErrorMessage()).toBe(
@@ -72,11 +72,11 @@ test.describe('Configurations-Custom Feilds', () => {
             await PROCESS_TEST.step(
                 'Add Department With Text Type',
                 async () => {
-                    await customefeild.clickExpenseTab('Department');
+                    await customefeild.clickOnTab('Department');
 
                     await customefeild.clickButton('Add New');
 
-                    await customefeild.addExpenseWithTextType(
+                    await customefeild.addWithTextType(
                         name + 'abc',
                         'Text',
                         1,
@@ -86,7 +86,7 @@ test.describe('Configurations-Custom Feilds', () => {
             );
             await PROCESS_TEST.step('Add Department With Boolean', async () => {
                 await customefeild.clickButton('Add New');
-                await customefeild.addExpenseWitBooleanType(
+                await customefeild.addWitBooleanType(
                     name + 'abcd',
                     'Boolean',
                     1,
@@ -98,7 +98,7 @@ test.describe('Configurations-Custom Feilds', () => {
                 'Add Department With Number type',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addExpenseWithTextType(
+                    await customefeild.addWithTextType(
                         name + 'abce',
                         'Number',
                         1,
@@ -111,7 +111,7 @@ test.describe('Configurations-Custom Feilds', () => {
                 'Add Department With Date type',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addExpenseWithDateType(
+                    await customefeild.addWithDateType(
                         name + 'abcf',
                         'Date',
                         1
@@ -122,7 +122,7 @@ test.describe('Configurations-Custom Feilds', () => {
                 'Add Department With TextArea',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addExpenseWithTextType(
+                    await customefeild.addWithTextType(
                         name + 'abcg',
                         'TextArea',
                         1,
@@ -160,7 +160,7 @@ test.describe('Configurations-Custom Feilds', () => {
                 'Check with existing name and type ',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addExpenseWithTextType(
+                    await customefeild.addWithTextType(
                         name + 'abc',
                         'Text',
                         1,

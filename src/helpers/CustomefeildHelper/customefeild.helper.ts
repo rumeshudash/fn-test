@@ -25,16 +25,37 @@ export class CustofeildHelper extends ListingHelper {
         await this.navigateTo('CUSTOMEFEILDS');
     }
 
-    public async clickExpenseTab(TabName: string) {
+    public async clickOnTab(TabName: string) {
         await this.tabHelper.checkTabExists(TabName);
         await this.tabHelper.clickTab(TabName);
     }
 
-    public async addExpenseCustomeFeild(
+    public async addWithChoiceType(
         name: string,
         type: string,
+        choiceList: string,
         priority: number
     ) {
+        await this.fillText(name, {
+            name: 'name',
+        });
+        await this.selectOption({
+            input: type,
+            name: 'column_type_id',
+        });
+
+        await this.selectOption({
+            input: choiceList,
+            name: 'choice_type_id',
+        });
+
+        await this.fillText(priority, {
+            name: 'priority',
+        });
+        await this.click({ role: 'button', name: 'save' });
+    }
+
+    public async addCustomeFeild(name: string, type: string, priority: number) {
         // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
@@ -48,7 +69,7 @@ export class CustofeildHelper extends ListingHelper {
         });
         await this.click({ role: 'button', name: 'save' });
     }
-    public async addExpenseWithTextType(
+    public async addWithTextType(
         name: string,
         type: string,
         priority: number,
@@ -73,7 +94,7 @@ export class CustofeildHelper extends ListingHelper {
 
         await this.click({ role: 'button', name: 'save' });
     }
-    public async addExpenseWitBooleanType(
+    public async addWitBooleanType(
         name: string,
         type: string,
         priority: number,
@@ -95,7 +116,7 @@ export class CustofeildHelper extends ListingHelper {
         }
         await this.click({ role: 'button', name: 'save' });
     }
-    public async addExpenseWithDateType(
+    public async addWithDateType(
         name: string,
         type: string,
         priority: number,

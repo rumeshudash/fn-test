@@ -21,12 +21,12 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.clickButton('Add New');
 
             expect(await dialog.getDialogTitle()).toBe(
-                'Add Advance Category Custom Field'
+                'Add Expense Head Custom Field'
             );
         });
 
         await PROCESS_TEST.step(
-            'Add Advance Category With Empty Feilds',
+            'Add Expense Head With Empty Feilds',
             async () => {
                 await customefeild.clickButton('Save');
             }
