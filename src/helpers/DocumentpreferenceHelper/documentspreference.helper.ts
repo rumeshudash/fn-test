@@ -48,6 +48,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
 
+    /**
+     * @todo -Need to remove the counts and bypass after bug fixes
+
+     */
     public async clickAddBtn() {
         await this._page
             .locator(
