@@ -94,14 +94,14 @@ describe(`Non Gst Business Creation`, () => {
 
         await PROCESS_TEST.step('Check Mandatory Fields', async () => {
             Logger.info(`\nstep-2-->Check Mandatory Fields`, `\n`);
-            await helper.formHelper.checkMandatoryFields(formSchema);
+            await helper.formHelper.checkIsMandatoryFields(formSchema);
         });
 
         await PROCESS_TEST.step('Fill Form Without  Data', async () => {
             Logger.info(`\nstep-3-->Fill Form Without  Data`, `\n`);
             await helper.formHelper.fillFormInputInformation(formSchema, {});
             await helper.formHelper.submitButton();
-            await helper.formHelper.checkAllMandatoryInputErrors(formSchema);
+            await helper.formHelper.checkAllMandatoryInputHasErrors(formSchema);
         });
 
         await PROCESS_TEST.step('Without Business Type', async () => {

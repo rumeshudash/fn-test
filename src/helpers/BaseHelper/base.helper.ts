@@ -352,7 +352,7 @@ export class BaseHelper {
     }
 
     /**
-     * @deprecated Use `FormHelper.getInputError() instead;
+     * @deprecated Use `FormHelper.getInputErrorMessage() instead;
      */
     public async getInputErrorMessageElement(
         options?: InputFieldLocatorOptions,

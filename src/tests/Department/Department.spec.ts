@@ -41,7 +41,7 @@ describe('HR -> Department Creation and Details Verification', () => {
             await department.openDepartmentAddForm();
             await department.fillFormInputInformation(departmentSchema, {});
             await department.submitButton();
-            await department.checkAllMandatoryInputErrors(departmentSchema);
+            await department.checkAllMandatoryInputHasErrors(departmentSchema);
         });
 
         // add new department
@@ -285,7 +285,7 @@ describe('HR -> Department Creation and Details Verification', () => {
             // check errors
             await departmentDetails.fillFormInputInformation(notesSchema, note);
             await departmentDetails.submitButton();
-            await departmentDetails.checkMandatoryFields(notesSchema);
+            await departmentDetails.checkIsMandatoryFields(notesSchema);
 
             // add note
             note.comments = 'test' + generateRandomNumber();
