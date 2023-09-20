@@ -1,35 +1,12 @@
 import { expect } from '@playwright/test';
-import { ListingHelper } from '../BaseHelper/listing.helper';
-import { FormHelper } from '../BaseHelper/form.helper';
-import chalk from 'chalk';
-import { NotificationHelper } from '../BaseHelper/notification.helper';
-import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
-import { TabHelper } from '../BaseHelper/tab.helper';
-import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { BaseHelper } from '../BaseHelper/base.helper';
+import { BreadCrumbHelper } from '../BaseHelper/breadCrumb.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { FileHelper } from '../BaseHelper/file.helper';
-
-// export class EmployeeCreation extends BaseHelper {
-//     public form: FormHelper;
-//     public notification: NotificationHelper;
-//     public breadCrumb: BreadCrumbHelper;
-//     public tab: TabHelper;
-//     public dialog: DialogHelper;
-//     public listing: ListingHelper;
-//     public file: FileHelper;
-
-//     constructor(page: any) {
-//         super(page);
-//         this.notification = new NotificationHelper(page);
-//         this.form = new FormHelper(page);
-//         this.breadCrumb = new BreadCrumbHelper(page);
-//         this.tab = new TabHelper(page);
-//         this.dialog = new DialogHelper(page);
-//         this.listing = new ListingHelper(page);
-//         this.file = new FileHelper(page);
-//     }
-
-// }
+import { FormHelper } from '../BaseHelper/form.helper';
+import { ListingHelper } from '../BaseHelper/listing.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { TabHelper } from '../BaseHelper/tab.helper';
 
 export class EmployeeCreation extends BaseHelper {
     public employeeInfo;
@@ -47,7 +24,7 @@ export class EmployeeCreation extends BaseHelper {
             required: true,
         },
         email: {
-            type: 'text',
+            type: 'email',
             required: true,
         },
         identifier: {
@@ -178,7 +155,7 @@ export class EmployeeCreation extends BaseHelper {
         return cellApprovalManager;
     }
 
-    public async verifyEmployeeDetails() {
+    public async verifyEmployeeTableData() {
         const employee_code = await this.getEmployeeCode();
         const employee_name = await this.getEmployeeName();
         const employee_email = await this.getEmployeeEmail();
@@ -247,6 +224,8 @@ export class EmployeeCreation extends BaseHelper {
         )._locator.innerText();
         expect(code_locator).toContain(code);
     }
+
+    //checking employee name clickable and also redirection correct
     public async checkEmployeeNameLink() {
         const employee_name = await this.getEmployeeName();
         const name = await employee_name.innerText();
