@@ -315,6 +315,7 @@ test.describe('Configuration - Expense Head', () => {
     PROCESS_TEST('TEH004-Expense Head Details Notes Tab', async ({ page }) => {
         const expenseHeadDetails = new ExpenseHeadDetailsHelper(page);
         const notification = expenseHeadDetails.notificationHelper;
+        const dialog = expenseHeadDetails.dialogHelper;
         await expenseHeadDetails.init();
         await PROCESS_TEST.step('Click on Notes Tab', async () => {
             await expenseHeadDetails.clickOnExpenseHead(
@@ -327,10 +328,12 @@ test.describe('Configuration - Expense Head', () => {
         await PROCESS_TEST.step('Add Notes with Empty Notes', async () => {
             await expenseHeadDetails.clickOnAddNotes('');
 
-            notification.checkErrorMessage('Note is required');
+            notification.checkErrorMessage('Notes is required');
         });
 
         await PROCESS_TEST.step('Add Notes with Valid Notes', async () => {
+            await dialog.closeDialog();
+
             await expenseHeadDetails.clickOnAddNotes(expenseHeadData.Notes);
         });
 
