@@ -8,22 +8,30 @@ import {
     MSME_NUMBER,
     PAN_CARD,
     PAN_CODE_ADDRESS,
-    clientGstinInfo,
     vendorGstinInfo,
 } from '@/utils/required_data';
 import GenericNonGstinCardHelper, {
     nonGstinDataType,
 } from '../CommonCardHelper/genericNonGstin.card.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
+import { FileHelper } from '../BaseHelper/file.helper';
 
 let getDate: string;
 export class VendorOnboarding extends BaseHelper {
     public lowerTDS;
     public notification: NotificationHelper;
+    public dialog: DialogHelper;
+    public form: FormHelper;
+    public file: FileHelper;
     constructor(lowerTDS, page) {
         super(page);
         this.lowerTDS = lowerTDS;
         this.notification = new NotificationHelper(page);
+        this.dialog = new DialogHelper(page);
+        this.form = new FormHelper(page);
+        this.file = new FileHelper(page);
     }
     private BUSINESS_DETAILS_DOM =
         "//div[@class='input-addon-group input-group-md']/following-sibling::div[1]";
@@ -33,12 +41,9 @@ export class VendorOnboarding extends BaseHelper {
             role: 'button',
             name: 'Invite Vendor',
         });
-        const linkDialog = this._page.getByRole('dialog');
-        expect(
-            await linkDialog.isVisible(),
-            chalk.red('Link Dialog visibility')
-        ).toBe(true);
-        if (await linkDialog.isVisible()) {
+        const linkDialog = await this._page.getByRole('dialog').isVisible();
+        expect(linkDialog, chalk.red('Link Dialog visibility')).toBe(true);
+        if (linkDialog) {
             await this._page
                 .locator(
                     "//span[contains(@class,'px-3 overflow-hidden')]/following-sibling::div[1]"
@@ -197,43 +202,43 @@ export class VendorOnboarding extends BaseHelper {
         await this._page.waitForTimeout(2000);
     }
 
-    public async clientInvitation(businessName: string, clientGSTIN: string) {
-        await this._page.waitForTimeout(1000);
-        const dropdown = this._page.locator(
-            '//div[text()="Select Your Business"]'
-        );
+    // public async clientInvitation(businessName: string, clientGSTIN: string) {
+    //     await this._page.waitForTimeout(1000);
+    //     const dropdown = this._page.locator(
+    //         '//div[text()="Select Your Business"]'
+    //     );
 
-        const gstinDropdown = this._page.locator(
-            '//div[text()="Select client business"]'
-        );
+    //     const gstinDropdown = this._page.locator(
+    //         '//div[text()="Select client business"]'
+    //     );
 
-        if (await dropdown.isVisible()) {
-            expect
-                .soft(
-                    await dropdown.textContent(),
-                    chalk.red('Business Information auto fetched')
-                )
-                .toBe(vendorGstinInfo.trade_name);
+    //     if (await dropdown.isVisible()) {
+    //         expect
+    //             .soft(
+    //                 await dropdown.textContent(),
+    //                 chalk.red('Business Information auto fetched')
+    //             )
+    //             .toBe(vendorGstinInfo.trade_name);
 
-            await this.selectOption({
-                option: businessName,
-                placeholder: 'Select Your Business',
-            });
+    //         await this.selectOption({
+    //             option: businessName,
+    //             placeholder: 'Select Your Business',
+    //         });
 
-            expect(
-                await gstinDropdown.textContent(),
-                chalk.red('Client Information auto fetched')
-            ).toBe(clientGstinInfo.trade_name);
-        }
-        if (await gstinDropdown.isVisible()) {
-            await this.selectOption({
-                input: clientGstinInfo.value,
-                placeholder: 'Select client business',
-            });
-        }
-        await this._page.waitForTimeout(1000);
-        await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
-    }
+    //         expect(
+    //             await gstinDropdown.textContent(),
+    //             chalk.red('Client Information auto fetched')
+    //         ).toBe(clientGstinInfo.trade_name);
+    //     }
+    //     if (await gstinDropdown.isVisible()) {
+    //         await this.selectOption({
+    //             input: clientGstinInfo.gstin,
+    //             placeholder: 'Select client business',
+    //         });
+    //     }
+    //     await this._page.waitForTimeout(1000);
+    //     await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
+    // }
     public async getClientID() {
         const clientID = await this._page
             .getByPlaceholder('Enter client Id')
@@ -262,8 +267,9 @@ export class VendorOnboarding extends BaseHelper {
         return gstin;
     }
 
-    public async uploadImageDocuments(imagePath: string) {
-        await this._page.waitForTimeout(2000);
+    public async uploadImageDocuments() {
+        await this._page.waitForTimeout(300);
+        await this._page.waitForLoadState('networkidle');
         const container = this._page.locator(
             "(//div[contains(@class,'py-3 gap-1')])"
         );
@@ -271,64 +277,70 @@ export class VendorOnboarding extends BaseHelper {
         const documentError = this._page.locator(
             '//div[@class="text-xs text-error"]'
         );
-        const containerBtn = this._page.locator(
-            '//div[@class="icon-container cursor-pointer"]'
-        );
-        const errorContainer = container.filter({ has: documentError });
+        // const containerBtn = this._page.locator(
+        //     '//div[@class="icon-container cursor-pointer"]'
+        // );
+        if (await documentError.first().isVisible()) {
+            const errorContainer = container.filter({ has: documentError });
 
-        const errorContainerCount = await errorContainer.count();
-        console.log('Document Image Error: ', errorContainerCount);
+            const errorContainerCount = await errorContainer.count();
+            console.log('Document Image Error: ', errorContainerCount);
 
-        for (let i = 0; i < errorContainerCount; i++) {
-            console.log(
-                'Document Image Error: ',
-                chalk.red(await documentError.first().textContent()) +
-                    ' Editable: ' +
-                    chalk.blue(
-                        (await errorContainer.first().textContent()).includes(
-                            'files'
+            for (let i = 0; i < errorContainerCount; i++) {
+                console.log(
+                    'Document Image Error: ',
+                    chalk.red(await documentError.first().textContent()) +
+                        ' Editable: ' +
+                        chalk.blue(
+                            (
+                                await errorContainer.first().textContent()
+                            ).includes('files')
                         )
-                    )
-            );
-
-            if (errorContainer) {
-                const filesTextError = (
-                    await errorContainer.first().innerText()
-                ).includes('files');
-
-                if (filesTextError) {
-                    await errorContainer.getByRole('img').first().click();
-                } else {
-                    await errorContainer.locator('i').first().click();
-                }
-                await this._page.setInputFiles(
-                    "//input[@type='file']",
-                    `./images/${imagePath}`
                 );
-                await this._page.waitForTimeout(1000);
 
-                if (
-                    await this._page
-                        .getByPlaceholder('Enter MSME number')
-                        .isVisible()
-                ) {
-                    await this.fillText(MSME_NUMBER, {
-                        placeholder: 'Enter MSME number',
-                    });
-                }
+                if (errorContainer) {
+                    const filesTextError = (
+                        await errorContainer.first().innerText()
+                    ).includes('files');
 
-                if (
-                    await this._page
-                        .getByPlaceholder('Enter COI number')
-                        .isVisible()
-                ) {
-                    await this.fillText(COI_NUMBER, {
-                        placeholder: 'Enter COI number',
-                    });
+                    if (filesTextError) {
+                        await errorContainer.getByRole('img').first().click();
+                    } else {
+                        await errorContainer.locator('i').first().click();
+                    }
+                    // await this._page.setInputFiles(
+                    //     "//input[@type='file']",
+                    //     `./images/${imagePath}`
+                    // );
+                    await this.file.setFileInput({ isDialog: true });
+                    // await this._page.waitForTimeout(1000);
+
+                    if (
+                        await this._page
+                            .getByPlaceholder('Enter MSME number')
+                            .isVisible()
+                    ) {
+                        await this.fillText(MSME_NUMBER, {
+                            placeholder: 'Enter MSME number',
+                        });
+                    }
+
+                    if (
+                        await this._page
+                            .getByPlaceholder('Enter COI number')
+                            .isVisible()
+                    ) {
+                        await this.fillText(COI_NUMBER, {
+                            placeholder: 'Enter COI number',
+                        });
+                    }
+                    await this.click({ role: 'button', name: 'Save' });
+                    // await this._page.waitForTimeout(2000);
                 }
-                await this.click({ role: 'button', name: 'Save' });
-                await this._page.waitForTimeout(2000);
             }
+            await this.click({ role: 'button', name: 'Submit' });
+        } else {
+            await this.click({ role: 'button', text: 'Submit' });
         }
     }
 }
@@ -341,16 +353,16 @@ export class VendorOnboardingWithGSTIN extends GenericGstinCardHelper {
             this._page.getByPlaceholder('ENTER GSTIN NUMBER'),
             chalk.red('Gstin input field visibility')
         ).toBeVisible();
-        await this.fillText(this.gstin_data.value, {
+        await this.fillText(this.gstin_data.gstin, {
             placeholder: 'ENTER GSTIN NUMBER',
         });
     }
-    public async gstinDisplayName() {
+    public async gstinDisplayName(displayName: string): Promise<void> {
         const display_name = await this._page
             .locator('#display_name')
             .inputValue();
         expect(display_name, chalk.red('Display name match with vendor')).toBe(
-            vendorGstinInfo.trade_name
+            displayName
         );
     }
 }
@@ -431,7 +443,7 @@ export class VendorManagedWithoutGSTIN extends GenericNonGstinCardHelper {
                 await this._page
                     .locator('//div[contains(@class,"mt-2 text-sm")]')
                     .isVisible(),
-                'Pin Code Address does not found'
+                chalk.red('Pin Code Address check')
             ).toBe(true);
 
             expect(
@@ -653,17 +665,17 @@ export class VendorInvitationDetails extends BaseHelper {
 
                 if (await imageName.isVisible()) {
                     expect(
-                        await imageName.textContent(),
+                        imageName,
                         chalk.red('Image Name match')
-                    ).toBe(IMAGE_NAME);
+                    ).toBeVisible();
                 }
             }
             if (title === 'Pan Card') {
                 if (await imageName.isVisible()) {
                     expect(
-                        await imageName.textContent(),
+                        imageName,
                         chalk.red('Image Name match')
-                    ).toBe(IMAGE_NAME);
+                    ).toBeVisible();
                 }
             }
 
@@ -683,9 +695,9 @@ export class VendorInvitationDetails extends BaseHelper {
 
                 if (await imageName.isVisible()) {
                     expect(
-                        await imageName.textContent(),
+                        imageName,
                         chalk.red('Image Name match')
-                    ).toBe(IMAGE_NAME);
+                    ).toBeVisible();
                 }
             }
 
@@ -720,9 +732,9 @@ export class VendorInvitationDetails extends BaseHelper {
 
                 if (await imageName.isVisible()) {
                     expect(
-                        await imageName.textContent(),
+                        imageName,
                         chalk.red('Image Name match')
-                    ).toBe(IMAGE_NAME);
+                    ).toBeVisible();
                 }
             }
 

@@ -27,7 +27,7 @@ const vendorNonGstinInfo: nonGstinDataType = {
 
 const clientGstinInfo: gstinDataType = {
     trade_name: 'Hidesign India Pvt Ltd',
-    value: '33AACCH0586R1Z6',
+    gstin: '33AACCH0586R1Z6',
     business_type: 'Private Limited',
     address:
         'EXPRESS AVENUE, 49/50 L-WHITES ROAD, ROYAPETTAH, SHOP NO.S 161 B, Chennai, , , 600014, , Tamil Nadu, NA, FIRST FLOOR, ',

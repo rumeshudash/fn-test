@@ -83,6 +83,37 @@ export const GetDateValue = (date: any, format?: string) => {
     }
     return new Date(date);
 };
+export function AccessNestedObject<T>(
+    obj: object | T[],
+    path: string | string[],
+    valueNotFound: any = undefined
+): T {
+    if (
+        !(
+            (Array.isArray(path) ||
+                typeof path == 'string' ||
+                typeof path == 'number') &&
+            obj &&
+            typeof obj == 'object'
+        )
+    ) {
+        return valueNotFound;
+    }
+
+    if (typeof path == 'number') {
+        path = String(path);
+    }
+
+    if (typeof path == 'string') {
+        path = path.split('.');
+    }
+
+    return path.reduce(
+        (xs: any, x: string) =>
+            xs && xs[x] != undefined ? xs[x] : valueNotFound,
+        obj
+    );
+}
 
 export const formatDateProfile = (date: string) => {
     // Parse the input date string into a Date object

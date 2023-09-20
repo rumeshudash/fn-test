@@ -8,7 +8,7 @@ export type gstinDataType = {
     status: string;
     pan_number: string;
     business_type: string;
-    value: string;
+    gstin: string;
 };
 
 export default class GenericGstinCardHelper extends BaseHelper {
@@ -57,7 +57,7 @@ export default class GenericGstinCardHelper extends BaseHelper {
             chalk.red('gstin number visibility')
         ).toBe(true);
         await expect(element, chalk.red('gstin number match')).toHaveText(
-            this.gstin_data.value
+            this.gstin_data.gstin
         );
     }
     async checkAddress() {
