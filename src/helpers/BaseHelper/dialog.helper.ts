@@ -85,6 +85,11 @@ export class DialogHelper extends BaseHelper {
         ).toBeVisible();
     }
 
+    /**
+     * Checks if the confirm dialog is open.
+     *
+     * @return {Promise<boolean>} Returns a promise that resolves to a boolean indicating whether the confirm dialog is open or not.
+     */
     public async isConfirmDialogOpen() {
         const dialog = this.locateByText(
             'Do you want to exit? The details you have entered will be deleted.'
@@ -103,6 +108,12 @@ export class DialogHelper extends BaseHelper {
         ).toBeTruthy();
     }
 
+    /**
+     * Clicks the specified option on the confirm dialog.
+     *
+     * @param {string} option - The option to check text on the confirm dialog.
+     * @return {Promise<void>} - A promise that resolves when the option is clicked.
+     */
     public async clickConfirmDialogAction(option: string) {
         const dialogContainer = this.getDialogContainer().getLocator();
         await dialogContainer.locator('button', { hasText: option }).click();

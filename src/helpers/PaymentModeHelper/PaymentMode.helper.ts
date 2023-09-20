@@ -1,6 +1,5 @@
-import { Page, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { BaseHelper } from '../BaseHelper/base.helper';
-import chalk from 'chalk';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { FormHelper } from '../BaseHelper/form.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
@@ -30,11 +29,11 @@ export class PaymentModesHelper extends BaseHelper {
         this.breadCrumb = new BreadCrumbHelper(page);
     }
 
-    public async init() {
+    public async init(): Promise<void> {
         await this.navigateTo('PAYMENTMODES');
     }
 
-    public async addNewPaymentMode() {
+    public async addNewPaymentMode(): Promise<void> {
         await this.click({ role: 'button', text: 'Add New' });
         expect(
             await this._page.getByRole('dialog').isVisible(),
@@ -42,7 +41,7 @@ export class PaymentModesHelper extends BaseHelper {
         ).toBe(true);
     }
 
-    public async verifyBankVisibility(type: string) {
+    public async verifyBankVisibility(type: string): Promise<void> {
         const bankField = await this.locate(
             '//div[@role="dialog"]//input[@name="bank_id"]'
         )._locator.isVisible();
@@ -60,97 +59,83 @@ export class PaymentModesHelper extends BaseHelper {
     public async fillPaymentModeWithoutBank(
         schema: ObjectDto,
         data: ObjectDto
-    ) {
+    ): Promise<void> {
         await this.form.fillFormInputInformation(schema, data, undefined, [
             'bank_id',
         ]);
     }
-    public async fillPaymentMode(schema: ObjectDto, data: ObjectDto) {
-        const { key, obj } = schema;
 
-        // const type = schema?.type;
-
-        for (const [key, value] of Object.entries(schema)) {
-            if (key === 'bank_id') continue;
-            if (value in TYPE_PREFIX) {
-                await this.fillInput(value, { name: 'name' });
-
-                await this.selectOption({
-                    option: value,
-                    name: 'type_id',
-                });
-            } else {
-                await this.form.fillFormInputInformation(schema, data);
-            }
-        }
-    }
-    // public async fillPaymentMode(data: ObjectDto) {
-    //     for (const [key, value, type] of Object.entries(data)) {
-    //         if (value in TYPE_PREFIX) {
-    //             await this.fillInput(value, { name: key });
-    //         } else {
-    //             await this.fillInput(value, { name: key });
-    //         }
-    //     }
-    // }
-
-    // public async fillPaymentMode(data={}) {
-    //  for (const item in data){
-    //     if
-
-    //  }
-
-    // public async fillPaymentMode(data: string) {
-    //     if (data in TYPE_PREFIX) {
-    //         await this.fillText(data, { name: 'name' });
-    //     }else{
-
-    //     }
-    // }
-    // public async verifyAddNewPaymentMode() {
-    //     const addPaymentHeading = await this.locate()
-    //         ._locator.getByRole('heading')
-    //         .textContent();
-    //     expect(
-    //         addPaymentHeading,
-    //         chalk.red('Payment Mode Heading check')
-    //     ).toContain('Add payment mode');
-    // }
-
-    private async _parentRow(name: string) {
+    /**
+     * Retrieves the parent row based on the given name.
+     *
+     * @param {string} name - The name used to find the row.
+     * @return {Promise<typeof row>} The parent row.
+     */
+    private async _parentRow(name: string): Promise<typeof row> {
         const row = (await this.listing.findRowInTable(name, 'NAME')).first();
         return row;
     }
-    public async verifyPaymentDetails(name: string, columnName: string) {
+    /**
+     * Verifies the payment details.
+     *
+     * @param {string} name - The name of the element in row.
+     * @param {string} columnName - The name of the column to check.
+     * @return {Promise<void>} A Promise that resolves when the verification is complete.
+     */
+    public async verifyPaymentDetails(
+        name: string,
+        columnName: string
+    ): Promise<void> {
         const parentRow = await this._parentRow(name);
         const cell = await this.listing.getCell(parentRow, columnName);
         await expect(cell).toBeVisible();
     }
 
-    public async clickPaymentAction(name: string) {
+    /**
+     * Checks if the payment row text matches the expected text.
+     *
+     * @param {string} name - The name of the element in the row.
+     * @param {string} columnName - The name of the column to check.
+     * @param {string} expectedText - The expected text to match.
+     * @return {Promise<void>} - Returns a Promise that resolves when the check is complete.
+     */
+    public async checkPaymentRowText(
+        name: string,
+        columnName: string,
+        expectedText: string
+    ): Promise<void> {
+        const parentRow = await this._parentRow(name);
+        const cell = await this.listing.getCellText(parentRow, columnName);
+
+        expect(cell).toBe(expectedText);
+    }
+
+    /**
+     * Clicks the payment action for a given name.
+     *
+     * @param {string} name - The name of the element that we want to perform the action button to click.
+     * @return {Promise<void>} A promise that resolves when the action is clicked.
+     */
+    public async clickPaymentAction(name: string): Promise<void> {
         const parentRow = await this._parentRow(name);
         const getAction = await this.listing.getCellButton(parentRow, 'ACTION');
         await getAction.click();
     }
 
-    public async getStatus(name: string) {
+    /**
+     * Retrieves the status of a given name.
+     *
+     * @param {string} name - The name of element that we want to retrieve the status for.
+     * @return {Promise<string>} The status of the given name.
+     */
+    public async getStatus(name: string): Promise<string> {
         const parentRow = await this._parentRow(name);
         const getStatus = await this.listing.getCellText(parentRow, 'STATUS');
         return getStatus;
     }
 
-    public async checkStatus(name: string, state: string) {
+    public async checkStatus(name: string, state: string): Promise<void> {
         const status = await this.getStatus(name);
         expect(status).toBe(state);
     }
-
-    // public async verifyBankStatus(status: string) {
-    //     const parentHelper = this.locate(
-    //         `//p[text()="${this.PaymentModeInfo.name}"]/parent::div/parent::div`
-    //     )._locator.first();
-    //     const bank_status = await parentHelper
-    //         .locator(`//button[text()="${status}"]`)
-    //         .isVisible();
-    //     expect(bank_status, chalk.red('Bank status visibility')).toBe(true);
-    // }
 }

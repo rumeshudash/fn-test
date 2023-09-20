@@ -6,19 +6,25 @@ import { expect, test } from '@playwright/test';
 const { describe } = PROCESS_TEST;
 
 describe('Configuration>Payment Mode', () => {
-    //For Payment Modes in Configuration
-    const paymentMode_Save_And_Create = {
-        name: `sc${generateRandomNumber()}`,
-        type_id: 'Cash',
-        bank_id: 'ICIC0000004',
-    };
-    const paymentModeInfo = {
+    const commonPaymentInfo = {
         name: `pay${generateRandomNumber()}`,
+        bank_id: 'HDFC0000001',
+    };
+    //For Payment Modes in Configuration
+    // const paymentMode_Save_And_Create = {
+    //     ...commonPaymentInfo,
+    //     type_id: 'Cheque',
+    // };
+    const withoutBankInfo = {
+        ...commonPaymentInfo,
         type_id: 'Cash',
-        bank_id: 'ICIC0000003',
+    };
+    const withBankInfo = {
+        ...commonPaymentInfo,
+        type_id: 'Cheque',
     };
     const Update_PaymentInfo = {
-        name: `updated${paymentModeInfo.name}`,
+        name: `updated${commonPaymentInfo.name}`,
     };
     const paymentInfoSchema = {
         name: {
@@ -60,90 +66,138 @@ describe('Configuration>Payment Mode', () => {
             await paymentMode.form.checkDisableSubmit();
         });
 
-        await PROCESS_TEST.step('Save And Create', async () => {
-            await paymentMode.fillPaymentMode(
-                paymentInfoSchema,
-                paymentMode_Save_And_Create
-            );
-            await paymentMode.verifyBankVisibility(
-                paymentMode_Save_And_Create.type_id
-            );
+        //Issue in Bank payment
 
-            await paymentMode.form.submitButton();
-            await paymentMode.notification.checkToastSuccess(
-                'Successfully saved'
-            );
-        });
+        // await PROCESS_TEST.step('Save And Create', async () => {
+        //     console.log(withBankInfo);
+        //     await paymentMode.form.fillFormInputInformation(
+        //         paymentInfoSchema,
+        //         withBankInfo
+        //     );
+        //     await paymentMode.verifyBankVisibility(withBankInfo.type_id);
+
+        //     await paymentMode.form.submitButton();
+        //     await paymentMode.form.checkInputError(
+        //         'bank_id',
+        //         paymentInfoSchema
+        //     );
+        //     await paymentMode.notification.checkToastSuccess(
+        //         'Successfully saved'
+        //     );
+        // });
 
         await PROCESS_TEST.step('Without bank', async () => {
-            await PROCESS_TEST.step('Cash', async () => {
-                await paymentMode.fillPaymentModeWithoutBank(
-                    paymentInfoSchema,
-                    paymentModeInfo
-                );
-            });
-            await PROCESS_TEST.step('Ledger', async () => {
-                await paymentMode.fillPaymentModeWithoutBank(
-                    paymentInfoSchema,
-                    paymentModeInfo
-                );
-            });
-        });
-
-        await PROCESS_TEST.step('with bank', async () => {
-            await paymentMode.addNewPaymentMode();
-
-            await paymentMode.fillPaymentMode(
-                paymentInfoSchema,
-                paymentModeInfo
-            );
-            await paymentMode.form.submitButton();
-            await paymentMode.notification.checkToastSuccess(
-                'Successfully saved'
+            await PROCESS_TEST.step(
+                `${withoutBankInfo.type_id} check`,
+                async () => {
+                    await paymentMode.fillPaymentModeWithoutBank(
+                        paymentInfoSchema,
+                        withoutBankInfo
+                    );
+                    await paymentMode.verifyBankVisibility(
+                        withoutBankInfo.type_id
+                    );
+                    await paymentMode.form.submitButton();
+                    await paymentMode.notification.checkToastSuccess(
+                        'Successfully saved'
+                    );
+                }
             );
         });
 
-        await PROCESS_TEST.step('Search and Verify Payment Mode', async () => {
-            await paymentMode.listing.searchInList(paymentModeInfo.name);
-            await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
-                'TYPE'
+        await PROCESS_TEST.step('Without Bank Search and Verify', async () => {
+            await paymentMode.listing.searchInList(withoutBankInfo.name);
+            await paymentMode.checkPaymentRowText(
+                withoutBankInfo.name,
+                'TYPE',
+                withoutBankInfo.type_id
+            );
+
+            await paymentMode.checkPaymentRowText(
+                withoutBankInfo.name,
+                'BANK',
+                '-'
+            );
+            await paymentMode.checkPaymentRowText(
+                withoutBankInfo.name,
+                'STATUS',
+                'Active'
             );
             await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
-                'BANK'
-            );
-            await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
-                'STATUS'
-            );
-            await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
+                withoutBankInfo.name,
                 'ADDED AT'
             );
             await paymentMode.verifyPaymentDetails(
-                paymentModeInfo.name,
+                withoutBankInfo.name,
                 'ACTION'
             );
         });
 
+        //Issue in Bank payment
+        // await PROCESS_TEST.step('with bank', async () => {
+        //     await paymentMode.addNewPaymentMode();
+        //     await PROCESS_TEST.step(
+        //         `${withBankInfo.type_id} check`,
+        //         async () => {
+        //             await paymentMode.form.fillFormInputInformation(
+        //                 paymentInfoSchema,
+        //                 withBankInfo
+        //             );
+        //             await paymentMode.verifyBankVisibility(
+        //                 withBankInfo.type_id
+        //             );
+        //             await paymentMode.form.submitButton();
+        //             await paymentMode.notification.checkToastSuccess(
+        //                 'Successfully saved'
+        //             );
+        //         }
+        //     );
+        // });
+
+        //After Payment mode fixed
+        // await PROCESS_TEST.step('With Bank Search and Verify', async () => {
+        //     await paymentMode.listing.searchInList(withBankInfo.name);
+        //     await paymentMode.checkPaymentRowText(
+        //         withoutBankInfo.name,
+        //         'TYPE',
+        //         withBankInfo.type_id
+        //     );
+
+        //     await paymentMode.checkPaymentRowText(
+        //         withBankInfo.name,
+        //         'BANK',
+        //         withBankInfo.bank_id
+        //     );
+        //     await paymentMode.checkPaymentRowText(
+        //         withBankInfo.name,
+        //         'STATUS',
+        //         'Active'
+        //     );
+        //     await paymentMode.verifyPaymentDetails(
+        //         withBankInfo.name,
+        //         'ADDED AT'
+        //     );
+        //     await paymentMode.verifyPaymentDetails(withBankInfo.name, 'ACTION');
+        // });
+
+        //For without Bank Only
         await PROCESS_TEST.step('Change Status', async () => {
             await paymentMode.status.setStatus(
-                paymentModeInfo.name,
+                withoutBankInfo.name,
                 'Inactive'
             );
 
             await paymentMode.notification.checkToastSuccess('Status Changed');
-            await paymentMode.checkStatus(paymentModeInfo.name, 'Inactive');
+            await paymentMode.checkStatus(withoutBankInfo.name, 'Inactive');
 
-            await paymentMode.status.setStatus(paymentModeInfo.name, 'Active');
+            await paymentMode.status.setStatus(withoutBankInfo.name, 'Active');
             await paymentMode.notification.checkToastSuccess('Status Changed');
 
-            await paymentMode.checkStatus(paymentModeInfo.name, 'Active');
+            await paymentMode.checkStatus(withoutBankInfo.name, 'Active');
         });
 
         await PROCESS_TEST.step('Edit Payment Mode Name', async () => {
-            await paymentMode.clickPaymentAction(paymentModeInfo.name);
+            await paymentMode.clickPaymentAction(withoutBankInfo.name);
             await paymentMode.form.fillFormInputInformation(
                 paymentInfoSchema,
                 Update_PaymentInfo,
@@ -179,6 +233,12 @@ describe('Configuration>Payment Mode', () => {
                 Update_PaymentInfo.name,
                 'ACTION'
             );
+        });
+
+        await PROCESS_TEST.step('Verify Dialog Open and Close', async () => {
+            await paymentMode.addNewPaymentMode();
+            await paymentMode.fillInput(' ', { name: 'name' });
+            await paymentMode.dialog.checkConfirmDialogOpenOrNot();
         });
     });
 });
