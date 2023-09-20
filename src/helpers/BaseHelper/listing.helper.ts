@@ -260,4 +260,26 @@ export class ListingHelper extends PageHelper {
         console.log(chalk.blue('Row', row));
         return row;
     }
+
+    /**
+     * This will returns the row count in specific page of the table
+     *
+     * @param {string} columnName - The Name of the column that most be contain in table header
+     * @return {Promise<number>} - Promise that returns the counts of the rows
+     */
+
+    public async getRowCount(columnName: string): Promise<number> {
+        const table = this.getTableContainer();
+        const names = await this.getTableColumnNames();
+
+        expect(names).toContain(columnName.toUpperCase());
+
+        const rows = table.locator(
+            '//div[contains(@class,"table-row body-row")]'
+        );
+
+        const count = await rows.count();
+
+        return count;
+    }
 }
