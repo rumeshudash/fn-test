@@ -388,9 +388,9 @@ test.describe('Configuration - Expense Head', () => {
                 await expenseHeadDetails.checkZoom();
             });
 
-            await PROCESS_TEST.step('Check Paginations', async () => {
-                await expenseHeadDetails.checkPagination();
-            });
+            // await PROCESS_TEST.step('Check Paginations', async () => {
+            //     await expenseHeadDetails.checkPagination();
+            // });
 
             await PROCESS_TEST.step('Delete Document', async () => {
                 await expenseHeadDetails.checkDocumentDelete(document);

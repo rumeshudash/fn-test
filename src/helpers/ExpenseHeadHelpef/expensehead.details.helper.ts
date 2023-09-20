@@ -132,6 +132,7 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
     }
 
     public async checkZoom() {
+        await this.documentHelper.toggleDocumentView('Document View');
         await this.documentHelper.checkZoom();
     }
 
@@ -148,6 +149,7 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         comment: string;
         date: Date;
     }) {
+        await this.documentHelper.toggleDocumentView('Table View');
         await this.documentHelper.checkDocumentDelete({
             comment: document.comment,
         });
