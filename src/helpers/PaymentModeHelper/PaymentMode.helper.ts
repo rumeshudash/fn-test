@@ -41,12 +41,18 @@ export class PaymentModesHelper extends BaseHelper {
         ).toBe(true);
     }
 
+    /**
+     * Verifies the visibility of a bank based on its type.
+     *
+     * @param {string} type - The type_id from the select .
+     * @return {Promise<void>} A Promise that resolves when the verification is complete.
+     */
     public async verifyBankVisibility(type: string): Promise<void> {
         const bankField = await this.locate(
             '//div[@role="dialog"]//input[@name="bank_id"]'
         )._locator.isVisible();
         if (!(type in TYPE_PREFIX) && bankField) {
-            expect(bankField, 'Check Bank Field Visibility').toBe(true);
+            expect(bankField, 'Check Bank Field Visibility').toBeTruthy();
         }
     }
     /**

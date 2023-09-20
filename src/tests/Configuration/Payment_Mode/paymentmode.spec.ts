@@ -1,20 +1,15 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { PaymentModesHelper } from '@/helpers/PaymentModeHelper/PaymentMode.helper';
-import { generateRandomName, generateRandomNumber } from '@/utils/common.utils';
-import { expect, test } from '@playwright/test';
+import { generateRandomNumber } from '@/utils/common.utils';
 
 const { describe } = PROCESS_TEST;
 
-describe('Configuration>Payment Mode', () => {
+describe('Configuration - Payment Mode', () => {
     const commonPaymentInfo = {
         name: `pay${generateRandomNumber()}`,
         bank_id: 'HDFC0000001',
     };
-    //For Payment Modes in Configuration
-    // const paymentMode_Save_And_Create = {
-    //     ...commonPaymentInfo,
-    //     type_id: 'Cheque',
-    // };
+
     const withoutBankInfo = {
         ...commonPaymentInfo,
         type_id: 'Cash',
@@ -22,6 +17,10 @@ describe('Configuration>Payment Mode', () => {
     const withBankInfo = {
         ...commonPaymentInfo,
         type_id: 'Cheque',
+    };
+    const withoutBankSC = {
+        name: `pay${generateRandomNumber()}`,
+        type_id: 'Ledger',
     };
     const Update_PaymentInfo = {
         name: `updated${commonPaymentInfo.name}`,
@@ -66,25 +65,20 @@ describe('Configuration>Payment Mode', () => {
             await paymentMode.form.checkDisableSubmit();
         });
 
-        //Issue in Bank payment
+        await PROCESS_TEST.step('Save and Create Another', async () => {
+            console.log(withBankInfo);
+            await paymentMode.fillPaymentModeWithoutBank(
+                paymentInfoSchema,
+                withoutBankSC
+            );
+            await paymentMode.verifyBankVisibility(withoutBankSC.type_id);
+            await paymentMode.saveAndCreateCheckbox();
+            await paymentMode.form.submitButton();
 
-        // await PROCESS_TEST.step('Save And Create', async () => {
-        //     console.log(withBankInfo);
-        //     await paymentMode.form.fillFormInputInformation(
-        //         paymentInfoSchema,
-        //         withBankInfo
-        //     );
-        //     await paymentMode.verifyBankVisibility(withBankInfo.type_id);
-
-        //     await paymentMode.form.submitButton();
-        //     await paymentMode.form.checkInputError(
-        //         'bank_id',
-        //         paymentInfoSchema
-        //     );
-        //     await paymentMode.notification.checkToastSuccess(
-        //         'Successfully saved'
-        //     );
-        // });
+            await paymentMode.notification.checkToastSuccess(
+                'Successfully saved'
+            );
+        });
 
         await PROCESS_TEST.step('Without bank', async () => {
             await PROCESS_TEST.step(
@@ -101,6 +95,7 @@ describe('Configuration>Payment Mode', () => {
                     await paymentMode.notification.checkToastSuccess(
                         'Successfully saved'
                     );
+                    await paymentMode.dialog.closeDialog();
                 }
             );
         });

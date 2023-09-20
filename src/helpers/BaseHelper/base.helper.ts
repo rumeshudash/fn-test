@@ -541,6 +541,11 @@ export class BaseHelper {
         );
     }
 
+    /**
+     * Clicks on the checkbox named with save and create another.
+     *
+     * @return {Promise<void>} Resolves when the checkbox is saved and created.
+     */
     async saveAndCreateCheckbox() {
         await this.validateCheckbox();
         const checkbox = this.locate('label', {
