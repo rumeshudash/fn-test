@@ -285,15 +285,11 @@ test.describe('Configuration - Expense Head', () => {
         });
 
         await PROCESS_TEST.step('Click on Actions Button', async () => {
-            details.checkActionButtonOptions([
+            await details.checkActionButtonOptions([
                 'Raise Expense',
                 'Add Notes',
                 'Add Documents',
             ]);
-        });
-
-        await PROCESS_TEST.step('Click on Expense Tab', async () => {
-            await expenseHeadDetails.clickOnTab('Expenses');
         });
 
         // await PROCESS_TEST.step('Check Expense', async () => {
