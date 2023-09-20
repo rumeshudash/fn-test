@@ -286,6 +286,16 @@ describe('Expense Creation>Finops Portal', () => {
                 }
             );
         });
+
+        await PROCESS_TEST.step('Check Confirm Form Closed', async () => {
+            await employeeCreation.clickAddIcon();
+            await page.waitForTimeout(1000);
+            await employeeCreation.fillInput(' ', {
+                name: 'name',
+            });
+
+            await employeeCreation.dialog.checkConfirmDialogOpenOrNot();
+        });
     });
 
     PROCESS_TEST('TED001', async ({ page }) => {
