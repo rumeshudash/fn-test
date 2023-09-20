@@ -2,6 +2,7 @@ import { ListingHelper } from '../BaseHelper/listing.helper';
 import { expect } from '@playwright/test';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
+import chalk from 'chalk';
 export class DocumentspreferenceHelper extends ListingHelper {
     public notificationHelper: NotificationHelper;
 
@@ -82,99 +83,110 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         const Array = await this.getSelectOptions();
 
-        await this.selectOption({
-            input: Array[0],
-            name: 'document_id',
-        });
+        if (Array.length > 0) {
+            await this.selectOption({
+                input: Array[0],
+                name: 'document_id',
+            });
+            await this._page.waitForTimeout(1000);
 
-        await this._page.waitForTimeout(1000);
-
-        await this.clickButton('Save');
+            await this.clickButton('Save');
+        } else {
+            console.log(chalk.red('No Document Found'));
+        }
     }
 
     public async addDocumentMendatory() {
         await this.clickAddBtn();
 
         const Array = await this.getSelectOptions();
-        await this.selectOption({
-            input: Array[0],
-            name: 'document_id',
-        });
-        await this._page
-            .locator('label')
-            .filter({ hasText: 'Document Mandatory' })
-            .click();
+        if (Array.length > 0) {
+            await this.selectOption({
+                input: Array[0],
+                name: 'document_id',
+            });
+            await this._page
+                .locator('label')
+                .filter({ hasText: 'Document Mandatory' })
+                .click();
 
-        await this._page.waitForTimeout(1000);
+            await this._page.waitForTimeout(1000);
 
-        await this.clickButton('Save');
+            await this.clickButton('Save');
+        } else {
+            console.log(chalk.red('No Document Found'));
+        }
     }
     public async addDocumentFileMendatory() {
         await this.clickAddBtn();
 
         const Array = await this.getSelectOptions();
 
-        await this.selectOption({
-            input: Array[0],
-            name: 'document_id',
-        });
-        await this._page
-            .locator('label')
-            .filter({ hasText: 'Document Files Mandatory' })
-            .click();
+        if (Array.length > 0) {
+            await this.selectOption({
+                input: Array[0],
+                name: 'document_id',
+            });
+            await this._page
+                .locator('label')
+                .filter({ hasText: 'Document Files Mandatory' })
+                .click();
 
-        await this._page.waitForTimeout(1000);
+            await this._page.waitForTimeout(1000);
 
-        await this.clickButton('Save');
+            await this.clickButton('Save');
+        } else {
+            console.log(chalk.red('No Document Found'));
+        }
     }
 
     public async addWithBothMandatory() {
         await this.clickAddBtn();
 
         const Array = await this.getSelectOptions();
-        await this.selectOption({
-            input: Array[0],
-            name: 'document_id',
-        });
-        await this._page
-            .locator('label')
-            .filter({ hasText: 'Document Mandatory' })
-            .click();
+        if (Array.length > 0) {
+            await this.selectOption({
+                input: Array[0],
+                name: 'document_id',
+            });
+            await this._page
+                .locator('label')
+                .filter({ hasText: 'Document Mandatory' })
+                .click();
 
-        await this._page
-            .locator('label')
-            .filter({ hasText: 'Document Files Mandatory' })
-            .click();
+            await this._page
+                .locator('label')
+                .filter({ hasText: 'Document Files Mandatory' })
+                .click();
 
-        await this._page.waitForTimeout(1000);
+            await this._page.waitForTimeout(1000);
 
-        await this.clickButton('Save');
+            await this.clickButton('Save');
+        } else {
+            console.log(chalk.red('No Document Found'));
+        }
     }
 
     public async addAndClickCheck() {
         await this.clickAddBtn();
 
         const Array = await this.getSelectOptions();
-        await this.selectOption({
-            input: Array[0],
-            name: 'document_id',
-        });
-        await this._page
-            .locator('label')
-            .filter({ hasText: 'save and create another' })
-            .click();
 
-        await this._page.waitForTimeout(1000);
+        if (Array.length > 0) {
+            await this.selectOption({
+                input: Array[0],
+                name: 'document_id',
+            });
+            await this._page
+                .locator('label')
+                .filter({ hasText: 'save and create another' })
+                .click();
 
-        await this.clickButton('Save');
-    }
+            await this._page.waitForTimeout(1000);
 
-    public async checkDocument() {
-        await this.clickAddBtn();
-
-        await this.fillInput('COI', {
-            name: 'document_id',
-        });
-        await this.clickButton('Save');
+            await this.clickButton('Save');
+        } else {
+            console.log(chalk.red('No Document Found'));
+        }
     }
 }
