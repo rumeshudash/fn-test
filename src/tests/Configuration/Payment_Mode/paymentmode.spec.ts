@@ -61,12 +61,6 @@ describe('Configuration>Payment Mode', () => {
         });
 
         await PROCESS_TEST.step('Save And Create', async () => {
-            // await paymentMode.form.fillFormInputInformation(
-            //     paymentInfoSchema,
-            //     paymentMode_Save_And_Create,
-            //     undefined,
-            //     ['bank_id']
-            // );
             await paymentMode.fillPaymentMode(
                 paymentInfoSchema,
                 paymentMode_Save_And_Create
@@ -74,21 +68,31 @@ describe('Configuration>Payment Mode', () => {
             await paymentMode.verifyBankVisibility(
                 paymentMode_Save_And_Create.type_id
             );
-            // await paymentMode.fillPaymentMode({ paymentMode_Save_And_Create });
+
             await paymentMode.form.submitButton();
             await paymentMode.notification.checkToastSuccess(
                 'Successfully saved'
             );
         });
 
-        await PROCESS_TEST.step('Add New Payment Mode', async () => {
+        await PROCESS_TEST.step('Without bank', async () => {
+            await PROCESS_TEST.step('Cash', async () => {
+                await paymentMode.fillPaymentModeWithoutBank(
+                    paymentInfoSchema,
+                    paymentModeInfo
+                );
+            });
+            await PROCESS_TEST.step('Ledger', async () => {
+                await paymentMode.fillPaymentModeWithoutBank(
+                    paymentInfoSchema,
+                    paymentModeInfo
+                );
+            });
+        });
+
+        await PROCESS_TEST.step('with bank', async () => {
             await paymentMode.addNewPaymentMode();
-            // await paymentMode.form.fillFormInputInformation(
-            //     paymentInfoSchema,
-            //     paymentModeInfo,
-            //     undefined,
-            //     ['bank_id']
-            // );
+
             await paymentMode.fillPaymentMode(
                 paymentInfoSchema,
                 paymentModeInfo

@@ -57,15 +57,20 @@ export class PaymentModesHelper extends BaseHelper {
      * @param {ObjectDto} data - The data object.
      * @return {Promise<void>} A promise that resolves when the payment mode is filled.
      */
+    public async fillPaymentModeWithoutBank(
+        schema: ObjectDto,
+        data: ObjectDto
+    ) {
+        await this.form.fillFormInputInformation(schema, data, undefined, [
+            'bank_id',
+        ]);
+    }
     public async fillPaymentMode(schema: ObjectDto, data: ObjectDto) {
         const { key, obj } = schema;
 
         // const type = schema?.type;
 
         for (const [key, value] of Object.entries(schema)) {
-            // console.log(key);
-            // console.log(value);
-            // console.log(value?.name);
             if (key === 'bank_id') continue;
             if (value in TYPE_PREFIX) {
                 await this.fillInput(value, { name: 'name' });
