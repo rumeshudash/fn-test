@@ -154,10 +154,11 @@ export class FormHelper extends BaseHelper {
                     });
                     break;
                 case 'reference_select':
-                    await this.selectOption({
-                        name,
-                        input: value ? String(value) : '',
-                    });
+                    if (!!value)
+                        await this.selectOption({
+                            name,
+                            input: value ? String(value) : '',
+                        });
                     break;
 
                 case 'textarea':
