@@ -10,6 +10,10 @@ import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { DetailsPageHelper } from '../BaseHelper/details.helper';
 
 export class ExpenseHeadDetailsHelper extends ListingHelper {
+    /**
+     *
+     * @description - Creating instnce of NotesHelper, TabHelper, NotificationHelper, BreadCrumbHelper, DocumentHelper, DialogHelper, DetailsPageHelper
+     */
     public noteHelper: NotesHelper;
 
     public tabhelper: TabHelper;
@@ -38,9 +42,17 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
         this.detailsHelper = new DetailsPageHelper(page);
     }
+    /**
+     * @description - Navigate to Expense Head Page
+     */
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
     }
+    /**
+     *@description - This function will click on the Expense Head
+     *
+     * @param {string}name - Name of the Expense Head to be redirected
+     */
 
     public async clickOnExpenseHead(name: string) {
         await this.tabHelper.clickTab('All');
@@ -56,17 +68,35 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this._page.waitForTimeout(3000);
     }
 
+    /**
+     *@description - This function will click on the manager name and redirect to the manager details page
+     *
+     * @param name - Name of the manager
+     */
     public async clickOnManagerName(name: string) {
         await this._page.getByText(name).click();
 
         this._page.waitForTimeout(2000);
     }
 
+    /**
+     * @description - This function will click on the edit icon of expense head details page
+     *
+     */
     public async clickOnEditIcon() {
         await this._page.locator('.items-center > button').first().click();
 
         this._page.waitForTimeout(2000);
     }
+
+    /**
+     * @description - This function will Edit the Expense Head with name of the expense head, parent and manager
+     *
+     * @param {string} name -Name of the Expense Head
+     *
+     * @param {string} parent - The optional parent feild to be edited selected from select option
+     * @param {string}manager - The optional manager feild to be edited selected from select option
+     */
 
     public async editExpenseHead(
         name: string,
@@ -79,29 +109,44 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         });
         if (parent) {
             await this.selectOption({
-                option: parent,
-                hasText: 'Select a Parent',
+                input: parent,
+                name: 'parent_id',
             });
         }
         if (manager) {
             await this.selectOption({
-                option: manager,
-                hasText: 'Select a manager',
+                input: manager,
+                name: 'manager_id',
             });
         }
         await this._page.waitForTimeout(1000);
         await this.click({ role: 'button', name: 'save' });
     }
-
+    /**
+     * @description - This function will click on the Actions button
+     *
+     */
     public async clickOnActions() {
         this.clickButton('Actions');
         this._page.waitForTimeout(1000);
     }
 
+    /**
+     * @description - This function will click on the tab
+     * @param {string} tabName - Name of the tab to be clicked
+     *
+     */
+
     public async clickOnTab(tabName: string) {
         await this.tabhelper.clickTab(tabName);
     }
-    public async clickOnAddNotes(notes: string) {
+
+    /**
+     *@description - This function will will add the Notes on specific expense head
+     *
+     * @param notes - Notes to be added
+     */
+    public async addNotes(notes: string) {
         await this.clickButton('Add Notes');
         await this.fillText(notes, {
             name: 'comments',
@@ -110,7 +155,13 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
         await this.clickButton('Save');
     }
-
+    /**
+     *
+     * @description - This function will add the Documents on specific expense head
+     *
+     * @param  document {comment: string; imagePath: string; date: Date} - Comment and Image Path of the document to be added
+     *
+     */
     public async addDocument(document: { comment: string; imagePath: string }) {
         await this.detailsHelper.openActionButtonItem('Add Documents');
         await this.documentHelper.uploadDocument(true);
@@ -118,6 +169,11 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this.clickButton('Save');
         await this._page.waitForTimeout(1000);
     }
+    /**
+     * @description - This function will verify the addition of the document
+     *
+     * @param document {comment: string; imagePath: string; date: Date} - Comment, Image Path and Date of the document to be added
+     */
     public async verifyDocumentAddition(document: {
         comment: string;
         imagePath: string;
@@ -130,7 +186,10 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
             document.date
         );
     }
-
+    /**
+     * @description - This function will verify check the zoom functionality
+     *
+     */
     public async checkZoom() {
         await this.documentHelper.toggleDocumentView('Document View');
         await this.documentHelper.checkZoom();

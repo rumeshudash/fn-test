@@ -330,7 +330,7 @@ test.describe('Configuration - Expense Head', () => {
         });
 
         await PROCESS_TEST.step('Add Notes with Empty Notes', async () => {
-            await expenseHeadDetails.clickOnAddNotes('');
+            await expenseHeadDetails.addNotes('');
 
             notification.checkErrorMessage('Notes is required');
         });
@@ -338,7 +338,7 @@ test.describe('Configuration - Expense Head', () => {
         await PROCESS_TEST.step('Add Notes with Valid Notes', async () => {
             await dialog.closeDialog();
 
-            await expenseHeadDetails.clickOnAddNotes(expenseHeadData.Notes);
+            await expenseHeadDetails.addNotes(expenseHeadData.Notes);
         });
 
         await PROCESS_TEST.step('Verify Notes', async () => {
