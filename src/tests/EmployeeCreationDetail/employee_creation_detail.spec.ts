@@ -7,7 +7,7 @@ import { DocumentInfo } from '@/utils/required_data';
 
 const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
-describe('Expense Creation>Finops Portal', () => {
+describe('Expense Creation-detail>Finops Portal', () => {
     const employeeCreationInfo_SaveAndCreate = {
         name: `${generateRandomName()}`,
         email: `email${generateRandomNumber()}@test.com`,
@@ -65,7 +65,7 @@ describe('Expense Creation>Finops Portal', () => {
             required: true,
         },
     };
-    PROCESS_TEST('TEC001', async ({ page }) => {
+    PROCESS_TEST('TEC001 - Employee Creation', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(
             employeeCreationInfo,
             page
@@ -293,7 +293,7 @@ describe('Expense Creation>Finops Portal', () => {
         });
     });
 
-    PROCESS_TEST('TED001', async ({ page }) => {
+    PROCESS_TEST('TED001-Employee Detail', async ({ page }) => {
         const employeeCreation = new EmployeeCreation(
             employeeCreationInfo,
             page
