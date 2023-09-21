@@ -12,8 +12,8 @@ import { test } from '@playwright/test';
 import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
-describe('TECF006', () => {
-    PROCESS_TEST('Expense Rejection with Comment', async ({ page }) => {
+describe('Expense Creation - Finops Portal', () => {
+    PROCESS_TEST('TECF006', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const signIn = new SignInHelper(page);
@@ -25,23 +25,27 @@ describe('TECF006', () => {
 
         await expense.init();
         await expense.addDocument();
-        await test.step('Fill Expense', async () => {
+        await PROCESS_TEST.step('Fill Expense', async () => {
+            await expense.fillBusinessDetails([
+                {
+                    to: 'Hidesign India Pvt Ltd',
+                    from: 'Adidas India Marketing Private Limited',
+                },
+            ]);
             await expense.fillExpenses([
                 {
-                    to_nth: 1,
-                    from_nth: 2,
                     invoice: ' inv' + generateRandomNumber(),
                     amount: 10000,
                     taxable_amount: 10000,
                     department: 'Sales',
-                    expense_head: 'Refund',
+                    expense_head: 'Foods & Accommodations',
                     poc: 'Abhishek',
                     pay_to: 'Vendor',
                     desc: 'Dummy Text',
                 },
             ]);
         });
-        await test.step('Add Taxes', async () => {
+        await PROCESS_TEST.step('Add Taxes', async () => {
             await expense.addTaxesData([
                 {
                     gst: '5%',
@@ -55,21 +59,24 @@ describe('TECF006', () => {
 
         const savedExpensePage = new SavedExpenseCreation(page);
 
-        await test.step('Check Saved and Party Status with poc', async () => {
-            await savedExpensePage.notification.checkToastSuccess(
-                'Invoice raised successfully.'
-            );
-            // expect(
-            //     await savedExpensePage.toastMessage(),
-            //     chalk.red('ToastMessage match')
-            // ).toBe('Invoice raised successfully.');
-            expect(
-                await savedExpensePage.checkPartyStatus(),
-                chalk.red('Check party status match')
-            ).toBe('Submitted');
-        });
+        await PROCESS_TEST.step(
+            'Check Saved and Party Status with poc',
+            async () => {
+                await savedExpensePage.notification.checkToastSuccess(
+                    'Invoice raised successfully.'
+                );
+                // expect(
+                //     await savedExpensePage.toastMessage(),
+                //     chalk.red('ToastMessage match')
+                // ).toBe('Invoice raised successfully.');
+                expect(
+                    await savedExpensePage.checkPartyStatus(),
+                    chalk.red('Check party status match')
+                ).toBe('Submitted');
+            }
+        );
 
-        await test.step('Check Approval Flows', async () => {
+        await PROCESS_TEST.step('Check Approval Flows', async () => {
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
             await verificationFlows.checkLevel();
@@ -84,7 +91,7 @@ describe('TECF006', () => {
             ).toBe('Pending Approval');
         });
 
-        await test.step('Expense Approval Reject', async () => {
+        await PROCESS_TEST.step('Expense Approval Reject', async () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
@@ -109,7 +116,7 @@ describe('TECF006', () => {
             ).toBe('Rejected');
         });
 
-        await test.step('Level Status in FinOps', async () => {
+        await PROCESS_TEST.step('Level Status in FinOps', async () => {
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
             await page.waitForLoadState('networkidle');
@@ -126,7 +133,7 @@ describe('TECF006', () => {
                 ),
                 chalk.red('Verification approval match')
             ).toBe('Rejected');
-            await test.step('Check Expense Status', async () => {
+            await PROCESS_TEST.step('Check Expense Status', async () => {
                 expect(
                     await savedExpensePage.expenseStatusSuccess('verification'),
                     chalk.red('Verification Status check')

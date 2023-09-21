@@ -14,20 +14,22 @@ import { test } from '@playwright/test';
 import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
-const EXPENSEDETAILS = {
+const BusinessInfo = {
     to: 'Hidesign India Pvt Ltd',
     from: 'Chumbak Design Private Limited',
+};
+const EXPENSEDETAILS = {
     invoice: ' inv' + generateRandomNumber(),
     amount: 10000,
     taxable_amount: 10000,
     department: 'Sales',
-    expense_head: 'Refund',
+    expense_head: 'Foods & Accommodations',
     poc: 'Sunil',
     pay_to: 'Vendor',
     desc: 'Dummy Text',
 };
-describe('TECF007', () => {
-    PROCESS_TEST('Expense Approval by FinOps', async ({ page }) => {
+describe('Expense Creation - Finops Portal', () => {
+    PROCESS_TEST('TECF007', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const signIn = new SignInHelper(page);
         const expense = new ExpenseHelper(page);
@@ -70,10 +72,11 @@ describe('TECF007', () => {
 
         await expense.addDocument();
 
-        await test.step('Fill Expense', async () => {
+        await PROCESS_TEST.step('Fill Expense', async () => {
+            await expense.fillBusinessDetails([BusinessInfo]);
             await expense.fillExpenses([EXPENSEDETAILS]);
         });
-        await test.step('Add Taxes', async () => {
+        await PROCESS_TEST.step('Add Taxes', async () => {
             await expense.addTaxesData([
                 {
                     gst: '5%',
@@ -87,22 +90,25 @@ describe('TECF007', () => {
 
         const savedExpensePage = new SavedExpenseCreation(page);
 
-        await test.step('Check Saved and Party Status with poc', async () => {
-            await savedExpensePage.notification.checkToastSuccess(
-                'Invoice raised successfully.'
-            );
-            // expect(
-            //     await savedExpensePage.toastMessage(),
-            //     chalk.red('Toast message match')
-            // ).toBe('Invoice raised successfully.');
+        await PROCESS_TEST.step(
+            'Check Saved and Party Status with poc',
+            async () => {
+                await savedExpensePage.notification.checkToastSuccess(
+                    'Invoice raised successfully.'
+                );
+                // expect(
+                //     await savedExpensePage.toastMessage(),
+                //     chalk.red('Toast message match')
+                // ).toBe('Invoice raised successfully.');
 
-            expect(
-                await savedExpensePage.checkPartyStatus(),
-                chalk.red('Check party status')
-            ).toBe('Submitted');
-        });
+                expect(
+                    await savedExpensePage.checkPartyStatus(),
+                    chalk.red('Check party status')
+                ).toBe('Submitted');
+            }
+        );
 
-        await test.step('Check Approval Flows', async () => {
+        await PROCESS_TEST.step('Check Approval Flows', async () => {
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
             await verificationFlows.checkLevel();
@@ -116,7 +122,7 @@ describe('TECF007', () => {
             ).toBe('Pending Approval');
         });
 
-        await test.step('POC Approval', async () => {
+        await PROCESS_TEST.step('POC Approval', async () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
@@ -138,7 +144,7 @@ describe('TECF007', () => {
             ).toBe('Approved');
         });
 
-        await test.step('Level Status in FinOps', async () => {
+        await PROCESS_TEST.step('Level Status in FinOps', async () => {
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
             await page.waitForLoadState('networkidle');
@@ -150,11 +156,14 @@ describe('TECF007', () => {
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await verificationFlows.checkApprovalByFinOps();
         });
-        await test.step('Check pending flows and party status in finops', async () => {
-            await verificationFlows.checkPendingFlows();
-        });
+        await PROCESS_TEST.step(
+            'Check pending flows and party status in finops',
+            async () => {
+                await verificationFlows.checkPendingFlows();
+            }
+        );
 
-        await test.step('Check finOpsFlows Details', async () => {
+        await PROCESS_TEST.step('Check finOpsFlows Details', async () => {
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await finOpsFlows.getLevelName();
             await finOpsFlows.getLevelStatus();
@@ -162,7 +171,7 @@ describe('TECF007', () => {
             await finOpsFlows.getFinopsEmail();
         });
 
-        await test.step('FinOps Approval', async () => {
+        await PROCESS_TEST.step('FinOps Approval', async () => {
             const finOpsEmail = await finOpsFlows.getFinopsEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
@@ -183,7 +192,7 @@ describe('TECF007', () => {
             ).toBe('Approved');
         });
 
-        await test.step('Payment Approval', async () => {
+        await PROCESS_TEST.step('Payment Approval', async () => {
             const paymentEmail = await paymentFlows.getPaymentEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
@@ -204,12 +213,20 @@ describe('TECF007', () => {
                 chalk.red('Payment level status match')
             ).toBe('Approved');
         });
-        await test.step('Check Business and Vendor', async () => {
+        await PROCESS_TEST.step('Check Business and Vendor', async () => {
             expect(
                 await savedExpensePage.checkExpenseTo(),
                 chalk.red('Check To Expense Details match')
-            ).toBe(EXPENSEDETAILS.to + '…');
+            ).toBe(BusinessInfo.to);
+            expect(
+                await savedExpensePage.checkExpenseFrom(),
+                chalk.red('Vendor name match')
+            ).toBe(BusinessInfo.from);
             await page.waitForTimeout(1000);
         });
     });
 });
+
+/**
+ * @todo: Select department is yet to implement
+ */

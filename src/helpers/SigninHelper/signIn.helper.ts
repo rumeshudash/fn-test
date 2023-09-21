@@ -50,13 +50,28 @@ export class SignInHelper extends NotificationHelper {
                 exact: true,
             })
             .isVisible();
+
         if (username === 'newtestauto@company.com') {
-            await this._page
-                .getByRole('dialog')
-                .getByText('FinOps Portal')
-                .click();
-            await this._page.waitForTimeout(1000);
+            const org = await this.locate(
+                '//div[@role="dialog"]//p[text()="Select Organization"]'
+            )._locator.isVisible();
+            if (org) await this.locate('div', { id: 'org-1' })._locator.click();
+
+            await this._page.waitForTimeout(300);
+            await this._page.waitForLoadState('networkidle');
+
+            const portal = await this.locate(
+                '//div[@role="dialog"]//h2[text()="Select Portal"]'
+            )._locator.isVisible();
+            if (portal)
+                await this.locate('div', { id: 'pro-3' })._locator.click();
+            // await this._page
+            //     .getByRole('dialog')
+            //     .getByText('FinOps Portal')+
+            //     .click();
+            // await this._page.waitForTimeout(1000);
         }
+
         if (createPassword === true) {
             await this.fillText(setPassword, {
                 placeholder: 'Enter Current Password',
