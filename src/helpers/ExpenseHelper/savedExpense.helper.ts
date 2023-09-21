@@ -54,7 +54,7 @@ export class SavedExpenseCreation extends BaseHelper {
         );
         const toBusiness = await toLocator
             .locator('(//div[contains(@class,"flex-1 gap-1")]//div)[1]')
-            .textContent();
+            .innerText();
         return toBusiness;
     }
 
@@ -63,8 +63,9 @@ export class SavedExpenseCreation extends BaseHelper {
             '(//div[@aria-label="bill-from-card"]//div)[1]'
         );
         const toBusiness = await toLocator
-            .locator('(//a[@class="table-link w-full"]//div)[2]')
-            .textContent();
+            .locator('//span')
+            .first()
+            .innerText();
         return toBusiness;
     }
 
@@ -95,6 +96,8 @@ export class SavedExpenseCreation extends BaseHelper {
                     input: update.expense_head,
                     name: 'expense_head_id',
                 });
+            if (update.comment)
+                await this.fillText(update.comment, { name: 'comment' });
         }
         await this.fillText('Approved', {
             placeholder: 'Write a comment...',

@@ -34,22 +34,22 @@ export class EmployeeDetailsPage extends BaseHelper {
             ._locator;
     }
 
-    public async checkEmployeeName() {
+    public async checkEmployeeName(name?: string) {
         const parentHelper = await this.parentEmployeeDetails();
         const locateName = parentHelper.filter({
-            hasText: this.employeeCreationInfo.name,
+            hasText: name || this.employeeCreationInfo.name,
         });
 
         await expect(locateName).toBeVisible();
     }
 
-    public async checkEmployeeCode() {
+    public async checkEmployeeCode(identifier?: string) {
         const parentHelper = await this.parentEmployeeDetails();
         const locateCode = parentHelper.locator(
             "//div[@class='text-sm text-base-secondary']"
         );
         expect(await locateCode.innerText()).toBe(
-            this.employeeCreationInfo.identifier
+            identifier || this.employeeCreationInfo.identifier
         );
     }
 
@@ -57,6 +57,25 @@ export class EmployeeDetailsPage extends BaseHelper {
         const parentHelper = await this.parentEmployeeDetails();
         const isVisible = await parentHelper.locator(locator).innerText();
         expect(isVisible).toBe(text);
+    }
+
+    public async verifyClickableLinks(
+        locator: string,
+        text: string,
+        redirectPageTitle: string
+    ) {
+        const information_element = await this.parentEmployeeDetails();
+        const targetElement = information_element
+            .locator(locator)
+            .getByText(text);
+        await targetElement.click();
+        await this._page.waitForTimeout(1000);
+        await this._page.waitForLoadState('networkidle');
+
+        await this.breadCrumb.checkBreadCrumbTitle(redirectPageTitle);
+        await this._page.goBack({
+            waitUntil: 'networkidle',
+        });
     }
 
     public async clickEditIcon() {
