@@ -277,7 +277,14 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
         await this._page.waitForTimeout(3000);
     }
-
+    /**
+     *
+     * @description - This function will check the status of the expense
+     *
+     * @param {string}expense_number - The Expense Number to be searched
+     *
+     * @param {string} status - The status of the expense
+     */
     public async checkExpenseStatus(expense_number: string, status: string) {
         await this._page.waitForTimeout(1000);
 
@@ -287,7 +294,13 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
         expect(statusText).toBe(status);
     }
-
+    /**
+     *
+     * @description - This function will check the balance of the expense
+     *
+     * @param expense_number - The Expense Number to be searched
+     * @param balance - The balance of the expense to be checked
+     */
     public async checkBalance(expense_number: string, balance: string) {
         await this._page.waitForTimeout(1000);
 
@@ -298,6 +311,13 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         expect(balanceText).toBe(balance);
     }
 
+    /**
+     *
+     * @description - This function will check the expense amount of the expense
+     *
+     * @param expense_number - The Expense Number to be searched
+     * @param amnt - The expense amount of the expense to be checked
+     */
     public async checkExpenseAmnt(expense_number: string, amnt: string) {
         await this._page.waitForTimeout(1000);
 
@@ -308,6 +328,13 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         expect(amntText).toBe(amnt);
     }
 
+    /**
+     *
+     * @description - This function will check the expense date of the expense
+     *
+     * @param expense_number - The Expense Number to be searched
+     * @param date - The expense date of the expense to be checked
+     */
     public async checkDate(expense_number: string, date: string) {
         await this._page.waitForTimeout(1000);
 
