@@ -66,8 +66,10 @@ test.describe('Configurations-Custom Feilds', () => {
         'TCF002 - Add Designation - Positive Case',
         async ({ page }) => {
             const customefeild = new CustofeildHelper(page);
+            const dialog = await customefeild.dialogHelper;
             await customefeild.init();
             const name = await CustofeildHelper.generateRandomGradeName();
+            const newName = await CustofeildHelper.generateRandomGradeName();
 
             await PROCESS_TEST.step(
                 'Add Designation With Text Type',
@@ -179,17 +181,29 @@ test.describe('Configurations-Custom Feilds', () => {
                 await customefeild.checkEdit(name + 'abc');
             });
 
-            await PROCESS_TEST.step('Name and Priority Change', async () => {
-                const newName =
-                    await CustofeildHelper.generateRandomGradeName();
+            await PROCESS_TEST.step('Edit with Empty Name', async () => {
+                await customefeild.changeName(name, 'Text', '');
+                const notification = await customefeild.notificationHelper;
 
-                await customefeild.changeNameORPriority(
-                    name + 'abc',
-                    'Text',
-                    1,
-                    newName,
-                    2
+                expect(await notification.getErrorMessage()).toBe(
+                    'Field Name is required'
                 );
+            });
+
+            await PROCESS_TEST.step('Change Name', async () => {
+                await dialog.closeDialog();
+                await customefeild.clickButton('Yes!');
+                await customefeild.checkEdit(name);
+
+                await customefeild.changeName(name, 'Text', newName);
+            });
+
+            await PROCESS_TEST.step('Change Priority', async () => {
+                await dialog.closeDialog();
+                await customefeild.clickButton('Yes!');
+                await customefeild.checkEdit(newName);
+
+                await customefeild.changePriority(newName, 'Text', 2);
             });
 
             await PROCESS_TEST.step(

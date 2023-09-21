@@ -185,7 +185,7 @@ test.describe('Configurations-Custom Feilds', () => {
                 await customefeild.checkEdit(name);
             });
             await PROCESS_TEST.step('Edit with Empty Name', async () => {
-                await customefeild.changeNameORPriority(name, 'Text', 1, '', 2);
+                await customefeild.changeName(name, 'Text', '');
                 const notification = await customefeild.notificationHelper;
 
                 expect(await notification.getErrorMessage()).toBe(
@@ -199,6 +199,14 @@ test.describe('Configurations-Custom Feilds', () => {
                 await customefeild.checkEdit(name);
 
                 await customefeild.changeName(name, 'Text', newName);
+            });
+
+            await PROCESS_TEST.step('Change Priority', async () => {
+                await dialog.closeDialog();
+                await customefeild.clickButton('Yes!');
+                await customefeild.checkEdit(newName);
+
+                await customefeild.changePriority(newName, 'Text', 2);
             });
 
             await PROCESS_TEST.step(
