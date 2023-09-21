@@ -202,7 +202,7 @@ describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered
             await vendorOnboarding.clickButton(' Add New Document');
             // await vendorOnboarding.dialog.checkConfirmDialogOpenOrNot();
             await vendorOnboarding.dialog.checkDialogTitle('Add New Document');
-            await vendorOnboarding.form.checkMandatoryFields(
+            await vendorOnboarding.form.checkIsMandatoryFields(
                 LOWER_TDS_DETAILS_SCHEMA
             );
             await vendorOnboarding.form.fillFormInputInformation(

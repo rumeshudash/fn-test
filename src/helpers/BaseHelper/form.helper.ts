@@ -1,11 +1,11 @@
 import { BaseHelper } from '@/baseHelper';
 import { ObjectDto } from '@/types/common.types';
+import { AccessNestedObject } from '@/utils/common.utils';
 import { Locator, Page, expect } from '@playwright/test';
 import chalk from 'chalk';
 import { BreadCrumbHelper } from './breadCrumb.helper';
 import { DialogHelper } from './dialog.helper';
 import { Logger } from './log.helper';
-import { AccessNestedObject } from '@/utils/common.utils';
 
 export class FormHelper extends BaseHelper {
     public breadcrumbHelper: BreadCrumbHelper;
@@ -145,8 +145,10 @@ export class FormHelper extends BaseHelper {
     ): Promise<void> {
         for (const [key, schema] of Object.entries(formSchema)) {
             const name = schema?.name ?? key;
-            if (ignoreFields.includes(name)) continue;
             const value = AccessNestedObject(data, name) || '';
+            if (ignoreFields.includes(name)) continue;
+            if (!value) continue;
+
             switch (schema?.type) {
                 case 'select':
                     await this.selectOption({
@@ -156,11 +158,10 @@ export class FormHelper extends BaseHelper {
                     });
                     break;
                 case 'reference_select':
-                    if (!!value)
-                        await this.selectOption({
-                            name,
-                            input: value ? String(value) : '',
-                        });
+                    await this.selectOption({
+                        name,
+                        input: value ? String(value) : '',
+                    });
                     break;
 
                 case 'textarea':
@@ -168,7 +169,7 @@ export class FormHelper extends BaseHelper {
                     break;
                 default:
                     await this.fillInput(value, {
-                        name: name,
+                        name,
                     });
             }
         }
@@ -179,6 +180,13 @@ export class FormHelper extends BaseHelper {
         });
     }
 
+    /**
+     * Fills a textarea form field with the provided data.
+     *
+     * @param {ObjectDto} data - The data to fill the form with.
+     * @param {string} targetClick - (optional) The target to click after filling the form.
+     * @return {Promise<void>} A promise that resolves when the form is filled.
+     */
     public async fillTextAreaForm(
         data: ObjectDto,
         targetClick?: string
@@ -214,6 +222,7 @@ export class FormHelper extends BaseHelper {
         await this._page.waitForTimeout(300);
         await this._page.waitForLoadState('networkidle');
     }
+
     /**
      * it helps to submit the form
      */
@@ -235,7 +244,13 @@ export class FormHelper extends BaseHelper {
         return btnClick;
     }
 
-    public async checkDisableSubmit(
+    /**
+     * Checks if the submit button is disabled.
+     *
+     * @param {string} button_title - The title of the submit button. Defaults to 'Save'.
+     * @return {Promise<void>} A promise that resolves once the check is complete.
+     */
+    public async checkSubmitIsDisabled(
         button_title: string = 'Save'
     ): Promise<void> {
         const submitButton = await this.submitButton(button_title, {
@@ -249,7 +264,6 @@ export class FormHelper extends BaseHelper {
     }
 
     /**
-
      * Checks if the input field is mandatory.
      *
      * @param {InputFieldLocatorOptions} options - The options for locating the input field.
@@ -272,7 +286,7 @@ export class FormHelper extends BaseHelper {
      * @param {ObjectDto} formSchema - The form schema to check.
      * @return {Promise<void>} - A promise that resolves when the mandatory fields have been checked.
      */
-    public async checkMandatoryFields(
+    public async checkIsMandatoryFields(
         formSchema: ObjectDto,
         ignoreFields: string[] = []
     ): Promise<void> {
@@ -288,7 +302,7 @@ export class FormHelper extends BaseHelper {
         }
     }
 
-    public async checkAllMandatoryInputErrors(
+    public async checkAllMandatoryInputHasErrors(
         formSchema: ObjectDto,
         ignoreFields: string[] = []
     ): Promise<void> {
@@ -299,43 +313,24 @@ export class FormHelper extends BaseHelper {
             await this.checkInputError(name, fieldSchema);
         }
     }
-    /**
-     * @deprecated User FormHelper.checkIsInputHasError() instead.
-     */
+
     public async checkInputError(
         name: string,
         schema: ObjectDto,
         message?: string
     ) {
-        const errorMessage = await this.getInputErrorMessageElement(
-            {
+        const errorMessage = this.getInputError({
+            name,
+            type: schema.type,
+        });
+
+        await expect(errorMessage).toBeVisible();
+        if (message) {
+            await this.checkIsInputHasErrorMessage(message, {
                 name,
-            },
-            schema?.type === 'textarea' ? 'textarea' : 'input'
-        );
-
-        expect(await errorMessage.isVisible()).toBe(true);
-        if (message) await this.matchedInputErrorMessage(message, errorMessage);
-    }
-
-    public async matchedInputErrorMessage(
-        message: string,
-        element: any
-    ): Promise<void> {
-        await this._page.waitForLoadState('networkidle');
-
-        // for comparing two error message
-        if (!message || !element) return;
-
-        let textContent = await element.textContent();
-        textContent = textContent.trim();
-
-        if (textContent === message) return Logger.error(textContent);
-        throw Logger.info(
-            chalk.red(
-                `"${textContent}" is not a valid error !! valid valid error should be "${message}"`
-            )
-        );
+                type: schema.type,
+            });
+        }
     }
 
     public async closeForm() {

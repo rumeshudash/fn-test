@@ -32,20 +32,20 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
     }
 
     public async checkEmailError(message?: string): Promise<void> {
-        const errorMessage = await this.getInputErrorMessageElement({
+        const errorMessage = await this.formHelper.getInputErrorMessage({
             name: 'email',
         });
         await this.ErrorMessageHandle(message, errorMessage);
     }
     public async checkMobileError(message?: string): Promise<void> {
-        const errorMessage = await this.getInputErrorMessageElement({
+        const errorMessage = await this.formHelper.getInputErrorMessage({
             name: 'mobile',
         });
 
         await this.ErrorMessageHandle(message, errorMessage);
     }
     public async checkGstinError(message?: string): Promise<void> {
-        const errorMessage = await this.getInputErrorMessageElement({
+        const errorMessage = await this.formHelper.getInputErrorMessage({
             name: 'gstin',
         });
 
@@ -83,8 +83,8 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
     }
 
     public async verifyStatus(
-        status: 'Active' | 'Inactive' = 'Active',
-        row: any
+        row: any,
+        status: 'Active' | 'Inactive' = 'Active'
     ): Promise<void> {
         expect(await this.listHelper.getCellText(row, 'STATUS'), {
             message: `Checking ${status} status`,
@@ -117,7 +117,7 @@ export default class CreateFinopsBusinessHelper extends NotificationHelper {
         }
         const name_cell = await this.listHelper.getCell(row, 'NAME');
 
-        await this.verifyStatus('Active', row);
+        await this.verifyStatus(row);
         await this.listHelper.getCellText(row, 'ADDED AT');
         await this.verifyBusinessName(
             name_cell,
@@ -185,7 +185,7 @@ export class BusinessDetailsPageHelper extends CreateFinopsBusinessHelper {
             '//div[contains(@class,"grid grid-cols-2")]'
         )._locator;
 
-        const titleLocator = await parentContainer.locator(
+        const titleLocator = parentContainer.locator(
             `//p[text()="${title}"]/following-sibling::p`
         );
         return titleLocator.innerText();
@@ -197,8 +197,9 @@ export class BusinessDetailsPageHelper extends CreateFinopsBusinessHelper {
 
     public async getHeading() {
         const parentContainer = await this.informationDetailsLocator();
-        return await parentContainer.locator('h3');
+        return parentContainer.locator('h3');
     }
+
     public async verifyHeading(heading: string) {
         const heading_element = await this.getHeading();
         expect(heading_element, {
@@ -208,7 +209,7 @@ export class BusinessDetailsPageHelper extends CreateFinopsBusinessHelper {
 
     public async checkInformation(title: string) {
         const parentContainer = await this.informationDetailsLocator();
-        const titleLocator = await parentContainer.locator(
+        const titleLocator = parentContainer.locator(
             `//p[text()='${title}']/parent::div/parent::div/parent::div //span[contains(@id,"has-")]`
         );
 
@@ -216,10 +217,10 @@ export class BusinessDetailsPageHelper extends CreateFinopsBusinessHelper {
     }
     public async openGstinFiling(gstin: string) {
         const parentContainer = await this.informationDetailsLocator();
-        const locator = await parentContainer.locator(
+        const locator = parentContainer.locator(
             `//span[text()='GSTIN']/parent::div/parent::p/parent::div/parent::div/parent::div //div[text()='${gstin}']`
         );
-        const gstin_element = await locator.getByText(gstin);
+        const gstin_element = locator.getByText(gstin);
         await gstin_element.click();
         await this._page.waitForLoadState('networkidle');
     }

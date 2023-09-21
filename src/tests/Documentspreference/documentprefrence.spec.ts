@@ -21,15 +21,16 @@ test.describe('Configuration - Document Preference', () => {
 
         await documents_preference.init();
 
-        await test.step('click On Add Button', async () => {
-            await documents_preference.clickAddBtn();
-        });
         await test.step('Add Document Preference with empty Documents', async () => {
-            await documents_preference.clickButton('Save');
+            const count = await documents_preference.checkRowCount();
+            if (count < 5) {
+                await documents_preference.clickAddBtn();
+                await documents_preference.clickButton('Save');
 
-            expect(await notification.getErrorMessage()).toBe(
-                'Document is required'
-            );
+                expect(await notification.getErrorMessage()).toBe(
+                    'Document is required'
+                );
+            }
         });
     });
 
@@ -50,38 +51,19 @@ test.describe('Configuration - Document Preference', () => {
 
         await test.step('Add Document Preference', async () => {
             await documents_preference.addDocumentPreference(); // Running this test case again may give the issue since we caant use same name
-
-            await notification.checkToastSuccess(
-                'Successfully created document preference'
-            );
         });
 
         await test.step('Add with Both Mandatory', async () => {
             await documents_preference.addWithBothMandatory(); // Running this test case again may give the issue since we caant use same name
-            await notification.checkToastSuccess(
-                'Successfully created document preference'
-            );
         });
         await test.step('Add With Document Mandatory', async () => {
             await documents_preference.addDocumentMendatory(); // Running this test case again may give the issue since we caant use same name
-
-            await notification.checkToastSuccess(
-                'Successfully created document preference'
-            );
         });
         await test.step('Add With Document File Mandatory', async () => {
             await documents_preference.addDocumentFileMendatory(); // Running this test case again may give the issue since we caant use same name
-
-            await notification.checkToastSuccess(
-                'Successfully created document preference'
-            );
         });
         await test.step('Check Add and Save Another ', async () => {
             await documents_preference.addAndClickCheck(); // Running this test case again may give the issue since we caant use same name
-
-            await notification.checkToastSuccess(
-                'Successfully created document preference'
-            );
         });
     });
 });

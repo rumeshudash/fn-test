@@ -246,7 +246,7 @@ describe('HR - Designations', () => {
             await detailsPage.clickActionOption('Add Employee');
             await detailsPage.dialog.checkFormIsOpen();
             await detailsPage.dialog.checkDialogTitle('Add Employee');
-            await designation.form.checkMandatoryFields([
+            await designation.form.checkIsMandatoryFields([
                 'Name',
                 'Email',
                 'Employee Code',
