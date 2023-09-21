@@ -56,10 +56,6 @@ export class DocumentspreferenceHelper extends ListingHelper {
             .click(); //During Empty list there is 2 button so we are using 1st button
 
         await this._page.waitForTimeout(1000);
-
-        // const title = await this.dialogHelper.getDialogTitle();
-
-        // expect(title).toBe('Add Document Preference');
     }
 
     public async getSelectOptions() {
