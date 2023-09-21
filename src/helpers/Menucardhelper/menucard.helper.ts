@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { PageHelper } from '../BaseHelper/page.helper';
-import { expect } from '@playwright/test';
+import { Locator, expect } from '@playwright/test';
 
 const mainMenuArray = [
     'Dashboard',
@@ -42,17 +42,30 @@ const submenuObject = {
 };
 
 export class MenucardHelper extends PageHelper {
+    /**
+     * @description - Navigate to Dashboard Page
+     *
+     */
     public async init() {
         await this.navigateTo('DASHBOARD');
     }
 
+    /**
+     *@description -This Function is used to open and close the menu card
+     */
     public async openAndCloseMenuCard() {
         await this._page.waitForLoadState('networkidle');
         await this._page
             .locator(`//div[contains(@class,'hamburger_button')]`)
             .click();
     }
-    public async getMenuLocator(menuName: string) {
+    /**
+     * @description - This function will return the locator of the main menu of specific input meanu name
+     *
+     * @param {string}menuName -The name of main menu like dashboard,expenses etc.
+     * @returns {Promise<Locator>} -This function returns the locator of the main menu
+     */
+    public async getMenuLocator(menuName: string): Promise<Locator> {
         const locator = await this._page
             .locator(
                 `//div[contains(@class,'sidebar-items')]//p[contains(@class,'sidebar-item-title')]`
@@ -63,6 +76,10 @@ export class MenucardHelper extends PageHelper {
         return locator;
     }
 
+    /**
+     * @description -This function will check the menu items are correctly reflected in the menu card
+     *
+     */
     public async checkSideBarItems() {
         const itemsText = await this._page
             .locator(`//div[contains(@class,'sidebar-items')]`)
@@ -89,6 +106,11 @@ export class MenucardHelper extends PageHelper {
         expect(filteredAndCleanedItems).toEqual(mainMenuArray);
     }
 
+    /**
+     * @description - This function will click on the main menu of specific input menu name
+     *
+     * @param menuName - The name of the main menu like dashboard,expenses etc.
+     */
     public async clickOnSideBarMenu(menuName: string) {
         await this._page.waitForTimeout(1000);
         await this._page
@@ -97,13 +119,23 @@ export class MenucardHelper extends PageHelper {
             .click();
     }
 
+    /**
+     * @description - This function will check the space between the main menu is present or not
+     *
+     * @param menuName - The name of the main menu like dashboard,expenses etc. having the space with class name mt-3
+     */
     public async checkSpaceInMenu(menuName: string) {
         const locator = await this.getMenuLocator(menuName);
         expect(
             locator.locator(`//ancestor::div[contains(@class,'submenu mt-3')]`)
         ).toBeTruthy();
     }
-
+    /**
+     * @description - This function will check the submenu items are correctly reflected in the menu card
+     *
+     * @param menuName - The name of the main menu like dashboard,expenses etc. which have sub menu like AP Dashboard,Payment Dashboard etc.
+     *
+     */
     public async checkSubMenuItems(menuName: string) {
         const locator = await this.getMenuLocator(menuName);
 
@@ -118,8 +150,6 @@ export class MenucardHelper extends PageHelper {
             .allInnerTexts(); // Use textContent instead of innerText
 
         const filteredItems = menus.filter((item) => item.trim() !== '');
-
-        console.log('filteredItems:', filteredItems);
 
         expect(filteredItems).toEqual(submenuObject[menuName]);
     }
