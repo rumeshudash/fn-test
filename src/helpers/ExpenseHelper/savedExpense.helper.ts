@@ -3,6 +3,7 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 import chalk from 'chalk';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { Logger } from '../BaseHelper/log.helper';
 // import { firefox } from 'playwright';
 
 let pocEmail;
@@ -80,7 +81,7 @@ export class SavedExpenseCreation extends BaseHelper {
         const partyStatus = await this._page
             .locator("//div[@id='party-status']/div[1]/div[1]")
             .textContent();
-        console.log('Before Approve check Party Status: ', partyStatus);
+        Logger.info('Before Approve check Party Status: ', partyStatus);
         if (partyStatus === 'Submitted' || partyStatus === 'Pending Approval') {
             await this.click({ role: 'button', name: 'Approve' });
         }
@@ -204,7 +205,7 @@ export class ApprovalWorkflowsTab extends BaseHelper {
         await this._page.reload();
         const helper = this.locate(this.APPROVAL_WORKFLOWS_DOM_SELECTOR);
         const verificationContainer = helper.locateByText('Pending Approval');
-        console.log(
+        Logger.info(
             'verificationContainer: ',
             await verificationContainer.count()
         );
@@ -229,7 +230,7 @@ export class ApprovalWorkflowsTab extends BaseHelper {
             const email = await flowsStatus
                 .locator("(//span[@class='text-xs approval-user-email'])[2]")
                 .textContent();
-            console.log(email);
+            Logger.info(email);
             return email;
         }
     }
