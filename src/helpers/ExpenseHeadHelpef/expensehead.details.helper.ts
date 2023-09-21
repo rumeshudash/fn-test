@@ -299,6 +299,7 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
         const statusText = await this.getCellText(row, 'STATUS');
         await this.clickTextOnTable(row, 'EXPENSE NO.');
+        await this._page.waitForTimeout(3000);
 
         expect(this._page.getByText(statusText, { exact: true })).toBeTruthy();
     }
@@ -316,6 +317,7 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
         const balanceText = await this.getCellText(row, 'BALANCE');
         await this.clickTextOnTable(row, 'EXPENSE NO.');
+        await this._page.waitForTimeout(3000);
 
         const balanceLocator = await this._page
             .locator(`//div[contains(@class,'font-medium text-xl')]`)
@@ -339,6 +341,7 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         const amntText = await this.getCellText(row, 'EXPENSE AMOUNT');
 
         await this.clickTextOnTable(row, 'EXPENSE NO.');
+        await this._page.waitForTimeout(3000);
         const amtLocator = await this._page
             .locator(`(//div[@class='font-medium text-sm'])[1]`)
             .innerText();
@@ -361,9 +364,10 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         const dateText = await this.getCellText(row, 'EXPENSE DATE');
 
         await this.clickTextOnTable(row, 'EXPENSE NO.');
+        await this._page.waitForTimeout(3000);
 
         const dateLocator = await this._page
-            .locator(`//div[@class='text-sm']`)
+            .locator(`//span[@class='text-sm']`)
             .innerText();
 
         expect(await dateLocator.includes(dateText)).toBeTruthy();
