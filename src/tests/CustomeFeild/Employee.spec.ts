@@ -108,7 +108,7 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.addWithChoiceType(
                 name + 'abcge',
                 'Choicelist',
-                'Choice-Type-101597106309',
+                'customechoce',
                 2
             );
 

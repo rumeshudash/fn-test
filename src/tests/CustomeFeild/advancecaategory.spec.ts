@@ -67,7 +67,9 @@ test.describe('Configurations-Custom Feilds', () => {
         async ({ page }) => {
             const customefeild = new CustofeildHelper(page);
             await customefeild.init();
+            const dialog = await customefeild.dialogHelper;
             const name = await CustofeildHelper.generateRandomGradeName();
+            const newName = await CustofeildHelper.generateRandomGradeName();
 
             await PROCESS_TEST.step(
                 'Add Advance Categories With Text Type',
@@ -77,29 +79,29 @@ test.describe('Configurations-Custom Feilds', () => {
                     await customefeild.clickButton('Add New');
 
                     await customefeild.addWithTextType(
-                        name + 'abc',
+                        name,
                         'Text',
                         1,
                         'Test1'
                     );
-                    await customefeild.checkNameAndType(name + 'abc', 'Text');
+                    await customefeild.checkNameAndType(name, 'Text');
                 }
             );
             await PROCESS_TEST.step(
                 'Add Advance Categories With Boolean',
                 async () => {
                     await customefeild.clickButton('Add New');
+                    const booleanName =
+                        (await CustofeildHelper.generateRandomGradeName()) +
+                        'Boolean';
                     await customefeild.addWitBooleanType(
-                        name + 'abcd',
+                        booleanName,
                         'Boolean',
                         1,
                         'True'
                     );
 
-                    await customefeild.checkNameAndType(
-                        name + 'abcd',
-                        'Boolean'
-                    );
+                    await customefeild.checkNameAndType(booleanName, 'Boolean');
                 }
             );
 
@@ -107,17 +109,17 @@ test.describe('Configurations-Custom Feilds', () => {
                 'Add Advance Categories With Number type',
                 async () => {
                     await customefeild.clickButton('Add New');
+                    const numberName =
+                        (await CustofeildHelper.generateRandomGradeName()) +
+                        'Number';
                     await customefeild.addWithTextType(
-                        name + 'abce',
+                        numberName,
                         'Number',
                         1,
                         123
                     );
 
-                    await customefeild.checkNameAndType(
-                        name + 'abce',
-                        'Number'
-                    );
+                    await customefeild.checkNameAndType(numberName, 'Number');
                 }
             );
 
@@ -125,71 +127,78 @@ test.describe('Configurations-Custom Feilds', () => {
                 'Add Advance Categories With Date type',
                 async () => {
                     await customefeild.clickButton('Add New');
-                    await customefeild.addWithDateType(
-                        name + 'abcf',
-                        'Date',
-                        1
-                    );
 
-                    await customefeild.checkNameAndType(name + 'abcf', 'Date');
+                    const dateName =
+                        (await CustofeildHelper.generateRandomGradeName()) +
+                        'Date';
+                    await customefeild.addWithDateType(dateName, 'Date', 1);
+
+                    await customefeild.checkNameAndType(dateName, 'Date');
                 }
             );
 
             await PROCESS_TEST.step('Add with choice type', async () => {
                 await customefeild.clickButton('Add New');
+
+                const choiceName =
+                    (await CustofeildHelper.generateRandomGradeName()) +
+                    'Choice';
                 await customefeild.addWithChoiceType(
-                    name + 'abcge',
+                    choiceName,
                     'Choicelist',
-                    'Choice-Type-101597106309',
+                    'customechoce',
                     2
                 );
 
-                await customefeild.checkNameAndType(
-                    name + 'abcge',
-                    'Choicelist'
-                );
+                await customefeild.checkNameAndType(choiceName, 'Choicelist');
             });
             await PROCESS_TEST.step(
                 'Add Advance Categories With TextArea',
                 async () => {
                     await customefeild.clickButton('Add New');
+                    const textAreaName =
+                        (await CustofeildHelper.generateRandomGradeName()) +
+                        'TextArea';
                     await customefeild.addWithTextType(
-                        name + 'abcg',
+                        textAreaName,
                         'TextArea',
                         1,
                         'Test1'
                     );
 
                     await customefeild.checkNameAndType(
-                        name + 'abcg',
+                        textAreaName,
                         'TextArea'
                     );
                 }
             );
 
             await PROCESS_TEST.step('Change Status', async () => {
-                await customefeild.changeStatus(name + 'abc');
+                await customefeild.changeStatus(name);
             });
 
             await PROCESS_TEST.step('Change Mendatory', async () => {
-                await customefeild.changeMendatory(name + 'abc');
+                await customefeild.changeMendatory(name);
             });
 
             await PROCESS_TEST.step('Check Editable', async () => {
-                await customefeild.checkEdit(name + 'abc');
+                await customefeild.checkEdit(name);
+            });
+            await PROCESS_TEST.step('Edit with Empty Name', async () => {
+                await customefeild.changeNameORPriority(name, 'Text', 1, '', 2);
+                const notification = await customefeild.notificationHelper;
+
+                expect(await notification.getErrorMessage()).toBe(
+                    'Field Name is required'
+                );
             });
 
-            await PROCESS_TEST.step('Name and Priority Change', async () => {
-                const newName =
-                    await CustofeildHelper.generateRandomGradeName();
+            await PROCESS_TEST.step('Change Name', async () => {
+                await dialog.closeDialog();
+                await customefeild.clickButton('Yes!');
+                await customefeild.checkEdit(name);
 
-                await customefeild.changeNameORPriority(
-                    name + 'abc',
-                    'Text',
-                    1,
-                    newName,
-                    2
-                );
+                await customefeild.changeName(name, 'Text', newName);
             });
 
             await PROCESS_TEST.step(
@@ -197,7 +206,7 @@ test.describe('Configurations-Custom Feilds', () => {
                 async () => {
                     await customefeild.clickButton('Add New');
                     await customefeild.addWithTextType(
-                        name + 'abc',
+                        newName,
                         'Text',
                         1,
                         'Test1'
