@@ -425,7 +425,7 @@ test.describe('Configuration - Expense Head', () => {
             await PROCESS_TEST.step(
                 'Check Expense from expense Tab',
                 async () => {
-                    await expenseHeadDetails.checkExpense(
+                    await expenseHeadDetails.openDetailsPage(
                         'EXPVN614',
                         'EXPENSE NO.'
                     );
@@ -443,7 +443,10 @@ test.describe('Configuration - Expense Head', () => {
             });
 
             await PROCESS_TEST.step('Check on Bill Form', async () => {
-                await expenseHeadDetails.checkExpense('EXPVN614', 'BILL FROM');
+                await expenseHeadDetails.openDetailsPage(
+                    'EXPVN614',
+                    'BILL FROM'
+                );
 
                 const breadCrumb = expenseHeadDetails.breadCrumbHelper;
 
@@ -457,7 +460,7 @@ test.describe('Configuration - Expense Head', () => {
                 await expenseHeadDetails.clickOnTab('Expenses');
             });
             await PROCESS_TEST.step('Check on Bill To', async () => {
-                await expenseHeadDetails.checkExpense('EXPVN614', 'BILL TO');
+                await expenseHeadDetails.openDetailsPage('EXPVN614', 'BILL TO');
 
                 const breadCrumb = expenseHeadDetails.breadCrumbHelper;
 

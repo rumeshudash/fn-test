@@ -260,7 +260,15 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         });
     }
 
-    public async checkExpense(expense_number: string, columnName: string) {
+    /**
+     *
+     *@description - This function will redirect to the details page of the expense ,bill from and bill to from expense head details page
+     *
+     * @param {string} expense_number - The Expense Number to be searched
+     * @param {string} columnName - The Column Name to be searched
+     */
+
+    public async openDetailsPage(expense_number: string, columnName: string) {
         await this._page.waitForTimeout(1000);
 
         const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
