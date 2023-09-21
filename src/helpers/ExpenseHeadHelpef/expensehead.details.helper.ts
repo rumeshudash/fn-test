@@ -366,8 +366,12 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this.clickTextOnTable(row, 'EXPENSE NO.');
         await this._page.waitForTimeout(3000);
 
+        console.log('dateText:', dateText);
+
         const dateLocator = await this._page
-            .locator(`//span[@class='text-sm']`)
+            .locator(
+                `(//span[contains(@class,'font-medium text-base-primary')])[3]`
+            )
             .innerText();
 
         expect(await dateLocator.includes(dateText)).toBeTruthy();
