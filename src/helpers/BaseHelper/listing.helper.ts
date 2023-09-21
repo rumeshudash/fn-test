@@ -46,6 +46,16 @@ export class ListingHelper extends PageHelper {
             .allInnerTexts();
     }
 
+    public async checkIsColumnsPresentInTable(columns: string[]) {
+        let tableColumns = await this.getTableColumnNames();
+
+        for (const column of columns) {
+            expect(tableColumns, {
+                message: `${column} is present in table `,
+            }).toContain(column);
+        }
+    }
+
     /**
      * Finds a row in the table based on a query and the column title to search by.
      *
