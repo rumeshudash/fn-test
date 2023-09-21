@@ -126,6 +126,10 @@ test.describe('Configuration - Expense Head', () => {
                     await expenseHead.changeActiveStatus(
                         expenseHeadData.NewName
                     );
+
+                    await expenseHead.tabHelper.clickTab('Inactive');
+
+                    await expenseHead.searchInList(expenseHeadData.NewName);
                 }
             );
 
@@ -136,7 +140,9 @@ test.describe('Configuration - Expense Head', () => {
                         expenseHeadData.NewName
                     );
 
-                    await page.waitForTimeout(1000);
+                    await expenseHead.tabHelper.clickTab('Inactive');
+
+                    await expenseHead.searchInList(expenseHeadData.NewName);
                 }
             );
 

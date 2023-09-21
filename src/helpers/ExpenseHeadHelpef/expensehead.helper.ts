@@ -87,22 +87,13 @@ export class ExpenseHeadHelper extends ListingHelper {
     public async changeActiveStatus(name: string) {
         await this.changeStatus(name);
 
-        await this.tabHelper.clickTab('Inactive');
-
-        await this._page.waitForTimeout(2000);
-
-        await this.searchInList(name);
-
-        await this._page.waitForTimeout(2000);
+        await this._page.waitForTimeout(1000);
     }
 
     public async changeInactiveStatus(name: string) {
         await this.changeStatus(name);
 
-        await this.tabHelper.clickTab('Active');
-
-        await this.searchInList(name);
-        await this._page.waitForTimeout(2000);
+        await this._page.waitForTimeout(1000);
     }
 
     public async editExpenseHead(name: string, newname: string) {
