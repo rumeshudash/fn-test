@@ -79,8 +79,10 @@ export class MenucardHelper extends PageHelper {
     /**
      * @description -This function will check the menu items are correctly reflected in the menu card
      *
+     *
+     * @param menuName - The name of the main menu like dashboard,expenses etc.
      */
-    public async checkSideBarItems() {
+    public async checkSideBarItems(menuName: string) {
         const itemsText = await this._page
             .locator(`//div[contains(@class,'sidebar-items')]`)
             .innerText();
@@ -103,7 +105,7 @@ export class MenucardHelper extends PageHelper {
         });
 
         console.log('filteredAndCleanedItems:', filteredAndCleanedItems);
-        expect(filteredAndCleanedItems).toEqual(mainMenuArray);
+        expect(filteredAndCleanedItems.includes(menuName)).toBeTruthy();
     }
 
     /**

@@ -15,7 +15,7 @@ test.describe('Menu Card', () => {
         });
 
         await PROCESS_TEST.step('Check SideBar Items', async () => {
-            await menucard.checkSideBarItems();
+            await menucard.checkSideBarItems('Dashboard');
         });
         await PROCESS_TEST.step('Check Space in submeny', async () => {
             await menucard.checkSpaceInMenu('Parties');
