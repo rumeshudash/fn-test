@@ -285,6 +285,14 @@ export class CustofeildHelper extends ListingHelper {
 
         await this.searchInList(newname);
     }
+    /**
+     *
+     *@description - This function will change the priority of the custome feild
+     *
+     * @param {strung} name - Name of the custome feild
+     * @param {string} type - Type of the custome feild
+     * @param {number} newpriority - New priority of the custome feild
+     */
     public async changePriority(
         name: string,
         type: string,
