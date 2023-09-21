@@ -162,8 +162,6 @@ test.describe('Configurations-Custom Feilds', () => {
         });
 
         await PROCESS_TEST.step('Change Priority', async () => {
-            await dialog.closeDialog();
-            await customefeild.clickButton('Yes!');
             await customefeild.checkEdit(newName);
 
             await customefeild.changePriority(newName, 'Text', 2);
