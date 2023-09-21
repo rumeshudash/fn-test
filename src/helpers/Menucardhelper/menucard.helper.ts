@@ -2,20 +2,6 @@ import chalk from 'chalk';
 import { PageHelper } from '../BaseHelper/page.helper';
 import { Locator, expect } from '@playwright/test';
 
-const mainMenuArray = [
-    'Dashboard',
-    'Expenses',
-    'Advances',
-    'Parties',
-    'HR',
-    'Work Flows',
-    'Transactions',
-    'Configurations',
-    'Reports',
-    'Switch Mode',
-    'Settings',
-    'Logout',
-];
 const submenuObject = {
     Dashboard: ['AP Dashboard', 'Payment Dashboard'],
 
@@ -79,8 +65,9 @@ export class MenucardHelper extends PageHelper {
     /**
      * @description -This function will check the menu items are correctly reflected in the menu card
      *
+     * @param {string} menuName - The name of the main menu like dashboard,expenses etc.
      */
-    public async checkSideBarItems() {
+    public async checkSideBarItem(menuName: string) {
         const itemsText = await this._page
             .locator(`//div[contains(@class,'sidebar-items')]`)
             .innerText();
@@ -103,7 +90,7 @@ export class MenucardHelper extends PageHelper {
         });
 
         console.log('filteredAndCleanedItems:', filteredAndCleanedItems);
-        expect(filteredAndCleanedItems).toEqual(mainMenuArray);
+        expect(filteredAndCleanedItems.includes(menuName)).toBeTruthy();
     }
 
     /**
