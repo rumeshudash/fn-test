@@ -117,16 +117,8 @@ export class ExpenseHelper extends BaseHelper {
         await this.locate(menuSelector).click();
     }
 
-    /**
-     * Fills the expenses with the given data array.
-     *
-     * @param {ExpenseDetailInputs[]} data - The array of expense detail inputs.
-     * @return {Promise<void>} A promise that resolves when the expenses are filled.
-     */
-
-    public async fillExpenses(data: ExpenseDetailInputs[] = []) {
+    public async fillBusinessDetails(data: BusinessDetails[] = []) {
         const helper = this.locate(ExpenseHelper.DETAIL_DOM_SELECTOR);
-
         for (let expData of data) {
             if (expData.to)
                 await helper._selectDropdown('Select Business', {
@@ -136,10 +128,6 @@ export class ExpenseHelper extends BaseHelper {
                 await helper._selectDropdown('Select Business', {
                     nth: expData.to_nth,
                 });
-            await helper.fillText(expData.invoice, {
-                name: 'invoice_number',
-            });
-            await this._page.waitForTimeout(1000);
 
             if (expData.from)
                 await helper._selectDropdown('Select Vendor', {
@@ -151,6 +139,31 @@ export class ExpenseHelper extends BaseHelper {
                     dropdownLabel: 'bill-from',
                     nth: expData.from_nth,
                 });
+        }
+    }
+
+    /**
+     * Fills the expenses with the given data array.
+     *
+     * @param {ExpenseDetailInputs[]} data - The array of expense detail inputs.
+     * @return {Promise<void>} A promise that resolves when the expenses are filled.
+     */
+    public async fillExpenses(data: ExpenseDetailInputs[] = []) {
+        const helper = this.locate(ExpenseHelper.DETAIL_DOM_SELECTOR);
+
+        for (let expData of data) {
+            // if (expData.to)
+            //     await helper._selectDropdown('Select Business', {
+            //         name: expData.to,
+            //     });
+            // if (expData.to_nth)
+            //     await helper._selectDropdown('Select Business', {
+            //         nth: expData.to_nth,
+            //     });
+            await helper.fillText(expData.invoice, {
+                name: 'invoice_number',
+            });
+            await this._page.waitForTimeout(1000);
 
             await helper.fillInput(expData.amount, {
                 name: 'amount',
@@ -159,20 +172,11 @@ export class ExpenseHelper extends BaseHelper {
                 name: 'taxable_amount',
             });
 
-            if (expData.department)
-                await helper.selectOption({
-                    input: expData.department,
-                    name: 'department',
-                });
-
-            // remove default poc
-            await this._page
-                .locator(
-                    "//input[@name='poc']/parent::div[contains(@class,'selectbox-container')]"
-                )
-                .locator('svg')
-                .first()
-                .click();
+            // if (expData.department)
+            //     await helper.selectOption({
+            //         input: expData.department,
+            //         name: 'department',
+            //     });
 
             if (expData.expense_head)
                 await helper.selectOption({
@@ -242,11 +246,28 @@ export class ExpenseHelper extends BaseHelper {
         }
     }
 
+    // public async checkDepartmentFetch() {
+    //     const department = this.locate(
+    //         '//input[@name="department"][1]'
+    //     )._locator.first();
+    //     await expect(department).toBeVisible();
+    // }
+
     public async addDocument() {
         await this._page
             .locator("//div[@role='presentation']")
             .locator("//input[@type='file']")
             .setInputFiles('images/pan-card.jpg');
         await this._page.waitForTimeout(1000);
+    }
+
+    public async removeDefaultInputValue(name: string) {
+        // remove default poc
+        await this.locate(
+            `//input[@name='${name}']/parent::div[contains(@class,'selectbox-container')]`
+        )
+            ._locator.locator('svg')
+            .first()
+            .click();
     }
 }

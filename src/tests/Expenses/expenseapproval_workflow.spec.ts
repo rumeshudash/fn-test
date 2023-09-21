@@ -14,14 +14,16 @@ import { test } from '@playwright/test';
 import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
-const EXPENSEDETAILS = {
+const BusinessInfo = {
     to: 'Hidesign India Pvt Ltd',
     from: 'Chumbak Design Private Limited',
+};
+const EXPENSEDETAILS = {
     invoice: ' inv' + generateRandomNumber(),
     amount: 10000,
     taxable_amount: 10000,
     department: 'Sales',
-    expense_head: 'Refund',
+    expense_head: 'Foods & Accommodations',
     poc: 'Sunil',
     pay_to: 'Vendor',
     desc: 'Dummy Text',
@@ -71,6 +73,7 @@ describe('TECF007', () => {
         await expense.addDocument();
 
         await test.step('Fill Expense', async () => {
+            await expense.fillBusinessDetails([BusinessInfo]);
             await expense.fillExpenses([EXPENSEDETAILS]);
         });
         await test.step('Add Taxes', async () => {
@@ -208,7 +211,11 @@ describe('TECF007', () => {
             expect(
                 await savedExpensePage.checkExpenseTo(),
                 chalk.red('Check To Expense Details match')
-            ).toBe(EXPENSEDETAILS.to + '…');
+            ).toBe(BusinessInfo.to);
+            expect(
+                await savedExpensePage.checkExpenseFrom(),
+                chalk.red('Vendor name match')
+            ).toBe(BusinessInfo.from);
             await page.waitForTimeout(1000);
         });
     });

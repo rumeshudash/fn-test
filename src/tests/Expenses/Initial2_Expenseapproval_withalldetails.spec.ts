@@ -27,15 +27,19 @@ describe('TECF004', () => {
 
         await expense.addDocument();
         await test.step('Fill Expense', async () => {
-            await expense.fillExpenses([
+            await expense.fillBusinessDetails([
                 {
                     to: 'Hidesign India Pvt Ltd',
                     from: 'Adidas India Marketing Private Limited',
+                },
+            ]);
+            await expense.fillExpenses([
+                {
                     invoice: ' inv' + generateRandomNumber(),
                     amount: 10000,
                     taxable_amount: 10000,
                     department: 'Sales',
-                    expense_head: 'Refund',
+                    expense_head: 'Foods & Accommodations',
                     poc: 'Abhishek',
                     pay_to: 'Vendor',
                     desc: 'Dummy Text',

@@ -14,9 +14,12 @@ import { test } from '@playwright/test';
 import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
-const EXPENSEDETAILS = {
+
+const BusinessInfo = {
     to: 'Bata India Limited',
     from: 'Amazon',
+};
+const EXPENSEDETAILS = {
     invoice: ' inv' + generateRandomNumber(),
     amount: 6000,
     taxable_amount: 6000,
@@ -70,6 +73,7 @@ describe('TECF008', () => {
         await expense.addDocument();
 
         await test.step('Fill Expense', async () => {
+            await expense.fillBusinessDetails([BusinessInfo]);
             await expense.fillExpenses([EXPENSEDETAILS]);
         });
 

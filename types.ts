@@ -109,12 +109,13 @@ interface LoginInfo {
     portal?: string;
     organization?: string;
 }
-
-interface ExpenseDetailInputs {
+interface BusinessDetails {
     to?: string;
     to_nth?: number;
     from?: string;
     from_nth?: number;
+}
+interface ExpenseDetailInputs {
     invoice?: string;
     amount?: number;
     taxable_amount?: number;
@@ -124,6 +125,7 @@ interface ExpenseDetailInputs {
     pay_to?: string;
     employee?: string;
     desc?: string;
+    comment?: string;
 }
 
 interface AddTaxesData {

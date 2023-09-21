@@ -11,9 +11,11 @@ import chalk from 'chalk';
 const { expect, describe } = PROCESS_TEST;
 
 describe('TECF001', () => {
-    const EXPENSEDETAILS = {
+    const BusinessInfo = {
         to: 'Hidesign India Pvt Ltd',
         from: 'Adidas India Marketing Private Limited',
+    };
+    const EXPENSEDETAILS = {
         invoice: ' inv' + generateRandomNumber(),
         amount: 10000,
         taxable_amount: 10000,
@@ -26,39 +28,52 @@ describe('TECF001', () => {
         async ({ page }) => {
             const expense = new ExpenseHelper(page);
             const toggleHelper = new ApprovalToggleHelper(page);
+            const savedExpensePage = new SavedExpenseCreation(page);
             await toggleHelper.gotoExpenseApproval();
             await toggleHelper.allInactive();
             await expense.init();
 
-            await expense.addDocument();
-            await expense.fillExpenses([EXPENSEDETAILS]);
-            await expense.addTaxesData([
-                {
-                    gst: '12%',
-                    cess: '200',
-                    tds: 'Salaries', //takes from second row
-                    tcs: '12',
-                },
-            ]);
-            // await page.getByRole('button', { name: 'Save' }).click();
-            await expense.clickButton('Save');
-            const savedExpensePage = new SavedExpenseCreation(page);
-
-            await test.step('Check Saved and Party Status', async () => {
-                await savedExpensePage.notification.checkToastSuccess(
-                    'Invoice raised successfully.'
-                );
-                // expect(
-                //     await savedExpensePage.toastMessage(),
-                //     chalk.red('Invoice not raised.')
-                // ).toBe('Invoice raised successfully.');
-                expect(
-                    await savedExpensePage.checkPartyStatus(),
-                    chalk.red('Party Status not open.')
-                ).toBe('Open');
+            await PROCESS_TEST.step('Fill Expense Details', async () => {
+                await expense.addDocument();
+                await expense.fillBusinessDetails([BusinessInfo]);
+                await expense.fillExpenses([EXPENSEDETAILS]);
             });
 
-            await test.step('Expense Status', async () => {
+            await PROCESS_TEST.step('Fill Tax ', async () => {
+                await expense.addTaxesData([
+                    {
+                        gst: '12%',
+                        cess: '200',
+                        tds: 'Salaries', //takes from second row
+                        tcs: '12',
+                    },
+                ]);
+            });
+            await PROCESS_TEST.step('Remove default input value', async () => {
+                await expense.removeDefaultInputValue('poc');
+                await expense.removeDefaultInputValue('department');
+            });
+            // await page.getByRole('button', { name: 'Save' }).click();
+            await expense.clickButton('Save');
+
+            await PROCESS_TEST.step(
+                'Check Saved and Party Status',
+                async () => {
+                    await savedExpensePage.notification.checkToastSuccess(
+                        'Invoice raised successfully.'
+                    );
+                    // expect(
+                    //     await savedExpensePage.toastMessage(),
+                    //     chalk.red('Invoice not raised.')
+                    // ).toBe('Invoice raised successfully.');
+                    expect(
+                        await savedExpensePage.checkPartyStatus(),
+                        chalk.red('Party Status not open.')
+                    ).toBe('Open');
+                }
+            );
+
+            await PROCESS_TEST.step('Expense Status', async () => {
                 expect(
                     await savedExpensePage.expenseStatusSuccess('verification'),
                     chalk.red('Verification Status check')
@@ -73,11 +88,15 @@ describe('TECF001', () => {
                 ).toBe(false);
             });
 
-            await test.step('Check Business and Vendor', async () => {
+            await PROCESS_TEST.step('Check Business and Vendor', async () => {
                 expect(
                     await savedExpensePage.checkExpenseTo(),
                     chalk.red('Check To match')
-                ).toBe(EXPENSEDETAILS.to + '…');
+                ).toBe(BusinessInfo.to);
+                expect(
+                    await savedExpensePage.checkExpenseFrom(),
+                    chalk.red('Check from match')
+                ).toBe(BusinessInfo.from);
             });
         }
     );

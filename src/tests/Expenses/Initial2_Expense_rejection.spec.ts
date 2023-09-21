@@ -26,15 +26,14 @@ describe('TECF006', () => {
         await expense.init();
         await expense.addDocument();
         await test.step('Fill Expense', async () => {
+            await expense.fillBusinessDetails([{ to_nth: 1, from_nth: 1 }]);
             await expense.fillExpenses([
                 {
-                    to_nth: 1,
-                    from_nth: 2,
                     invoice: ' inv' + generateRandomNumber(),
                     amount: 10000,
                     taxable_amount: 10000,
                     department: 'Sales',
-                    expense_head: 'Refund',
+                    expense_head: 'Foods & Accommodations',
                     poc: 'Abhishek',
                     pay_to: 'Vendor',
                     desc: 'Dummy Text',

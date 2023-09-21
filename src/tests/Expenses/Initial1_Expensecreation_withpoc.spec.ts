@@ -20,11 +20,15 @@ describe('TECF002', () => {
         await expense.init();
 
         await expense.addDocument();
-        await test.step('Fill Expense', async () => {
-            await expense.fillExpenses([
+        await PROCESS_TEST.step('Fill Expense', async () => {
+            await expense.fillBusinessDetails([
                 {
                     to: 'Hidesign India Pvt Ltd',
                     from: 'Adidas India Marketing Private Limited',
+                },
+            ]);
+            await expense.fillExpenses([
+                {
                     invoice: ' inv' + generateRandomNumber(),
                     amount: 10000,
                     taxable_amount: 10000,
@@ -36,7 +40,7 @@ describe('TECF002', () => {
                 },
             ]);
         });
-        await test.step('Add Taxes', async () => {
+        await PROCESS_TEST.step('Add Taxes', async () => {
             await expense.addTaxesData([
                 {
                     gst: '8%',
@@ -45,26 +49,32 @@ describe('TECF002', () => {
                     tcs: '20',
                 },
             ]);
-            await expense.clickButton('Save');
         });
+        await PROCESS_TEST.step('Remove default input value', async () => {
+            await expense.removeDefaultInputValue('department');
+        });
+        await expense.clickButton('Save');
 
         const savedExpensePage = new SavedExpenseCreation(page);
 
-        await test.step('Check Saved and Party Status with poc', async () => {
-            await savedExpensePage.notification.checkToastSuccess(
-                'Invoice raised successfully.'
-            );
-            // expect(
-            //     await savedExpensePage.toastMessage(),
-            //     chalk.red('Toast message match')
-            // ).toBe('Invoice raised successfully.');
-            expect(
-                await savedExpensePage.checkPartyStatus(),
-                chalk.red('Check party status match')
-            ).toBe('Submitted');
-        });
+        await PROCESS_TEST.step(
+            'Check Saved and Party Status with poc',
+            async () => {
+                await savedExpensePage.notification.checkToastSuccess(
+                    'Invoice raised successfully.'
+                );
+                // expect(
+                //     await savedExpensePage.toastMessage(),
+                //     chalk.red('Toast message match')
+                // ).toBe('Invoice raised successfully.');
+                expect(
+                    await savedExpensePage.checkPartyStatus(),
+                    chalk.red('Check party status match')
+                ).toBe('Submitted');
+            }
+        );
 
-        await test.step('Check Approval Flows', async () => {
+        await PROCESS_TEST.step('Check Approval Flows', async () => {
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
             const verificationFlows = new ApprovalWorkflowsTab(page);
