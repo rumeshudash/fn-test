@@ -18,6 +18,16 @@ interface InputFieldLocatorOptions {
     type?: string;
     hasText?: string;
 }
+interface SelectBoxLocatorOptions {
+    option?: string | number;
+    input?: string | number;
+    selector?: string;
+    placeholder?: string;
+    label?: string;
+    name?: string;
+    hasText?: string;
+    exact?: boolean;
+}
 
 type LocatorRoles =
     | 'alert'

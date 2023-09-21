@@ -251,28 +251,17 @@ export class BaseHelper {
     // }
 
     /**
-     * Selects an option from a dropdown menu based on the provided options.
+     * Retrieves the select box element based on the provided options.
      *
-     * @param {string | number} options.option - The value of the option to select.
-     * @param {string | number} options.input - The value to fill in the input field.
-     * @param {string} options.selector - The selector to locate the dropdown menu.
-     * @param {string} options.placeholder - The placeholder text of the dropdown menu.
-     * @param {string} options.label - The label text of the dropdown menu.
-     * @param {string} options.name - The name attribute of the input field.
-     * @return {Promise<void>} A promise that resolves when the option is selected.
+     * @param {SelectBoxLocatorOptions} options - The options for locating the select box element.
+     *    - selector: The CSS selector to locate the select box element. (optional)
+     *    - placeholder: The placeholder text to locate the select box element. (optional)
+     *    - name: The name attribute value of the input element to locate the select box element. (optional)
+     *    - hasText: The text value to locate the select box element. (optional)
+     * @return {Element} The located select box element.
      */
-    public async selectOption(options?: {
-        option?: string | number;
-        input?: string | number;
-        selector?: string;
-        placeholder?: string;
-        label?: string;
-        name?: string;
-        hasText?: string;
-        exact?: boolean;
-    }) {
-        const { selector, placeholder, name, label, input, option, hasText } =
-            options || {};
+    public getSelectBoxElement(options?: SelectBoxLocatorOptions) {
+        const { selector, placeholder, name, hasText } = options || {};
 
         let tempSelector = '//div[contains(@class,"selectbox-container")]';
 
@@ -285,7 +274,24 @@ export class BaseHelper {
         if (hasText)
             tempSelector += `//div[text()="${hasText}"]/ancestor::div[contains(@class,"selectbox-container")]`;
 
-        const selectBox = this.locate(selector || tempSelector);
+        return this.locate(selector || tempSelector);
+    }
+
+    /**
+     * Selects an option from a dropdown menu based on the provided options.
+     *
+     * @param {string | number} options.option - The value of the option to select.
+     * @param {string | number} options.input - The value to fill in the input field.
+     * @param {string} options.selector - The selector to locate the dropdown menu.
+     * @param {string} options.placeholder - The placeholder text of the dropdown menu.
+     * @param {string} options.label - The label text of the dropdown menu.
+     * @param {string} options.name - The name attribute of the input field.
+     * @return {Promise<void>} A promise that resolves when the option is selected.
+     */
+    public async selectOption(options?: SelectBoxLocatorOptions) {
+        const { input, option } = options || {};
+
+        const selectBox = this.getSelectBoxElement(options);
 
         if (input) {
             await selectBox
@@ -298,7 +304,8 @@ export class BaseHelper {
         }
         console.log(`${input || option} is selected`);
 
-        const elements = await this._page
+        const elements = await selectBox
+            .getLocator()
             .locator(
                 `//div[contains(@class,"MenuList")]//div[contains(@class,"option")]//div[contains(text(),"${
                     input || option
@@ -325,6 +332,47 @@ export class BaseHelper {
                 chalk.red(`${input || option} does not found in dropdown`)
             );
         }
+    }
+
+    /**
+     * Opens the select box and returns the select box element.
+     *
+     * @param {SelectBoxLocatorOptions} [options] - The options for locating the select box element.
+     * @return {Promise<ElementHandle>} The select box element.
+     */
+    public async openSelectBox(options?: SelectBoxLocatorOptions) {
+        const selectBox = this.getSelectBoxElement(options);
+        await selectBox.click();
+        return selectBox;
+    }
+
+    /**
+     * Clicks on the select box's footer action.
+     *
+     * @param {SelectBoxLocatorOptions} options - The options for locating the select box.
+     * @param {string} actionName - The name of the action to perform on the select box footer. (optional)
+     * @return {Promise<void>} A promise that resolves when the action is clicked.
+     */
+    public async clickSelectBoxFooterAction(
+        options?: SelectBoxLocatorOptions,
+        actionName?: string
+    ) {
+        const selectBox = this.getSelectBoxElement(options);
+        const menuFooter = selectBox
+            .getLocator()
+            .locator(
+                `//div[contains(@class,"Menu")]/div[contains(@class, "menu-footer")]`
+            );
+
+        let button = menuFooter.locator('button');
+        if (actionName) {
+            button = menuFooter.locator('button', { hasText: actionName });
+        }
+
+        await expect(button, 'Checking footer button is visible').toBeVisible();
+
+        this.setLocator(button);
+        await this.click();
     }
 
     /**
