@@ -56,10 +56,15 @@ export class DocumentspreferenceHelper extends ListingHelper {
         expect(RowNames).toEqual(name);
     }
 
+    /**
+     *  @description - This function will change the status of the Document Preference
+     *
+     * @param {string} name - Name of the Document Preference
+     * @param {string} columnName - Name of the Column
+     */
+
     public async changeSatus(name: string, columnName: string) {
         await this.searchInList(name);
-
-        await this._page.waitForTimeout(1000);
 
         const row = await this.findRowInTable(name, 'NAME');
 
@@ -69,8 +74,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
     }
 
     /**
-     * @todo -Need to remove the counts and bypass after bug fixes
-
+     * @description - This function will click on Add new button
+     *
      */
     public async clickAddBtn() {
         await this._page
@@ -82,7 +87,13 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    public async getSelectOptions() {
+    /**
+     * @description - This function will return the select options from the dropdown and return the array
+     *
+     * @returns {Promise<string[]>} - This function will return the array of the options
+     *
+     */
+    public async getSelectOptions(): Promise<string[]> {
         const locator = await this.dialogHelper.getLocator();
 
         await locator
@@ -98,6 +109,13 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         return newArray;
     }
+
+    /**
+     * @description - This Function will add document preference with first items of select option
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addDocumentPreference() {
         const count = await this.getRowCount('NAME');
 
@@ -123,7 +141,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
             console.log(chalk.red('Maximum Document Preference Added'));
         }
     }
-
+    /**
+     * @description - This Function will add document preference with first items of select option with document mandatory checkbox clicked
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addDocumentMendatory() {
         const count = await this.getRowCount('NAME');
 
@@ -153,6 +176,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
             console.log(chalk.red('Maximum Document Preference Added'));
         }
     }
+    /**
+     * @description - This Function will add document preference with first items of select option with document files mandatory checkbox clicked
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addDocumentFileMendatory() {
         const count = await this.getRowCount('NAME');
 
@@ -184,6 +213,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
         }
     }
 
+    /**
+     * @description - This Function will add document preference with first items of select option with both checkbox clicked
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addWithBothMandatory() {
         const count = await this.getRowCount('NAME');
 
@@ -219,6 +254,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
         }
     }
 
+    /**
+     * @description - This Function will add document preference with first items of select option with  save and create another checkbox clicked
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addAndClickCheck() {
         const count = await this.getRowCount('NAME');
 
@@ -250,6 +291,11 @@ export class DocumentspreferenceHelper extends ListingHelper {
         }
     }
 
+    /**
+     *
+     * @returns {promise<number>} - T return the count of the rows in the table
+     * @description - This function will return the count of the rows in the table
+     */
     public async checkRowCount() {
         await this.searchInList('');
         const count = await this.getRowCount('NAME');
