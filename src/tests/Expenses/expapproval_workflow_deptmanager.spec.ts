@@ -29,8 +29,8 @@ const EXPENSEDETAILS = {
     pay_to: 'Vendor',
     desc: 'Dummy Text',
 };
-describe('TECF008', () => {
-    PROCESS_TEST('Expense Approval by FinOps', async ({ page }) => {
+describe('Expense Creation - Finops Portal', () => {
+    PROCESS_TEST('TECF008', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const signIn = new SignInHelper(page);
         const expense = new ExpenseHelper(page);
@@ -72,12 +72,12 @@ describe('TECF008', () => {
 
         await expense.addDocument();
 
-        await test.step('Fill Expense', async () => {
+        await PROCESS_TEST.step('Fill Expense', async () => {
             await expense.fillBusinessDetails([BusinessInfo]);
             await expense.fillExpenses([EXPENSEDETAILS]);
         });
 
-        // await test.step('Add Taxes', async () => {
+        // await PROCESS_TEST.step('Add Taxes', async () => {
         //     await expense.addTaxesData([
         //         {
         //             gst: '5%',
@@ -92,22 +92,25 @@ describe('TECF008', () => {
 
         const savedExpensePage = new SavedExpenseCreation(page);
 
-        await test.step('Check Saved and Party Status with poc', async () => {
-            await savedExpensePage.notification.checkToastSuccess(
-                'Invoice raised successfully.'
-            );
-            // expect(
-            //     await savedExpensePage.toastMessage(),
-            //     chalk.red('Toast Message match')
-            // ).toBe('Invoice raised successfully.');
+        await PROCESS_TEST.step(
+            'Check Saved and Party Status with poc',
+            async () => {
+                await savedExpensePage.notification.checkToastSuccess(
+                    'Invoice raised successfully.'
+                );
+                // expect(
+                //     await savedExpensePage.toastMessage(),
+                //     chalk.red('Toast Message match')
+                // ).toBe('Invoice raised successfully.');
 
-            expect(
-                await savedExpensePage.checkPartyStatus(),
-                chalk.red('Party Status match')
-            ).toBe('Submitted');
-        });
+                expect(
+                    await savedExpensePage.checkPartyStatus(),
+                    chalk.red('Party Status match')
+                ).toBe('Submitted');
+            }
+        );
 
-        await test.step('Check Approval Flows', async () => {
+        await PROCESS_TEST.step('Check Approval Flows', async () => {
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
             await verificationFlows.checkLevel();
@@ -121,7 +124,7 @@ describe('TECF008', () => {
             ).toBe('Pending Approval');
         });
 
-        await test.step('POC Approval', async () => {
+        await PROCESS_TEST.step('POC Approval', async () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
@@ -143,7 +146,7 @@ describe('TECF008', () => {
             ).toBe('Approved');
         });
 
-        await test.step('Level Status in FinOps', async () => {
+        await PROCESS_TEST.step('Level Status in FinOps', async () => {
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
             await page.waitForLoadState('networkidle');
@@ -162,7 +165,7 @@ describe('TECF008', () => {
             // await verificationFlows.checkApprovalByFinOps();
         });
 
-        await test.step('Level Two Verification Flows', async () => {
+        await PROCESS_TEST.step('Level Two Verification Flows', async () => {
             const nextEmail = await verificationFlows.nextApprovalFlows(
                 'Verification Approvals'
             );
@@ -182,7 +185,7 @@ describe('TECF008', () => {
             await verificationFlows.checkManagerApproval();
         });
 
-        await test.step('Payment Approval', async () => {
+        await PROCESS_TEST.step('Payment Approval', async () => {
             await page.waitForTimeout(1000);
             const paymentEmail = await paymentFlows.getPaymentEmail();
             const expData = await verificationFlows.getExpData();

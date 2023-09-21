@@ -12,8 +12,8 @@ import { test } from '@playwright/test';
 
 const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
-describe('TECF004', () => {
-    PROCESS_TEST('Expense Approval by POC with Comment', async ({ page }) => {
+describe('Expense Creation - Finops Portal', () => {
+    PROCESS_TEST('TECF004', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const verificationFlows = new ApprovalWorkflowsTab(page);
@@ -26,7 +26,7 @@ describe('TECF004', () => {
         await expense.init();
 
         await expense.addDocument();
-        await test.step('Fill Expense', async () => {
+        await PROCESS_TEST.step('Fill Expense', async () => {
             await expense.fillBusinessDetails([
                 {
                     to: 'Hidesign India Pvt Ltd',
@@ -46,7 +46,7 @@ describe('TECF004', () => {
                 },
             ]);
         });
-        await test.step('Add Taxes', async () => {
+        await PROCESS_TEST.step('Add Taxes', async () => {
             await expense.addTaxesData([
                 {
                     gst: '5%',
@@ -60,17 +60,22 @@ describe('TECF004', () => {
 
         const savedExpensePage = new SavedExpenseCreation(page);
 
-        await test.step('Check Saved and Party Status with poc', async () => {
-            await savedExpensePage.notification.checkToastSuccess(
-                'Invoice raised successfully.'
-            );
-            // expect(await savedExpensePage.toastMessage()).toBe(
-            //     'Invoice raised successfully.'
-            // );
-            expect(await savedExpensePage.checkPartyStatus()).toBe('Submitted');
-        });
+        await PROCESS_TEST.step(
+            'Check Saved and Party Status with poc',
+            async () => {
+                await savedExpensePage.notification.checkToastSuccess(
+                    'Invoice raised successfully.'
+                );
+                // expect(await savedExpensePage.toastMessage()).toBe(
+                //     'Invoice raised successfully.'
+                // );
+                expect(await savedExpensePage.checkPartyStatus()).toBe(
+                    'Submitted'
+                );
+            }
+        );
 
-        await test.step('Check Approval Flows', async () => {
+        await PROCESS_TEST.step('Check Approval Flows', async () => {
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
             await verificationFlows.checkLevel();
@@ -83,7 +88,7 @@ describe('TECF004', () => {
             ).toBe('Pending Approval');
         });
 
-        await test.step('POC Approval', async () => {
+        await PROCESS_TEST.step('POC Approval', async () => {
             const pocEmail = await verificationFlows.checkEmail();
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
@@ -106,7 +111,7 @@ describe('TECF004', () => {
                 )
             ).toBe('Approved');
         });
-        await test.step('Level Status in FinOps', async () => {
+        await PROCESS_TEST.step('Level Status in FinOps', async () => {
             const expData = await verificationFlows.getExpData();
             await savedExpensePage.logOut();
             await page.waitForLoadState('networkidle');

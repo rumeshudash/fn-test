@@ -13,7 +13,7 @@ import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 
-describe('TECF003', () => {
+describe('Expense Creation - Finops Portal', () => {
     const BusinessInfo = {
         to: 'Hidesign India Pvt Ltd',
         from: 'Adidas India Marketing Private Limited',
@@ -26,7 +26,7 @@ describe('TECF003', () => {
         pay_to: 'Vendor',
         desc: 'Dummy Text',
     };
-    PROCESS_TEST('Expense Approval by POC', async ({ page, login }) => {
+    PROCESS_TEST('TECF003', async ({ page, login }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const signIn = new SignInHelper(page);
@@ -167,3 +167,7 @@ describe('TECF003', () => {
         });
     });
 });
+
+/**
+ * @todo: Select department is yet to implement
+ */

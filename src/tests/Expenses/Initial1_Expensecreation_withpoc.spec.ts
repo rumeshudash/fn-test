@@ -6,11 +6,10 @@ import {
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
-import { test } from '@playwright/test';
 import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
-describe('TECF002', () => {
+describe('Expense Creation - Finops Portal', () => {
     PROCESS_TEST('Raise Expense with POC', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
@@ -20,7 +19,7 @@ describe('TECF002', () => {
         await expense.init();
 
         await expense.addDocument();
-        await PROCESS_TEST.step('Fill Expense', async () => {
+        await PROCESS_TEST.step('TECF002', async () => {
             await expense.fillBusinessDetails([
                 {
                     to: 'Hidesign India Pvt Ltd',
