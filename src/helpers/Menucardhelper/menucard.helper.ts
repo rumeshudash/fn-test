@@ -105,7 +105,7 @@ export class MenucardHelper extends PageHelper {
         });
 
         console.log('filteredAndCleanedItems:', filteredAndCleanedItems);
-        expect(filteredAndCleanedItems.includes(menuName)).toBeTruthy();
+        expect(filteredAndCleanedItems).toContainEqual(menuName);
     }
 
     /**
