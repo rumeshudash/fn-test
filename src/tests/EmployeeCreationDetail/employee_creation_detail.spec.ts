@@ -7,7 +7,7 @@ import { DocumentInfo } from '@/utils/required_data';
 
 const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
-describe('Expense Creation-detail>Finops Portal', () => {
+describe('Employee Creation-detail>Finops Portal', () => {
     const employeeCreationInfo_SaveAndCreate = {
         name: `${generateRandomName()}`,
         email: `email${generateRandomNumber()}@test.com`,
@@ -553,7 +553,7 @@ describe('Expense Creation-detail>Finops Portal', () => {
                     'AMOUNT',
                     'ADDED AT',
                 ];
-                await detailsPage.listing.checkIsColumnsPresentInTable(columns);
+                await detailsPage.listing.checkTableColumnsExist(columns);
             });
             await PROCESS_TEST.step('Verify Bank Tab', async () => {
                 await detailsPage.tab.clickTab('Bank');
@@ -568,7 +568,7 @@ describe('Expense Creation-detail>Finops Portal', () => {
                     'BRANCH',
                     'ACTION',
                 ];
-                await detailsPage.listing.checkIsColumnsPresentInTable(columns);
+                await detailsPage.listing.checkTableColumnsExist(columns);
             });
             await PROCESS_TEST.step('Verify Reportee tab', async () => {
                 await detailsPage.tab.clickTab('Reportees');
@@ -581,7 +581,7 @@ describe('Expense Creation-detail>Finops Portal', () => {
                     'DESIGNATION',
                     'DEPARTMENT',
                 ];
-                await detailsPage.listing.checkIsColumnsPresentInTable(columns);
+                await detailsPage.listing.checkTableColumnsExist(columns);
             });
             await PROCESS_TEST.step('Verify Advance tab', async () => {
                 await detailsPage.tab.clickTab('Advance');
@@ -593,7 +593,7 @@ describe('Expense Creation-detail>Finops Portal', () => {
                     'PURPOSE',
                     'CREATED AT',
                 ];
-                await detailsPage.listing.checkIsColumnsPresentInTable(columns);
+                await detailsPage.listing.checkTableColumnsExist(columns);
             });
             await PROCESS_TEST.step('Verify Delegation Tabs', async () => {
                 await detailsPage.tab.clickTab('Delegations');
@@ -608,7 +608,7 @@ describe('Expense Creation-detail>Finops Portal', () => {
                     'STATUS',
                     'ADDED AT',
                 ];
-                await detailsPage.listing.checkIsColumnsPresentInTable(columns);
+                await detailsPage.listing.checkTableColumnsExist(columns);
             });
         });
     });
