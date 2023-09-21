@@ -194,26 +194,43 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this.documentHelper.toggleDocumentView('Document View');
         await this.documentHelper.checkZoom();
     }
-
+    /**
+     *
+     * @description - This function will check the pagination
+     */
     public async checkPagination() {
         await this.documentHelper.checkPagination();
     }
-
+    /**
+     *
+     * @description - This function will Verify the addition of the notes
+     *
+     * @param note {title: string; date: Date} - Title and Date of the note to be added
+     */
     public async verifyNoteAddition(note: { title: string; date: Date }) {
         await this.noteHelper.checkNoteExists({
             title: note.title,
         });
     }
-    public async checkDocumentDelete(document: {
-        comment: string;
-        date: Date;
-    }) {
+    /**
+     *
+     * @description - This function will delete the documents
+     *
+     * @param document {comment: string; date: Date} - Comment and Date of the document to be deleted
+     */
+    public async documentDelete(document: { comment: string; date: Date }) {
         await this.documentHelper.toggleDocumentView('Table View');
         await this.documentHelper.checkDocumentDelete({
             comment: document.comment,
         });
     }
-
+    /**
+     *
+     * @description - This function will Edits the notes
+     *
+     * @param note {title: string; date: Date} - Title and Date of the note to be edited
+     * @param {string} newNotes - New notes to be added
+     */
     public async editNotes(
         note: { title: string; date: Date },
         newNotes: string
@@ -231,6 +248,12 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
 
+    /**
+     *
+     * @description - This function will delete the notes
+     *
+     * @param note {title: string; date: Date} - Title and Date of the note to be deleted
+     */
     public async deleteNotes(note: { title: string; date: Date }) {
         await this.noteHelper.clickDeleteIcon({
             title: note.title,

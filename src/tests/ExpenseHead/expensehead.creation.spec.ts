@@ -401,7 +401,7 @@ test.describe('Configuration - Expense Head', () => {
             // });
 
             await PROCESS_TEST.step('Delete Document', async () => {
-                await expenseHeadDetails.checkDocumentDelete(document);
+                await expenseHeadDetails.documentDelete(document);
             });
         }
     );
