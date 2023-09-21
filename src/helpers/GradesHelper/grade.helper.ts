@@ -7,9 +7,11 @@ import { expect } from '@playwright/test';
 import { StatusHelper } from '../BaseHelper/status.helper';
 import chalk from 'chalk';
 
-type statusType = 'Active' | 'Inactive';
-
 export class GradesHelper extends ListingHelper {
+    /**
+     * @description - Creating instnce of DialogHelper, NotificationHelper, StatusHelper
+     *
+     */
     public dialogHelper: DialogHelper;
 
     public notificationHelper: NotificationHelper;
@@ -24,13 +26,21 @@ export class GradesHelper extends ListingHelper {
 
         this.statusHelper = new StatusHelper(page);
     }
-    private static GRADES_DOM_SELECTOR =
-        "(//div[contains(@class,'flex-1 h-full')])[1]";
 
+    /**
+     * @description - Navigate to Grades Page
+     *
+     */
     public async init() {
         await this.navigateTo('GRADES');
     }
 
+    /**
+     * @description - Add Grades with Name and Priority
+     *
+     * @param name - Name of the Grade
+     * @param priority - Priority of the Grade
+     */
     public async addGrades(name: string, priority: number) {
         // await this.clickButton('Add Grade');
         await this.fillText(name, {
@@ -45,19 +55,27 @@ export class GradesHelper extends ListingHelper {
         await this.click({ role: 'button', name: 'save' });
 
         await this.searchInList(name);
-
-        await this._page.waitForTimeout(1000);
     }
-    public async checkPriority(name: string) {
-        // await this.clickButton('Add Grade');
+
+    /**
+     * @description - Try to add grades with empty  priority
+     *
+     * @param name - Name of the Grade
+     */
+    public async checkEmptyPriority(name: string) {
         await this.fillText(name, {
             name: 'name',
         });
         await this.click({ role: 'button', name: 'save' });
     }
 
+    /**
+     * @description - Add Grdaes with Name and priority and click on save and create another checkbox
+     *
+     * @param name - Name of the Grade
+     * @param priority - Priority of the Grade
+     */
     public async checkWithCheckbox(name: string, priority: number) {
-        await this._page.waitForTimeout(1000);
         await this.fillText(name, {
             name: 'name',
         });
@@ -71,25 +89,32 @@ export class GradesHelper extends ListingHelper {
 
         await this._page.waitForTimeout(1000);
     }
-    public async activeToInactive(name: string) {
+
+    /**
+     * @description - Change the status of the Grade
+     *
+     * @param name - Name of the Grade
+     */
+    public async chaneStatus(name: string) {
         await this.searchInList(name);
 
-        await this._page.waitForTimeout(1000);
         const row = await this.findRowInTable(name, 'NAME');
         await this.clickButtonInTable(row, 'STATUS');
 
         const status = await this.getCellText(row, 'STATUS');
 
         console.log(chalk.green('Status is changed to ' + status));
-
-        await this._page.waitForTimeout(1000);
     }
 
-    // public async checkTitle() {
-    //     await this.dialogHelper.getDialogTitle();
-
-    //     expect(await this.dialogHelper.getDialogTitle()).toBe('Add Grade');
-    // }
+    /**
+     * @description - Edit the Grade with name and priority
+     *
+     * @param name - Name of the Grade
+     * @param newname - New Name of the Grade
+     * @param priority - Priority of the Grade to be changed
+     *
+     * @param flag - Flag to check whether to search with old name or new name
+     */
 
     public async editGrdaes(
         name: string,
@@ -99,7 +124,6 @@ export class GradesHelper extends ListingHelper {
     ) {
         await this.searchInList(name);
 
-        await this._page.waitForTimeout(1000);
         const row = await this.findRowInTable(name, 'NAME');
         await this.clickButtonInTable(row, 'ACTION');
 
@@ -122,14 +146,16 @@ export class GradesHelper extends ListingHelper {
         } else {
             await this.searchInList(newname);
         }
-
-        await this._page.waitForTimeout(1000);
     }
+
+    /**
+     * @description - Verify the Added Grades and  Priority Reflected in the table and status is active
+     * @param name
+     * @param priority
+     */
 
     public async verifyGrades(name: string, priority: number) {
         await this.searchInList(name);
-
-        await this._page.waitForTimeout(1000);
 
         const row = await this.ifRowExists(name, 'NAME');
 

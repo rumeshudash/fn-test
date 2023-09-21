@@ -7,20 +7,17 @@ test.describe('HR-Grades', () => {
         const grades = new GradesHelper(page);
         await grades.init();
         await grades.clickButton('Add Grade');
-        const dialog = await grades.dialogHelper;
+        const notification = grades.notificationHelper;
+        const dialog = grades.dialogHelper;
 
         const name = await GradesHelper.generateRandomGradeName();
 
         await PROCESS_TEST.step('Click on Add Grade', async () => {
-            // await grades.clickButton('Add Grade');
-            const dialog = await grades.dialogHelper;
-
             await expect(await dialog.getDialogTitle()).toBe('Add Grade');
         });
 
         await PROCESS_TEST.step('Check empty Name feild', async () => {
             await grades.addGrades('', 1);
-            const notification = await grades.notificationHelper;
 
             expect(await notification.getErrorMessage()).toBe(
                 'Name is required'
@@ -33,8 +30,7 @@ test.describe('HR-Grades', () => {
             await grades.clickButton('Yes!');
 
             await grades.clickButton('Add Grade');
-            await grades.checkPriority(name);
-            const notification = await grades.notificationHelper;
+            await grades.checkEmptyPriority(name);
 
             expect(await notification.getErrorMessage()).toBe(
                 'Priority is required'
@@ -46,7 +42,8 @@ test.describe('HR-Grades', () => {
         const grades = new GradesHelper(page);
         await grades.init();
         await grades.clickButton('Add Grade');
-        const dialog = await grades.dialogHelper;
+        const dialog = grades.dialogHelper;
+        const notification = grades.notificationHelper;
 
         const name = await GradesHelper.generateRandomGradeName();
 
@@ -55,17 +52,14 @@ test.describe('HR-Grades', () => {
         await PROCESS_TEST.step('With valid Name and Priority', async () => {
             await grades.addGrades(name, 1);
 
-            // const notification = await grades.notificationHelper;
-
-            // expect(await notification.getToastSuccess()).toBe('Successfully saved');
+            notification.checkToastSuccess('Successfully saved');
             await grades.verifyGrades(name, 1);
         });
 
         await PROCESS_TEST.step('Change The status', async () => {
-            await grades.activeToInactive(name);
+            await grades.chaneStatus(name);
 
-            // expect(await grades.successToast()).toBe('Status Changed');
-            await page.waitForTimeout(1000);
+            notification.checkToastSuccess('Successfully Changed');
         });
         await PROCESS_TEST.step(
             'Check Edit with duplicate Name Feild',
@@ -87,11 +81,8 @@ test.describe('HR-Grades', () => {
                 await grades.clickButton('Yes!');
 
                 await grades.editGrdaes(name, '', null);
-                const notification = await grades.notificationHelper;
 
-                expect(await notification.getErrorMessage()).toBe(
-                    'Name is required'
-                );
+                notification.checkErrorMessage('Name is required');
             }
         );
         await PROCESS_TEST.step('EditIcon click', async () => {
@@ -100,30 +91,20 @@ test.describe('HR-Grades', () => {
             await grades.clickButton('Yes!');
 
             await grades.editGrdaes(name, newName, null);
-
-            const notification = await grades.notificationHelper;
         });
         await PROCESS_TEST.step(
             'EditIcon Click with  Priority feild',
             async () => {
                 await grades.editGrdaes(newName, undefined, 19, true);
 
-                const notification = await grades.notificationHelper;
-
-                // expect(await notification.getToastSuccess()).toBe(
-                //     'Successfully saved'
-                // );
+                notification.checkToastSuccess('Successfully saved');
             }
         );
 
         await PROCESS_TEST.step('Check duplicate Name feild', async () => {
             await grades.clickButton('Add Grade');
             await grades.addGrades(newName, 1);
-            const notification = await grades.notificationHelper;
-
-            expect(await notification.getErrorMessage()).toBe(
-                'Duplicate grade name'
-            );
+            notification.checkErrorMessage('Duplicate grade name');
         });
 
         await PROCESS_TEST.step(
