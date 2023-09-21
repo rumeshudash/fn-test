@@ -463,7 +463,7 @@ describe('Business Detail', () => {
                 ['gstin']
             );
             await page.waitForLoadState('load');
-            businessDetails.formHelper.checkIsInputDisabled({
+            await businessDetails.formHelper.checkIsInputDisabled({
                 name: 'gstin',
             });
             await businessDetails.formHelper.submitButton();

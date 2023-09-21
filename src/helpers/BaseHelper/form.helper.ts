@@ -94,9 +94,9 @@ export class FormHelper extends BaseHelper {
      *
      * @param {InputFieldLocatorOptions} options - The options to locate the input field.
      */
-    public checkIsInputEditable(options: InputFieldLocatorOptions) {
+    public async checkIsInputEditable(options: InputFieldLocatorOptions) {
         const input = this.getInputElement(options);
-        expect(
+        await expect(
             input,
             `Check input is editable: ${this._tempSelector}`
         ).toBeEditable();
@@ -107,9 +107,9 @@ export class FormHelper extends BaseHelper {
      *
      * @param {InputFieldLocatorOptions} options - The options to locate the input field.
      */
-    public checkIsInputDisabled(options: InputFieldLocatorOptions) {
+    public async checkIsInputDisabled(options: InputFieldLocatorOptions) {
         const input = this.getInputElement(options);
-        expect(
+        await expect(
             input,
             `Check input is disabled: ${this._tempSelector}`
         ).toBeDisabled();
@@ -205,25 +205,6 @@ export class FormHelper extends BaseHelper {
     }
 
     /**
-     * Check and Click Submit Button if enabled.
-     *
-     * @param {any} button - The submit button element.
-     * @return {Promise<void>} - A promise that resolves when the actions are completed.
-     */
-    private async _clickSubmitButton(button: any) {
-        expect(await button.isEnabled(), {
-            message: 'check save button enabled',
-        }).toBe(true);
-        await button.click();
-        const button_title = await button.textContent();
-
-        Logger.info(`${button_title} is clicked`);
-
-        await this._page.waitForTimeout(300);
-        await this._page.waitForLoadState('networkidle');
-    }
-
-    /**
      * it helps to submit the form
      */
     public async submitButton(
@@ -269,7 +250,9 @@ export class FormHelper extends BaseHelper {
      * @param {InputFieldLocatorOptions} options - The options for locating the input field.
      * @return {Promise<boolean>} - Returns a promise that resolves to a boolean value indicating if the input field is mandatory.
      */
-    public async isInputMandatory(options?: InputFieldLocatorOptions) {
+    public async isInputMandatory(
+        options?: InputFieldLocatorOptions
+    ): Promise<boolean> {
         const input = this.getInputElement(options);
 
         return input
@@ -333,7 +316,31 @@ export class FormHelper extends BaseHelper {
         }
     }
 
+    /**
+     * Closes the form.
+     *
+     * @return {Promise<void>} - A promise that resolves when the form is closed.
+     */
     public async closeForm() {
         await this.dialogHelper.closeDialog();
+    }
+
+    /**
+     * Check and Click Submit Button if enabled.
+     *
+     * @param {any} button - The submit button element.
+     * @return {Promise<void>} - A promise that resolves when the actions are completed.
+     */
+    private async _clickSubmitButton(button: any) {
+        expect(await button.isEnabled(), {
+            message: 'check save button enabled',
+        }).toBe(true);
+        await button.click();
+        const button_title = await button.textContent();
+
+        Logger.info(`${button_title} is clicked`);
+
+        await this._page.waitForTimeout(300);
+        await this._page.waitForLoadState('networkidle');
     }
 }

@@ -221,6 +221,16 @@ describe('Configuration -> Choice Types', () => {
         );
 
         // Check if all information is editable
+        await PROCESS_TEST.step(
+            'Check if all information is editable',
+            async () => {
+                await formHelper.checkIsInputEditable({ name: 'name' });
+                await formHelper.checkIsInputEditable({
+                    name: 'description',
+                    type: 'textarea',
+                });
+            }
+        );
     });
     PROCESS_TEST.afterEach(async ({ page }) => {
         const choiceTypeHelper = new ChoiceTypeHelper(page);
