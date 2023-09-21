@@ -95,7 +95,7 @@ export class GradesHelper extends ListingHelper {
      *
      * @param name - Name of the Grade
      */
-    public async chaneStatus(name: string) {
+    public async changeStatus(name: string) {
         await this.searchInList(name);
 
         const row = await this.findRowInTable(name, 'NAME');
@@ -171,6 +171,11 @@ export class GradesHelper extends ListingHelper {
 
         expect(row).toBe(true);
     }
+
+    /**
+     * @description -Check Warning Dialog is open or not
+     * @param name - Name of the Grade to be Added
+     */
 
     public async checkWarning(name: string) {
         await this.fillText(name, {

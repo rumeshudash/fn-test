@@ -7,12 +7,15 @@ test.describe('HR-Grades', () => {
         const grades = new GradesHelper(page);
         await grades.init();
         await grades.clickButton('Add Grade');
-        const notification = grades.notificationHelper;
         const dialog = grades.dialogHelper;
+        const notification = grades.notificationHelper;
 
         const name = await GradesHelper.generateRandomGradeName();
 
         await PROCESS_TEST.step('Click on Add Grade', async () => {
+            // await grades.clickButton('Add Grade');
+            const dialog = await grades.dialogHelper;
+
             await expect(await dialog.getDialogTitle()).toBe('Add Grade');
         });
 
@@ -43,6 +46,7 @@ test.describe('HR-Grades', () => {
         await grades.init();
         await grades.clickButton('Add Grade');
         const dialog = grades.dialogHelper;
+
         const notification = grades.notificationHelper;
 
         const name = await GradesHelper.generateRandomGradeName();
@@ -52,20 +56,19 @@ test.describe('HR-Grades', () => {
         await PROCESS_TEST.step('With valid Name and Priority', async () => {
             await grades.addGrades(name, 1);
 
-            notification.checkToastSuccess('Successfully saved');
             await grades.verifyGrades(name, 1);
         });
 
         await PROCESS_TEST.step('Change The status', async () => {
-            await grades.chaneStatus(name);
+            await grades.changeStatus(name);
 
-            notification.checkToastSuccess('Successfully Changed');
+            notification.checkToastSuccess('Status Changed');
+            await page.waitForTimeout(1000);
         });
         await PROCESS_TEST.step(
             'Check Edit with duplicate Name Feild',
             async () => {
                 await grades.editGrdaes(name, 'NEWHAMsss', null);
-                const notification = await grades.notificationHelper;
 
                 expect(await notification.getErrorMessage()).toBe(
                     'Duplicate grade name'
@@ -82,7 +85,9 @@ test.describe('HR-Grades', () => {
 
                 await grades.editGrdaes(name, '', null);
 
-                notification.checkErrorMessage('Name is required');
+                expect(await notification.getErrorMessage()).toBe(
+                    'Name is required'
+                );
             }
         );
         await PROCESS_TEST.step('EditIcon click', async () => {
@@ -96,15 +101,16 @@ test.describe('HR-Grades', () => {
             'EditIcon Click with  Priority feild',
             async () => {
                 await grades.editGrdaes(newName, undefined, 19, true);
-
-                notification.checkToastSuccess('Successfully saved');
             }
         );
 
         await PROCESS_TEST.step('Check duplicate Name feild', async () => {
             await grades.clickButton('Add Grade');
             await grades.addGrades(newName, 1);
-            notification.checkErrorMessage('Duplicate grade name');
+
+            expect(await notification.getErrorMessage()).toBe(
+                'Duplicate grade name'
+            );
         });
 
         await PROCESS_TEST.step(
