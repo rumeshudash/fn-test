@@ -1,6 +1,6 @@
 // import { format, isDate, parse } from 'date-fns';
 
-import { format, isDate, parse } from 'date-fns';
+import { format, isDate, parse, addDays } from 'date-fns';
 
 // This will Generate Random Name
 export function generateRandomName() {
@@ -73,7 +73,7 @@ export const formatDate = (date: string | Date, showTime?: boolean) => {
 
 // in format 18-09-2023
 export const formatDateNew = (date: string | Date) => {
-    return format(GetDateValue(date), 'dd-MMM-yyyy');
+    return format(GetDateValue(date), 'dd-MM-yyyy');
 };
 
 export const GetDateValue = (date: any, format?: string) => {
@@ -90,5 +90,15 @@ export const formatDateProfile = (date: string) => {
 
     // Format the parsed date as "dd MMM, yyyy"
     const formattedDate = format(inputDate, 'dd MMM, yyyy');
+    return formattedDate;
+};
+
+export const generateRandomDate = () => {
+    // Generate a random number of days to add to the current date
+    const randomDays = Math.floor(Math.random() * 2000);
+    const currentDate = new Date();
+    // Add the random number of days to the current date
+    const randomDate = addDays(currentDate, randomDays);
+    const formattedDate = format(randomDate, 'dd-MM-yyyy');
     return formattedDate;
 };
