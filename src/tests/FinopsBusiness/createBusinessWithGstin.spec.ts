@@ -111,14 +111,14 @@ describe(`Create Gstin Business`, () => {
 
         await PROCESS_TEST.step('Check Mandatory Fields', async () => {
             Logger.info(`\nstep-2-->Check Mandatory Fields`, `\n`);
-            await helper.formHelper.checkMandatoryFields(formSchema);
+            await helper.formHelper.checkIsMandatoryFields(formSchema);
         });
 
         await PROCESS_TEST.step('Fill Form Without  Data', async () => {
             Logger.info(`\nstep-3-->Fill Form Without  Data`, `\n`);
             await helper.formHelper.fillFormInputInformation(formSchema, {});
             await helper.formHelper.submitButton();
-            await helper.formHelper.checkAllMandatoryInputErrors(formSchema);
+            await helper.formHelper.checkAllMandatoryInputHasErrors(formSchema);
         });
         await PROCESS_TEST.step('without Gstin Number', async () => {
             Logger.info(`\nstep-3-->without Gstin Number`, `\n`);
@@ -132,7 +132,7 @@ describe(`Create Gstin Business`, () => {
             );
             await helper.checkGstinError();
 
-            await helper.formHelper.checkDisableSubmit();
+            await helper.formHelper.checkSubmitIsDisabled();
         });
         await PROCESS_TEST.step('Verify Invalid Gstin', async () => {
             Logger.info(`\nstep-4-->Verify Invalid Gstin`, `\n`);
@@ -211,7 +211,7 @@ describe(`Create Gstin Business`, () => {
                 businessInformation
             );
 
-            await helper.formHelper.checkMandatoryFields(formSchema);
+            await helper.formHelper.checkIsMandatoryFields(formSchema);
             await gstin_helper.gstinInfoCheck();
             await helper.formHelper.submitButton();
             await helper.checkToastSuccess('Successfully Saved');

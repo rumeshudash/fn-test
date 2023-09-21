@@ -3,10 +3,12 @@ import { Page, expect } from '@playwright/test';
 import { FormHelper } from '../BaseHelper/form.helper';
 import { ListingHelper } from '../BaseHelper/listing.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
+import { StatusHelper } from '../BaseHelper/status.helper';
 
 export class ChoiceTypeHelper extends ListingHelper {
     public formHelper: FormHelper;
     public notificationHelper: NotificationHelper;
+    public statusHelper: StatusHelper;
 
     public choiceTypeSchema = {
         name: {
@@ -23,6 +25,7 @@ export class ChoiceTypeHelper extends ListingHelper {
         super(page);
         this.formHelper = new FormHelper(page);
         this.notificationHelper = new NotificationHelper(page);
+        this.statusHelper = new StatusHelper(page);
     }
 
     public async init() {

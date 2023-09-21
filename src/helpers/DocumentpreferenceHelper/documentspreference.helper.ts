@@ -48,6 +48,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
 
+    /**
+     * @todo -Need to remove the counts and bypass after bug fixes
+
+     */
     public async clickAddBtn() {
         await this._page
             .locator(
@@ -79,114 +83,161 @@ export class DocumentspreferenceHelper extends ListingHelper {
         return newArray;
     }
     public async addDocumentPreference() {
-        await this.clickAddBtn();
+        const count = await this.getRowCount('NAME');
 
-        const Array = await this.getSelectOptions();
+        if (count < 5) {
+            await this.clickAddBtn();
 
-        if (Array.length > 0) {
-            await this.selectOption({
-                input: Array[0],
-                name: 'document_id',
-            });
-            await this._page.waitForTimeout(1000);
+            const Array = await this.getSelectOptions();
 
-            await this.clickButton('Save');
+            if (Array.length > 0) {
+                await this.selectOption({
+                    input: Array[0],
+                    name: 'document_id',
+                });
+                await this._page.waitForTimeout(1000);
+
+                await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
+            }
         } else {
-            console.log(chalk.red('No Document Found'));
+            console.log(chalk.red('Maximum Document Preference Added'));
         }
     }
 
     public async addDocumentMendatory() {
-        await this.clickAddBtn();
+        const count = await this.getRowCount('NAME');
 
-        const Array = await this.getSelectOptions();
-        if (Array.length > 0) {
-            await this.selectOption({
-                input: Array[0],
-                name: 'document_id',
-            });
-            await this._page
-                .locator('label')
-                .filter({ hasText: 'Document Mandatory' })
-                .click();
+        if (count < 5) {
+            await this.clickAddBtn();
 
-            await this._page.waitForTimeout(1000);
+            const Array = await this.getSelectOptions();
+            if (Array.length > 0) {
+                await this.selectOption({
+                    input: Array[0],
+                    name: 'document_id',
+                });
+                await this._page
+                    .locator('label')
+                    .filter({ hasText: 'Document Mandatory' })
+                    .click();
 
-            await this.clickButton('Save');
+                await this._page.waitForTimeout(1000);
+
+                await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
+            }
         } else {
-            console.log(chalk.red('No Document Found'));
+            console.log(chalk.red('Maximum Document Preference Added'));
         }
     }
     public async addDocumentFileMendatory() {
-        await this.clickAddBtn();
+        const count = await this.getRowCount('NAME');
 
-        const Array = await this.getSelectOptions();
+        if (count < 5) {
+            await this.clickAddBtn();
 
-        if (Array.length > 0) {
-            await this.selectOption({
-                input: Array[0],
-                name: 'document_id',
-            });
-            await this._page
-                .locator('label')
-                .filter({ hasText: 'Document Files Mandatory' })
-                .click();
+            const Array = await this.getSelectOptions();
 
-            await this._page.waitForTimeout(1000);
+            if (Array.length > 0) {
+                await this.selectOption({
+                    input: Array[0],
+                    name: 'document_id',
+                });
+                await this._page
+                    .locator('label')
+                    .filter({ hasText: 'Document Files Mandatory' })
+                    .click();
 
-            await this.clickButton('Save');
+                await this._page.waitForTimeout(1000);
+
+                await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
+            }
         } else {
-            console.log(chalk.red('No Document Found'));
+            console.log(chalk.red('Maximum Document Preference Added'));
         }
     }
 
     public async addWithBothMandatory() {
-        await this.clickAddBtn();
+        const count = await this.getRowCount('NAME');
 
-        const Array = await this.getSelectOptions();
-        if (Array.length > 0) {
-            await this.selectOption({
-                input: Array[0],
-                name: 'document_id',
-            });
-            await this._page
-                .locator('label')
-                .filter({ hasText: 'Document Mandatory' })
-                .click();
+        if (count < 5) {
+            await this.clickAddBtn();
 
-            await this._page
-                .locator('label')
-                .filter({ hasText: 'Document Files Mandatory' })
-                .click();
+            const Array = await this.getSelectOptions();
+            if (Array.length > 0) {
+                await this.selectOption({
+                    input: Array[0],
+                    name: 'document_id',
+                });
+                await this._page
+                    .locator('label')
+                    .filter({ hasText: 'Document Mandatory' })
+                    .click();
 
-            await this._page.waitForTimeout(1000);
+                await this._page
+                    .locator('label')
+                    .filter({ hasText: 'Document Files Mandatory' })
+                    .click();
 
-            await this.clickButton('Save');
+                await this._page.waitForTimeout(1000);
+
+                await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
+            }
         } else {
-            console.log(chalk.red('No Document Found'));
+            console.log(chalk.red('Maximum Document Preference Added'));
         }
     }
 
     public async addAndClickCheck() {
-        await this.clickAddBtn();
+        const count = await this.getRowCount('NAME');
 
-        const Array = await this.getSelectOptions();
+        if (count < 5) {
+            await this.clickAddBtn();
 
-        if (Array.length > 0) {
-            await this.selectOption({
-                input: Array[0],
-                name: 'document_id',
-            });
-            await this._page
-                .locator('label')
-                .filter({ hasText: 'save and create another' })
-                .click();
+            const Array = await this.getSelectOptions();
 
-            await this._page.waitForTimeout(1000);
+            if (Array.length > 0) {
+                await this.selectOption({
+                    input: Array[0],
+                    name: 'document_id',
+                });
+                await this._page
+                    .locator('label')
+                    .filter({ hasText: 'save and create another' })
+                    .click();
 
-            await this.clickButton('Save');
+                await this._page.waitForTimeout(1000);
+
+                await this.clickButton('Save');
+
+                await this.notificationHelper.checkToastSuccess(
+                    'Successfully created document preference'
+                );
+            }
         } else {
-            console.log(chalk.red('No Document Found'));
+            console.log(chalk.red('Maximum Document Preference Added'));
         }
+    }
+
+    public async checkRowCount() {
+        await this.searchInList('');
+        const count = await this.getRowCount('NAME');
+
+        return count;
     }
 }

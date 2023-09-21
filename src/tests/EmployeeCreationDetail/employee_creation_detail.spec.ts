@@ -82,7 +82,7 @@ describe('Expense Creation-detail>Finops Portal', () => {
 
         await PROCESS_TEST.step('verify mandatory fields', async () => {
             await page.waitForTimeout(1000);
-            await employeeCreation.form.checkMandatoryFields(
+            await employeeCreation.form.checkIsMandatoryFields(
                 employeeCreation.employeeCreationSchema
             );
             await employeeCreation.form.fillFormInputInformation(
@@ -90,7 +90,7 @@ describe('Expense Creation-detail>Finops Portal', () => {
                 {}
             );
             await employeeCreation.form.submitButton();
-            await employeeCreation.form.checkAllMandatoryInputErrors(
+            await employeeCreation.form.checkAllMandatoryInputHasErrors(
                 employeeCreation.employeeCreationSchema
             );
         });

@@ -64,7 +64,7 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
             Logger.info('Checking User Group Form Error');
             await userCreation.fillFormInputInformation(formSchema, {});
             await userCreation.submitButton();
-            await userCreation.checkAllMandatoryInputErrors(formSchema);
+            await userCreation.checkAllMandatoryInputHasErrors(formSchema);
             Logger.success('User Group Form Error is visible');
         });
 
@@ -221,7 +221,7 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
             // check errors
             await userDetails.fillFormInputInformation(notesSchema, note);
             await userDetails.submitButton();
-            await userDetails.checkMandatoryFields(notesSchema);
+            await userDetails.checkIsMandatoryFields(notesSchema);
 
             // check addition
             note.comments = 'test' + generateRandomNumber();

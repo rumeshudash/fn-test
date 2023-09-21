@@ -1,7 +1,7 @@
 import { Locator, Page, expect } from '@playwright/test';
+import chalk from 'chalk';
 import { PageHelper } from './page.helper';
 import { TabHelper } from './tab.helper';
-import chalk from 'chalk';
 
 export class ListingHelper extends PageHelper {
     public tabHelper: TabHelper;
@@ -53,6 +53,19 @@ export class ListingHelper extends PageHelper {
             expect(tableColumns, {
                 message: `${column} is present in table `,
             }).toContain(column);
+        }
+    }
+
+    /**
+     * Checks if the specified columns exist in the table.
+     *
+     * @param {string[]} columns - The names of the columns to check.
+     * @return {Promise<void>} A promise that resolves when all columns are found.
+     */
+    public async checkTableColumnsExist(columns: string[]): Promise<void> {
+        const columnNames = await this.getTableColumnNames();
+        for (const columnName of columns) {
+            expect(columnNames).toContainEqual(columnName);
         }
     }
 
@@ -269,5 +282,27 @@ export class ListingHelper extends PageHelper {
             });
         console.log(chalk.blue('Row', row));
         return row;
+    }
+
+    /**
+     * This will returns the row count in specific page of the table
+     *
+     * @param {string} columnName - The Name of the column that most be contain in table header
+     * @return {Promise<number>} - Promise that returns the counts of the rows
+     */
+
+    public async getRowCount(columnName: string): Promise<number> {
+        const table = this.getTableContainer();
+        const names = await this.getTableColumnNames();
+
+        expect(names).toContain(columnName.toUpperCase());
+
+        const rows = table.locator(
+            '//div[contains(@class,"table-row body-row")]'
+        );
+
+        const count = await rows.count();
+
+        return count;
     }
 }

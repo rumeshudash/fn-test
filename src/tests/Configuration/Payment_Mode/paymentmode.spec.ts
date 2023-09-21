@@ -55,14 +55,14 @@ describe('Configuration - Payment Mode', () => {
                 ['bank_id', 'type_id']
             );
             await paymentMode.form.submitButton();
-            await paymentMode.form.checkMandatoryFields(paymentInfoSchema, [
+            await paymentMode.form.checkIsMandatoryFields(paymentInfoSchema, [
                 'bank_id',
             ]);
-            await paymentMode.form.checkAllMandatoryInputErrors(
+            await paymentMode.form.checkAllMandatoryInputHasErrors(
                 paymentInfoSchema,
                 ['bank_id']
             );
-            await paymentMode.form.checkDisableSubmit();
+            await paymentMode.form.checkSubmitIsDisabled();
         });
 
         await PROCESS_TEST.step('Save and Create Another', async () => {
