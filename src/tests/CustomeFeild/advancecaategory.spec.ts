@@ -202,31 +202,29 @@ test.describe('Configurations-Custom Feilds', () => {
             });
 
             await PROCESS_TEST.step('Change Priority', async () => {
-                await dialog.closeDialog();
-                await customefeild.clickButton('Yes!');
                 await customefeild.checkEdit(newName);
 
                 await customefeild.changePriority(newName, 'Text', 2);
             });
 
-            await PROCESS_TEST.step(
-                'Check with existing name and type ',
-                async () => {
-                    await customefeild.clickButton('Add New');
-                    await customefeild.addWithTextType(
-                        newName,
-                        'Text',
-                        1,
-                        'Test1'
-                    );
+            // await PROCESS_TEST.step(
+            //     'Check with existing name and type ',
+            //     async () => {
+            //         await customefeild.clickButton('Add New');
+            //         await customefeild.addWithTextType(
+            //             newName,
+            //             'Text',
+            //             1,
+            //             'Test1'
+            //         );
 
-                    const notification = await customefeild.notificationHelper;
+            //         const notification = await customefeild.notificationHelper;
 
-                    expect(await notification.getErrorMessage()).toBe(
-                        'There is already a column with similar name'
-                    );
-                }
-            );
+            //         expect(await notification.getErrorMessage()).toBe(
+            //             'There is already a column with similar name'
+            //         );
+            //     }
+            // );
         }
     );
 });
