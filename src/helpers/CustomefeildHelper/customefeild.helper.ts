@@ -7,6 +7,11 @@ import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { expect } from '@playwright/test';
 
 export class CustofeildHelper extends ListingHelper {
+    /**
+     *
+     * @description - Creating instance of all helpers
+     *
+     */
     public tabHelper: TabHelper;
     public notificationHelper: NotificationHelper;
 
@@ -22,15 +27,29 @@ export class CustofeildHelper extends ListingHelper {
         this.formHelper = new FormHelper(page);
         this.dialogHelper = new DialogHelper(page);
     }
+    /**
+     * @description - Initializing the page
+     */
     public async init() {
         await this.navigateTo('CUSTOMEFEILDS');
     }
-
+    /**
+     *
+     * @description - This function will clcik on the tab
+     *
+     * @param TabName - Name of the tab
+     */
     public async clickOnTab(TabName: string) {
         await this.tabHelper.checkTabExists(TabName);
         await this.tabHelper.clickTab(TabName);
     }
-
+    /**
+     *
+     * @description - This function will check the name and type of the custome feild after adding to the custome feild list
+     *
+     * @param {string} name - Name of the custome feild
+     * @param {string} type- Type of the custome feild
+     */
     public async checkNameAndType(name: string, type: string) {
         await this.searchInList(name);
         const row = await this.findRowInTable(name, 'FIELD NAME');
@@ -42,7 +61,15 @@ export class CustofeildHelper extends ListingHelper {
 
         expect(textType).toEqual(type);
     }
-
+    /**
+     *
+     * @description - This function will add the custome feild with the choice type
+     *
+     * @param {string}name - Name of the custome feild
+     * @param {string}type - Type of the custome feild
+     * @param {string}choiceList -The name of the choice list
+     * @param {number}priority - The priority of the custome feild
+     */
     public async addWithChoiceType(
         name: string,
         type: string,
@@ -67,9 +94,15 @@ export class CustofeildHelper extends ListingHelper {
         });
         await this.click({ role: 'button', name: 'save' });
     }
-
+    /**
+     *
+     * @description - This function will add the custome feild
+     *
+     * @param {string} name - Name of the custome feild
+     * @param {string} type - Type of the custome feild
+     * @param {number}priority - The priority of the custome feild
+     */
     public async addCustomeFeild(name: string, type: string, priority: number) {
-        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
@@ -82,13 +115,21 @@ export class CustofeildHelper extends ListingHelper {
         });
         await this.click({ role: 'button', name: 'save' });
     }
+    /**
+     *
+     * @description - This function will add the custome feild with the text type
+     *
+     * @param {string}name - Name of the custome feild
+     * @param {string} type - Type of the custome feild
+     * @param {number}priority - The priority of the custome feild
+     * @param {string} defaultValue - The default value of the custome feild for text type
+     */
     public async addWithTextType(
         name: string,
         type: string,
         priority: number,
         defaultValue?: string | number
     ) {
-        // await this.clickButton('Add New');
         await this.fillText(name, {
             name: 'name',
         });
@@ -107,6 +148,15 @@ export class CustofeildHelper extends ListingHelper {
 
         await this.click({ role: 'button', name: 'save' });
     }
+    /**
+     *
+     * @description - This function will add the custome feild with the boolean type
+     *
+     * @param {string} name - Name of the custome feild
+     * @param {string} type - Type of the custome feild
+     * @param {number} priority - The priority of the custome feild
+     * @param {string} defaultValue - The default value of the custome feild for boolean type True or False
+     */
     public async addWitBooleanType(
         name: string,
         type: string,
@@ -128,6 +178,15 @@ export class CustofeildHelper extends ListingHelper {
         }
         await this.click({ role: 'button', name: 'save' });
     }
+    /**
+     *
+     * @description - This function will add the custome feild with the date type
+     *
+     * @param {string} name - Name of the custome feild
+     * @param {string} type - Type of the custome feild
+     * @param {number} priority - The priority of the custome feild
+     * @param {Date} defaultValue - The default value of the custome feild for date type
+     */
     public async addWithDateType(
         name: string,
         type: string,
@@ -148,7 +207,12 @@ export class CustofeildHelper extends ListingHelper {
 
         await this.click({ role: 'button', name: 'save' });
     }
-
+    /**
+     *
+     * @description - This function will change the status of the custome feild active to inactive vice versa
+     *
+     * @param name - Name of the custome feild
+     */
     public async changeStatus(name: string) {
         await this.searchInList(name);
         const row = await this.findRowInTable(name, 'FIELD NAME');
@@ -160,7 +224,13 @@ export class CustofeildHelper extends ListingHelper {
 
         console.log(chalk.green('Status is changed to ' + status));
     }
-
+    /**
+     *
+     * @description - This function will change the Mandatory status of the custome feild active to inactive vice versa
+     *
+     * @param name - Name of the custome feild
+     *
+     */
     public async changeMendatory(name: string) {
         await this.searchInList(name);
 
@@ -174,7 +244,12 @@ export class CustofeildHelper extends ListingHelper {
 
         console.log(chalk.green('Status is changed to ' + status));
     }
-
+    /**
+     *
+     * @description - This function will check the edit button and click on it
+     *
+     * @param name - Name of the custome feild
+     */
     public async checkEdit(name: string) {
         await this.searchInList(name);
 
@@ -182,36 +257,58 @@ export class CustofeildHelper extends ListingHelper {
         const row = await this.findRowInTable(name, 'FIELD NAME');
         await this.clickButtonInTable(row, 'ACTION');
     }
-
-    public async changeNameORPriority(
+    /**
+     *
+     * @description - This function will change the name and priority of the custome feild
+     *
+     *
+     * @param {string} name - Name of the custome feild
+     * @param {string} type - Type of the custome feild
+     *
+     * @param {string} newname - New name of the custome feild
+     */
+    public async changeName(
         name: string,
         type: string,
-        priority: number,
 
-        newname?: string,
-        newpriority?: number
+        newname?: string
     ) {
-        await this.checkEdit(name);
+        await this.checkNameAndType(name, type);
 
-        // await this._page.getByText(`${name}`);
-        // await this._page.getByText(`${type}`);
-        // await this._page.getByText(`${priority}`);
-
-        if (newname) {
-            await this.fillText(newname, {
-                name: 'name',
-            });
-        }
-        if (newpriority) {
-            await this.fillText(newpriority, {
-                name: 'priority',
-            });
-        }
+        await this.fillText(newname, {
+            name: 'name',
+        });
 
         await this.click({ role: 'button', name: 'save' });
 
         await this._page.waitForTimeout(1000);
 
         await this.searchInList(newname);
+    }
+    /**
+     *
+     *@description - This function will change the priority of the custome feild
+     *
+     * @param {strung} name - Name of the custome feild
+     * @param {string} type - Type of the custome feild
+     * @param {number} newpriority - New priority of the custome feild
+     */
+    public async changePriority(
+        name: string,
+        type: string,
+
+        newpriority?: number
+    ) {
+        await this.checkNameAndType(name, type);
+
+        await this.fillText(newpriority, {
+            name: 'priority',
+        });
+
+        await this.click({ role: 'button', name: 'save' });
+
+        await this._page.waitForTimeout(1000);
+
+        await this.searchInList(name);
     }
 }

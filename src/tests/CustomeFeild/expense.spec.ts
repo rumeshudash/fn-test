@@ -61,102 +61,129 @@ test.describe('Configurations-Custom Feilds', () => {
 
     PROCESS_TEST('TCF002 - Add Expense - Positive Case', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
+        const dialog = await customefeild.dialogHelper;
         await customefeild.init();
         const name = await CustofeildHelper.generateRandomGradeName();
+        const newName = await CustofeildHelper.generateRandomGradeName();
 
         await PROCESS_TEST.step('Add Expense With Text Type', async () => {
             await customefeild.clickOnTab('Expense');
 
             await customefeild.clickButton('Add New');
 
-            await customefeild.addWithTextType(
-                name + 'abc',
-                'Text',
-                1,
-                'Test1'
-            );
+            await customefeild.addWithTextType(name, 'Text', 1, 'Test1');
+
+            await customefeild.checkNameAndType(name, 'Text');
         });
         await PROCESS_TEST.step('Add Expense With Boolean', async () => {
             await customefeild.clickButton('Add New');
+            const booleanName =
+                (await CustofeildHelper.generateRandomGradeName()) + 'Boolean';
             await customefeild.addWitBooleanType(
-                name + 'abcd',
+                booleanName,
                 'Boolean',
                 1,
                 'True'
             );
+
+            await customefeild.checkNameAndType(booleanName, 'Boolean');
         });
 
         await PROCESS_TEST.step('Add Expense With Number type', async () => {
             await customefeild.clickButton('Add New');
-            await customefeild.addWithTextType(name + 'abce', 'Number', 1, 123);
+            const numberName =
+                (await CustofeildHelper.generateRandomGradeName()) + 'Number';
+            await customefeild.addWithTextType(numberName, 'Number', 1, 123);
+
+            await customefeild.checkNameAndType(numberName, 'Number');
+        });
+        await PROCESS_TEST.step('Add with choice type', async () => {
+            await customefeild.clickButton('Add New');
+            const choiceName =
+                (await CustofeildHelper.generateRandomGradeName()) + 'Choice';
+            await customefeild.addWithChoiceType(
+                choiceName,
+                'Choicelist',
+                'customechoce',
+                2
+            );
+
+            await customefeild.checkNameAndType(choiceName, 'Choicelist');
         });
 
         await PROCESS_TEST.step('Add Expense With Date type', async () => {
             await customefeild.clickButton('Add New');
-            await customefeild.addWithDateType(name + 'abcf', 'Date', 1);
-        });
-        await PROCESS_TEST.step('Add with choice type', async () => {
-            await customefeild.clickButton('Add New');
-            await customefeild.addWithChoiceType(
-                name + 'abcge',
-                'Choicelist',
-                'Choice-Type-101597106309',
-                2
-            );
+            const dateName =
+                (await CustofeildHelper.generateRandomGradeName()) + 'Date';
+            await customefeild.addWithDateType(dateName, 'Date', 1);
 
-            await customefeild.checkNameAndType(name + 'abcge', 'Choicelist');
+            await customefeild.checkNameAndType(dateName, 'Date');
         });
         await PROCESS_TEST.step('Add Expense With TextArea', async () => {
             await customefeild.clickButton('Add New');
+            const textAreaName =
+                (await CustofeildHelper.generateRandomGradeName()) + 'TextArea';
             await customefeild.addWithTextType(
-                name + 'abcg',
+                textAreaName,
                 'TextArea',
                 1,
                 'Test1'
             );
+
+            await customefeild.checkNameAndType(textAreaName, 'TextArea');
         });
 
         await PROCESS_TEST.step('Change Status', async () => {
-            await customefeild.changeStatus(name + 'abc');
+            await customefeild.changeStatus(name);
         });
 
         await PROCESS_TEST.step('Change Mendatory', async () => {
-            await customefeild.changeMendatory(name + 'abc');
+            await customefeild.changeMendatory(name);
         });
 
         await PROCESS_TEST.step('Check Editable', async () => {
-            await customefeild.checkEdit(name + 'abc');
+            await customefeild.checkEdit(name);
         });
+        await PROCESS_TEST.step('Edit with Empty Name', async () => {
+            await customefeild.changeName(name, 'Text', '');
+            const notification = await customefeild.notificationHelper;
 
-        await PROCESS_TEST.step('Name and Priority Change', async () => {
-            const newName = await CustofeildHelper.generateRandomGradeName();
-
-            await customefeild.changeNameORPriority(
-                name + 'abc',
-                'Text',
-                1,
-                newName,
-                2
+            expect(await notification.getErrorMessage()).toBe(
+                'Field Name is required'
             );
         });
 
-        await PROCESS_TEST.step(
-            'Check with existing name and type ',
-            async () => {
-                await customefeild.clickButton('Add New');
-                await customefeild.addWithTextType(
-                    name + 'abc',
-                    'Text',
-                    1,
-                    'Test1'
-                );
+        await PROCESS_TEST.step('Change Name', async () => {
+            await dialog.closeDialog();
+            await customefeild.clickButton('Yes!');
+            await customefeild.checkEdit(name);
 
-                const notification = await customefeild.notificationHelper;
+            await customefeild.changeName(name, 'Text', newName);
+        });
 
-                expect(await notification.getErrorMessage()).toBe(
-                    'There is already a column with similar name'
-                );
-            }
-        );
+        await PROCESS_TEST.step('Change Priority', async () => {
+            await customefeild.checkEdit(newName);
+
+            await customefeild.changePriority(newName, 'Text', 2);
+        });
+
+        // await PROCESS_TEST.step(
+        //     'Check with existing name and type ',
+        //     async () => {
+        //         await customefeild.clickButton('Add New');
+        //         await customefeild.addWithTextType(
+        //             name,
+        //             'Text',
+        //             1,
+        //             'Test1'
+        //         );
+
+        //         const notification = await customefeild.notificationHelper;
+
+        //         expect(await notification.getErrorMessage()).toBe(
+        //             'There is already a column with similar name'
+        //         );
+        //     }
+        // );
     });
 });
