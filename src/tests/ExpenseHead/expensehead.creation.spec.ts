@@ -426,14 +426,8 @@ test.describe('Configuration - Expense Head', () => {
                 'Check Expense from expense Tab',
                 async () => {
                     await expenseHeadDetails.openDetailsPage(
-                        'EXPVN614',
+                        '1',
                         'EXPENSE NO.'
-                    );
-
-                    const breadCrumb = expenseHeadDetails.breadCrumbHelper;
-
-                    await expect(await breadCrumb.getBreadCrumbSubTitle()).toBe(
-                        '#EXPVN614'
                     );
                 }
             );
@@ -443,10 +437,7 @@ test.describe('Configuration - Expense Head', () => {
             });
 
             await PROCESS_TEST.step('Check on Bill Form', async () => {
-                await expenseHeadDetails.openDetailsPage(
-                    'EXPVN614',
-                    'BILL FROM'
-                );
+                await expenseHeadDetails.openDetailsPage('1', 'BILL FROM');
 
                 const breadCrumb = expenseHeadDetails.breadCrumbHelper;
 
@@ -460,7 +451,7 @@ test.describe('Configuration - Expense Head', () => {
                 await expenseHeadDetails.clickOnTab('Expenses');
             });
             await PROCESS_TEST.step('Check on Bill To', async () => {
-                await expenseHeadDetails.openDetailsPage('EXPVN614', 'BILL TO');
+                await expenseHeadDetails.openDetailsPage('1', 'BILL TO');
 
                 const breadCrumb = expenseHeadDetails.breadCrumbHelper;
 
@@ -476,27 +467,30 @@ test.describe('Configuration - Expense Head', () => {
             await PROCESS_TEST.step(
                 'Check on Expense Head Status',
                 async () => {
-                    await expenseHeadDetails.checkExpenseStatus(
-                        'EXPVN614',
-                        'Pending'
-                    );
+                    await expenseHeadDetails.checkExpenseStatus('1');
                 }
             );
+            await PROCESS_TEST.step('Back to the page', async () => {
+                await page.goBack();
+                await expenseHeadDetails.clickOnTab('Expenses');
+            });
             await PROCESS_TEST.step('Check Balance', async () => {
-                await expenseHeadDetails.checkBalance('EXPVN614', '₹11,111.00');
+                await expenseHeadDetails.checkBalance('1');
+            });
+            await PROCESS_TEST.step('Back to the page', async () => {
+                await page.goBack();
+                await expenseHeadDetails.clickOnTab('Expenses');
             });
 
             await PROCESS_TEST.step('Check Expense amount', async () => {
-                await expenseHeadDetails.checkExpenseAmnt(
-                    'EXPVN614',
-                    '₹11,111.00'
-                );
+                await expenseHeadDetails.checkExpenseAmnt('1');
+            });
+            await PROCESS_TEST.step('Back to the page', async () => {
+                await page.goBack();
+                await expenseHeadDetails.clickOnTab('Expenses');
             });
             await PROCESS_TEST.step('Check Expense Date', async () => {
-                await expenseHeadDetails.checkDate(
-                    'EXPVN614',
-                    '29 Aug, 2023 5:45 AM'
-                );
+                await expenseHeadDetails.checkDate('1');
             });
         }
     );

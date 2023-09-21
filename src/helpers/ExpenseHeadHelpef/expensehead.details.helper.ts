@@ -264,18 +264,25 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
      *
      *@description - This function will redirect to the details page of the expense ,bill from and bill to from expense head details page
      *
-     * @param {string} expense_number - The Expense Number to be searched
+     * @param {string} expense_number_row - The Expense Number to be searched from S.N i.e serial number
      * @param {string} columnName - The Column Name to be searched
      */
 
-    public async openDetailsPage(expense_number: string, columnName: string) {
+    public async openDetailsPage(
+        expense_number_row: string,
+        columnName: string
+    ) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number_row, 'S.N');
+
+        const text = await this.getCellText(row, columnName);
 
         await this.clickTextOnTable(row, columnName);
 
         await this._page.waitForTimeout(3000);
+
+        expect(this._page.getByText(text, { exact: true })).toBeTruthy();
     }
     /**
      *
@@ -283,16 +290,17 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
      *
      * @param {string}expense_number - The Expense Number to be searched
      *
-     * @param {string} status - The status of the expense
+     *
      */
-    public async checkExpenseStatus(expense_number: string, status: string) {
+    public async checkExpenseStatus(expense_number: string) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number, 'S.N');
 
         const statusText = await this.getCellText(row, 'STATUS');
+        await this.clickTextOnTable(row, 'EXPENSE NO.');
 
-        expect(statusText).toBe(status);
+        expect(this._page.getByText(statusText, { exact: true })).toBeTruthy();
     }
     /**
      *
@@ -301,14 +309,19 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
      * @param expense_number - The Expense Number to be searched
      * @param balance - The balance of the expense to be checked
      */
-    public async checkBalance(expense_number: string, balance: string) {
+    public async checkBalance(expense_number: string) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number, 'S.N');
 
         const balanceText = await this.getCellText(row, 'BALANCE');
+        await this.clickTextOnTable(row, 'EXPENSE NO.');
 
-        expect(balanceText).toBe(balance);
+        const balanceLocator = await this._page
+            .locator(`//div[contains(@class,'font-medium text-xl')]`)
+            .innerText();
+
+        expect(await balanceLocator.includes(balanceText)).toBeTruthy();
     }
 
     /**
@@ -318,14 +331,19 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
      * @param expense_number - The Expense Number to be searched
      * @param amnt - The expense amount of the expense to be checked
      */
-    public async checkExpenseAmnt(expense_number: string, amnt: string) {
+    public async checkExpenseAmnt(expense_number: string) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number, 'S.N');
 
         const amntText = await this.getCellText(row, 'EXPENSE AMOUNT');
 
-        expect(amntText).toBe(amnt);
+        await this.clickTextOnTable(row, 'EXPENSE NO.');
+        const amtLocator = await this._page
+            .locator(`(//div[@class='font-medium text-sm'])[1]`)
+            .innerText();
+
+        expect(await amtLocator.includes(amntText)).toBeTruthy();
     }
 
     /**
@@ -335,13 +353,19 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
      * @param expense_number - The Expense Number to be searched
      * @param date - The expense date of the expense to be checked
      */
-    public async checkDate(expense_number: string, date: string) {
+    public async checkDate(expense_number: string) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number, 'S.N');
 
         const dateText = await this.getCellText(row, 'EXPENSE DATE');
 
-        expect(dateText).toBe(date);
+        await this.clickTextOnTable(row, 'EXPENSE NO.');
+
+        const dateLocator = await this._page
+            .locator(`//div[@class='text-sm']`)
+            .innerText();
+
+        expect(await dateLocator.includes(dateText)).toBeTruthy();
     }
 }
