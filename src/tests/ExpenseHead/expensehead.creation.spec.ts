@@ -189,6 +189,8 @@ test.describe('Configuration - Expense Head', () => {
                     expenseHeadData.Name = NewName;
 
                     notification.checkToastSuccess('Successfully saved');
+
+                    await expenseHead.searchInList(expenseHeadData.Name);
                 }
             );
 
