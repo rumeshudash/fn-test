@@ -273,7 +273,8 @@ export class FormHelper extends BaseHelper {
         formSchema: ObjectDto,
         ignoreFields: string[] = []
     ): Promise<void> {
-        for (const [name, fieldSchema] of Object.entries(formSchema)) {
+        for (const [key, fieldSchema] of Object.entries(formSchema)) {
+            const name = fieldSchema?.name ?? key;
             if (!fieldSchema?.required) continue;
             if (ignoreFields.includes(name)) continue;
             expect(

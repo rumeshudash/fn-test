@@ -185,7 +185,8 @@ describe('Expense Creation - Finops Portal', () => {
             await savedExpensePage.clickApprove();
 
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
-            await page.waitForTimeout(1000);
+            // await page.waitForTimeout(1000);
+            await page.waitForLoadState('networkidle');
             expect(
                 await finOpsFlows.getLevelStatus(),
                 chalk.red('FinOps level status match')
