@@ -4,6 +4,10 @@ import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
 import chalk from 'chalk';
 export class DocumentspreferenceHelper extends ListingHelper {
+    /**
+     *
+     * @description - Creating instnce of DialogHelper, NotificationHelper
+     */
     public notificationHelper: NotificationHelper;
 
     public dialogHelper: DialogHelper;
@@ -13,11 +17,22 @@ export class DocumentspreferenceHelper extends ListingHelper {
         this.notificationHelper = new NotificationHelper(page);
         this.dialogHelper = new DialogHelper(page);
     }
+    /**
+     *
+     * @description - Navigate to Document Preference Page
+     */
     public async init() {
         await this.navigateTo('DOCUMENT_PREFERENCES');
     }
 
-    public async searchTextInList(name: string) {
+    /**
+     * @description - This function will search text in list And check the text is present or not
+     *
+     * @param name - Name of the Document Preference
+     *
+     */
+
+    public async checkTextInList(name: string) {
         await this.searchInList(name);
 
         const row = await this.findRowInTable(name, 'NAME');
@@ -29,7 +44,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
         expect(text).toBe(name);
     }
 
-    public async getTableHeader(name: string[]) {
+    /**
+     *@description - This function will check the table header Names
+     *
+     * @param {string[]} name - The Names of the Table Header
+     */
+    public async checkTableHeader(name: string[]) {
         await this._page.waitForTimeout(1000);
         const RowNames = await this.getTableColumnNames();
 
