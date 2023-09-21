@@ -154,7 +154,13 @@ export class MenucardHelper extends PageHelper {
         expect(filteredItems).toEqual(submenuObject[menuName]);
     }
 
-    public async checkSpaceOnSidebard(menuName: string) {
+    /**
+     * @description - This function will check the space between menus having class name sidebar-item mt-3
+     *
+     * @param menuName -The name of the main menu
+     */
+
+    public async checkSpaceOnSidebar(menuName: string) {
         const locator = await this.getMenuLocator(menuName);
 
         expect(
@@ -163,6 +169,11 @@ export class MenucardHelper extends PageHelper {
             )
         ).toBeTruthy();
     }
+
+    /**
+     * @description - This function will scrolldown the menu card and check the menu card is scrolled or not
+     *
+     */
 
     public async scrollDown() {
         const locator = await this._page.locator(
