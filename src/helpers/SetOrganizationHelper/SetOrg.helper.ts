@@ -11,8 +11,9 @@ import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { ExpenseHelper } from '../ExpenseHelper/expense.helper';
 import { StatusHelper } from '../BaseHelper/status.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
 
-export class SetOrganization extends BaseHelper {
+export class SetOrganization extends FormHelper {
     private _documentHelper: DocumentHelper;
     public dialogHelper: DialogHelper;
     private _notificationHelper: NotificationHelper;
@@ -87,10 +88,9 @@ export class SetOrganization extends BaseHelper {
             .getByRole('button', { name: 'Save' })
             .click();
         await this._page.waitForLoadState('networkidle');
-        const toastMsg = await this._notificationHelper.getToastMessage(
-            'success'
+        await this._notificationHelper.checkToastSuccess(
+            'Successfully set profile image'
         );
-        expect(toastMsg).toContain('Successfully set profile image');
         await this._page.reload();
         await this._page.waitForLoadState('networkidle');
         await this._toggleSidebar();
@@ -351,7 +351,6 @@ export class SetOrganization extends BaseHelper {
 
     public async validateApprovalDelegation(data: ApprovalDelegationData) {
         await this._tabHelper.clickTab('Approval Delegations');
-        // const tableHeader = this._listingHelper.getTableContainer().locator('.table-header-group');
         await this.click({ text: 'ADDED AT' });
         await this.click({ role: 'menuitemradio', text: 'Descending' });
         const row = await this._listingHelper.findRowInTable('1', 'S.N');
@@ -365,6 +364,8 @@ export class SetOrganization extends BaseHelper {
     }
 
     public async deactivateAll() {
+        await this.navigateTo('MYPROFILE');
+        await this._tabHelper.clickTab('Approval Delegations');
         const rows = this._listingHelper
             .getTableContainer()
             .locator('div.table-row.body-row');

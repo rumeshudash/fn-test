@@ -63,4 +63,5 @@ export const LISTING_ROUTES = {
     DOCUMENT_PREFERENCES: TEST_URL + '/e/f/document-preferences',
     DASHBOARD: TEST_URL + '/e/f/',
     CHOICE_TYPES: TEST_URL + '/e/f/choice-types',
+    APPROVAL_DELEGATIONS: TEST_URL + '/e/f/approval-delegations',
 };

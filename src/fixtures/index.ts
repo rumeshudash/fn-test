@@ -14,6 +14,7 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
             const helper = new BaseHelper(page);
 
             await page.goto(TEST_URL + '/login', { waitUntil: 'networkidle' });
+            await page.waitForTimeout(1000);
             await page.waitForLoadState('networkidle');
 
             if (await helper.isVisible({ id: 'username' })) {

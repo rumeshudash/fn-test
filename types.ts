@@ -264,3 +264,15 @@ interface StatusChangeData {
     // row?: LocatorRoles;
     hasDialog?: boolean;
 }
+
+interface DelegationFillData {
+    delegated_id?: string;
+    start_time?: string;
+    end_time?: string;
+    comments?: string;
+}
+
+interface ErrorType {
+    name: string;
+    message: string;
+}

@@ -270,7 +270,6 @@ export class ListingHelper extends PageHelper {
             .filter({
                 hasText: query2,
             });
-        console.log(chalk.blue('Row', row));
         return row;
     }
 
