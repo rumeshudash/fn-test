@@ -163,9 +163,7 @@ test.describe('Signup', () => {
         await test.step('Create Business after Email Verification', async () => {
             await business.fillBusiness({ business_name: 'ABCD Company LTD' });
             await business.clickContinue();
-            await expect(page, chalk.red('Title match')).toHaveTitle(
-                'Finnoto - Analytical Dashboard'
-            );
+            await expect(page, 'Finops Portal Open').toHaveURL(/.*\/e\/f/);
         });
     });
     test('Verify Sign In clickable link', async ({ page }) => {
