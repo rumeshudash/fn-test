@@ -314,7 +314,7 @@ export class BaseHelper {
             .elementHandles();
 
         expect(elements.length, {
-            message: `${input || option} does not found in dropdown`,
+            message: `check ${input || option}  dropdown`,
         }).toBeGreaterThanOrEqual(1);
 
         if (elements.length === 1) {
@@ -328,9 +328,7 @@ export class BaseHelper {
                 }
             }
         } else {
-            throw new Error(
-                chalk.red(`${input || option} does not found in dropdown`)
-            );
+            throw new Error(chalk.red(`check ${input || option} in dropdown`));
         }
     }
 
@@ -442,66 +440,67 @@ export class BaseHelper {
             exact: true,
         });
         await document_navigation.click();
-        await this._page.waitForTimeout(1000);
 
         const vendorBankDetails = this._page.locator(
             "(//div[contains(@class,'flex items-center')])[2]"
         );
+        await this._page.waitForTimeout(300);
+        await this._page.waitForLoadState('networkidle');
         expect(
             await vendorBankDetails.isVisible(),
-            'Vendor Bank Details is not visible'
+            'Check vendor bank details check'
         ).toBe(true);
 
-        const error = this._page.locator('span.label.text-error');
-        const errorCount = await error.count();
-        if (errorCount > 0) {
-            console.log(chalk.red(`Error ocurred: ${errorCount}`));
-            for (let i = 0; i < errorCount; i++) {
-                const errorMsg = await error.nth(i).textContent();
-                console.log(`Error (error ${i}): `, chalk.red(errorMsg));
-            }
-        }
-        const toast = this._page.locator('div.ct-toast-success');
-        const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-        const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
+        // const error = this._page.locator('span.label.text-error');
+        // const errorCount = await error.count();
+        // if (errorCount > 0) {
+        //     console.log(chalk.red(`Error ocurred: ${errorCount}`));
+        //     for (let i = 0; i < errorCount; i++) {
+        //         const errorMsg = await error.nth(i).textContent();
+        //         console.log(`Error (error ${i}): `, chalk.red(errorMsg));
+        //     }
+        // }
+        // const toast = this._page.locator('div.ct-toast-success');
+        // const toastError = this._page.locator('div.ct-toast.ct-toast-error');
+        // const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
 
-        const toastErrorCount = await toastError.count();
-        const toastWarnCount = await toastWarn.count();
-        const toastCount = await toast.count();
-        if (toastCount > 0) {
-            console.log(chalk.green(`toastMessage (success): ${toastCount}:`));
-            for (let i = 0; i < toastCount; i++) {
-                const successMsg = await toast.nth(i).textContent();
-                console.log(
-                    `toastMessage (success ${i}): `,
-                    chalk.green(successMsg)
-                );
-            }
-        }
-        if (toastWarnCount > 0) {
-            console.log(
-                chalk.red(
-                    `Multiple toastMessage ocurred \n ${toastWarn}:`,
-                    toastWarnCount
-                )
-            );
-            for (let i = 0; i < toastWarnCount; i++) {
-                const errorMsg = await toastWarn.nth(i).textContent();
-                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-            }
-        }
-        if (toastErrorCount > 0) {
-            console.log(
-                chalk.red(
-                    `Multiple toastMessage ocurred \n ${toastError}:`,
-                    toastErrorCount
-                )
-            );
-            for (let i = 0; i < toastErrorCount; i++) {
-                const errorMsg = await toastError.nth(i).textContent();
-                console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-            }
-        }
+        // const toastErrorCount = await toastError.count();
+        // const toastWarnCount = await toastWarn.count();
+        // const toastCount = await toast.count();
+        // if (toastCount > 0) {
+        //     console.log(chalk.green(`toastMessage (success): ${toastCount}:`));
+        //     for (let i = 0; i < toastCount; i++) {
+        //         const successMsg = await toast.nth(i).textContent();
+        //         console.log(
+        //             `toastMessage (success ${i}): `,
+        //             chalk.green(successMsg)
+        //         );
+        //     }
+        // }
+        // if (toastWarnCount > 0) {
+        //     console.log(
+        //         chalk.red(
+        //             `Multiple toastMessage ocurred \n ${toastWarn}:`,
+        //             toastWarnCount
+        //         )
+        //     );
+        //     for (let i = 0; i < toastWarnCount; i++) {
+        //         const errorMsg = await toastWarn.nth(i).textContent();
+        //         console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
+        //     }
+        // }
+        // if (toastErrorCount > 0) {
+        //     console.log(
+        //         chalk.red(
+        //             `Multiple toastMessage ocurred \n ${toastError}:`,
+        //             toastErrorCount
+        //         )
+        //     );
+        //     for (let i = 0; i < toastErrorCount; i++) {
+        //         const errorMsg = await toastError.nth(i).textContent();
+        //         console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
+        //     }
+        // }
     }
     // we can't display display name field before gstin data fetched
     public async beforeGstinNameNotVisibleDisplayName() {
@@ -721,5 +720,9 @@ export class BaseHelper {
     async clickActionOption(options: string) {
         const optionContainer = this.locate('div', { role: 'menu' })._locator;
         await optionContainer.getByRole('menuitem', { name: options }).click();
+    }
+
+    public async logOut() {
+        await this._page.locator('a').filter({ hasText: 'Logout' }).click();
     }
 }

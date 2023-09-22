@@ -43,35 +43,12 @@ export class SignInHelper extends NotificationHelper {
         await this.click({ role: 'button', name: ' Next → ' });
         await this.fillText(password, { id: 'password' });
         await this.click({ role: 'button', name: 'Submit' });
-        await this._page.waitForTimeout(1000);
 
         const createPassword = await this._page
             .getByText('Create New Password', {
                 exact: true,
             })
             .isVisible();
-
-        if (username === 'newtestauto@company.com') {
-            const org = await this.locate(
-                '//div[@role="dialog"]//p[text()="Select Organization"]'
-            )._locator.isVisible();
-            if (org) await this.locate('div', { id: 'org-1' })._locator.click();
-
-            await this._page.waitForTimeout(300);
-            await this._page.waitForLoadState('networkidle');
-
-            const portal = await this.locate(
-                '//div[@role="dialog"]//h2[text()="Select Portal"]'
-            )._locator.isVisible();
-            if (portal)
-                await this.locate('div', { id: 'pro-3' })._locator.click();
-            // await this._page
-            //     .getByRole('dialog')
-            //     .getByText('FinOps Portal')+
-            //     .click();
-            // await this._page.waitForTimeout(1000);
-        }
-
         if (createPassword === true) {
             await this.fillText(setPassword, {
                 placeholder: 'Enter Current Password',
@@ -88,8 +65,27 @@ export class SignInHelper extends NotificationHelper {
             await this.fillText(username, { id: 'username' });
             await this.fillText(password, { id: 'password' });
             await this.click({ role: 'button', name: 'Submit' });
-            await this._page.waitForTimeout(1000);
+            await this._page.waitForLoadState('networkidle');
         }
+
+        // const selectOrgPortal = async () => {
+        const org = await this.locate(
+            '//div[@role="dialog"]//p[text()="Select Organization"]'
+        )._locator.isVisible();
+        if (org) await this.locate('div', { id: 'org-1' })._locator.click();
+
+        await this._page.waitForTimeout(300);
+        await this._page.waitForLoadState('networkidle');
+
+        const portal = await this.locate(
+            '//div[@role="dialog"]//h2[text()="Select Portal"]'
+        )._locator.isVisible();
+        if (portal) await this.locate('div', { id: 'pro-3' })._locator.click();
+        await this._page.waitForTimeout(2000);
+        // };
+        // if (username === 'newtestauto@company.com') selectOrgPortal;
+
+        // selectOrgPortal;
     }
 
     /**

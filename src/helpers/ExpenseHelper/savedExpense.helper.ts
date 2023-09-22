@@ -106,10 +106,6 @@ export class SavedExpenseCreation extends BaseHelper {
         await this.click({ role: 'button', name: 'Approve' });
         await this._page.waitForLoadState('networkidle');
     }
-
-    public async logOut() {
-        await this._page.locator('a').filter({ hasText: 'Logout' }).click();
-    }
 }
 
 export class ApprovalWorkflowsTab extends BaseHelper {

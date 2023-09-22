@@ -2,11 +2,7 @@ import { PROCESS_TEST } from '@/fixtures';
 import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
-import {
-    BankAccountDetails,
-    VendorInvitationDetails,
-    VendorOnboarding,
-} from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
+import { VendorOnboarding } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 import {
@@ -14,9 +10,11 @@ import {
     NON_GSTIN_BANK_DETAILS_TWO,
     NON_GSTIN_LOWER_TDS_DETAILS,
 } from '@/utils/required_data';
-import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { nonGstinDataType } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
 import chalk from 'chalk';
+import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/vendorOnboardingWithoutGstin.helper';
+import { VendorInvitationDetails } from '@/helpers/VendorOnboardingHelper/InvitationDetails.helper';
+import { BankAccountDetails } from '@/helpers/VendorOnboardingHelper/bankDetails.helper';
 
 //Vendor and Client Details
 const vendorNonGstinInfo: nonGstinDataType = {
@@ -29,7 +27,7 @@ const vendorNonGstinInfo: nonGstinDataType = {
 
 const clientGstinInfo: gstinDataType = {
     trade_name: 'Hidesign India Pvt Ltd',
-    value: '33AACCH0586R1Z6',
+    gstin: '33AACCH0586R1Z6',
     business_type: 'Private Limited',
     address:
         'EXPRESS AVENUE, 49/50 L-WHITES ROAD, ROYAPETTAH, SHOP NO.S 161 B, Chennai, , , 600014, , Tamil Nadu, NA, FIRST FLOOR, ',
@@ -171,13 +169,13 @@ describe('TCVO004', () => {
                 await withnogstin.clickButton('Connect');
             });
             await test.step('Client Invitation Field', async () => {
-                await vendorOnboarding.clientInvitation(
-                    vendorNonGstinInfo.trade_name,
-                    ''
-                );
+                // await vendorOnboarding.clientInvitation(
+                //     vendorNonGstinInfo.trade_name,
+                //     ''
+                // );
 
                 await withnogstin.clickButton('Next');
-                await vendorOnboarding.uploadImageDocuments(IMAGE_NAME);
+                await vendorOnboarding.uploadImageDocuments();
 
                 await withnogstin.clickButton('Submit');
 
@@ -209,7 +207,7 @@ describe('TCVO004', () => {
                 expect(
                     await invitationDetails.checkNonGstinClientGSTIN(),
                     chalk.red('Client Gstin does not matched')
-                ).toBe(clientGstinInfo.value);
+                ).toBe(clientGstinInfo.gstin);
             });
 
             await test.step('Check Uploaded Doucments', async () => {
