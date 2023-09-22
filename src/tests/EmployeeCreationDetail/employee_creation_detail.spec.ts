@@ -228,7 +228,7 @@ describe('Employee Creation-detail>Finops Portal', () => {
                 'Change Employee Status Active to Inactive',
                 async () => {
                     await employeeCreation.listing.searchInList(
-                        employeeCreationInfo.name
+                        employeeCreationInfo.identifier
                     );
                     await employeeCreation.checkEmployeeNameLink();
                     await employeeCreation.clickButton('Actions');
@@ -483,6 +483,7 @@ describe('Employee Creation-detail>Finops Portal', () => {
 
         await PROCESS_TEST.step('Add Documents - Action Options', async () => {
             await PROCESS_TEST.step('Add Documents Verify', async () => {
+                await detailsPage.clickActionButton();
                 await detailsPage.clickActionOption('Add Documents');
                 await employeeCreation.file.setFileInput({ isDialog: true });
                 await employeeCreation.form.fillTextAreaForm(
