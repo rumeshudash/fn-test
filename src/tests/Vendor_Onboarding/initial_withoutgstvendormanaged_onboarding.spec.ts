@@ -2,19 +2,17 @@ import { PROCESS_TEST } from '@/fixtures';
 import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
-import {
-    BankAccountDetails,
-    VendorOnboarding,
-} from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
+import { VendorOnboarding } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import { test } from '@playwright/test';
 import {
     NON_GSTIN_LOWER_TDS_DETAILS,
     NON_GSTIN_BANK_DETAILS_ONE,
 } from '@/utils/required_data';
-import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
 import { nonGstinDataType } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
 import chalk from 'chalk';
+import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/vendorOnboardingWithoutGstin.helper';
+import { BankAccountDetails } from '@/helpers/VendorOnboardingHelper/bankDetails.helper';
 
 //Vendor and Client Details
 const vendorNonGstinInfo: nonGstinDataType = {

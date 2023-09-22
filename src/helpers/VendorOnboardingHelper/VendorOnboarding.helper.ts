@@ -19,6 +19,66 @@ import { FormHelper } from '../BaseHelper/form.helper';
 import { FileHelper } from '../BaseHelper/file.helper';
 
 let getDate: string;
+
+export const vendorGstinInfoSchema = {
+    gstin: {
+        type: 'text',
+        required: true,
+    },
+};
+export const BANKDETAILS_SCHEMA = {
+    account_number: {
+        type: 'password',
+        required: true,
+    },
+    re_account_number: {
+        type: 'text',
+        required: true,
+    },
+    ifsc_code: {
+        type: 'text',
+        required: true,
+    },
+};
+
+export const LOWER_TDS_DETAILS_SCHEMA = {
+    type_id: {
+        type: 'select',
+        required: true,
+    },
+    identifier: {
+        type: 'text',
+        required: true,
+    },
+    percentage: {
+        type: 'text',
+        required: true,
+        name: 'custom_field_data.percentage',
+    },
+    expiry_date: {
+        type: 'text',
+        required: true,
+    },
+};
+
+export const Client_Invitation_Info_Schema = {
+    vendor_account_id: {
+        type: 'select',
+        required: true,
+    },
+    business_account_id: {
+        type: 'reference_select',
+        required: true,
+    },
+    bank_id: {
+        type: 'select',
+        required: true,
+    },
+    poc: {
+        type: 'email',
+    },
+};
+
 export class VendorOnboarding extends BaseHelper {
     public lowerTDS;
     public notification: NotificationHelper;
@@ -77,6 +137,71 @@ export class VendorOnboarding extends BaseHelper {
         await this._page.locator('a').filter({ hasText: 'Logout' }).click();
     }
 
+    /**
+     * Verifies the business details.
+     *
+     * @param {string} title - The title certificate of the business.
+     * @param {string} certNumber - The certificate number of the business.
+     * @return {Promise<void>} A promise that resolves once the verification is complete.
+     */
+    public async verifyBusinessDetails(
+        title: string,
+        certNumber: string
+    ): Promise<void> {
+        const businessLocator = this.locate(
+            `//div[text()="${title}"]/ancestor::div[contains(@class,"px-4 border rounded")]`
+        )._locator;
+        const detailsName = businessLocator.locator(
+            `//div[text()="${certNumber}"]`
+        );
+
+        await expect(detailsName).toBeVisible();
+    }
+
+    /**
+     * Verifies the auto-fetching of business details.
+     *
+     * @param {string} dropdownName - The name of the dropdown.
+     * @param {string} data - The expected data to be fetched.
+     */
+    public async verifyAutoFetchBusinessName(
+        dropdownName: string,
+        data: string
+    ): Promise<void> {
+        await this._page.waitForTimeout(300);
+        await this._page.waitForLoadState('networkidle');
+        const value = await this.locate(
+            `//input[@name="${dropdownName}"]/parent::div //div[text()="${data}"]`
+        )._locator.isVisible();
+
+        expect(value, chalk.red('Verify Auto Fetch Business Name')).toBe(true);
+    }
+
+    public async verifyClientId(id: string | number): Promise<void> {
+        const getclient = await this.locate('input', {
+            name: 'identifier',
+        })._locator.inputValue();
+
+        expect(getclient, chalk.red('check Client ID')).toBe(id);
+    }
+
+    // dropdownName: string,
+    // data: string
+    public async verifyAutoFetchClientName(): Promise<void> {
+        await this._page.waitForTimeout(300);
+        await this._page.waitForLoadState('networkidle');
+        // const value = await this.locate(
+        //     `//input[@name="${dropdownName}"]/parent::div //div[text()="${data}"]`
+        // )._locator.isVisible();
+        const value = await this.locate(
+            `//input[@name="client_account_id"]/parent::div //div[contains(text(), "Select")]`
+        )._locator.isVisible();
+
+        expect(value, chalk.red('Verify Auto Fetch Client Name')).not.toBe(
+            true
+        );
+    }
+
     // public async bankAccount(data: ClientBankAccountDetails[] = []) {
     //     const bankAccountName = await this._page
     //         .locator('#account_name')
@@ -130,7 +255,7 @@ export class VendorOnboarding extends BaseHelper {
     //         }
     //     }
     // }
-    async fillDocuments() {
+    public async fillDocuments() {
         await this._page.waitForTimeout(1500);
 
         await expect(
@@ -338,10 +463,19 @@ export class VendorOnboarding extends BaseHelper {
                     // await this._page.waitForTimeout(2000);
                 }
             }
-            await this.click({ role: 'button', name: 'Submit' });
         } else {
             await this.click({ role: 'button', text: 'Submit' });
         }
+    }
+
+    public async verifyOnboardingCompleted() {
+        await this._page.waitForTimeout(1000);
+        expect(
+            await this.locate(
+                '//div[text()="Onboarding Completed"]'
+            )._locator.isVisible(),
+            chalk.red('Onboarding text visibility')
+        ).toBe(true);
     }
 }
 
@@ -364,407 +498,5 @@ export class VendorOnboardingWithGSTIN extends GenericGstinCardHelper {
         expect(display_name, chalk.red('Display name match with vendor')).toBe(
             displayName
         );
-    }
-}
-export class VendorManagedWithoutGSTIN extends GenericNonGstinCardHelper {
-    private VENDOR_MANAGED_ONBOARDING_DOM = '//div[text()="Vendor Onboarding"]';
-    private BUSINESS_DETAILS_DOM =
-        "//div[@class='input-addon-group input-group-md']/following-sibling::div[1]";
-    private INVITATION_DETAILS_DOM =
-        "(//div[contains(@class,'flex-1 gap-4')])[2]";
-    public static VENDORONBOARDINGWITHOUTGSTIN_DOM =
-        '//div[text()="Documents for Approval"]';
-
-    public async fillVendorDetails(data: nonGstinDataType[] = []) {
-        const helper = this.locate(this.VENDOR_MANAGED_ONBOARDING_DOM);
-        for (let details of data) {
-            expect(
-                await helper.locate('#name')._locator.isVisible(),
-                chalk.red('Name field visibility')
-            ).toBe(true);
-
-            await helper.fillText(details.trade_name, {
-                name: 'name',
-            });
-            expect(
-                await helper.locate('#display_name')._locator.isVisible(),
-                chalk.red('Display Name field visibility')
-            ).toBe(true);
-
-            await helper.fillText(details.display_name, {
-                name: 'display_name',
-            });
-
-            expect(
-                await helper
-                    .locate('input', { name: 'type_id' })
-                    ._locator.isVisible(),
-                chalk.red('Business Type visibility')
-            ).toBe(true);
-
-            await helper.selectOption({
-                input: details.business_type,
-                name: 'type_id',
-            });
-
-            expect(
-                await helper.locate('#pincode')._locator.isVisible(),
-                chalk.red('Pincode field visibility')
-            ).toBe(true);
-
-            await helper.fillText(details.pin_code, { name: 'pincode' });
-
-            expect(
-                await helper.locate('#address')._locator.isVisible(),
-                chalk.red('Address field visibility')
-            ).toBe(true);
-
-            await helper.fillText(details.address, { name: 'address' });
-
-            await this.checkWizardNavigationClickDocument('Documents');
-            expect(
-                await helper.locate('#name')._locator.inputValue(),
-                chalk.red('Name field input value')
-            ).not.toBeNull();
-
-            expect(
-                await helper.locate('#name')._locator.inputValue(),
-                chalk.red('Name field value match')
-            ).toBe(details.trade_name);
-
-            expect
-                .soft(
-                    await helper.locate('#display_name')._locator.inputValue(),
-                    chalk.red('Display Name input field')
-                )
-                .not.toBeNull();
-
-            expect(
-                await this._page
-                    .locator('//div[contains(@class,"mt-2 text-sm")]')
-                    .isVisible(),
-                chalk.red('Pin Code Address check')
-            ).toBe(true);
-
-            expect(
-                await this._page
-                    .locator('//div[contains(@class,"mt-2 text-sm")]')
-                    .textContent(),
-                chalk.red('Pin Code Address match')
-            ).toBe(PAN_CODE_ADDRESS);
-            expect(
-                (await helper.locate('#pincode')._locator.inputValue()).length,
-                chalk.red('Pincode length check')
-            ).toBeGreaterThan(5);
-
-            expect(
-                await this._page
-                    .locator('//div[contains(@class,"mt-2 text-sm")]')
-                    .isVisible(),
-                chalk.red('Pin Code Address visibility')
-            );
-
-            expect(
-                (await helper.locate('#address')._locator.inputValue()).length,
-                chalk.red('Address input field ')
-            ).not.toBe(0);
-        }
-    }
-}
-
-export class BankAccountDetails extends BaseHelper {
-    public bankDetails;
-    constructor(bankDetails, page) {
-        super(page);
-        this.bankDetails = bankDetails;
-    }
-    // validate bank account name with business name
-    async validateBankAccountName() {
-        expect(
-            await this._page.locator('#account_name').isVisible(),
-            chalk.red('Bank Name visibility')
-        ).toBe(true);
-
-        const clientBusinessName = await this._page
-            .locator('#account_name')
-            .inputValue();
-        expect(clientBusinessName, chalk.red('Bank Name match')).toBe(
-            this.bankDetails.bankName
-        );
-    }
-
-    // Check if a button with the name 'Next' is visible and clickable on the page
-    async isBtnVisible() {
-        expect(
-            await this._page.getByRole('button', { name: 'Next' }).isEnabled(),
-            chalk.red('Next button enabled ')
-        ).toBe(true);
-    }
-    async fillBankAccount() {
-        await this.fillText(this.bankDetails.accountNumber, {
-            name: 'account_number',
-        });
-        await this.fillText(this.bankDetails.accountNumber, {
-            name: 're_account_number',
-        });
-        await this.fillText(this.bankDetails.ifsc, { name: 'ifsc_code' });
-        if (IMAGE_NAME) {
-            await this._page.setInputFiles(
-                "//input[@type='file']",
-                `./images/${IMAGE_NAME}`
-            );
-        }
-        await this.isBtnVisible();
-    }
-    async vendorIfscLogoVisibilityValidation() {
-        const iconLocator = this.locate('//img[@alt="bank"]')._locator;
-        expect(
-            await iconLocator.isVisible(),
-            chalk.red('IFSC Bank Logo visibility')
-        ).toBe(true);
-    }
-    async vendorIfscDetailsValidation() {
-        const ifsc_details = this.locate('div', {
-            id: 'bank_ifsc_info',
-        })._locator;
-        expect(
-            await ifsc_details.isVisible(),
-            chalk.red('Bank Details visibility')
-        ).toBe(true);
-
-        return await ifsc_details.textContent();
-    }
-    async bankAccountName() {
-        const accountName = await this._page
-            .locator('//label[@for="account_name"]/following-sibling::div[1]')
-            .textContent();
-        return accountName;
-    }
-    async bankAccountNumber() {
-        const account_number = await this._page
-            .locator(
-                '//span[@class="text-sm font-medium"]/following-sibling::span[1]'
-            )
-            .textContent();
-        return account_number;
-    }
-    async bankIFSCCode() {
-        const ifsc_code = await this._page
-            .locator("//img[@alt='bank']/following-sibling::p[1]")
-            .textContent();
-        return ifsc_code;
-    }
-    async businessDetailsIFSC() {
-        const gstin = await this._page
-            .locator('//div[text()="IFSC Code"]/following-sibling::div')
-            .textContent();
-        return gstin;
-    }
-}
-
-export class VendorInvitationDetails extends BaseHelper {
-    public bankDetails;
-    public lowerTDS;
-    constructor(bankDetails, lowerTDS, page) {
-        super(page);
-        this.bankDetails = bankDetails;
-        this.lowerTDS = lowerTDS;
-    }
-    private INVITATION_DETAILS_DOM =
-        "(//div[contains(@class,'flex-1 gap-4')])[2]";
-
-    async checkFrom() {
-        const helper = this.locate(this.INVITATION_DETAILS_DOM);
-        return await helper._page
-            .locator("(//div[contains(@class,'flex-1 gap-1')]//div)[1]")
-            .textContent();
-    }
-    async checkFromGSTIN() {
-        const helper = this.locate(this.INVITATION_DETAILS_DOM);
-        const businessGSTIN = helper._page.locator(
-            "//span[contains(@class,'text-xs text-base-tertiary')]"
-        );
-        await expect
-            .soft(businessGSTIN, chalk.red('GSTIN of Business visibility'))
-            .toBeVisible();
-        if (await businessGSTIN.isVisible())
-            return await businessGSTIN.textContent();
-    }
-    async checkClient() {
-        const helper = this.locate(this.INVITATION_DETAILS_DOM);
-        return await helper._page
-            .locator("//span[contains(@class,'inline-block w-3/4')]")
-            .textContent();
-    }
-
-    async checkClientGSTIN() {
-        const helper = this.locate(this.INVITATION_DETAILS_DOM);
-        return await helper._page
-            .locator("//span[contains(@class,'text-xs cursor-pointer')]")
-            .textContent();
-    }
-
-    //For non GSTIN Information
-    async checkNonGstinFrom() {
-        const helper = this.locate(this.INVITATION_DETAILS_DOM);
-        return await helper._page
-            .locator("(//div[@class='w-full']//span)[3]")
-            .textContent();
-    }
-    async checkGstinFromNonGstin() {
-        const helper = this.locate(this.INVITATION_DETAILS_DOM);
-        const businessGSTIN = helper._page.locator(
-            "(//div[contains(@class,'text-center rounded')])[1]"
-        );
-        await expect
-            .soft(businessGSTIN, chalk.red('GSTIN of Business visibility'))
-            .toBeVisible();
-        if (await businessGSTIN.isVisible())
-            return await businessGSTIN.textContent();
-    }
-
-    async checkNonGstinClient() {
-        const helper = this.locate(this.INVITATION_DETAILS_DOM);
-        return await helper._page
-            .locator("//span[contains(@class,'inline-block w-3/4')]")
-            .textContent();
-    }
-
-    async checkNonGstinClientGSTIN() {
-        const helper = this.locate(this.INVITATION_DETAILS_DOM);
-        return await helper._page
-            .locator("//span[contains(@class,'text-xs cursor-pointer')]")
-            .textContent();
-    }
-
-    async checkDocument(title: string) {
-        const helper = this.locate(
-            VendorOnboardingWithGSTIN.VENDORONBOARDINGWITHOUTGSTIN_DOM
-        );
-        const container = helper._page
-            .locator(`(//div[contains(@class,'border-b cursor-pointer')])`)
-            .filter({ hasText: title });
-        const imageName = helper._page.locator(
-            '//div[contains(@class,"overflow-hidden font-medium")]'
-        );
-        if (await container.isVisible()) {
-            await container.click();
-            if (title === 'GSTIN Certificate') {
-                const gstinStatus = helper._page.locator(
-                    "//p[text()='GST Status']/following-sibling::p"
-                );
-
-                expect(
-                    await gstinStatus.isVisible(),
-                    chalk.red('GSTIN Status visibility')
-                ).toBe(true);
-                expect(
-                    await gstinStatus.textContent(),
-                    chalk.red('GSTIN Status match')
-                ).toBe(vendorGstinInfo.status);
-
-                if (await imageName.isVisible()) {
-                    expect(
-                        imageName,
-                        chalk.red('Image Name match')
-                    ).toBeVisible();
-                }
-            }
-            if (title === 'Pan Card') {
-                if (await imageName.isVisible()) {
-                    expect(
-                        imageName,
-                        chalk.red('Image Name match')
-                    ).toBeVisible();
-                }
-            }
-
-            if (title === 'MSME') {
-                const msmeLocator = helper._page.locator(
-                    "//div[text()='MSME number']/following-sibling::div"
-                );
-                expect(
-                    await msmeLocator.isVisible(),
-                    chalk.red('MSME visibility')
-                ).toBe(true);
-
-                expect(
-                    await msmeLocator.textContent(),
-                    chalk.red('MSME match')
-                ).toBe(MSME_NUMBER);
-
-                if (await imageName.isVisible()) {
-                    expect(
-                        imageName,
-                        chalk.red('Image Name match')
-                    ).toBeVisible();
-                }
-            }
-
-            if (title === 'Lower TDS') {
-                const tdsCertNumber = helper._page.locator(
-                    "//div[text()='TDS Certificate Number']/following-sibling::div"
-                );
-                const tdsPercentage = helper._page.locator(
-                    '//div[text()="Lower TDS Percentage"]/following-sibling::div'
-                );
-                console.log(
-                    'Lower TDS Percentage: ' + (await tdsPercentage.innerText())
-                );
-                const expireDate = helper._page.locator(
-                    '//div[text()="Expiry Date"]/following-sibling::div'
-                );
-
-                expect(
-                    await tdsCertNumber.textContent(),
-                    chalk.red('TDS Certificate Number match')
-                ).toBe(this.lowerTDS.tdsCertNumber);
-
-                expect(
-                    await tdsPercentage.textContent(),
-                    chalk.red('TDS Percentage match')
-                ).toBe(this.lowerTDS.tdsPercentage + '%');
-
-                expect(
-                    await expireDate.textContent(),
-                    chalk.red('Expiry Date match')
-                ).toBe(getDate);
-
-                if (await imageName.isVisible()) {
-                    expect(
-                        imageName,
-                        chalk.red('Image Name match')
-                    ).toBeVisible();
-                }
-            }
-
-            if (title === 'Bank') {
-                const bankName = helper._page.locator(
-                    "//div[text()='Name']/following-sibling::div"
-                );
-                const accountNumber = helper._page.locator(
-                    '//div[text()="A/C Number"]/following-sibling::div'
-                );
-                const ifscCode = helper._page.locator(
-                    "//div[text()='IfSC Code']/following-sibling::div"
-                );
-
-                expect(
-                    await bankName.textContent(),
-                    chalk.red('Bank Name match')
-                ).toBe(this.bankDetails.bankName);
-
-                expect(
-                    await accountNumber.textContent(),
-                    chalk.red('Account Number match')
-                ).toBe(this.bankDetails.accountNumber);
-
-                expect(
-                    await ifscCode.textContent(),
-                    chalk.red('IFSC Code match')
-                ).toBe(this.bankDetails.ifsc);
-            }
-        }
-        await helper._page.waitForTimeout(1000);
     }
 }
