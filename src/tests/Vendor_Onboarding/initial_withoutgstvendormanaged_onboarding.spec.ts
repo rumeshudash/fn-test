@@ -8,11 +8,13 @@ import { test } from '@playwright/test';
 import {
     NON_GSTIN_LOWER_TDS_DETAILS,
     NON_GSTIN_BANK_DETAILS_ONE,
+    NON_GSTIN_BANK_DETAILS_TWO,
 } from '@/utils/required_data';
 import { nonGstinDataType } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
 import chalk from 'chalk';
 import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/vendorOnboardingWithoutGstin.helper';
 import { BankAccountDetails } from '@/helpers/VendorOnboardingHelper/bankDetails.helper';
+import { VendorInvitationDetails } from '@/helpers/VendorOnboardingHelper/InvitationDetails.helper';
 
 //Vendor and Client Details
 const vendorNonGstinInfo: nonGstinDataType = {
@@ -38,8 +40,15 @@ let bankAccountNumber: string;
 const { expect, describe } = PROCESS_TEST;
 
 //Vendor Managed with Client Connect
-describe('TCVO003', () => {
-    PROCESS_TEST('Vendor Onboarding Without GSTIN', async ({ page }) => {
+describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor Managed)', () => {
+    const SignupInfo = {
+        name: 'User130823',
+        email: `user${generateRandomNumber()}@test.com`,
+        password: '123456',
+        confirm_password: '123456',
+    };
+
+    PROCESS_TEST('TCVO003', async ({ page }) => {
         const withnogstin = new VendorManagedWithoutGSTIN(
             vendorNonGstinInfo,
             page
@@ -54,50 +63,46 @@ describe('TCVO003', () => {
             page
         );
         // const vendorOnboarding = new VendorOnboarding(vendorNonGstinInfo, page);
-        await withnogstin.clickLinkInviteVendor('Vendor Invitations');
-        await vendorOnboarding.clickCopyLink();
-        await vendorOnboarding.notification.checkToastSuccess(
-            'Link Successfully Copied!!!'
-        );
+        await PROCESS_TEST.step('Click Invite Vendor', async () => {
+            await withnogstin.clickLinkInviteVendor('Vendor Invitations');
+            await vendorOnboarding.clickCopyLink();
+            await vendorOnboarding.notification.checkToastSuccess(
+                'Link Successfully Copied!!!'
+            );
+        });
         // expect(
         //     await withnogstin.toastMessage(),
         //     chalk.red('ToastMessage match')
         // ).toBe('Link Successfully Copied!!!');
 
-        await test.step('Open Copied Link', async () => {
+        await PROCESS_TEST.step('Open Copied Link', async () => {
             const URL = await vendorOnboarding.linkURL();
             await vendorOnboarding.closeDialog();
             await vendorOnboarding.logOut();
             await vendorOnboarding.init(URL);
         });
 
-        await test.step('Signup - Vendor Onboarding', async () => {
-            test.slow();
+        await PROCESS_TEST.step('Signup - Vendor Onboarding', async () => {
             await withnogstin.clickButton('Sign Up');
             const signup = new SignupHelper(page);
-            await signup.fillSignup({
-                name: 'User130823',
-                email: `User${generateRandomNumber()}@test.com`,
-                password: '123456',
-                confirm_password: '123456',
-            });
+            await signup.fillSignup(SignupInfo);
             await signup.clickButton('Next');
         });
 
         //Verifies account after signup
-        await test.step('Verify Email', async () => {
+        await PROCESS_TEST.step('Verify Email', async () => {
             const verifyEmail = new VerifyEmailHelper(page);
             await verifyEmail.fillCode('1');
             await verifyEmail.clickButton('Verify →');
             await withnogstin.clickButton('Continue →');
         });
 
-        await test.step('Create Business Client', async () => {
+        await PROCESS_TEST.step('Create Business Client', async () => {
             await withnogstin.clickButton('Create New Business');
             await withnogstin.setCheckbox('No');
         });
 
-        await test.step('Fill Business Details', async () => {
+        await PROCESS_TEST.step('Fill Business Details', async () => {
             await withnogstin.fillVendorDetails([vendorNonGstinInfo]);
             await withnogstin.clickButton('Next');
             await vendorOnboarding.notification.checkToastSuccess(
@@ -109,12 +114,12 @@ describe('TCVO003', () => {
             // ).toBe('Successfully saved');
         });
 
-        await test.step('Fill Document Details', async () => {
+        await PROCESS_TEST.step('Fill Document Details', async () => {
             await vendorOnboarding.fillDocuments();
             await withnogstin.clickButton('Next');
         });
 
-        await test.step('Fill Bank Account Details', async () => {
+        await PROCESS_TEST.step('Fill Bank Account Details', async () => {
             test.slow();
             await getBankDetails.validateBankAccountName();
             await getBankDetails.fillBankAccount();
@@ -122,7 +127,7 @@ describe('TCVO003', () => {
                 'Bank Account'
             );
         });
-        await test.step('Verify Bank Account Details', async () => {
+        await PROCESS_TEST.step('Verify Bank Account Details', async () => {
             const ifscBankDetails =
                 await getBankDetails.vendorIfscDetailsValidation();
             expect(ifscBankDetails, chalk.red('Bank IFSC Code match')).toBe(
@@ -143,6 +148,172 @@ describe('TCVO003', () => {
                 chalk.red('Onboarding Completed text visibility')
             ).toBe(true);
             await withnogstin.clickButton('Close');
+        });
+    });
+
+    PROCESS_TEST('TCVO004', async ({ page }) => {
+        const withnogstin = new VendorManagedWithoutGSTIN(
+            vendorNonGstinInfo,
+            page
+        );
+        const vendorOnboarding = new VendorOnboarding(
+            NON_GSTIN_LOWER_TDS_DETAILS,
+            page
+        );
+        const invitationDetails = new VendorInvitationDetails(
+            NON_GSTIN_BANK_DETAILS_TWO,
+            NON_GSTIN_LOWER_TDS_DETAILS,
+            page
+        );
+        const getBankDetails = new BankAccountDetails(
+            NON_GSTIN_BANK_DETAILS_TWO,
+            page
+        );
+
+        // const vendorOnboarding = new VendorOnboarding(vendorNonGstinInfo, page);
+        await withnogstin.clickLinkInviteVendor('Vendor Invitations');
+        await vendorOnboarding.clickCopyLink();
+        await vendorOnboarding.notification.checkToastSuccess(
+            'Link Successfully Copied!!!'
+        );
+        // expect(
+        //     await withnogstin.toastMessage(),
+        //     chalk.red('ToastMessage match')
+        // ).toBe('Link Successfully Copied!!!');
+
+        await PROCESS_TEST.step('Open Copied Link', async () => {
+            const URL = await vendorOnboarding.linkURL();
+            await vendorOnboarding.closeDialog();
+            await vendorOnboarding.logOut();
+            await vendorOnboarding.init(URL);
+        });
+
+        await PROCESS_TEST.step('Signup - Vendor Onboarding', async () => {
+            test.slow();
+            await withnogstin.clickButton('Sign Up');
+            const signup = new SignupHelper(page);
+            await signup.fillSignup({
+                name: 'User130823',
+                email: `User${generateRandomNumber()}@test.com`,
+                password: '123456',
+                confirm_password: '123456',
+            });
+            await signup.clickButton('Next');
+            test.slow();
+        });
+
+        //Verifies account after signup
+        await PROCESS_TEST.step('Verify Email', async () => {
+            const verifyEmail = new VerifyEmailHelper(page);
+            await verifyEmail.fillCode('1');
+            await verifyEmail.clickButton('Verify →');
+            await withnogstin.clickButton('Continue →');
+        });
+
+        await PROCESS_TEST.step('Create Business Client', async () => {
+            await withnogstin.clickButton('Create New Business');
+            await withnogstin.setCheckbox('No');
+        });
+
+        await PROCESS_TEST.step('Fill Business Details', async () => {
+            await withnogstin.fillVendorDetails([vendorNonGstinInfo]);
+            await withnogstin.clickButton('Next');
+            await vendorOnboarding.notification.checkToastSuccess(
+                'Successfully saved'
+            );
+            // expect(
+            //     await withnogstin.toastMessage(),
+            //     chalk.red('Toast message does not occured')
+            // ).toBe('Successfully saved');
+        });
+
+        await PROCESS_TEST.step('Fill Document Details', async () => {
+            await vendorOnboarding.fillDocuments();
+            await withnogstin.clickButton('Next');
+        });
+
+        await PROCESS_TEST.step('Fill Bank Account Details', async () => {
+            test.slow();
+
+            await getBankDetails.fillBankAccount();
+            await withnogstin.checkWizardNavigationClickDocument(
+                'Bank Account'
+            );
+        });
+        await PROCESS_TEST.step('Verify Bank Account Details', async () => {
+            const ifscBankDetails =
+                await getBankDetails.vendorIfscDetailsValidation();
+            expect(ifscBankDetails, chalk.red('Bank IFSC Code match')).toBe(
+                getBankDetails.bankDetails.address
+            );
+            await getBankDetails.vendorIfscLogoVisibilityValidation();
+            await withnogstin.clickButton('Previous');
+            await withnogstin.clickButton('Next');
+
+            await getBankDetails.fillBankAccount();
+            await withnogstin.checkWizardNavigationClickDocument(
+                'Bank Account'
+            );
+            await withnogstin.clickButton('Next');
+
+            expect(
+                await page.getByText('Onboarding Completed').isVisible(),
+                chalk.red('Onboarding Completed text visibility')
+            ).toBe(true);
+            await withnogstin.clickButton('Close');
+        });
+
+        await PROCESS_TEST.step('Without GSTIN Client Connect', async () => {
+            await withnogstin.clickButton('Connect');
+        });
+        await PROCESS_TEST.step('Client Invitation Field', async () => {
+            // await vendorOnboarding.clientInvitation(
+            //     vendorNonGstinInfo.trade_name,
+            //     ''
+            // );
+
+            await withnogstin.clickButton('Next');
+            await vendorOnboarding.uploadImageDocuments();
+
+            await withnogstin.clickButton('Submit');
+
+            //Adding custom Timeout
+            test.slow();
+            await vendorOnboarding.notification.checkToastSuccess(
+                'Successfully saved'
+            );
+            // expect(
+            //     await withnogstin.toastMessage(),
+            //     chalk.red('ToastMessage match')
+            // ).toBe('Successfully created');
+        });
+
+        await PROCESS_TEST.step('Client Verify and Approve', async () => {
+            expect(
+                await invitationDetails.checkNonGstinFrom(),
+                chalk.red('Business Name does not matched')
+            ).toBe(vendorNonGstinInfo.trade_name);
+            expect(
+                await invitationDetails.checkNonGstinClient(),
+                chalk.red('Client Name does not matched')
+            ).toBe(clientGstinInfo.trade_name + ' ');
+
+            expect(
+                await invitationDetails.checkGstinFromNonGstin(),
+                chalk.red('GSTIN does not matched')
+            ).toBe('Not Registered Business');
+            expect(
+                await invitationDetails.checkNonGstinClientGSTIN(),
+                chalk.red('Client Gstin does not matched')
+            ).toBe(clientGstinInfo.gstin);
+        });
+
+        await PROCESS_TEST.step('Check Uploaded Doucments', async () => {
+            await invitationDetails.checkDocument('COI');
+            await invitationDetails.checkDocument('Pan Card');
+            await invitationDetails.checkDocument('MSME');
+            await invitationDetails.checkDocument('Lower TDS');
+            await invitationDetails.checkDocument('Bank');
         });
     });
 });
