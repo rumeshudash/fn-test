@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import test, { Page, expect } from '@playwright/test';
 import chalk from 'chalk';
 import { BaseHelper } from '../BaseHelper/base.helper';
 import { PortalSelectorHelper } from '../BaseHelper/portalSelector.helper';
@@ -152,17 +152,15 @@ export class SignInHelper extends NotificationHelper {
         await this.click({ role: 'button', name: ' Next → ' });
 
         for (let i = 0; i <= 10; i++) {
-            const password = SignInHelper.generateRandomPassword();
-            await this.fillText(password, { id: 'password' });
-            await this.click({ role: 'button', name: 'Submit' });
+            await test.step(`Attempt ${i + 1}`, async () => {
+                const password = SignInHelper.generateRandomPassword();
+                await this.fillText(password, { id: 'password' });
+                await this.click({ role: 'button', name: 'Submit' });
+            });
 
             const errorMessage = await this.getErrorMessage();
-
             if (errorMessage) {
-                if (
-                    errorMessage ===
-                    'Account locked for too many invalid attempts. Please try after 5 minutes'
-                ) {
+                if (errorMessage.includes('Account locked')) {
                     break;
                 }
             }
