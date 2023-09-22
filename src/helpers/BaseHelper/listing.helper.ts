@@ -295,4 +295,9 @@ export class ListingHelper extends PageHelper {
 
         return count;
     }
+
+    public async isAnyRowExist(columnName: string): Promise<boolean> {
+        const n_rows = await this.getRowCount(columnName);
+        return !!n_rows;
+    }
 }
