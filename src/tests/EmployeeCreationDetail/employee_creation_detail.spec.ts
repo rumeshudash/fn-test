@@ -111,9 +111,15 @@ describe('Employee Creation-detail>Finops Portal', () => {
                     name: 'email',
                 }
             );
+
+            await employeeCreation.form.dialogHelper.checkConfirmDialogOpenOrNot();
+            await employeeCreation.form.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
+            );
         });
 
         await PROCESS_TEST.step('Check Save And Create Another', async () => {
+            await employeeCreation.clickAddIcon();
             await employeeCreation.form.fillFormInputInformation(
                 employeeCreation.employeeCreationSchema,
                 employeeCreationInfo_SaveAndCreate
@@ -477,7 +483,6 @@ describe('Employee Creation-detail>Finops Portal', () => {
 
         await PROCESS_TEST.step('Add Documents - Action Options', async () => {
             await PROCESS_TEST.step('Add Documents Verify', async () => {
-                await detailsPage.clickActionButton();
                 await detailsPage.clickActionOption('Add Documents');
                 await employeeCreation.file.setFileInput({ isDialog: true });
                 await employeeCreation.form.fillTextAreaForm(
