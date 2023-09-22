@@ -34,13 +34,7 @@ export const businessVendorGstin: gstinDataType = {
 };
 
 //For Vendor and Client Info to fill
-export const VendorClientInfo = {
-    trade_name: 'Hidesign India Pvt Ltd', //Client Business Name
-    displayName: businessVendorGstin.trade_name.slice(5),
-    value: businessVendorGstin.gstin, //Vendor GSTIN
-    vendorEmail: 'meatshop@gmail.com',
-    vendorNumber: '9876543210',
-};
+
 //For checking client info from card
 export const ClientBusinessDetails: gstinDataType = {
     trade_name: 'Hidesign India Pvt Ltd',
