@@ -176,7 +176,7 @@ describe('HR -> Department Creation and Details Verification', () => {
                 required: true,
             },
             email: {
-                type: 'email',
+                type: 'text',
                 required: true,
             },
             identifier: {

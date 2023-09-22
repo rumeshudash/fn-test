@@ -14,11 +14,11 @@ test.describe('Configuration - Document Preference', () => {
         });
 
         await PROCESS_TEST.step('Check Data is present in list', async () => {
-            await documents_preference.searchTextInList('COI');
+            await documents_preference.checkTextInList('COI');
         });
 
         await PROCESS_TEST.step('Check List Feild', async () => {
-            await documents_preference.getTableHeader([
+            await documents_preference.checkTableHeader([
                 'S.N',
                 'NAME',
                 'MANDATORY',

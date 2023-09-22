@@ -18,6 +18,16 @@ interface InputFieldLocatorOptions {
     type?: string;
     hasText?: string;
 }
+interface SelectBoxLocatorOptions {
+    option?: string | number;
+    input?: string | number;
+    selector?: string;
+    placeholder?: string;
+    label?: string;
+    name?: string;
+    hasText?: string;
+    exact?: boolean;
+}
 
 type LocatorRoles =
     | 'alert'
@@ -253,4 +263,16 @@ interface StatusChangeData {
     colName?: string;
     // row?: LocatorRoles;
     hasDialog?: boolean;
+}
+
+interface DelegationFillData {
+    delegated_id?: string;
+    start_time?: string;
+    end_time?: string;
+    comments?: string;
+}
+
+interface ErrorType {
+    name: string;
+    message: string;
 }

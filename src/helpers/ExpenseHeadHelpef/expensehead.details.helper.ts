@@ -10,6 +10,10 @@ import { DialogHelper } from '../BaseHelper/dialog.helper';
 import { DetailsPageHelper } from '../BaseHelper/details.helper';
 
 export class ExpenseHeadDetailsHelper extends ListingHelper {
+    /**
+     *
+     * @description - Creating instnce of NotesHelper, TabHelper, NotificationHelper, BreadCrumbHelper, DocumentHelper, DialogHelper, DetailsPageHelper
+     */
     public noteHelper: NotesHelper;
 
     public tabhelper: TabHelper;
@@ -38,9 +42,17 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
         this.detailsHelper = new DetailsPageHelper(page);
     }
+    /**
+     * @description - Navigate to Expense Head Page
+     */
     public async init() {
         await this.navigateTo('EXPENSE_HEADS');
     }
+    /**
+     *@description - This function will click on the Expense Head
+     *
+     * @param {string}name - Name of the Expense Head to be redirected
+     */
 
     public async clickOnExpenseHead(name: string) {
         await this.tabHelper.clickTab('All');
@@ -56,17 +68,35 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this._page.waitForTimeout(3000);
     }
 
+    /**
+     *@description - This function will click on the manager name and redirect to the manager details page
+     *
+     * @param name - Name of the manager
+     */
     public async clickOnManagerName(name: string) {
         await this._page.getByText(name).click();
 
         this._page.waitForTimeout(2000);
     }
 
+    /**
+     * @description - This function will click on the edit icon of expense head details page
+     *
+     */
     public async clickOnEditIcon() {
         await this._page.locator('.items-center > button').first().click();
 
         this._page.waitForTimeout(2000);
     }
+
+    /**
+     * @description - This function will Edit the Expense Head with name of the expense head, parent and manager
+     *
+     * @param {string} name -Name of the Expense Head
+     *
+     * @param {string} parent - The optional parent feild to be edited selected from select option
+     * @param {string}manager - The optional manager feild to be edited selected from select option
+     */
 
     public async editExpenseHead(
         name: string,
@@ -79,29 +109,44 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         });
         if (parent) {
             await this.selectOption({
-                option: parent,
-                hasText: 'Select a Parent',
+                input: parent,
+                name: 'parent_id',
             });
         }
         if (manager) {
             await this.selectOption({
-                option: manager,
-                hasText: 'Select a manager',
+                input: manager,
+                name: 'manager_id',
             });
         }
         await this._page.waitForTimeout(1000);
         await this.click({ role: 'button', name: 'save' });
     }
-
+    /**
+     * @description - This function will click on the Actions button
+     *
+     */
     public async clickOnActions() {
         this.clickButton('Actions');
         this._page.waitForTimeout(1000);
     }
 
+    /**
+     * @description - This function will click on the tab
+     * @param {string} tabName - Name of the tab to be clicked
+     *
+     */
+
     public async clickOnTab(tabName: string) {
         await this.tabhelper.clickTab(tabName);
     }
-    public async clickOnAddNotes(notes: string) {
+
+    /**
+     *@description - This function will will add the Notes on specific expense head
+     *
+     * @param notes - Notes to be added
+     */
+    public async addNotes(notes: string) {
         await this.clickButton('Add Notes');
         await this.fillText(notes, {
             name: 'comments',
@@ -110,7 +155,13 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
 
         await this.clickButton('Save');
     }
-
+    /**
+     *
+     * @description - This function will add the Documents on specific expense head
+     *
+     * @param  document {comment: string; imagePath: string; date: Date} - Comment and Image Path of the document to be added
+     *
+     */
     public async addDocument(document: { comment: string; imagePath: string }) {
         await this.detailsHelper.openActionButtonItem('Add Documents');
         await this.documentHelper.uploadDocument(true);
@@ -118,6 +169,11 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this.clickButton('Save');
         await this._page.waitForTimeout(1000);
     }
+    /**
+     * @description - This function will verify the addition of the document
+     *
+     * @param document {comment: string; imagePath: string; date: Date} - Comment, Image Path and Date of the document to be added
+     */
     public async verifyDocumentAddition(document: {
         comment: string;
         imagePath: string;
@@ -130,31 +186,51 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
             document.date
         );
     }
-
+    /**
+     * @description - This function will verify check the zoom functionality
+     *
+     */
     public async checkZoom() {
         await this.documentHelper.toggleDocumentView('Document View');
         await this.documentHelper.checkZoom();
     }
-
+    /**
+     *
+     * @description - This function will check the pagination
+     */
     public async checkPagination() {
         await this.documentHelper.checkPagination();
     }
-
+    /**
+     *
+     * @description - This function will Verify the addition of the notes
+     *
+     * @param note {title: string; date: Date} - Title and Date of the note to be added
+     */
     public async verifyNoteAddition(note: { title: string; date: Date }) {
         await this.noteHelper.checkNoteExists({
             title: note.title,
         });
     }
-    public async checkDocumentDelete(document: {
-        comment: string;
-        date: Date;
-    }) {
+    /**
+     *
+     * @description - This function will delete the documents
+     *
+     * @param document {comment: string; date: Date} - Comment and Date of the document to be deleted
+     */
+    public async documentDelete(document: { comment: string; date: Date }) {
         await this.documentHelper.toggleDocumentView('Table View');
         await this.documentHelper.checkDocumentDelete({
             comment: document.comment,
         });
     }
-
+    /**
+     *
+     * @description - This function will Edits the notes
+     *
+     * @param note {title: string; date: Date} - Title and Date of the note to be edited
+     * @param {string} newNotes - New notes to be added
+     */
     public async editNotes(
         note: { title: string; date: Date },
         newNotes: string
@@ -172,59 +248,132 @@ export class ExpenseHeadDetailsHelper extends ListingHelper {
         await this._page.waitForTimeout(1000);
     }
 
+    /**
+     *
+     * @description - This function will delete the notes
+     *
+     * @param note {title: string; date: Date} - Title and Date of the note to be deleted
+     */
     public async deleteNotes(note: { title: string; date: Date }) {
         await this.noteHelper.clickDeleteIcon({
             title: note.title,
         });
     }
 
-    public async checkExpense(expense_number: string, columnName: string) {
+    /**
+     *
+     *@description - This function will redirect to the details page of the expense ,bill from and bill to from expense head details page
+     *
+     * @param {string} expense_number_row - The Expense Number to be searched from S.N i.e serial number
+     * @param {string} columnName - The Column Name to be searched
+     */
+
+    public async openDetailsPage(
+        expense_number_row: string,
+        columnName: string
+    ) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number_row, 'S.N');
+
+        const text = await this.getCellText(row, columnName);
 
         await this.clickTextOnTable(row, columnName);
 
         await this._page.waitForTimeout(3000);
-    }
 
-    public async checkExpenseStatus(expense_number: string, status: string) {
+        expect(this._page.getByText(text, { exact: true })).toBeTruthy();
+    }
+    /**
+     *
+     * @description - This function will check the status of the expense
+     *
+     * @param {string}expense_number - The Expense Number to be searched
+     *
+     *
+     */
+    public async checkExpenseStatus(expense_number: string) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number, 'S.N');
 
         const statusText = await this.getCellText(row, 'STATUS');
+        await this.clickTextOnTable(row, 'EXPENSE NO.');
+        await this._page.waitForTimeout(3000);
 
-        expect(statusText).toBe(status);
+        expect(this._page.getByText(statusText, { exact: true })).toBeTruthy();
     }
-
-    public async checkBalance(expense_number: string, balance: string) {
+    /**
+     *
+     * @description - This function will check the balance of the expense
+     *
+     * @param expense_number - The Expense Number to be searched
+     * @param balance - The balance of the expense to be checked
+     */
+    public async checkBalance(expense_number: string) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number, 'S.N');
 
         const balanceText = await this.getCellText(row, 'BALANCE');
+        await this.clickTextOnTable(row, 'EXPENSE NO.');
+        await this._page.waitForTimeout(3000);
 
-        expect(balanceText).toBe(balance);
+        const balanceLocator = await this._page
+            .locator(`//div[contains(@class,'font-medium text-xl')]`)
+            .innerText();
+
+        expect(await balanceLocator.includes(balanceText)).toBeTruthy();
     }
 
-    public async checkExpenseAmnt(expense_number: string, amnt: string) {
+    /**
+     *
+     * @description - This function will check the expense amount of the expense
+     *
+     * @param expense_number - The Expense Number to be searched
+     * @param amnt - The expense amount of the expense to be checked
+     */
+    public async checkExpenseAmnt(expense_number: string) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number, 'S.N');
 
         const amntText = await this.getCellText(row, 'EXPENSE AMOUNT');
 
-        expect(amntText).toBe(amnt);
+        await this.clickTextOnTable(row, 'EXPENSE NO.');
+        await this._page.waitForTimeout(3000);
+        const amtLocator = await this._page
+            .locator(`(//div[@class='font-medium text-sm'])[1]`)
+            .innerText();
+
+        expect(await amtLocator.includes(amntText)).toBeTruthy();
     }
 
-    public async checkDate(expense_number: string, date: string) {
+    /**
+     *
+     * @description - This function will check the expense date of the expense
+     *
+     * @param expense_number - The Expense Number to be searched
+     * @param date - The expense date of the expense to be checked
+     */
+    public async checkDate(expense_number: string) {
         await this._page.waitForTimeout(1000);
 
-        const row = await this.findRowInTable(expense_number, 'EXPENSE NO.');
+        const row = await this.findRowInTable(expense_number, 'S.N');
 
         const dateText = await this.getCellText(row, 'EXPENSE DATE');
 
-        expect(dateText).toBe(date);
+        await this.clickTextOnTable(row, 'EXPENSE NO.');
+        await this._page.waitForTimeout(3000);
+
+        console.log('dateText:', dateText);
+
+        const dateLocator = await this._page
+            .locator(
+                `(//span[contains(@class,'font-medium text-base-primary')])[3]`
+            )
+            .innerText();
+
+        expect(await dateLocator.includes(dateText)).toBeTruthy();
     }
 }

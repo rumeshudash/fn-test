@@ -55,13 +55,13 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
 
         await test.step('Check User Group Form Opening', async () => {
             await userCreation.verifyCancelPopup();
-            await userCreation.fillFormInputInformation(formSchema, {
-                name: '',
-            });
+            await userCreation.dialogHelper.clickButton('Close');
+            await userCreation.dialogHelper.clickConfirmDialogAction('Yes!');
         });
 
         await test.step('Check User Group Form Error', async () => {
             Logger.info('Checking User Group Form Error');
+            await userCreation.openUserGroupForm();
             await userCreation.fillFormInputInformation(formSchema, {});
             await userCreation.submitButton();
             await userCreation.checkAllMandatoryInputHasErrors(formSchema);

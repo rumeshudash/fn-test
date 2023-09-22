@@ -4,6 +4,10 @@ import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { DialogHelper } from '../BaseHelper/dialog.helper';
 import chalk from 'chalk';
 export class DocumentspreferenceHelper extends ListingHelper {
+    /**
+     *
+     * @description - Creating instnce of DialogHelper, NotificationHelper
+     */
     public notificationHelper: NotificationHelper;
 
     public dialogHelper: DialogHelper;
@@ -13,11 +17,22 @@ export class DocumentspreferenceHelper extends ListingHelper {
         this.notificationHelper = new NotificationHelper(page);
         this.dialogHelper = new DialogHelper(page);
     }
+    /**
+     *
+     * @description - Navigate to Document Preference Page
+     */
     public async init() {
         await this.navigateTo('DOCUMENT_PREFERENCES');
     }
 
-    public async searchTextInList(name: string) {
+    /**
+     * @description - This function will search text in list And check the text is present or not
+     *
+     * @param name - Name of the Document Preference
+     *
+     */
+
+    public async checkTextInList(name: string) {
         await this.searchInList(name);
 
         const row = await this.findRowInTable(name, 'NAME');
@@ -29,17 +44,27 @@ export class DocumentspreferenceHelper extends ListingHelper {
         expect(text).toBe(name);
     }
 
-    public async getTableHeader(name: string[]) {
+    /**
+     *@description - This function will check the table header Names
+     *
+     * @param {string[]} name - The Names of the Table Header
+     */
+    public async checkTableHeader(name: string[]) {
         await this._page.waitForTimeout(1000);
         const RowNames = await this.getTableColumnNames();
 
         expect(RowNames).toEqual(name);
     }
 
+    /**
+     *  @description - This function will change the status of the Document Preference
+     *
+     * @param {string} name - Name of the Document Preference
+     * @param {string} columnName - Name of the Column
+     */
+
     public async changeSatus(name: string, columnName: string) {
         await this.searchInList(name);
-
-        await this._page.waitForTimeout(1000);
 
         const row = await this.findRowInTable(name, 'NAME');
 
@@ -49,8 +74,8 @@ export class DocumentspreferenceHelper extends ListingHelper {
     }
 
     /**
-     * @todo -Need to remove the counts and bypass after bug fixes
-
+     * @description - This function will click on Add new button
+     *
      */
     public async clickAddBtn() {
         await this._page
@@ -60,13 +85,15 @@ export class DocumentspreferenceHelper extends ListingHelper {
             .click(); //During Empty list there is 2 button so we are using 1st button
 
         await this._page.waitForTimeout(1000);
-
-        // const title = await this.dialogHelper.getDialogTitle();
-
-        // expect(title).toBe('Add Document Preference');
     }
 
-    public async getSelectOptions() {
+    /**
+     * @description - This function will return the select options from the dropdown and return the array
+     *
+     * @returns {Promise<string[]>} - This function will return the array of the options
+     *
+     */
+    public async getSelectOptions(): Promise<string[]> {
         const locator = await this.dialogHelper.getLocator();
 
         await locator
@@ -82,6 +109,13 @@ export class DocumentspreferenceHelper extends ListingHelper {
 
         return newArray;
     }
+
+    /**
+     * @description - This Function will add document preference with first items of select option
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addDocumentPreference() {
         const count = await this.getRowCount('NAME');
 
@@ -107,7 +141,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
             console.log(chalk.red('Maximum Document Preference Added'));
         }
     }
-
+    /**
+     * @description - This Function will add document preference with first items of select option with document mandatory checkbox clicked
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addDocumentMendatory() {
         const count = await this.getRowCount('NAME');
 
@@ -137,6 +176,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
             console.log(chalk.red('Maximum Document Preference Added'));
         }
     }
+    /**
+     * @description - This Function will add document preference with first items of select option with document files mandatory checkbox clicked
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addDocumentFileMendatory() {
         const count = await this.getRowCount('NAME');
 
@@ -168,6 +213,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
         }
     }
 
+    /**
+     * @description - This Function will add document preference with first items of select option with both checkbox clicked
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addWithBothMandatory() {
         const count = await this.getRowCount('NAME');
 
@@ -203,6 +254,12 @@ export class DocumentspreferenceHelper extends ListingHelper {
         }
     }
 
+    /**
+     * @description - This Function will add document preference with first items of select option with  save and create another checkbox clicked
+     *
+     * @todo - Need to remove some of bypasses of the adding document preference
+     *
+     */
     public async addAndClickCheck() {
         const count = await this.getRowCount('NAME');
 
@@ -234,6 +291,11 @@ export class DocumentspreferenceHelper extends ListingHelper {
         }
     }
 
+    /**
+     *
+     * @returns {promise<number>} - T return the count of the rows in the table
+     * @description - This function will return the count of the rows in the table
+     */
     public async checkRowCount() {
         await this.searchInList('');
         const count = await this.getRowCount('NAME');
