@@ -1,10 +1,15 @@
 import { PROCESS_TEST } from '@/fixtures';
-import GenericGstinCardHelper from '@/helpers/CommonCardHelper/genericGstin.card.helper';
+import GenericGstinCardHelper, {
+    gstinDataType,
+} from '@/helpers/CommonCardHelper/genericGstin.card.helper';
+import GenericNonGstinCardHelper, {
+    nonGstinDataType,
+} from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
 import {
     BusinessManagedOnboarding,
     WithoutGstinBusinessManagedOnboarding,
 } from '@/helpers/VendorOnboardingHelper/businessManagedOnboarding.helper';
-import { VendorInfo_NonGstin, clientGstinInfo } from '@/utils/required_data';
+import { VendorInfo_NonGstin } from '@/utils/required_data';
 const { expect, describe } = PROCESS_TEST;
 
 const data = {
@@ -14,6 +19,13 @@ const data = {
 
 //Business Managed vendor onboarding with GSTIN
 describe('TCBV002', () => {
+    const BusinessManagedInfo: nonGstinDataType = {
+        trade_name: 'Hello India',
+        display_name: '',
+        address: '',
+        pin_code: '',
+        business_type: '',
+    };
     PROCESS_TEST(
         'Business Managed without GSTIN - Add Vendor',
         async ({ page }) => {
@@ -27,8 +39,8 @@ describe('TCBV002', () => {
             );
 
             //To verify Client Info in card
-            const businessGstin = new GenericGstinCardHelper(
-                clientGstinInfo,
+            const businessGstin = new GenericNonGstinCardHelper(
+                BusinessManagedInfo,
                 page
             );
 
