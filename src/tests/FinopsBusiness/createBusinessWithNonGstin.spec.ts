@@ -55,9 +55,8 @@ export const updated_BusinessInfo = {
     type_id: 'Private Limited',
     pincode: 560056,
 };
-
+const title = 'Add Business';
 const createInit = async (page: any) => {
-    const title = 'Add Business';
     const helper = new CreateFinopsBusinessHelper(page);
 
     await helper.init(); // got to business listing page
@@ -82,47 +81,83 @@ describe(`Non Gst Business Creation`, () => {
             ...businessInformation,
             name: random_business_name,
         };
-
-        await PROCESS_TEST.step('Check Confirm Pop Up Modal', async () => {
-            Logger.info(`\nstep-1-->Check Confirm Pop Up Modal`, `\n`);
-
-            await helper.formHelper.fillFormInputInformation(formSchema, {});
-            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
-            await helper.formHelper.dialogHelper.clickConfirmDialogAction('No');
+        await PROCESS_TEST.step('Check Mandatory Fields', async () => {
+            Logger.info(`\nstep-1-->Check Mandatory Fields`, `\n`);
+            await helper.formHelper.checkIsMandatoryFields(formSchema);
         });
 
-        await PROCESS_TEST.step('Check Mandatory Fields', async () => {
-            Logger.info(`\nstep-2-->Check Mandatory Fields`, `\n`);
-            await helper.formHelper.checkIsMandatoryFields(formSchema);
+        await PROCESS_TEST.step('Check Confirm Pop Up Modal', async () => {
+            Logger.info(`\nstep-2-->Check Confirm Pop Up Modal`, `\n`);
+
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                name: 'business',
+            });
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
+            );
         });
 
         await PROCESS_TEST.step('Fill Form Without  Data', async () => {
             Logger.info(`\nstep-3-->Fill Form Without  Data`, `\n`);
-            await helper.formHelper.fillFormInputInformation(formSchema, {});
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
+            await helper.formHelper.resetForm(formSchema);
             await helper.formHelper.submitButton();
             await helper.formHelper.checkAllMandatoryInputHasErrors(formSchema);
+
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
+            );
         });
 
         await PROCESS_TEST.step('Without Business Type', async () => {
             Logger.info(`\nstep-6-->Without Business Type`, `\n`);
-            await helper.formHelper.fillFormInputInformation(formSchema, {
-                ...nonGstBusiness,
-                type_id: '',
+
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
+            await helper.formHelper.fillFormInputInformation(
+                formSchema,
+                {
+                    ...nonGstBusiness,
+                    type_id: '',
+                },
+                'email'
+            );
+
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
             });
 
             await helper.formHelper.checkInputError(
                 'type_id',
                 formSchema['type_id']
             );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
+            );
         });
 
         await PROCESS_TEST.step('Without Business Name', async () => {
             Logger.info(`\nstep-4-->Without Business Name`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 name: '',
             });
+
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
+            });
             await helper.formHelper.checkInputError('name', formSchema['name']);
+
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
+            );
         });
 
         //@todo it should be implement after web issue fix
@@ -145,67 +180,102 @@ describe(`Non Gst Business Creation`, () => {
 
         await PROCESS_TEST.step('Without Pin code', async () => {
             Logger.info(`\nstep-7-->Without Pin code`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 pincode: '',
+            });
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
             });
 
             await helper.formHelper.checkInputError(
                 'pincode',
                 formSchema['pincode']
             );
+
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
+            );
         });
 
         await PROCESS_TEST.step('With Invalid Pin code', async () => {
             Logger.info(`\nstep-8-->With Invalid Pin code`, `\n`);
-            await helper.formHelper.fillFormInputInformation(
-                formSchema,
-                {
-                    ...nonGstBusiness,
-                    pincode: '452',
-                },
-                'email'
-            );
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...nonGstBusiness,
+                pincode: '452',
+            });
 
-            // await helper.formHelper.checkDisableSubmit();
             await helper.formHelper.checkInputError(
                 'pincode',
                 formSchema['pincode'],
                 Invalid_Pin_code_Error_Message
             );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
+            );
         });
 
         await PROCESS_TEST.step('Without Address ', async () => {
             Logger.info(`\nstep-9-->Without Address`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 address: '',
+            });
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
             });
 
             await helper.formHelper.checkInputError(
                 'address',
                 formSchema['address']
             );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
+            );
         });
 
         await PROCESS_TEST.step('Without Email ', async () => {
             Logger.info(`\nstep-10-->Without Email`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 email: '',
+            });
+            await helper.fillInput('', { name: 'email' });
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
             });
 
             await helper.formHelper.checkInputError(
                 'email',
                 formSchema['email']
             );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
+            );
         });
 
         await PROCESS_TEST.step('With Invalid Email  ', async () => {
             Logger.info(`\nstep-11-->With Invalid Email`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 email: 'usergmail.com',
+            });
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
             });
 
             await helper.formHelper.checkInputError(
@@ -213,32 +283,55 @@ describe(`Non Gst Business Creation`, () => {
                 formSchema['email'],
                 Invalid_Email_Error_Message
             );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
+            );
         });
         await PROCESS_TEST.step('Without Mobile ', async () => {
             Logger.info(`\nstep-12-->Without Mobile`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 mobile: '',
             });
-
+            await helper.fillInput('', { name: 'mobile' });
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
+            });
             await helper.formHelper.checkInputError(
                 'mobile',
                 formSchema['mobile']
+            );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
             );
         });
 
         await PROCESS_TEST.step('With Invalid Mobile Number ', async () => {
             Logger.info(`\nstep-13-->With Invalid Mobile Number`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.clickNavigationTab('Non GST Registered');
 
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...nonGstBusiness,
                 mobile: '98456123',
             });
 
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
+            });
+
             await helper.formHelper.checkInputError(
                 'mobile',
                 formSchema['mobile'],
                 Invalid_Mobile_Error_Message
+            );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes'
             );
         });
 
@@ -251,6 +344,8 @@ describe(`Non Gst Business Creation`, () => {
                         `\n`
                     )
                 );
+                await helper.listHelper.openDialogFormByButtonText(title);
+                await helper.clickNavigationTab('Non GST Registered');
                 await helper.formHelper.fillFormInputInformation(
                     formSchema,
                     {

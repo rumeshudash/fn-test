@@ -341,6 +341,7 @@ export class FormHelper extends BaseHelper {
             name,
             type: schema.type,
         });
+        console.log(errorMessage);
 
         await expect(errorMessage).toBeVisible();
         if (message) {
