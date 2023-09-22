@@ -15,12 +15,12 @@ import { expect } from '@playwright/test';
 import chalk from 'chalk';
 
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Reliance Industries Limited',
-    gstin: '27AAACR5055K1Z7',
-    business_type: 'Proprietorship',
-    pan_number: 'AAACR5055K',
+    trade_name: 'Swiss Singapore India Private Limited',
+    gstin: '19AATCS0544F1Z3',
+    business_type: 'Private Limited',
+    pan_number: 'AATCS0544F',
     address:
-        'Reliance Corporate Park, Thane Belapur Road, Ghansoli, Navi Mumbai, 5, Thane, 400701, Maharashtra, NA, 5, TTC Industrial Area',
+        'INDUSTRY HOUSE, CAMAC STREET, CAMAC STREET, 10, Kolkata, 700017, West Bengal, NA, 16',
     status: 'Active',
 };
 
@@ -54,7 +54,7 @@ const BankInformationSchema = {
 };
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '27AAACR5055K1Z7',
+    gstin: '19AATCS0544F1Z3',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
@@ -135,7 +135,9 @@ describe(`Create Gstin Business`, () => {
                 ...businessInformation,
                 gstin: '',
             });
-            await helper.formHelper.submitButton();
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
+            });
 
             await helper.formHelper.checkInputError('gstin', formSchema.gstin);
 
@@ -150,14 +152,17 @@ describe(`Create Gstin Business`, () => {
             Logger.info(`\nstep-4-->Verify Invalid Gstin`, `\n`);
 
             await helper.listHelper.openDialogFormByButtonText(title);
-            await helper.formHelper.fillFormInputInformation(formSchema, {
-                ...businessInformation,
-                gstin: '27AAQCS4259Q1Z1',
+            await helper.formHelper.fillFormInputInformation(
+                formSchema,
+                {
+                    ...businessInformation,
+                    gstin: '27AAQCS4259Q1Z1',
+                },
+                'email'
+            );
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
             });
-            await page.waitForTimeout(1000);
-            await page.waitForLoadState('networkidle');
-
-            await helper.formHelper.submitButton();
 
             await helper.formHelper.checkInputError(
                 'gstin',
@@ -182,9 +187,9 @@ describe(`Create Gstin Business`, () => {
             await helper.fillInput('', {
                 name: 'email',
             });
-            await page.waitForTimeout(1000);
-            await page.waitForLoadState('networkidle');
-            await helper.formHelper.submitButton();
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
+            });
 
             await helper.formHelper.checkInputError(
                 'email',
@@ -229,9 +234,9 @@ describe(`Create Gstin Business`, () => {
             await helper.fillInput('', {
                 name: 'mobile',
             });
-            await page.waitForTimeout(1000);
-            await page.waitForLoadState('networkidle');
-            await helper.formHelper.submitButton();
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
+            });
             await helper.formHelper.checkInputError(
                 'mobile',
                 formSchema['mobile']
@@ -268,7 +273,8 @@ describe(`Create Gstin Business`, () => {
 
             await helper.formHelper.fillFormInputInformation(
                 formSchema,
-                businessInformation
+                businessInformation,
+                'email'
             );
 
             await helper.formHelper.checkIsMandatoryFields(formSchema);
