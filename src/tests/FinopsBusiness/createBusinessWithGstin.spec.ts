@@ -1,5 +1,6 @@
 import {
     Invalid_Email_Error_Message,
+    Invalid_Gstin_Error_Message,
     Invalid_Mobile_Error_Message,
 } from '@/constants/errorMessage.constants';
 import { PROCESS_TEST } from '@/fixtures';
@@ -7,19 +8,19 @@ import { Logger } from '@/helpers/BaseHelper/log.helper';
 import GenericGstinCardHelper, {
     gstinDataType,
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
-import CreateFinopsBusinessHelper, {
-    BusinessDetailsPageHelper,
-} from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
+import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
+import { BusinessDetailsPageHelper } from '@/helpers/FinopsBusinessHelper/detailFinopsBusiness.helper';
+import { generateRandomNumber } from '@/utils/common.utils';
 import { expect } from '@playwright/test';
 import chalk from 'chalk';
 
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Venkatesh Infratech Private Limited',
-    gstin: '27AAECV2994B1Z8',
+    trade_name: 'Swiss Singapore India Private Limited',
+    gstin: '19AATCS0544F1Z3',
     business_type: 'Private Limited',
-    pan_number: 'AAECV2994B',
+    pan_number: 'AATCS0544F',
     address:
-        'BIMA COMPLEX, PANVEL MUMBRA ROAD, KALAMBOLI, D5111, Raigad, 410218, Maharashtra, NA',
+        'INDUSTRY HOUSE, CAMAC STREET, CAMAC STREET, 10, Kolkata, 700017, West Bengal, NA, 16',
     status: 'Active',
 };
 
@@ -35,12 +36,6 @@ const notesSchema = {
         type: 'textarea',
         required: true,
     },
-};
-
-const BankInformation = {
-    account_number: '1234567889',
-    re_account_number: '1234567889',
-    ifsc_code: 'ICIC0000004',
 };
 
 const BankInformationSchema = {
@@ -59,7 +54,7 @@ const BankInformationSchema = {
 };
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '27AAECV2994B1Z8',
+    gstin: '19AATCS0544F1Z3',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };
@@ -78,8 +73,8 @@ const formSchema = {
         required: true,
     },
 };
+const title = 'Add Business';
 const createInit = async (page: any) => {
-    const title = 'Add Business';
     const helper = new CreateFinopsBusinessHelper(page);
     const gstin_helper = new GenericGstinCardHelper(businessGstinInfo, page);
     gstin_helper.expand_card = true;
@@ -101,65 +96,114 @@ describe(`Create Gstin Business`, () => {
     PROCESS_TEST('TBA001', async ({ page }) => {
         const { helper, gstin_helper } = await createInit(page);
 
-        await PROCESS_TEST.step(' Check Confirm Pop Up Modal', async () => {
-            Logger.info(`\nstep-1-->Check Confirm Pop Up Modal`, `\n`);
-
-            await helper.formHelper.fillFormInputInformation(formSchema, {});
-            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
-            await helper.formHelper.dialogHelper.clickConfirmDialogAction('No');
-        });
-
         await PROCESS_TEST.step('Check Mandatory Fields', async () => {
-            Logger.info(`\nstep-2-->Check Mandatory Fields`, `\n`);
+            Logger.info(`\nstep-1-->Check Mandatory Fields`, `\n`);
+
             await helper.formHelper.checkIsMandatoryFields(formSchema);
+        });
+        await PROCESS_TEST.step(' Check Confirm Pop Up Modal', async () => {
+            Logger.info(`\nstep-2-->Check Confirm Pop Up Modal`, `\n`);
+
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                gstin: '12',
+            });
+
+            await helper.formHelper.submitButton();
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
+            );
         });
 
         await PROCESS_TEST.step('Fill Form Without  Data', async () => {
             Logger.info(`\nstep-3-->Fill Form Without  Data`, `\n`);
-            await helper.formHelper.fillFormInputInformation(formSchema, {});
+            await helper.listHelper.openDialogFormByButtonText(title);
+
+            await helper.formHelper.resetForm(formSchema);
             await helper.formHelper.submitButton();
             await helper.formHelper.checkAllMandatoryInputHasErrors(formSchema);
+
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
+            );
         });
         await PROCESS_TEST.step('without Gstin Number', async () => {
             Logger.info(`\nstep-3-->without Gstin Number`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
+            await helper.formHelper.fillFormInputInformation(formSchema, {
+                ...businessInformation,
+                gstin: '',
+            });
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
+            });
+
+            await helper.formHelper.checkInputError('gstin', formSchema.gstin);
+
+            await helper.formHelper.checkSubmitIsDisabled();
+
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
+            );
+        });
+        await PROCESS_TEST.step('Verify Invalid Gstin', async () => {
+            Logger.info(`\nstep-4-->Verify Invalid Gstin`, `\n`);
+
+            await helper.listHelper.openDialogFormByButtonText(title);
             await helper.formHelper.fillFormInputInformation(
                 formSchema,
                 {
                     ...businessInformation,
-                    gstin: '',
+                    gstin: '27AAQCS4259Q1Z1',
                 },
                 'email'
             );
-            await helper.checkGstinError();
-
-            await helper.formHelper.checkSubmitIsDisabled();
-        });
-        await PROCESS_TEST.step('Verify Invalid Gstin', async () => {
-            Logger.info(`\nstep-4-->Verify Invalid Gstin`, `\n`);
-            await helper.formHelper.fillFormInputInformation(formSchema, {
-                ...businessInformation,
-                gstin: '27AAQCS4259Q1Z1',
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
             });
 
-            await helper.checkGstinError('Invalid Gstin Number');
-            await helper.formHelper.submitButton();
+            await helper.formHelper.checkInputError(
+                'gstin',
+                formSchema.gstin,
+                Invalid_Gstin_Error_Message
+            );
+
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
+            );
         });
 
         await PROCESS_TEST.step('Without Email ', async () => {
             Logger.info(`\nstep-5-->Without Email`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
+
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...businessInformation,
-                email: '',
+                email: ' ',
+            });
+            await helper.fillInput('', {
+                name: 'email',
+            });
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
             });
 
             await helper.formHelper.checkInputError(
                 'email',
                 formSchema['email']
             );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
+            );
         });
 
         await PROCESS_TEST.step('With Invalid Email  ', async () => {
             Logger.info(`\nstep-6-->With Invalid Email`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
             await helper.formHelper.fillFormInputInformation(
                 formSchema,
                 {
@@ -174,23 +218,38 @@ describe(`Create Gstin Business`, () => {
                 formSchema['email'],
                 Invalid_Email_Error_Message
             );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
+            );
         });
         await PROCESS_TEST.step('Without Mobile ', async () => {
             Logger.info(`\nstep-7-->Without Mobile`, `\n`);
+            await helper.listHelper.openDialogFormByButtonText(title);
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...businessInformation,
-                mobile: '',
+                mobile: ' ',
             });
 
+            await helper.fillInput('', {
+                name: 'mobile',
+            });
+            await helper.formHelper.submitButton('Save', {
+                waitForNetwork: true,
+            });
             await helper.formHelper.checkInputError(
                 'mobile',
                 formSchema['mobile']
+            );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
             );
         });
 
         await PROCESS_TEST.step('With Invalid Mobile Number ', async () => {
             Logger.info(`\nstep-8-->With Invalid Mobile Number`, `\n`);
-
+            await helper.listHelper.openDialogFormByButtonText(title);
             await helper.formHelper.fillFormInputInformation(formSchema, {
                 ...businessInformation,
                 mobile: '98456123',
@@ -201,14 +260,21 @@ describe(`Create Gstin Business`, () => {
                 formSchema['mobile'],
                 Invalid_Mobile_Error_Message
             );
+            await helper.formHelper.dialogHelper.checkConfirmDialogOpenOrNot();
+            await helper.formHelper.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
+            );
         });
 
         await PROCESS_TEST.step('Create Business Account.', async () => {
             Logger.info(`\nstep-10-->Create Business Account.`, `\n`);
 
+            await helper.listHelper.openDialogFormByButtonText(title);
+
             await helper.formHelper.fillFormInputInformation(
                 formSchema,
-                businessInformation
+                businessInformation,
+                'email'
             );
 
             await helper.formHelper.checkIsMandatoryFields(formSchema);
@@ -231,6 +297,12 @@ describe('Business Detail', () => {
         name: 'Ram Kumar Chhetri',
         mobile: '9876543321',
         email: 'testingperson2@test.com',
+    };
+    const account_number = `142${generateRandomNumber()}454${generateRandomNumber()}`;
+    const BankInformation = {
+        account_number: account_number,
+        re_account_number: account_number,
+        ifsc_code: 'ICIC0000004',
     };
 
     const contactPersonInfoSchema = {
@@ -279,6 +351,7 @@ describe('Business Detail', () => {
                     'Pan Number',
                     businessGstinInfo.pan_number
                 );
+                //@todo it should be implement after web issue fixed
                 // await businessDetails.verifyInformation(
                 //     'Address',
 
@@ -387,28 +460,67 @@ describe('Business Detail', () => {
             }
         );
 
-        await PROCESS_TEST.step('Bank Account - tab', async () => {
+        await PROCESS_TEST.step('Attach Bank Account', async () => {
             await businessDetails.tab.clickTab('Bank Accounts');
-
             await businessDetails.clickActionButton();
+
             await businessDetails.clickActionOption('Add Bank Account');
-            await businessDetails.dialog.checkDialogTitle('Add Bank Account');
-            await businessDetails.formHelper.fillFormInputInformation(
-                BankInformationSchema,
-                BankInformation,
-                'account_number'
+            await businessDetails.dialog.checkDialogTitle(
+                'Attach Bank Account'
             );
-            await page.waitForTimeout(1000);
-            await page.waitForLoadState('networkidle');
-            await businessDetails.fileUpload.setFileInput({ isDialog: true });
-            await businessDetails.formHelper.submitButton(undefined, {
-                waitForNetwork: true,
+
+            const selectBox = await businessDetails.openSelectBox({
+                name: 'bankId',
             });
 
-            await page.waitForTimeout(1000);
-            await page.waitForLoadState('networkidle');
-            await businessDetails.checkToastSuccess('Successfully saved');
+            await selectBox.locateByText('+ Add Bank Account').click();
+
+            await page.waitForLoadState('domcontentloaded');
+            await PROCESS_TEST.step('Bank Account Creation', async () => {
+                await businessDetails.formHelper.fillFormInputInformation(
+                    BankInformationSchema,
+                    BankInformation,
+                    'account_number'
+                );
+                await page.waitForTimeout(1000);
+                await page.waitForLoadState('networkidle');
+                await businessDetails.fileUpload.setFileInput({
+                    isDialog: true,
+                });
+                await businessDetails.formHelper.submitButton(undefined, {
+                    waitForNetwork: true,
+                });
+
+                await page.waitForTimeout(1000);
+                await page.waitForLoadState('networkidle');
+                await businessDetails.checkToastSuccess('Successfully Created');
+            });
+            await businessDetails.attachBankAccount();
+            await businessDetails.checkToastSuccess('Bank Account is attached');
         });
+        //@todo old way
+        // await PROCESS_TEST.step('Bank Account - tab', async () => {
+        //     await businessDetails.tab.clickTab('Bank Accounts');
+
+        //     await businessDetails.clickActionButton();
+        //     await businessDetails.clickActionOption('Add Bank Account');
+        //     await businessDetails.dialog.checkDialogTitle('Add Bank Account');
+        //     await businessDetails.formHelper.fillFormInputInformation(
+        //         BankInformationSchema,
+        //         BankInformation,
+        //         'account_number'
+        //     );
+        //     await page.waitForTimeout(1000);
+        //     await page.waitForLoadState('networkidle');
+        //     await businessDetails.fileUpload.setFileInput({ isDialog: true });
+        //     await businessDetails.formHelper.submitButton(undefined, {
+        //         waitForNetwork: true,
+        //     });
+
+        //     await page.waitForTimeout(1000);
+        //     await page.waitForLoadState('networkidle');
+        //     await businessDetails.checkToastSuccess('Successfully saved');
+        // });
 
         await PROCESS_TEST.step('Contact Person - tab', async () => {
             await businessDetails.tab.clickTab('Contact Persons');

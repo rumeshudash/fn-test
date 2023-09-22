@@ -179,6 +179,41 @@ export class FormHelper extends BaseHelper {
             name: targetClick,
         });
     }
+    public async resetForm(
+        formSchema: ObjectDto,
+
+        ignoreFields: string[] = []
+    ): Promise<void> {
+        for (const [key, schema] of Object.entries(formSchema)) {
+            const name = schema?.name ?? key;
+            const value = '';
+            if (ignoreFields.includes(name)) continue;
+
+            switch (schema?.type) {
+                case 'select':
+                    await this.selectOption({
+                        name,
+                        option: value ? String(value) : '',
+                        exact: true,
+                    });
+                    break;
+                case 'reference_select':
+                    await this.selectOption({
+                        name,
+                        input: value ? String(value) : '',
+                    });
+                    break;
+
+                case 'textarea':
+                    await this.fillText(value, { name });
+                    break;
+                default:
+                    await this.fillInput(value, {
+                        name,
+                    });
+            }
+        }
+    }
 
     /**
      * Fills a textarea form field with the provided data.
@@ -307,6 +342,7 @@ export class FormHelper extends BaseHelper {
             name,
             type: schema.type,
         });
+        console.log(errorMessage);
 
         await expect(errorMessage).toBeVisible();
         if (message) {

@@ -21,7 +21,7 @@ const { expect, describe } = PROCESS_TEST;
 
 //Vendor Managed with Client Connect
 describe.configure({ mode: 'serial' });
-describe('FinOps Portal>Vendor Onboarding through Invitation link(GST Registered Vendor)', () => {
+describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registered Vendor)', () => {
     let URL: string;
 
     const VendorManagedGstinInfo: gstinDataType = {
