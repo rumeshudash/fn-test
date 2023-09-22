@@ -127,7 +127,7 @@ export class SetOrganization extends FormHelper {
             },
             {
                 selector: '#has-Mobile',
-                text: '9936465791',
+                text: '9936465792',
             },
         ]);
     }
@@ -261,8 +261,7 @@ export class SetOrganization extends FormHelper {
 
     public async validateBankAccount() {
         const bankInfo: BankDetails = {
-            // 'ACCOUNT NUMBER': generateRandomNumber(),
-            'ACCOUNT NUMBER': '881861475065',
+            'ACCOUNT NUMBER': generateRandomNumber(),
             'IFSC CODE': 'ICIC0004444',
             NAME: 'ICICI Bank',
         };
@@ -285,13 +284,14 @@ export class SetOrganization extends FormHelper {
             NAME: 'ICICI Bank',
         };
 
-        // await this._detailsHelper.openActionButtonItem('Add Bank Account');
-        // await this.fillBankDetails(bankInfo);
-        // await this._documentHelper.uploadDocument(true);
-        // await this.clickButton('Save');
-        // await this._notificationHelper.checkToastSuccess(
-        //     'Account Successfully Created'
-        // );
+        await this._detailsHelper.openActionButtonItem('Add Bank Account');
+        await this.fillBankDetails(bankInfo);
+        await this._documentHelper.uploadDocument(true);
+        await this.clickButton('Save');
+        await this._page.waitForTimeout(1000);
+        await this._notificationHelper.checkToastSuccess(
+            'Account Successfully Created'
+        );
 
         await this._detailsHelper.openActionButtonItem('Add Bank Account');
         await this.fillBankDetails(negativeBankInfo);

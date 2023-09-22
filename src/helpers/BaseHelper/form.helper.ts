@@ -77,15 +77,24 @@ export class FormHelper extends BaseHelper {
      *
      * @param {string} message - The error message to check.
      * @param {InputFieldLocatorOptions} options - Options for locating the input field.
+     * @param {boolean} exact - If true, the error message must match exactly. Otherwise, the error message must match the substring.
      */
     public async checkIsInputHasErrorMessage(
         message: string,
-        options: InputFieldLocatorOptions
+        options: InputFieldLocatorOptions,
+        exact: boolean = true
     ) {
         const inputError = await this.getInputErrorMessage(options);
-        expect(inputError, `Check input has error message: ${message}`).toBe(
-            message
-        );
+        if (exact)
+            expect(
+                inputError,
+                `Check input has error message: ${message}`
+            ).toBe(message);
+        else
+            expect(
+                inputError,
+                `Check input has error message: ${message}`
+            ).toContain(message);
     }
 
     /**
