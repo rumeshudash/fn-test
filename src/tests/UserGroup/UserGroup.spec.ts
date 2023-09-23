@@ -14,7 +14,7 @@ describe.configure({ mode: 'serial' });
 describe('Configuration -> User Group Creation and Details Verification', () => {
     let userData: UserGroupData = {
         name: `Test User Group ${generateRandomNumber()}`,
-        manager_id: 'Amit Raj',
+        manager: 'Amit Raj',
         description: 'Test User Group Description',
         member: 'Admin Create',
         memberEmail: 'employeecreation1@test.com',
@@ -23,7 +23,7 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
 
     let validationData: UserGroupData = {
         name: userData.name,
-        manager: userData.manager_id,
+        manager: userData.manager,
         description: 'Test User Group Description',
         status: 'Active',
     };
@@ -33,7 +33,7 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
             type: 'text',
             required: true,
         },
-        manager_id: {
+        manager: {
             type: 'reference_select',
             required: true,
         },
@@ -154,7 +154,7 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
             await userDetails.detailsHelper.openEditForm();
             const newUserData: UserGroupData = {
                 name: 'Test' + generateRandomNumber(),
-                manager_id: 'Abhishek Gupta',
+                manager: 'Abhishek Gupta',
                 description: 'test' + generateRandomNumber(),
             };
 

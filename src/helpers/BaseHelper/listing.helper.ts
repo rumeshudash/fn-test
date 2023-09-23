@@ -178,7 +178,10 @@ export class ListingHelper extends PageHelper {
         linkColumn: string = '',
         elementType: string = 'a'
     ): Promise<void> {
-        if (isSearch) await this.searchInList(id);
+        if (isSearch) {
+            await this.searchInList(id);
+            await this._page.waitForSelector('div.table-row.body-row');
+        }
         const row = await this.findRowInTable(id, columnName);
         let filter = columnName;
         if (linkColumn) filter = linkColumn;
