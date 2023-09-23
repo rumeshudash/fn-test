@@ -133,7 +133,6 @@ export class SignInHelper extends NotificationHelper {
             await this.click({ id: 'org-1' });
         }
         await this.portalSelectorHelper.selectFinopsPortal();
-        // await this._page.getByText('FinOps Portal').click();
 
         this._page.getByText('Dashboard');
 

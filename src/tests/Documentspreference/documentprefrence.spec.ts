@@ -32,9 +32,16 @@ test.describe('Configuration - Document Preference', () => {
         await signup.fillOtp('111111', 6);
 
         await signup.clickButton('Verify →');
-        await signup.fillInput(name, { name: 'name' });
+        await signup.clickButton('Continue →');
+        await signup.fillInput(name, { name: 'organization_name' });
 
         await signup.clickButton('Continue');
+        const signin = new SignInHelper(page);
+        await signin.init();
+        await signin.checkDashboard({
+            username: userData.email,
+            password: userData.password,
+        });
 
         const notification = documents_preference.notificationHelper;
 
@@ -59,8 +66,8 @@ test.describe('Configuration - Document Preference', () => {
         const signin = new SignInHelper(page);
         await signin.init();
         await signin.checkDashboard({
-            username: 'doc@finnoto.com',
-            password: '123456',
+            username: userData.email,
+            password: userData.password,
         });
 
         const documents_preference = new DocumentspreferenceHelper(page);
