@@ -4,7 +4,7 @@ require('dotenv').config();
 export default defineConfig({
     testDir: './src/tests',
     /* Maximum time one test can run for. */
-    timeout: 4 * 60 * 1000, // 4 min
+    timeout: 3 * 60 * 1000, // 3 min
 
     expect: {
         /**
