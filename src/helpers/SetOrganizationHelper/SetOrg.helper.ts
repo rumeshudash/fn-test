@@ -87,6 +87,7 @@ export class SetOrganization extends FormHelper {
             .getLocator()
             .getByRole('button', { name: 'Save' })
             .click();
+        await this._page.waitForTimeout(1000);
         await this._page.waitForLoadState('networkidle');
         await this._notificationHelper.checkToastSuccess(
             'Successfully set profile image'

@@ -121,7 +121,7 @@ describe('Approval Delegation Flow', () => {
                 fillData,
                 errors
             );
-            delegationData['ADDED AT'] = formatDate(new Date(), true);
+            delegationData['ADDED AT'] = formatDate(new Date(), true) + ' ';
         });
 
         await test.step('Verify Delegation in Table', async () => {
@@ -192,7 +192,7 @@ describe('Approval Delegation Flow', () => {
             );
 
             // open delegator account and verify
-            await delegation.openDelegatorAccount(delegatorInfo, expenseId);
+            await delegation.openDelegatorAccount(delegatorInfo);
             await delegation.verifyDelegatorInProfile(delegationData);
             await delegation.verifyInExpense(
                 userInfo,

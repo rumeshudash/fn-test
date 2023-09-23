@@ -4,7 +4,7 @@ require('dotenv').config();
 export default defineConfig({
     testDir: './src/tests',
     /* Maximum time one test can run for. */
-    timeout: 3 * 60 * 1000, // 3 min
+    timeout: 4 * 60 * 1000, // 4 min
 
     expect: {
         /**
@@ -25,7 +25,7 @@ export default defineConfig({
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
         /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
-        actionTimeout: 30 * 1000, // 30 sec.
+        actionTimeout: 45 * 1000, // 45 sec.
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',

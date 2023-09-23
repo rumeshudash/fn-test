@@ -207,17 +207,13 @@ export class ApprovalDelegation extends FormHelper {
         return id;
     }
 
-    public async openDelegatorAccount(delegatorInfo, expenseId: string) {
+    public async openDelegatorAccount(delegatorInfo) {
         await this._savedExpensePage.logOut();
         await this._page.waitForLoadState('domcontentloaded');
         await this._signInHelper.signInPage(
             delegatorInfo.email,
             delegatorInfo.password
         );
-        await this._page.waitForSelector('//div[@role="dialog"]', {
-            state: 'attached',
-        });
-        await this._page.getByText('New Test Auto').click();
         await this._page.waitForURL(TEST_URL + '/e/e');
     }
 
