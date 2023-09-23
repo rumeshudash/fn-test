@@ -44,9 +44,9 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
         identifier: '333333333',
 
         expiry_date: '22-02-2023',
-        custom_field_data: {
-            percentage: '32',
-        },
+        // custom_field_data: {
+        percentage: '32',
+        // },
     };
 
     //For Vendor Managed Onboarding GSTIN

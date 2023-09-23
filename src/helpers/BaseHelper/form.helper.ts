@@ -181,6 +181,8 @@ export class FormHelper extends BaseHelper {
                         name,
                     });
             }
+            await this._page.waitForTimeout(300);
+            await this._page.waitForLoadState('domcontentloaded');
         }
         if (!targetClick) return;
         await this.click({

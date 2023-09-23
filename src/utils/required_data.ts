@@ -13,28 +13,7 @@ export const vendorGstinInfo: gstinDataType = {
 
 //Vendor Onboarding with GSTIN Clinet Info Card
 
-export const NON_GSTIN_LOWER_TDS_DETAILS = {
-    selectInput: 'Lower TDS',
-    tdsCertNumber: '10',
-    date: '22-02-2023',
-    tdsPercentage: '20',
-};
-
 //For Vendor Managed Onboarding NON GSTIN
-export const NON_GSTIN_BANK_DETAILS_ONE = {
-    bankName: 'ABC Pvt Ltd',
-    accountNumber: '12345678',
-    ifsc: 'HDFC0000009',
-    address: 'HDFC0000009, Bangalore - Kasturba Gandhi Marg ',
-};
-
-//For Vendor Managed Onboarding Client Connect NON GSTIN
-export const NON_GSTIN_BANK_DETAILS_TWO = {
-    bankName: 'ABD Pvt Ltd',
-    accountNumber: '1234567',
-    ifsc: 'HDFC0000002',
-    address: 'HDFC0000002,MUMBAI - KHAR WEST',
-};
 
 export const IMAGE_NAME = 'invoice3.png';
 export const MSME_NUMBER = '22';
