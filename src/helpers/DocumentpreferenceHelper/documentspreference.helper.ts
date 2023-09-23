@@ -94,7 +94,7 @@ export class DocumentspreferenceHelper extends ListingHelper {
      *
      */
     public async getSelectOptions(): Promise<string[]> {
-        const locator = await this.dialogHelper.getLocator();
+        const locator = this.dialogHelper.getLocator();
 
         await locator
             .locator(
@@ -122,11 +122,11 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (count < 5) {
             await this.clickAddBtn();
 
-            const Array = await this.getSelectOptions();
+            const dataArray = await this.getSelectOptions();
 
-            if (Array.length > 0) {
+            if (dataArray.length > 0) {
                 await this.selectOption({
-                    input: Array[0],
+                    input: dataArray[0],
                     name: 'document_id',
                 });
                 await this._page.waitForTimeout(1000);
@@ -153,10 +153,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (count < 5) {
             await this.clickAddBtn();
 
-            const Array = await this.getSelectOptions();
-            if (Array.length > 0) {
+            const dataArray = await this.getSelectOptions();
+            if (dataArray.length > 0) {
                 await this.selectOption({
-                    input: Array[0],
+                    input: dataArray[0],
                     name: 'document_id',
                 });
                 await this._page
@@ -188,11 +188,11 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (count < 5) {
             await this.clickAddBtn();
 
-            const Array = await this.getSelectOptions();
+            const dataArray = await this.getSelectOptions();
 
-            if (Array.length > 0) {
+            if (dataArray.length > 0) {
                 await this.selectOption({
-                    input: Array[0],
+                    input: dataArray[0],
                     name: 'document_id',
                 });
                 await this._page
@@ -225,10 +225,10 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (count < 5) {
             await this.clickAddBtn();
 
-            const Array = await this.getSelectOptions();
-            if (Array.length > 0) {
+            const dataArray = await this.getSelectOptions();
+            if (dataArray.length > 0) {
                 await this.selectOption({
-                    input: Array[0],
+                    input: dataArray[0],
                     name: 'document_id',
                 });
                 await this._page
@@ -266,11 +266,11 @@ export class DocumentspreferenceHelper extends ListingHelper {
         if (count < 5) {
             await this.clickAddBtn();
 
-            const Array = await this.getSelectOptions();
+            const dataArray = await this.getSelectOptions();
 
-            if (Array.length > 0) {
+            if (dataArray.length > 0) {
                 await this.selectOption({
-                    input: Array[0],
+                    input: dataArray[0],
                     name: 'document_id',
                 });
                 await this._page
