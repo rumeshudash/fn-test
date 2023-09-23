@@ -4,6 +4,8 @@ import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 
 import { test, expect } from '@playwright/test';
 
+test.describe.configure({ mode: 'serial' });
+
 test.describe('Configuration - Document Preference', () => {
     const userData = {
         name: 'Test User',
