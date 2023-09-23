@@ -146,12 +146,16 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.changeMendatory(name);
         });
 
+        await PROCESS_TEST.step('Change Mendatory', async () => {
+            await customefeild.changeMendatory(name);
+        });
+
         await PROCESS_TEST.step('Check Editable', async () => {
             await customefeild.checkEdit(name);
         });
         await PROCESS_TEST.step('Edit with Empty Name', async () => {
             await customefeild.changeName(name, 'Text', '');
-            const notification = await customefeild.notificationHelper;
+            const notification = customefeild.notificationHelper;
 
             expect(await notification.getErrorMessage()).toBe(
                 'Field Name is required'

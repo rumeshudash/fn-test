@@ -146,6 +146,10 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.changeMendatory(name);
         });
 
+        await PROCESS_TEST.step('Change Mendatory', async () => {
+            await customefeild.changeMendatory(name);
+        });
+
         await PROCESS_TEST.step('Check Editable', async () => {
             await customefeild.checkEdit(name);
         });
