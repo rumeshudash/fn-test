@@ -18,7 +18,7 @@ const data = {
 };
 
 //Business Managed vendor onboarding with GSTIN
-describe('TCBV002', () => {
+describe('Business Managed without GSTIN - Vendor Onboarding', () => {
     const BusinessManagedInfo: nonGstinDataType = {
         trade_name: 'Hidesign India Pvt Ltd',
         // display_name: '',
@@ -38,58 +38,53 @@ describe('TCBV002', () => {
         mobile: 9876553123,
     };
 
-    PROCESS_TEST(
-        'Business Managed without GSTIN - Add Vendor',
-        async ({ page }) => {
-            const businessManagedOnboarding = new BusinessManagedOnboarding(
-                page
-            );
-            //To fill Form with client Name and Vendor Info
-            const withoutGstin = new WithoutGstinBusinessManagedOnboarding(
-                VendorInfo_NonGstin,
-                page
-            );
+    PROCESS_TEST('TCBV002', async ({ page }) => {
+        const businessManagedOnboarding = new BusinessManagedOnboarding(page);
+        //To fill Form with client Name and Vendor Info
+        const withoutGstin = new WithoutGstinBusinessManagedOnboarding(
+            VendorInfo_NonGstin,
+            page
+        );
 
-            //To verify Client Info in card
-            const businessGstin = new GenericNonGstinCardHelper(
-                BusinessManagedInfo,
-                page
-            );
+        //To verify Client Info in card
+        const businessGstin = new GenericNonGstinCardHelper(
+            BusinessManagedInfo,
+            page
+        );
 
-            await businessManagedOnboarding.clickVendor('My Vendors');
-            await businessManagedOnboarding.verifyVendorPageURL();
-            await businessManagedOnboarding.clickAddIcon();
-            await businessManagedOnboarding.clickNavigationTab(
-                'Non GST Registered'
-            );
+        await businessManagedOnboarding.clickVendor('My Vendors');
+        await businessManagedOnboarding.verifyVendorPageURL();
+        await businessManagedOnboarding.clickAddIcon();
+        await businessManagedOnboarding.clickNavigationTab(
+            'Non GST Registered'
+        );
 
-            await withoutGstin.selectClientTradeName();
-            businessGstin.ignore_test_fields = [
-                'gstin_business_address',
-                'gstin_business_type',
-                'gstin_business_pan',
-            ];
-            await businessGstin.gstinInfoCheck();
-            // await withoutGstin.addVendorAccount();
-            await businessManagedOnboarding.form.fillFormInputInformation(
-                VendorInfoSchema,
-                VendorInfo
-            );
+        await withoutGstin.selectClientTradeName();
+        businessGstin.ignore_test_fields = [
+            'gstin_business_address',
+            'gstin_business_type',
+            'gstin_business_pan',
+        ];
+        await businessGstin.gstinInfoCheck();
+        // await withoutGstin.addVendorAccount();
+        await businessManagedOnboarding.form.fillFormInputInformation(
+            VendorInfoSchema,
+            VendorInfo
+        );
 
-            // await businessManagedOnboarding.saveAndCreateCheckbox();
+        // await businessManagedOnboarding.saveAndCreateCheckbox();
 
-            await businessManagedOnboarding.clickButton('Save');
-            // await businessManagedOnboarding.afterSaveAndCreateValidation();
-            // expect(await businessManagedOnboarding.toastMessage()).toBe(
-            //     'Successfully saved'
-            // );
-            await businessManagedOnboarding.verifyBusinessManaged();
-            await businessManagedOnboarding.verifyNonGstinStatus();
+        await businessManagedOnboarding.clickButton('Save');
+        // await businessManagedOnboarding.afterSaveAndCreateValidation();
+        // expect(await businessManagedOnboarding.toastMessage()).toBe(
+        //     'Successfully saved'
+        // );
+        await businessManagedOnboarding.verifyBusinessManaged();
+        await businessManagedOnboarding.verifyNonGstinStatus();
 
-            //To Verify Vendor In List
-            await businessManagedOnboarding.clickVendor('My Vendors');
-            await withoutGstin.searchVendor();
-            await withoutGstin.verifyVendorInList();
-        }
-    );
+        //To Verify Vendor In List
+        await businessManagedOnboarding.clickVendor('My Vendors');
+        await withoutGstin.searchVendor();
+        await withoutGstin.verifyVendorInList();
+    });
 });
