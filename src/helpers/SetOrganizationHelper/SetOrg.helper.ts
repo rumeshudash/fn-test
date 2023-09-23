@@ -99,7 +99,7 @@ export class SetOrganization extends FormHelper {
     }
 
     public async validateProfileDelete() {
-        const deleteBtn = await this._page.locator('#my-profile-delete-button');
+        const deleteBtn = this._page.locator('#my-profile-delete-button');
         await deleteBtn.click();
         await this.dialogHelper.clickConfirmDialogAction('Yes!');
         await this._notificationHelper.checkToastSuccess(
@@ -293,7 +293,8 @@ export class SetOrganization extends FormHelper {
         await this.fillBankDetails(bankInfo);
         await this._documentHelper.uploadDocument(true);
         await this.clickButton('Save');
-        await this._page.waitForTimeout(1000);
+        await this._page.waitForTimeout(1500);
+        await this._page.waitForLoadState('networkidle');
         await this._notificationHelper.checkToastSuccess(
             'Account Successfully Created'
         );
