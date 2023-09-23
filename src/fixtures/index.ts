@@ -18,12 +18,9 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
             await page.waitForLoadState('networkidle');
 
             if (await helper.isVisible({ id: 'username' })) {
-                await helper.fillInput(
-                    process.env.TEST_USER || 'newtestauto@company.com',
-                    {
-                        name: 'username',
-                    }
-                );
+                await helper.fillInput('newtestauto@company.com', {
+                    name: 'username',
+                });
                 await helper.click({ role: 'button', name: 'Next →' });
 
                 await helper.fillInput(process.env.TEST_PASS || '123456', {

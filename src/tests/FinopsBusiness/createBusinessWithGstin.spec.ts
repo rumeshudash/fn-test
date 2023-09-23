@@ -15,12 +15,12 @@ import { expect } from '@playwright/test';
 import chalk from 'chalk';
 
 const businessGstinInfo: gstinDataType = {
-    trade_name: 'Swiss Singapore India Private Limited',
-    gstin: '19AATCS0544F1Z3',
-    business_type: 'Private Limited',
-    pan_number: 'AATCS0544F',
+    trade_name: 'Manu Engineers And Traders',
+    gstin: '03AGIPG5625R2Z2',
+    business_type: 'Proprietorship',
+    pan_number: 'AGIPG5625R',
     address:
-        'INDUSTRY HOUSE, CAMAC STREET, CAMAC STREET, 10, Kolkata, 700017, West Bengal, NA, 16',
+        'shop no E 4, industrial area , Near ITI, manu engineering and traders, Bathinda, 151001, Punjab, NA',
     status: 'Active',
 };
 
@@ -54,7 +54,7 @@ const BankInformationSchema = {
 };
 const { describe } = PROCESS_TEST;
 const businessInformation = {
-    gstin: '19AATCS0544F1Z3',
+    gstin: '03AGIPG5625R2Z2',
     mobile: '9845612345',
     email: 'user@gmail.com',
 };

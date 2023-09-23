@@ -93,7 +93,7 @@ export class UserCreation extends FormHelper {
 
         // verify manager
         const manager = await this.listHelper.getCellText(group, 'MANAGER');
-        expect(manager).toBe(data.manager_id);
+        expect(manager).toBe(data.manager);
 
         // verify status
         const statusButton = await this.listHelper.getCellText(group, 'STATUS');
@@ -121,7 +121,7 @@ export class UserCreation extends FormHelper {
             },
             {
                 selector: '#has-Manager',
-                text: data.manager_id,
+                text: data.manager,
             },
             {
                 selector: '#has-Description',

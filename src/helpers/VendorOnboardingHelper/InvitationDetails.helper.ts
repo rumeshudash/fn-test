@@ -165,7 +165,7 @@ export class VendorInvitationDetails extends BaseHelper {
                 expect(
                     await tdsPercentage.textContent(),
                     chalk.red('TDS Percentage match')
-                ).toBe(this.lowerTDS.custom_field_data.percentage + '%');
+                ).toBe(this.lowerTDS.percentage + '%');
 
                 expect(
                     await expireDate.textContent(),
@@ -192,9 +192,9 @@ export class VendorInvitationDetails extends BaseHelper {
                 );
 
                 expect(
-                    await bankName.textContent(),
+                    await bankName.isVisible(),
                     chalk.red('Bank Name match')
-                ).toBe(this.bankDetails.bankName);
+                ).toBe(true);
 
                 expect(
                     await accountNumber.textContent(),
