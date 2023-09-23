@@ -218,7 +218,7 @@ test.describe('Configurations-Custom Feilds', () => {
             //             'Test1'
             //         );
 
-            //         const notification = await customefeild.notificationHelper;
+            //         const notification =  customefeild.notificationHelper;
 
             //         expect(await notification.getErrorMessage()).toBe(
             //             'There is already a column with similar name'
