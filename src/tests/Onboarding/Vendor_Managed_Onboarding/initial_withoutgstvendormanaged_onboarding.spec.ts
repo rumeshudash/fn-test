@@ -3,6 +3,7 @@ import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.help
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import {
+    Client_Invitation_Info_Schema,
     LOWER_TDS_DETAILS_SCHEMA,
     VendorOnboarding,
 } from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
@@ -19,9 +20,12 @@ import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 const vendorNonGstinInfo = {
     name: 'ABC Pvt Ltd',
     display_name: 'ABC Pvt Ltd',
-    type_id: 'Partnership Firm',
+    business_type_id: 'Partnership Firm',
     pincode: 110001,
     address: '123/45 Test address',
+};
+const CLIENTID = {
+    id: '57649556',
 };
 const vendorNonGstinSchema = {
     name: {
@@ -31,7 +35,7 @@ const vendorNonGstinSchema = {
     display_name: {
         type: 'text',
     },
-    type_id: {
+    business_type_id: {
         type: 'reference_select',
         required: true,
     },
@@ -44,6 +48,15 @@ const vendorNonGstinSchema = {
         required: true,
     },
 };
+const incorrectPincode = {
+    ...vendorNonGstinInfo,
+    pincode: 10001,
+};
+
+const emptyAddress = {
+    ...vendorNonGstinInfo,
+    address: '',
+};
 
 const clientGstinInfo: gstinDataType = {
     trade_name: 'Hidesign India Pvt Ltd',
@@ -55,11 +68,21 @@ const clientGstinInfo: gstinDataType = {
     status: 'Active',
 };
 const NON_GSTIN_BANK_DETAILS = {
-    bankName: vendorNonGstinInfo.name,
     account_number: '12345678',
     re_account_number: '12345678',
     ifsc_code: 'HDFC0000009',
-    address: 'HDFC0000009, Bangalore - Kasturba Gandhi Marg ',
+};
+
+const BankAddress = {
+    address: 'HDFC0000009,Bangalore - Kasturba Gandhi Marg',
+};
+
+const BankName = {
+    account_name: vendorNonGstinInfo.name,
+};
+const invalidIfsc = {
+    ...NON_GSTIN_BANK_DETAILS,
+    ifsc_code: 'HDFC000000',
 };
 
 const NON_GSTIN_BANK_DETAILS_SCHEMA = {
@@ -81,9 +104,9 @@ const NON_GSTIN_LOWER_TDS_DETAILS = {
     type_id: 'Lower TDS',
     identifier: '10',
     expiry_date: '22-02-2023',
-    custom_field_data: {
-        percentage: '32',
-    },
+    // custom_field_data: {
+    percentage: '32',
+    // },
 };
 
 let bankAccountNumber: string;
@@ -147,16 +170,57 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
             await withnogstin.setCheckbox('No');
         });
 
+        await PROCESS_TEST.step(
+            'Check Validation with Empty Field',
+            async () => {
+                await vendorOnboarding.form.fillFormInputInformation(
+                    vendorNonGstinSchema,
+                    {}
+                );
+                await vendorOnboarding.form.submitButton('Next');
+                await vendorOnboarding.form.checkAllMandatoryInputHasErrors(
+                    vendorNonGstinSchema
+                );
+            }
+        );
         await PROCESS_TEST.step('Fill Business Details', async () => {
-            await vendorOnboarding.form.fillFormInputInformation(
-                vendorNonGstinSchema,
-                vendorNonGstinInfo
-            );
-            // await withnogstin.fillVendorDetails([vendorNonGstinInfo]);
-            await withnogstin.clickButton('Next');
-            await vendorOnboarding.notification.checkToastSuccess(
-                'Successfully saved'
-            );
+            await PROCESS_TEST.step('Empty address field', async () => {
+                await vendorOnboarding.form.fillFormInputInformation(
+                    vendorNonGstinSchema,
+                    emptyAddress
+                );
+                await vendorOnboarding.form.checkSubmitIsDisabled('Next');
+
+                /** @TODO have to add helper for textarea empty check  */
+                // await vendorOnboarding.form.checkInputError(
+                //     'address',
+                //     vendorNonGstinSchema
+                // );
+            });
+            await PROCESS_TEST.step('Incorrect Pincode check', async () => {
+                await vendorOnboarding.form.fillFormInputInformation(
+                    vendorNonGstinSchema,
+                    incorrectPincode
+                );
+
+                await vendorOnboarding.form.submitButton('Next');
+
+                await vendorOnboarding.form.checkInputError(
+                    'pincode',
+                    vendorNonGstinSchema
+                );
+            });
+
+            await PROCESS_TEST.step('Fill valid Info', async () => {
+                await vendorOnboarding.form.fillFormInputInformation(
+                    vendorNonGstinSchema,
+                    vendorNonGstinInfo
+                );
+                await withnogstin.clickButton('Next');
+                await vendorOnboarding.notification.checkToastSuccess(
+                    'Successfully saved'
+                );
+            });
         });
 
         await PROCESS_TEST.step('Fill Document Details', async () => {
@@ -171,16 +235,44 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
             );
 
             await vendorOnboarding.form.submitButton();
+            await vendorOnboarding.form.submitButton('Next');
         });
 
         await PROCESS_TEST.step('Fill Bank Account Details', async () => {
-            await getBankDetails.validateBankAccountName();
+            await getBankDetails.validateBankAccountName(BankName.account_name);
+
+            await PROCESS_TEST.step('Empty Mandatory Field', async () => {
+                await vendorOnboarding.form.fillFormInputInformation(
+                    vendorNonGstinSchema,
+                    {}
+                );
+                await vendorOnboarding.form.submitButton('Next');
+                await vendorOnboarding.form.checkAllMandatoryInputHasErrors(
+                    NON_GSTIN_BANK_DETAILS_SCHEMA
+                );
+            });
+
+            await PROCESS_TEST.step(
+                'Validation with Invalid IFSC code',
+                async () => {
+                    await vendorOnboarding.form.fillFormInputInformation(
+                        NON_GSTIN_BANK_DETAILS,
+                        invalidIfsc
+                    );
+                    await vendorOnboarding.form.checkSubmitIsDisabled('Next');
+
+                    await vendorOnboarding.form.checkInputError(
+                        'ifsc_code',
+                        NON_GSTIN_BANK_DETAILS_SCHEMA
+                    );
+                }
+            );
             // await getBankDetails.fillBankAccount();
             await vendorOnboarding.form.fillFormInputInformation(
                 NON_GSTIN_BANK_DETAILS_SCHEMA,
                 NON_GSTIN_BANK_DETAILS
             );
-
+            await vendorOnboarding.file.setFileInput({ isDialog: false });
             await withnogstin.checkWizardNavigationClickDocument(
                 'Bank Account'
             );
@@ -190,7 +282,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
                 await getBankDetails.vendorIfscDetailsValidation();
 
             expect(ifscBankDetails, chalk.red('Bank IFSC Code match')).toBe(
-                getBankDetails.bankDetails.address
+                BankAddress.address
             );
 
             await getBankDetails.vendorIfscLogoVisibilityValidation();
@@ -206,6 +298,8 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
             await withnogstin.checkWizardNavigationClickDocument(
                 'Bank Account'
             );
+
+            await vendorOnboarding.file.setFileInput({ isDialog: false });
             await vendorOnboarding.form.submitButton('Next');
             // expect(
             //     await page.getByText('Onboarding Completed').isVisible(),
@@ -223,7 +317,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
             page
         );
         const invitationDetails = new VendorInvitationDetails(
-            NON_GSTIN_LOWER_TDS_DETAILS,
+            NON_GSTIN_BANK_DETAILS,
             NON_GSTIN_LOWER_TDS_DETAILS,
             page
         );
@@ -236,28 +330,39 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
         });
 
         await PROCESS_TEST.step('Without GSTIN Client Connect', async () => {
-            await withnogstin.clickButton('Connect with Client');
+            await withnogstin.clickButton('Connect With Client');
+            await page.waitForTimeout(1000);
         });
-        await PROCESS_TEST.step('Client Invitation Field', async () => {
-            // await vendorOnboarding.clientInvitation(
-            //     vendorNonGstinInfo.trade_name,
-            //     ''
-            // );
 
+        await PROCESS_TEST.step(
+            'Verify Business and Client Auto Fetch',
+            async () => {
+                await vendorOnboarding.verifyAutoFetchBusinessName(
+                    'vendor_account_id',
+                    vendorNonGstinInfo.name
+                );
+                await vendorOnboarding.verifyClientId(CLIENTID.id);
+                await vendorOnboarding.verifyAutoFetchClientName();
+            }
+        );
+
+        await PROCESS_TEST.step('Fill Business and Client Info', async () => {
+            await vendorOnboarding.form.fillFormInputInformation(
+                Client_Invitation_Info_Schema,
+                clientGstinInfo
+            );
             await withnogstin.clickButton('Next');
+        });
+
+        await PROCESS_TEST.step('Upload Documents', async () => {
             await vendorOnboarding.uploadImageDocuments();
 
-            await withnogstin.clickButton('Submit');
+            await vendorOnboarding.form.submitButton('Submit');
 
             //Adding custom Timeout
-            test.slow();
             await vendorOnboarding.notification.checkToastSuccess(
                 'Successfully saved'
             );
-            // expect(
-            //     await withnogstin.toastMessage(),
-            //     chalk.red('ToastMessage match')
-            // ).toBe('Successfully created');
         });
 
         await PROCESS_TEST.step('Client Verify and Approve', async () => {
@@ -280,7 +385,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
             ).toBe(clientGstinInfo.gstin);
         });
 
-        await PROCESS_TEST.step('Check Uploaded Doucments', async () => {
+        await PROCESS_TEST.step('Check Uploaded Documents', async () => {
             await invitationDetails.checkDocument('COI');
             await invitationDetails.checkDocument('Pan Card');
             await invitationDetails.checkDocument('MSME');

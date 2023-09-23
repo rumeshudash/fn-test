@@ -53,7 +53,6 @@ export const LOWER_TDS_DETAILS_SCHEMA = {
     percentage: {
         type: 'text',
         required: true,
-        name: 'custom_field_data.percentage',
     },
     expiry_date: {
         type: 'text',
@@ -170,6 +169,7 @@ export class VendorOnboarding extends BaseHelper {
     ): Promise<void> {
         await this._page.waitForTimeout(300);
         await this._page.waitForLoadState('networkidle');
+        await this._page.waitForLoadState('domcontentloaded');
         const value = await this.locate(
             `//input[@name="${dropdownName}"]/parent::div //div[text()="${data}"]`
         )._locator.isVisible();
@@ -459,7 +459,21 @@ export class VendorOnboarding extends BaseHelper {
                             placeholder: 'Enter COI number',
                         });
                     }
+
+                    if (
+                        (await this._page
+                            .getByPlaceholder('Enter Pan Card number')
+                            .isVisible()) &&
+                        (await this._page
+                            .getByPlaceholder('Enter Pan Card number')
+                            .isEditable())
+                    ) {
+                        await this.fillText(PAN_CARD, {
+                            placeholder: 'Enter Pan Card number',
+                        });
+                    }
                     await this.click({ role: 'button', name: 'Save' });
+
                     // await this._page.waitForTimeout(2000);
                 }
             }
