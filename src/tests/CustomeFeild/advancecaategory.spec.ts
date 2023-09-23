@@ -7,7 +7,7 @@ test.describe('Configurations-Custom Feilds', () => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
 
-        const dialog = await customefeild.dialogHelper;
+        const dialog = customefeild.dialogHelper;
 
         await PROCESS_TEST.step('Check page is opening', async () => {
             await expect(page.getByText('Custom')).toHaveCount(1);
@@ -40,7 +40,7 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.clickButton('Add New');
             await customefeild.addCustomeFeild('', 'Text', 1);
 
-            const notification = await customefeild.notificationHelper;
+            const notification = customefeild.notificationHelper;
 
             expect(await notification.getErrorMessage()).toBe(
                 'Field Name is required'
@@ -54,7 +54,7 @@ test.describe('Configurations-Custom Feilds', () => {
 
             await customefeild.clickButton('Add New');
             await customefeild.addCustomeFeild('Test1', '', 1);
-            const notification = await customefeild.notificationHelper;
+            const notification = customefeild.notificationHelper;
 
             expect(await notification.getErrorMessage()).toBe(
                 'Field Type is required'
@@ -67,7 +67,7 @@ test.describe('Configurations-Custom Feilds', () => {
         async ({ page }) => {
             const customefeild = new CustofeildHelper(page);
             await customefeild.init();
-            const dialog = await customefeild.dialogHelper;
+            const dialog = customefeild.dialogHelper;
             const name = await CustofeildHelper.generateRandomGradeName();
             const newName = await CustofeildHelper.generateRandomGradeName();
 
@@ -102,6 +102,7 @@ test.describe('Configurations-Custom Feilds', () => {
                     );
 
                     await customefeild.checkNameAndType(booleanName, 'Boolean');
+                    await customefeild.changeStatus(booleanName);
                 }
             );
 
@@ -120,6 +121,7 @@ test.describe('Configurations-Custom Feilds', () => {
                     );
 
                     await customefeild.checkNameAndType(numberName, 'Number');
+                    await customefeild.changeStatus(numberName);
                 }
             );
 
@@ -134,6 +136,7 @@ test.describe('Configurations-Custom Feilds', () => {
                     await customefeild.addWithDateType(dateName, 'Date', 1);
 
                     await customefeild.checkNameAndType(dateName, 'Date');
+                    await customefeild.changeStatus(dateName);
                 }
             );
 
@@ -151,6 +154,7 @@ test.describe('Configurations-Custom Feilds', () => {
                 );
 
                 await customefeild.checkNameAndType(choiceName, 'Choicelist');
+                await customefeild.changeStatus(choiceName);
             });
             await PROCESS_TEST.step(
                 'Add Advance Categories With TextArea',
@@ -170,6 +174,7 @@ test.describe('Configurations-Custom Feilds', () => {
                         textAreaName,
                         'TextArea'
                     );
+                    await customefeild.changeStatus(textAreaName);
                 }
             );
 
@@ -186,7 +191,7 @@ test.describe('Configurations-Custom Feilds', () => {
             });
             await PROCESS_TEST.step('Edit with Empty Name', async () => {
                 await customefeild.changeName(name, 'Text', '');
-                const notification = await customefeild.notificationHelper;
+                const notification = customefeild.notificationHelper;
 
                 expect(await notification.getErrorMessage()).toBe(
                     'Field Name is required'
@@ -218,7 +223,7 @@ test.describe('Configurations-Custom Feilds', () => {
             //             'Test1'
             //         );
 
-            //         const notification = await customefeild.notificationHelper;
+            //         const notification =  customefeild.notificationHelper;
 
             //         expect(await notification.getErrorMessage()).toBe(
             //             'There is already a column with similar name'
