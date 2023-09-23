@@ -1,23 +1,42 @@
 import { DocumentspreferenceHelper } from '@/helpers/DocumentpreferenceHelper/documentspreference.helper';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
+import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 
 import { test, expect } from '@playwright/test';
-import { PROCESS_TEST } from '@/fixtures';
 
 test.describe('Configuration - Document Preference', () => {
+    const userData = {
+        name: 'Test User',
+        email: '',
+        password: '123456',
+        confirmPassword: '123456',
+    };
     test('TDP001 -   Create Document Preference - Negative Case ', async ({
         page,
     }) => {
         const documents_preference = new DocumentspreferenceHelper(page);
-        const signin = new SignInHelper(page);
-        await signin.init();
-        await signin.checkDashboard({
-            username: 'doc@finnoto.com',
-            password: '123456',
+        const signup = new SignupHelper(page);
+        const username = SignupHelper.genRandomEmail();
+        userData.email = username;
+        const name = 'test';
+
+        await signup.init();
+        await signup.fillSignup({
+            name: userData.name,
+            email: userData.email,
+            password: userData.password,
+            confirm_password: userData.confirmPassword,
         });
+        await signup.clickButton('Next →');
+
+        await signup.fillOtp('111111', 6);
+
+        await signup.clickButton('Verify →');
+        await signup.fillInput(name, { name: 'name' });
+
+        await signup.clickButton('Continue');
 
         const notification = documents_preference.notificationHelper;
-        const dialog = documents_preference.dialogHelper;
 
         await documents_preference.init();
 
@@ -45,7 +64,6 @@ test.describe('Configuration - Document Preference', () => {
         });
 
         const documents_preference = new DocumentspreferenceHelper(page);
-        const notification = documents_preference.notificationHelper;
 
         await documents_preference.init();
 
