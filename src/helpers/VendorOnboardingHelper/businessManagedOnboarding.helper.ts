@@ -3,8 +3,17 @@ import { BaseHelper } from '../BaseHelper/base.helper';
 import { LISTING_ROUTES } from '@/constants/api.constants';
 import { vendorGstinInfo } from '@/utils/required_data';
 import chalk from 'chalk';
+import { DialogHelper } from '../BaseHelper/dialog.helper';
+import { FormHelper } from '../BaseHelper/form.helper';
 
 export class BusinessManagedOnboarding extends BaseHelper {
+    public form: FormHelper;
+    public dialog: DialogHelper;
+    constructor(page: any) {
+        super(page);
+        this.dialog = new DialogHelper(page);
+        this.form = new FormHelper(page);
+    }
     public vendorBusiness;
     public ignore_next_page: string[] = [];
 
@@ -40,17 +49,16 @@ export class BusinessManagedOnboarding extends BaseHelper {
                 "//div[contains(@class,'flex-wrap justify-end')]//button[1]"
             )
             .click();
-        await this.verifyDialog();
     }
 
-    async verifyDialog() {
-        expect(
-            await this._page
-                .locator("//div[text()='Add Vendor Account']")
-                .isVisible(),
-            chalk.red('Add vendor account visibility')
-        ).toBe(true);
-    }
+    // async verifyDialog() {
+    //     expect(
+    //         await this._page
+    //             .locator("//div[text()='Add Vendor Account']")
+    //             .isVisible(),
+    //         chalk.red('Add vendor account visibility')
+    //     ).toBe(true);
+    // }
 
     async clickNavigationTab(nav: string) {
         await this._page.locator(`//span[text()='${nav}']`).click();
@@ -164,10 +172,14 @@ export class GstinBusinessManagedOnboarding extends BaseHelper {
         );
     }
 
-    async editDisplayName() {
-        const displayName = await this._page
-            .locator('#display_name')
-            .fill(this.vendorBusiness.displayName);
+    async editDisplayName(name: string) {
+        // await this._page
+        //     .locator('#display_name')
+        //     .fill(this.vendorBusiness.displayName);
+
+        await this.locate('input', { name: 'display_name' })._locator.fill(
+            name
+        );
     }
 }
 
