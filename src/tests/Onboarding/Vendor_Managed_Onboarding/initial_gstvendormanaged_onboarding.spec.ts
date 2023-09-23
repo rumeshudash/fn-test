@@ -3,7 +3,7 @@ import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.help
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
-import { VendorInvitationDetails } from '@/helpers/VendorOnboardingHelper/InvitationDetails.helper';
+import { VendorInvitationDetails } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/InvitationDetails.helper';
 import {
     BANKDETAILS_SCHEMA,
     Client_Invitation_Info_Schema,
@@ -11,8 +11,8 @@ import {
     VendorOnboarding,
     VendorOnboardingWithGSTIN,
     vendorGstinInfoSchema,
-} from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
-import { BankAccountDetails } from '@/helpers/VendorOnboardingHelper/bankDetails.helper';
+} from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/VendorOnboarding.helper';
+import { BankAccountDetails } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/bankDetails.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import chalk from 'chalk';
 

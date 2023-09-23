@@ -1,20 +1,18 @@
 import { PROCESS_TEST } from '@/fixtures';
 import { gstinDataType } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
+import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
+import { VendorInvitationDetails } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/InvitationDetails.helper';
 import {
     Client_Invitation_Info_Schema,
     LOWER_TDS_DETAILS_SCHEMA,
     VendorOnboarding,
-} from '@/helpers/VendorOnboardingHelper/VendorOnboarding.helper';
+} from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/VendorOnboarding.helper';
+import { BankAccountDetails } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/bankDetails.helper';
+import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/vendorOnboardingWithoutGstin.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
-import { test } from '@playwright/test';
-import { nonGstinDataType } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
 import chalk from 'chalk';
-import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/vendorOnboardingWithoutGstin.helper';
-import { BankAccountDetails } from '@/helpers/VendorOnboardingHelper/bankDetails.helper';
-import { VendorInvitationDetails } from '@/helpers/VendorOnboardingHelper/InvitationDetails.helper';
-import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 
 //Vendor and Client Details
 const vendorNonGstinInfo = {
@@ -71,6 +69,13 @@ const NON_GSTIN_BANK_DETAILS = {
     account_number: '12345678',
     re_account_number: '12345678',
     ifsc_code: 'HDFC0000009',
+};
+const Client_Invitation_Info = {
+    vendor_account_id: vendorNonGstinInfo.name, // vendor_account_id: 'Ujjivan Small Finance Bank Limited', //Bank should be connected on vendor account
+    business_account_id: clientGstinInfo.trade_name, //Client Business added from clientGstinInfo
+    // bank_id: 'ICIC0000002', //Bank must be availabe on vendor account
+    bank_id: NON_GSTIN_BANK_DETAILS.ifsc_code,
+    poc: 'vasant02@harbourfront.com',
 };
 
 const BankAddress = {
@@ -349,7 +354,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
         await PROCESS_TEST.step('Fill Business and Client Info', async () => {
             await vendorOnboarding.form.fillFormInputInformation(
                 Client_Invitation_Info_Schema,
-                clientGstinInfo
+                Client_Invitation_Info
             );
             await withnogstin.clickButton('Next');
         });

@@ -2,12 +2,13 @@ import { PROCESS_TEST } from '@/fixtures';
 import GenericGstinCardHelper, {
     gstinDataType,
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
+import { BusinessManagedOnboarding } from '@/helpers/VendorOnboardingHelper/Business_ManagedHelper/businessManagedOnboarding.helper';
 import {
-    BusinessManagedOnboarding,
     GstinBusinessManagedOnboarding,
-} from '@/helpers/VendorOnboardingHelper/businessManagedOnboarding.helper';
-import { businessVendorGstin } from '@/utils/required_data';
-import { test } from '@playwright/test';
+    VendorSchema,
+} from '@/helpers/VendorOnboardingHelper/Business_ManagedHelper/withGstOnboarding.helper';
+import { generateRandomNumber } from '@/utils/common.utils';
+
 const { expect, describe } = PROCESS_TEST;
 
 //Business Managed vendor onboarding with GSTIN
@@ -38,6 +39,16 @@ describe('TCBV001', () => {
             required: true,
         },
     };
+    //Data used in Business Managed Onboarding with GSTIN
+    const businessVendorGstin: gstinDataType = {
+        trade_name: 'Adani Electricity Mumbai Limited',
+        gstin: '27AADCD0086F1ZW',
+        pan_number: 'AADCD0086F',
+        business_type: 'Proprietorship',
+        address:
+            'EKSAR DEVIDAS LANE, OFF SVP ROAD,BORIVALI WEST, MUMBAI, CTS 407/A NEW, Mumbai Suburban, 400103, Maharashtra, NA, 408 OLD VILLAGE',
+        status: 'Active',
+    };
     const VendorClientInfo = {
         trade_name: 'Hidesign India Pvt Ltd', //Client Business Name
         // displayName: businessVendorGstin.trade_name.slice(5),
@@ -47,16 +58,12 @@ describe('TCBV001', () => {
     };
 
     const VendorInfo = {
-        gstin: '29AKAPD8772G1Z0',
-        updated_display_name: 'Updated Vendor',
+        gstin: businessVendorGstin.gstin,
+        email: `email${generateRandomNumber()}@test.com`,
+        mobile: 9876421231,
+        // updated_display_name: 'Updated Vendor',
     };
 
-    const VendorSchema = {
-        gstin: {
-            type: 'text',
-            required: true,
-        },
-    };
     PROCESS_TEST(
         'Business Managed with GSTIN - Vendor Onboarding',
         async ({ page }) => {
@@ -127,14 +134,18 @@ describe('TCBV001', () => {
                         // await withGstin.expandClientInfoCard();
 
                         // await withGstin.checkDisplayName();
-                        await withGstin.editDisplayName(
-                            VendorInfo.updated_display_name
-                        );
+                        // await withGstin.editDisplayName(
+                        //     VendorInfo.updated_display_name
+                        // );
                         await withGstin.expandClientInfoCard();
                         await vendorGstin.gstinInfoCheck();
                         await businessManagedOnboarding.saveAndCreateCheckbox();
 
-                        await businessManagedOnboarding.clickButton('Save');
+                        await businessManagedOnboarding.form.submitButton();
+                        await businessManagedOnboarding.form.checkInputError(
+                            'gstin',
+                            VendorSchema
+                        );
                     });
                 }
             );

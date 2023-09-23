@@ -4,6 +4,7 @@ import chalk from 'chalk';
 
 export type nonGstinDataType = {
     trade_name: string;
+    value?: string;
     display_name?: string;
     business_type: string;
     pin_code: string;
@@ -31,16 +32,16 @@ export default class GenericNonGstinCardHelper extends BaseHelper {
             this.gstin_data.trade_name
         );
     }
-    // async checkGstinNumber() {
-    //     const element = this.locate('div', {
-    //         id: 'gstin_number',
-    //     })._locator;
+    async checkGstinNumber() {
+        const element = this.locate('div', {
+            id: 'gstin_number',
+        })._locator;
 
-    //     expect(await element.isVisible(), 'Gstin Number not found').toBe(true);
-    //     await expect(element, 'Gstin Number  not matched !!').toHaveText(
-    //         this.gstin_data.value
-    //     );
-    // }
+        expect(await element.isVisible(), 'Gstin Number not found').toBe(true);
+        await expect(element, 'Gstin Number  not matched !!').toHaveText(
+            this.gstin_data.value
+        );
+    }
     async checkAddress() {
         const element = this.locate('span', {
             id: 'gstin_address',
@@ -93,12 +94,12 @@ export default class GenericNonGstinCardHelper extends BaseHelper {
         await this._page.waitForTimeout(2000);
         if (!this.ignore_test_fields.includes('gstin_business_name'))
             await this.checkBusinessName();
-        // if (!this.ignore_test_fields.includes('gstin_business_number'))
-        //     await this.checkGstinNumber();
-        if (!this.ignore_test_fields.includes('gstin_business_address'))
-            await this.checkAddress();
-        if (!this.ignore_test_fields.includes('gstin_business_business_type'))
-            await this.checkBusinessType();
+        if (!this.ignore_test_fields.includes('gstin_number'))
+            await this.checkGstinNumber();
+        // if (!this.ignore_test_fields.includes('gstin_business_address'))
+        //     await this.checkAddress();
+        // if (!this.ignore_test_fields.includes('gstin_business_business_type'))
+        //     await this.checkBusinessType();
         // if (!this.ignore_test_fields.includes('gstin_business_pan'))
         //     await this.checkPAN();
         // if (!this.ignore_test_fields.includes('gstin_business_status'))

@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
-import { FileHelper } from '../BaseHelper/file.helper';
+import { BaseHelper } from '../../BaseHelper/base.helper';
+import { FileHelper } from '../../BaseHelper/file.helper';
 import chalk from 'chalk';
 
 export class BankAccountDetails extends BaseHelper {

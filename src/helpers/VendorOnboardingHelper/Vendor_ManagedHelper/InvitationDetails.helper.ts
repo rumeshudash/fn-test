@@ -1,8 +1,8 @@
-import { expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
-import chalk from 'chalk';
+import { BaseHelper } from '@/helpers/BaseHelper/base.helper';
 import { VendorOnboardingWithGSTIN } from './VendorOnboarding.helper';
 import { MSME_NUMBER, vendorGstinInfo } from '@/utils/required_data';
+import chalk from 'chalk';
+import { expect } from '@playwright/test';
 
 export class VendorInvitationDetails extends BaseHelper {
     public bankDetails;

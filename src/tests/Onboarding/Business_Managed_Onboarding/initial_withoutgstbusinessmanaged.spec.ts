@@ -1,15 +1,15 @@
 import { PROCESS_TEST } from '@/fixtures';
-import GenericGstinCardHelper, {
-    gstinDataType,
-} from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import GenericNonGstinCardHelper, {
     nonGstinDataType,
 } from '@/helpers/CommonCardHelper/genericNonGstin.card.helper';
+import { BusinessManagedOnboarding } from '@/helpers/VendorOnboardingHelper/Business_ManagedHelper/businessManagedOnboarding.helper';
 import {
-    BusinessManagedOnboarding,
+    VendorInfoSchema,
     WithoutGstinBusinessManagedOnboarding,
-} from '@/helpers/VendorOnboardingHelper/businessManagedOnboarding.helper';
+} from '@/helpers/VendorOnboardingHelper/Business_ManagedHelper/withoutGstOnboarding.helper';
+import { generateRandomNumber } from '@/utils/common.utils';
 import { VendorInfo_NonGstin } from '@/utils/required_data';
+
 const { expect, describe } = PROCESS_TEST;
 
 const data = {
@@ -20,12 +20,24 @@ const data = {
 //Business Managed vendor onboarding with GSTIN
 describe('TCBV002', () => {
     const BusinessManagedInfo: nonGstinDataType = {
-        trade_name: 'Hello India',
-        display_name: '',
-        address: '',
-        pin_code: '',
-        business_type: '',
+        trade_name: 'Hidesign India Pvt Ltd',
+        // display_name: '',
+        value: '33AACCH0586R1Z6',
+        address:
+            'EXPRESS AVENUE, 49/50 L-WHITES ROAD, ROYAPETTAH, SHOP NO.S 161 B, Chennai, 600014, Tamil Nadu, NA, FIRST FLOOR',
+        pin_code: 'AACCH0586R',
+        business_type: 'Private Limited',
     };
+
+    const VendorInfo = {
+        name: `ABC${generateRandomNumber()}`,
+        type_id: 'Partnership Firm',
+        pincode: '110001',
+        address: 'Delhi',
+        email: `emails${generateRandomNumber()}@test.com`,
+        mobile: 9876553123,
+    };
+
     PROCESS_TEST(
         'Business Managed without GSTIN - Add Vendor',
         async ({ page }) => {
@@ -48,7 +60,7 @@ describe('TCBV002', () => {
             await businessManagedOnboarding.verifyVendorPageURL();
             await businessManagedOnboarding.clickAddIcon();
             await businessManagedOnboarding.clickNavigationTab(
-                'Non GSTIN Registered'
+                'Non GST Registered'
             );
 
             await withoutGstin.selectClientTradeName();
@@ -58,7 +70,11 @@ describe('TCBV002', () => {
                 'gstin_business_pan',
             ];
             await businessGstin.gstinInfoCheck();
-            await withoutGstin.addVendorAccount();
+            // await withoutGstin.addVendorAccount();
+            await businessManagedOnboarding.form.fillFormInputInformation(
+                VendorInfoSchema,
+                VendorInfo
+            );
 
             // await businessManagedOnboarding.saveAndCreateCheckbox();
 
