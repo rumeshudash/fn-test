@@ -25,11 +25,11 @@ describe('Approval Delegation Flow', () => {
         };
 
         const expiredDelegation: ApprovalDelegationData = {
-            DELEGATOR: 'Abhishek Gupta',
-            'START TIME': '20-09-2021',
-            'END TIME': '21-09-2021',
-            COMMENTS: 'test',
-            'ADDED AT': '20 Sep, 2023 6:14 PM',
+            DELEGATOR: 'Pavani Reddy',
+            'START TIME': '20-09-2023',
+            'END TIME': '20-09-2023',
+            COMMENTS: 'test duration passed',
+            'ADDED AT': '20 Sep, 2023 5:50 PM',
         };
 
         const fillData: DelegationFillData = {
@@ -76,7 +76,6 @@ describe('Approval Delegation Flow', () => {
                     message: 'Delegated to is required',
                 },
             ];
-
             // validate empty delegation error
             await delegation.openDelegationForm();
             await delegation.fillAndValidateForm(
@@ -87,15 +86,28 @@ describe('Approval Delegation Flow', () => {
 
             // validate invalid date error
             fillData.delegated_id = 'Abhishek Gupta';
-            fillData.end_time = '24-09-2021';
+            fillData.start_time = '24-09-2021';
+            errors = [
+                {
+                    name: 'start_time',
+                    message: 'Start Time must be greater than or equal to',
+                },
+            ];
+            await delegation.fillAndValidateForm(
+                delegationSchema,
+                fillData,
+                errors
+            );
 
+            // validate end date error
+            fillData.start_time = delegationData['START TIME'];
+            fillData.end_time = '24-09-2021';
             errors = [
                 {
                     name: 'end_time',
-                    message: 'End Time must be a valid date',
+                    message: 'End Time must be greater than or equal to',
                 },
             ];
-
             await delegation.fillAndValidateForm(
                 delegationSchema,
                 fillData,
@@ -103,14 +115,13 @@ describe('Approval Delegation Flow', () => {
             );
 
             fillData.end_time = delegationData['END TIME'];
-            delegationData['ADDED AT'] = formatDate(new Date(), true);
             errors = [];
-
             await delegation.fillAndValidateForm(
                 delegationSchema,
                 fillData,
                 errors
             );
+            delegationData['ADDED AT'] = formatDate(new Date(), true);
         });
 
         await test.step('Verify Delegation in Table', async () => {
@@ -120,6 +131,18 @@ describe('Approval Delegation Flow', () => {
 
         await test.step('Verify Status Change', async () => {
             await delegation.verifyStatusChange(delegationData, 'Inactive');
+        });
+
+        await test.step('Verify Delegation in Details Page', async () => {
+            await delegation.verifyStatusChange(delegationData, 'Active');
+
+            // verify for user
+            await delegation.openDetailsPage(delegationData, delegatorInfo);
+            await delegation.verifyInDelegationTab(delegationData);
+
+            // verify for delegator
+            await delegation.openDetailsPage(delegationData, userInfo);
+            await delegation.verifyInDelegationTab(delegationData);
         });
 
         await test.step('Verify Delegation in Workflows Tab', async () => {
@@ -139,7 +162,12 @@ describe('Approval Delegation Flow', () => {
         await test.step('Verify Expiration of Delegation', async () => {
             await delegation.navigateTo('APPROVAL_DELEGATIONS');
             await delegation.verifyStatusChange(delegationData, 'Inactive');
-            await delegation.verifyStatusChange(expiredDelegation, 'Active');
+            await delegation.verifyStatusChange(
+                expiredDelegation,
+                'Active',
+                'USER',
+                true
+            );
             await delegation.createExpense();
             await delegation.verifyDelegatorInApprovalTab(
                 expiredDelegation,
@@ -148,8 +176,13 @@ describe('Approval Delegation Flow', () => {
             );
         });
 
-        await test.step('Create Expense and Verify Delegation', async () => {
-            await delegation.verifyStatusChange(expiredDelegation, 'Inactive');
+        await test.step('Create Expense and Verify Delegation in Delegator account', async () => {
+            await delegation.verifyStatusChange(
+                expiredDelegation,
+                'Inactive',
+                'USER',
+                true
+            );
             await delegation.verifyStatusChange(delegationData, 'Active');
             await delegation.createExpense();
             const expenseId = await delegation.verifyDelegatorInApprovalTab(
@@ -157,12 +190,22 @@ describe('Approval Delegation Flow', () => {
                 true,
                 userInfo
             );
+
+            // open delegator account and verify
             await delegation.openDelegatorAccount(delegatorInfo, expenseId);
             await delegation.verifyDelegatorInProfile(delegationData);
             await delegation.verifyInExpense(
                 userInfo,
                 delegationData,
                 expenseId
+            );
+        });
+
+        await test.step('Deactivate Delegation', async () => {
+            await delegation.verifyStatusChange(
+                delegationData,
+                'Inactive',
+                'EMPLOYEE'
             );
         });
     });

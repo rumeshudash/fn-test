@@ -176,6 +176,7 @@ export class BaseHelper {
         await this._page.goto(finalUrl, {
             waitUntil: 'networkidle',
         });
+        await this._page.waitForLoadState('domcontentloaded');
     }
 
     /**

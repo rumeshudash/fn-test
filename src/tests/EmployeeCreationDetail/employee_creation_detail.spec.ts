@@ -111,9 +111,15 @@ describe('Employee Creation-detail>Finops Portal', () => {
                     name: 'email',
                 }
             );
+
+            await employeeCreation.form.dialogHelper.checkConfirmDialogOpenOrNot();
+            await employeeCreation.form.dialogHelper.clickConfirmDialogAction(
+                'Yes!'
+            );
         });
 
         await PROCESS_TEST.step('Check Save And Create Another', async () => {
+            await employeeCreation.clickAddIcon();
             await employeeCreation.form.fillFormInputInformation(
                 employeeCreation.employeeCreationSchema,
                 employeeCreationInfo_SaveAndCreate
@@ -222,7 +228,7 @@ describe('Employee Creation-detail>Finops Portal', () => {
                 'Change Employee Status Active to Inactive',
                 async () => {
                     await employeeCreation.listing.searchInList(
-                        employeeCreationInfo.name
+                        employeeCreationInfo.identifier
                     );
                     await employeeCreation.checkEmployeeNameLink();
                     await employeeCreation.clickButton('Actions');

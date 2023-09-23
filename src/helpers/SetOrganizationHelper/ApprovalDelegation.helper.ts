@@ -64,12 +64,25 @@ export class ApprovalDelegation extends FormHelper {
         await this.fillInput('', {
             name: 'start_time',
         });
+        await this.fillInput('', {
+            name: 'end_time',
+        });
         await this.fillFormInputInformation(schema, data);
         await this.submitButton();
         for (const err of errors) {
-            await this.checkIsInputHasErrorMessage(err.message, {
-                name: err.name,
-            });
+            if (err.name === 'end_time' || err.name === 'start_time') {
+                await this.checkIsInputHasErrorMessage(
+                    err.message,
+                    {
+                        name: err.name,
+                    },
+                    false
+                );
+            } else {
+                await this.checkIsInputHasErrorMessage(err.message, {
+                    name: err.name,
+                });
+            }
         }
     }
 
@@ -105,11 +118,19 @@ export class ApprovalDelegation extends FormHelper {
 
     public async verifyStatusChange(
         data: ApprovalDelegationData,
-        status: 'Active' | 'Inactive'
+        status: 'Active' | 'Inactive',
+        type: 'USER' | 'EMPLOYEE' = 'USER',
+        isSearch: boolean = false
     ) {
         const start_date = formatDateProfile(data['START TIME']);
         const end_date = formatDateProfile(data['END TIME']);
-        await this.navigateTo('APPROVAL_DELEGATIONS');
+        if (type === 'USER') {
+            await this.navigateTo('APPROVAL_DELEGATIONS');
+        } else {
+            await this.navigateTo('EMPLOYEEMYPROFILE');
+            await this.tabHelper.clickTab('Approval Delegations');
+        }
+        if (isSearch) await this._listingHelper.searchInList(data['DELEGATOR']);
         const row = await this.getRowWithDates(start_date, end_date);
         await this.statusHelper.setStatusWithRow(status, row);
     }
@@ -160,6 +181,7 @@ export class ApprovalDelegation extends FormHelper {
             },
         ]);
         await this.submitButton();
+        await this._page.waitForSelector('.breadcrumbs');
     }
 
     public async verifyDelegatorInApprovalTab(
@@ -221,5 +243,19 @@ export class ApprovalDelegation extends FormHelper {
         await this._notificationHelper.checkToastSuccess(
             'Successfully Approved!'
         );
+    }
+
+    public async openDetailsPage(data: ApprovalDelegationData, userInfo) {
+        await this.navigateTo('MYPROFILE');
+        await this.tabHelper.clickTab('Approval Delegations');
+        const start_date = formatDateProfile(data['START TIME']);
+        const end_date = formatDateProfile(data['END TIME']);
+        const row = await this.getRowWithDates(start_date, end_date);
+        await row.getByText(userInfo.name).click();
+    }
+
+    public async verifyInDelegationTab(data: ApprovalDelegationData) {
+        await this.tabHelper.clickTab('Delegations');
+        await this.validateDelegationRow(data);
     }
 }
