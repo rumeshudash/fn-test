@@ -1,22 +1,17 @@
-import { BaseHelper } from '../BaseHelper/base.helper';
-import chalk from 'chalk';
-import GenericGstinCardHelper from '../CommonCardHelper/genericGstin.card.helper';
-import { expect } from '@playwright/test';
+import { BaseHelper } from '@/helpers/BaseHelper/base.helper';
+import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
+import { FileHelper } from '@/helpers/BaseHelper/file.helper';
+import { FormHelper } from '@/helpers/BaseHelper/form.helper';
+import { NotificationHelper } from '@/helpers/BaseHelper/notification.helper';
+import GenericGstinCardHelper from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import {
     COI_NUMBER,
     IMAGE_NAME,
     MSME_NUMBER,
     PAN_CARD,
-    PAN_CODE_ADDRESS,
-    vendorGstinInfo,
 } from '@/utils/required_data';
-import GenericNonGstinCardHelper, {
-    nonGstinDataType,
-} from '../CommonCardHelper/genericNonGstin.card.helper';
-import { NotificationHelper } from '../BaseHelper/notification.helper';
-import { DialogHelper } from '../BaseHelper/dialog.helper';
-import { FormHelper } from '../BaseHelper/form.helper';
-import { FileHelper } from '../BaseHelper/file.helper';
+import { expect } from '@playwright/test';
+import chalk from 'chalk';
 
 let getDate: string;
 

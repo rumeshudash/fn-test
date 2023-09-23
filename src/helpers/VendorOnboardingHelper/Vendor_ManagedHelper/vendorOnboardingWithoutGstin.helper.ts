@@ -1,10 +1,4 @@
-import { expect } from '@playwright/test';
-import GenericNonGstinCardHelper, {
-    nonGstinDataType,
-} from '../CommonCardHelper/genericNonGstin.card.helper';
-import chalk from 'chalk';
-import { PAN_CODE_ADDRESS } from '@/utils/required_data';
-import { BaseHelper } from '../BaseHelper/base.helper';
+import { BaseHelper } from '@/helpers/BaseHelper/base.helper';
 
 export class VendorManagedWithoutGSTIN extends BaseHelper {
     private VENDOR_MANAGED_ONBOARDING_DOM = '//div[text()="Vendor Onboarding"]';

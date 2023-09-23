@@ -17,7 +17,7 @@ export const vendorGstinInfo: gstinDataType = {
 
 export const IMAGE_NAME = 'invoice3.png';
 export const MSME_NUMBER = '22';
-export const PAN_CARD = '20';
+export const PAN_CARD = 'BAJPC4350M';
 export const COI_NUMBER = '23332567';
 export const PICK_DATE = '20-06-2023';
 export const PAN_CODE_ADDRESS = 'New Delhi Central, Delhi';

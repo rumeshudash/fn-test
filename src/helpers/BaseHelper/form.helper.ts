@@ -353,7 +353,7 @@ export class FormHelper extends BaseHelper {
             name,
             type: schema.type,
         });
-        console.log(errorMessage);
+        Logger.error(await errorMessage.textContent());
 
         await expect(errorMessage).toBeVisible();
         if (message) {
