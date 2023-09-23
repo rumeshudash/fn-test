@@ -168,10 +168,14 @@ export class ApprovalDelegation extends FormHelper {
     public async createExpense() {
         await this.navigateTo('RAISE_EXPENSES');
         await this._documentHelper.uploadDocument(false);
-        await this._expenseHelper.fillExpenses([
+        await this._expenseHelper.fillBusinessDetails([
             {
                 to: 'Hidesign India Pvt Ltd',
                 from: 'Adidas India Marketing Private Limited',
+            },
+        ]);
+        await this._expenseHelper.fillExpenses([
+            {
                 invoice: ' inv' + generateRandomNumber(),
                 amount: 10000,
                 taxable_amount: 10000,
