@@ -1,24 +1,24 @@
-import { BaseHelper } from './base.helper';
-
-import { SignupHelper } from '../SignupHelper/signup.helper';
-import { SignInHelper } from '../SigninHelper/signIn.helper';
 import { Page } from '@playwright/test';
-import { LISTING_ROUTES } from '@/constants/api.constants';
+import { SignInHelper } from '../SigninHelper/signIn.helper';
+import { SignupHelper } from '../SignupHelper/signup.helper';
 
-export class ProcessSignup extends BaseHelper {
+export class ProcessSignup {
     public userData = {
         username: '',
         password: '',
     };
     public signupHelper: SignupHelper;
     public signinHelper: SignInHelper;
-    constructor(page: Page) {
-        super(page);
-        this.signupHelper = new SignupHelper(page);
-        this.signinHelper = new SignInHelper(page);
-    }
+    // constructor(page: Page) {
+    //     super(page);
+    //     this.signupHelper = new SignupHelper(page);
+    //     this.signinHelper = new SignInHelper(page);
+    // }
 
-    public async newSignup() {
+    public async newSignup(page: Page) {
+        this.signupHelper = new SignupHelper(page);
+
+        // this.signupHelper = new SignupHelper(page);
         await this.signupHelper.init();
         const username = SignupHelper.genRandomEmail();
         const name = 'test';
@@ -41,6 +41,8 @@ export class ProcessSignup extends BaseHelper {
         await this.signupHelper.fillInput(name, { name: 'organization_name' });
 
         await this.signupHelper.clickButton('Continue');
+        await page.waitForLoadState('domcontentloaded');
+        // await page.waitForLoadState('do')
 
         this.userData.username = username;
         this.userData.password = password;
@@ -48,13 +50,16 @@ export class ProcessSignup extends BaseHelper {
         return this.userData;
     }
 
-    public async newLogin(url: keyof typeof LISTING_ROUTES) {
+    public async newLogin(page: Page) {
+        this.signinHelper = new SignInHelper(page);
         await this.signinHelper.init();
+
         await this.signinHelper.checkDashboard({
             username: this.userData.username,
             password: this.userData.password,
         });
-
-        await this.navigateTo(url);
+        // if (redirectUrl) {
+        //     await this.navigateTo(redirectUrl);
+        // }
     }
 }

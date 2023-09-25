@@ -9,11 +9,20 @@ import { NotificationHelper } from '../BaseHelper/notification.helper';
 export default class CreateFinopsBusinessHelper extends NotificationHelper {
     public listHelper: ListingHelper;
     public formHelper: FormHelper;
+    public title: string;
+
+    async openBusinessForm() {
+        await this.listHelper.openDialogFormByButtonText(
+            this.title,
+            'ef_add_business'
+        );
+    }
 
     constructor(page) {
         super(page);
         this.listHelper = new ListingHelper(page);
         this.formHelper = new FormHelper(page);
+        this.title = 'Add Business';
     }
     public async init() {
         const URL = LISTING_ROUTES['BUSINESSESS'];

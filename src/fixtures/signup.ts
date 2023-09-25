@@ -1,8 +1,11 @@
 import { Page, test } from '@playwright/test';
-
+import fs from 'fs';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 
+if (fs.existsSync('./signup.json')) {
+    test.use({ storageState: 'signup.json' });
+}
 export const PROCESS_SIGNUP = test.extend<{ signup: void }>({
     signup: [
         async ({ page }: { page: Page }, use: () => any) => {
@@ -35,7 +38,7 @@ export const PROCESS_SIGNUP = test.extend<{ signup: void }>({
                 username: username,
                 password: password,
             });
-            // await page.context().storageState({ path: 'signup.json' });
+            await page.context().storageState({ path: 'signup.json' });
 
             await use();
         },
