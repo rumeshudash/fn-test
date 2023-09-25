@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
 test.describe.configure({ mode: 'serial' });
-test.describe('TRP001', () => {
-    PROCESS_TEST('Reset Password page is open', async ({ page }) => {
+test.describe('FinOps_SignIn', () => {
+    PROCESS_TEST('TRP001 - Reset Password page is open', async ({ page }) => {
         const resetPassword = new ResetPasswordHelper(page);
         await resetPassword.init();
         await resetPassword.resetPasswordPage();
@@ -13,17 +13,20 @@ test.describe('TRP001', () => {
             'Change Password'
         );
     });
-    PROCESS_TEST('Reset Password with empty password', async ({ page }) => {
-        const resetPassword = new ResetPasswordHelper(page);
-        await resetPassword.init();
-
-        await resetPassword.resetPassword('', '1234567', '1234567');
-        expect(await resetPassword.getErrorMessage()).toBe(
-            'Old Password is required'
-        );
-    });
     PROCESS_TEST(
-        'Reset Password with Incorrect  new password',
+        'TRP002 - Reset Password with empty password',
+        async ({ page }) => {
+            const resetPassword = new ResetPasswordHelper(page);
+            await resetPassword.init();
+
+            await resetPassword.resetPassword('', '1234567', '1234567');
+            expect(await resetPassword.getErrorMessage()).toBe(
+                'Old Password is required'
+            );
+        }
+    );
+    PROCESS_TEST(
+        'TRP003 - Reset Password with Incorrect  new password',
         async ({ page }) => {
             const resetPassword = new ResetPasswordHelper(page);
             await resetPassword.init();
@@ -36,7 +39,7 @@ test.describe('TRP001', () => {
         }
     );
     PROCESS_TEST(
-        'Reset Password with Without confirm password',
+        'TRP004 - Reset Password with Without confirm password',
         async ({ page }) => {
             const resetPassword = new ResetPasswordHelper(page);
             await resetPassword.init();
@@ -48,7 +51,7 @@ test.describe('TRP001', () => {
         }
     );
     PROCESS_TEST(
-        'Reset Password with same old and  new password',
+        'TRP006 - Reset Password with same old and  new password',
         async ({ page }) => {
             const resetPassword = new ResetPasswordHelper(page);
             await resetPassword.init();
@@ -60,17 +63,24 @@ test.describe('TRP001', () => {
         }
     );
 
-    PROCESS_TEST('Check with Invalid Old password', async ({ page }) => {
-        const resetPassword = new ResetPasswordHelper(page);
-        await resetPassword.init();
-        await resetPassword.resetPassword('12345677887', '123456', '123456');
-        await resetPassword.click({ role: 'button', name: 'Yes' });
+    PROCESS_TEST(
+        'TRP007 - Check with Invalid Old password',
+        async ({ page }) => {
+            const resetPassword = new ResetPasswordHelper(page);
+            await resetPassword.init();
+            await resetPassword.resetPassword(
+                '12345677887',
+                '123456',
+                '123456'
+            );
+            await resetPassword.click({ role: 'button', name: 'Yes' });
 
-        await resetPassword.checkToastError('Invalid old password');
-    });
+            await resetPassword.checkToastError('Invalid old password');
+        }
+    );
 
     PROCESS_TEST(
-        'with valid old password and valid new password',
+        'TRP008 -with valid old password and valid new password',
         async ({ page }) => {
             const resetPassword = new ResetPasswordHelper(page);
             await resetPassword.init();

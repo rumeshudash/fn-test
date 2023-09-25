@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import chalk from 'chalk';
 
-test.describe('Signin', () => {
+test.describe('FinOps_SignIn', () => {
     test('Check sigin page is loading ', async ({ page }) => {
         const signin = new SignInHelper(page);
         await signin.init();

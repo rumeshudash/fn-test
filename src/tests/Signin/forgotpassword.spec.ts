@@ -1,7 +1,7 @@
 import { ForgotPasswordHelper } from '@/helpers/SigninHelper/forgotpassword.helper';
 import { expect, test } from '@playwright/test';
 
-test.describe('Forgot Password', () => {
+test.describe('FinOps_Forgotpassword', () => {
     test('without details', async ({ page }) => {
         const forgotPassword = new ForgotPasswordHelper(page);
         await forgotPassword.init();

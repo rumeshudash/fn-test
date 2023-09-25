@@ -2,7 +2,7 @@ import { CustofeildHelper } from '@/helpers/CustomefeildHelper/customefeild.help
 import { test, expect } from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
-test.describe('Configurations-Custom Feilds', () => {
+test.describe('FinOps_CustomfieldCreation -Configurations-Custom Feilds', () => {
     PROCESS_TEST('TCF001- Expense -Negative', async ({ page }) => {
         const customefeild = new CustofeildHelper(page);
         await customefeild.init();
@@ -72,6 +72,7 @@ test.describe('Configurations-Custom Feilds', () => {
             await customefeild.clickButton('Add New');
 
             await customefeild.addWithTextType(name, 'Text', 1, 'Test1');
+            await page.waitForTimeout(1000);
 
             await customefeild.checkNameAndType(name, 'Text');
         });
@@ -85,8 +86,10 @@ test.describe('Configurations-Custom Feilds', () => {
                 1,
                 'True'
             );
+            await page.waitForTimeout(1000);
 
             await customefeild.checkNameAndType(booleanName, 'Boolean');
+            await page.waitForTimeout(1000);
             await customefeild.changeStatus(booleanName);
         });
 
@@ -95,8 +98,10 @@ test.describe('Configurations-Custom Feilds', () => {
             const numberName =
                 (await CustofeildHelper.generateRandomGradeName()) + 'Number';
             await customefeild.addWithTextType(numberName, 'Number', 1, 123);
+            await page.waitForTimeout(1000);
 
             await customefeild.checkNameAndType(numberName, 'Number');
+            await page.waitForTimeout(1000);
             await customefeild.changeStatus(numberName);
         });
         await PROCESS_TEST.step('Add with choice type', async () => {
@@ -109,8 +114,10 @@ test.describe('Configurations-Custom Feilds', () => {
                 'customechoce',
                 2
             );
+            await page.waitForTimeout(1000);
 
             await customefeild.checkNameAndType(choiceName, 'Choicelist');
+            await page.waitForTimeout(1000);
             await customefeild.changeStatus(choiceName);
         });
 
@@ -119,8 +126,10 @@ test.describe('Configurations-Custom Feilds', () => {
             const dateName =
                 (await CustofeildHelper.generateRandomGradeName()) + 'Date';
             await customefeild.addWithDateType(dateName, 'Date', 1);
+            await page.waitForTimeout(1000);
 
             await customefeild.checkNameAndType(dateName, 'Date');
+            await page.waitForTimeout(1000);
             await customefeild.changeStatus(dateName);
         });
         await PROCESS_TEST.step('Add Expense With TextArea', async () => {
@@ -133,8 +142,10 @@ test.describe('Configurations-Custom Feilds', () => {
                 1,
                 'Test1'
             );
+            await page.waitForTimeout(1000);
 
             await customefeild.checkNameAndType(textAreaName, 'TextArea');
+            await page.waitForTimeout(1000);
             await customefeild.changeStatus(textAreaName);
         });
 
@@ -166,8 +177,10 @@ test.describe('Configurations-Custom Feilds', () => {
             await dialog.closeDialog();
             await customefeild.clickButton('Yes!');
             await customefeild.checkEdit(name);
+            await page.waitForTimeout(1000);
 
             await customefeild.changeName(name, 'Text', newName);
+            await page.waitForTimeout(1000);
         });
 
         await PROCESS_TEST.step('Change Priority', async () => {
