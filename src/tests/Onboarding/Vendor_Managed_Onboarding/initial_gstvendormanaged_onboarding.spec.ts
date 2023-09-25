@@ -4,12 +4,12 @@ import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import { VendorInvitationDetails } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/InvitationDetails.helper';
+import { VendorOnboardingWithGSTIN } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/OnboardingWithGstin.helper';
 import {
     BANKDETAILS_SCHEMA,
     Client_Invitation_Info_Schema,
     LOWER_TDS_DETAILS_SCHEMA,
     VendorOnboarding,
-    VendorOnboardingWithGSTIN,
     vendorGstinInfoSchema,
 } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/VendorOnboarding.helper';
 import { BankAccountDetails } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/bankDetails.helper';
@@ -44,9 +44,7 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
         identifier: '333333333',
 
         expiry_date: '22-02-2023',
-        // custom_field_data: {
         percentage: '32',
-        // },
     };
 
     //For Vendor Managed Onboarding GSTIN
@@ -67,13 +65,14 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
         pan_number: 'AABCF8078M',
         status: 'Active',
     };
+
     const Client_Invitation_Info = {
-        vendor_account_id: VendorManagedGstinInfo.trade_name, // vendor_account_id: 'Ujjivan Small Finance Bank Limited', //Bank should be connected on vendor account
-        business_account_id: clientGstinInfo.trade_name, //Client Business added from clientGstinInfo
-        // bank_id: 'ICIC0000002', //Bank must be availabe on vendor account
+        vendor_account_id: VendorManagedGstinInfo.trade_name,
+        business_account_id: clientGstinInfo.trade_name,
         bank_id: BANKDETAILS.ifsc_code,
         poc: 'vasant02@harbourfront.com',
     };
+
     const SignupInfo = {
         name: 'User130823',
         email: `user${generateRandomNumber()}@test.com`,
@@ -97,14 +96,8 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
             );
         });
 
-        // expect(
-        //     await vendorOnboarding.toastMessage(),
-        //     chalk.red('ToastMessage match')
-        // ).toBe('Link Successfully Copied!!!');
-
         await PROCESS_TEST.step('Open Copied Link', async () => {
             URL = await vendorOnboarding.linkURL();
-            // await vendorOnboarding.closeDialog();
             await vendorOnboarding.dialog.closeDialog();
             await vendorOnboarding.logOut();
             await vendorOnboarding.init(URL);
@@ -128,7 +121,6 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
         await PROCESS_TEST.step('Create Business Client', async () => {
             await vendorOnboarding.clickButton('Create New Business');
             await vendorOnboarding.setCheckbox('Yes');
-            // await withgstin.fillGstinInput();
             await vendorOnboarding.form.fillFormInputInformation(
                 vendorGstinInfoSchema,
                 VendorManagedGstinInfo
@@ -149,20 +141,14 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
                     await vendorOnboarding.notification.checkToastSuccess(
                         'Successfully saved'
                     );
-                    // expect(
-                    //     await vendorOnboarding.toastMessage(),
-                    //     chalk.red('ToastMessage match')
-                    // ).toBe('Successfully saved');
                 }
             );
         });
 
         //Verifies vendor details in card with provided one
-
         await PROCESS_TEST.step('Documents - Vendor Onboarding', async () => {
-            // await vendorOnboarding.fillDocuments(); // LOWER_TDS_DETAILS
-            await vendorOnboarding.clickButton(' Add New Document');
-            // await vendorOnboarding.dialog.checkConfirmDialogOpenOrNot();
+            await vendorOnboarding.form.submitButton('Add New Document');
+            await vendorOnboarding.dialog.waitForDialogOpen();
             await vendorOnboarding.dialog.checkDialogTitle('Add New Document');
             await vendorOnboarding.form.checkIsMandatoryFields(
                 LOWER_TDS_DETAILS_SCHEMA
@@ -181,26 +167,17 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
                 VendorManagedGstinInfo.pan_number
             );
             await vendorOnboarding.form.submitButton();
-            // await vendorOnboarding.form.checkInputError(
-            //     'custom_field_data.percentage',
-            //     LOWER_TDS_DETAILS_SCHEMA
-            // );
-            // await vendorOnboarding.notification.getErrorMessage();
+
             await vendorOnboarding.notification.checkToastSuccess(
                 'Successfully saved'
             );
-            await vendorOnboarding.clickButton('Next');
-
-            // await vendorOnboarding.form.checkAllMandatoryInputErrors(
-            //     LOWER_TDS_DETAILS_SCHEMA
-            // );
+            await vendorOnboarding.form.submitButton('Next');
         });
 
         //Adding Bank Account to vendor
         await PROCESS_TEST.step(
             'Bank Account - Vendor Onboarding',
             async () => {
-                // await getBankDetails.fillBankAccount(); //BANKDETAILS
                 await vendorOnboarding.form.fillFormInputInformation(
                     BANKDETAILS_SCHEMA,
                     BANKDETAILS
@@ -216,7 +193,7 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
                 );
                 await getBankDetails.vendorIfscLogoVisibilityValidation();
 
-                await vendorOnboarding.clickButton('Next');
+                await vendorOnboarding.form.submitButton('Next');
                 await vendorOnboarding.verifyOnboardingCompleted();
             }
         );
@@ -239,16 +216,13 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
         await PROCESS_TEST.step('SignIn as Client', async () => {
             await signIn.logOut();
             await signIn.signInPage(SignupInfo.email, SignupInfo.password);
-            // await signIn.clickButton("Submit")
             await vendorOnboarding.init(URL);
         });
         //Connects client to vendor
         await PROCESS_TEST.step(
             'Client Connect - Verifies then Fill',
             async () => {
-                // await vendorOnboarding.init(URL);
-                await vendorOnboarding.clickButton('Connect With Client');
-
+                await vendorOnboarding.form.submitButton('Connect With Client');
                 await PROCESS_TEST.step(
                     'Verify Business and Client Auto Fetch',
                     async () => {
@@ -257,14 +231,19 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
                             VendorManagedGstinInfo.trade_name
                         );
                         await vendorOnboarding.verifyClientId(CLIENTID.id);
-                        // 'business_account_id'
-                        // clientGstinInfo.trade_name
+
                         await vendorOnboarding.verifyAutoFetchClientName();
                     }
                 );
-                await vendorOnboarding.form.fillFormInputInformation(
-                    Client_Invitation_Info_Schema,
-                    Client_Invitation_Info
+
+                await PROCESS_TEST.step(
+                    'Fill Client Information Manaully',
+                    async () => {
+                        await vendorOnboarding.form.fillFormInputInformation(
+                            Client_Invitation_Info_Schema,
+                            Client_Invitation_Info
+                        );
+                    }
                 );
             }
         );
@@ -276,7 +255,7 @@ describe('FinOps Portal - Vendor Onboarding through Invitation link (GST Registe
 
             await withgstin.gstinInfoCheck();
             await getBankDetails.bankAccountNumber();
-            await vendorOnboarding.clickButton('Next');
+            await vendorOnboarding.form.submitButton('Next');
         });
 
         await PROCESS_TEST.step(
