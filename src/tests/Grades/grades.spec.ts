@@ -2,7 +2,7 @@ import { GradesHelper } from '@/helpers/GradesHelper/grade.helper';
 import { test, expect } from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
-test.describe('HR-Grades', () => {
+test.describe('FinOps_GradesCreation - HR-Grades', () => {
     PROCESS_TEST('TGC001-Grades Creation', async ({ page }) => {
         const grades = new GradesHelper(page);
         await grades.init();

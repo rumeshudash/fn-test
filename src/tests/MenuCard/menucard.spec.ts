@@ -26,7 +26,7 @@ test.describe('Menu Card', () => {
         });
 
         await PROCESS_TEST.step('Check SubMenu Items', async () => {
-            await menucard.checkSubMenuItems('Dashboard');
+            await menucard.checkSubMenuItems('Dashboard', 'AP Dashboard');
         });
 
         await PROCESS_TEST.step('Click on Sidebar menu', async () => {

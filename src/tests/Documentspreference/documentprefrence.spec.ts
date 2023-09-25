@@ -1,55 +1,49 @@
 import { DocumentspreferenceHelper } from '@/helpers/DocumentpreferenceHelper/documentspreference.helper';
-import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
-import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
-import { PROCESS_SIGNUP } from '@/fixtures/signup';
 
 import { test, expect } from '@playwright/test';
 
+import { ProcessSignup } from '@/helpers/BaseHelper/signup.helper';
+
 test.describe.configure({ mode: 'serial' });
 
-test.describe('Configuration - Document Preference', () => {
-    const userData = {
-        name: 'Test User',
-        email: '',
-        password: '123456',
-        confirmPassword: '123456',
+test.describe('FinOps_DocumentPreferences - Configuration - Document Preference', () => {
+    let signupHelper = new ProcessSignup();
+    let userData = {
+        username: '',
+        password: '',
     };
-    PROCESS_SIGNUP(
-        'TDP001 -   Create Document Preference - Negative Case ',
-        async ({ page }) => {
-            const documents_preference = new DocumentspreferenceHelper(page);
+    test('TDP001 -   Create Document Preference - Negative Case ', async ({
+        page,
+    }) => {
+        const SignupData = await signupHelper.newSignup(page);
 
-            const notification = documents_preference.notificationHelper;
+        userData.username = SignupData.username;
+        userData.password = SignupData.password;
 
-            await documents_preference.init();
+        await signupHelper.newLogin(page);
+        const documents_preference = new DocumentspreferenceHelper(page);
 
-            await PROCESS_SIGNUP.step(
-                'Add Document Preference with empty Documents',
-                async () => {
-                    const count = await documents_preference.checkRowCount();
-                    if (count < 5) {
-                        await documents_preference.clickAddBtn();
-                        await documents_preference.clickButton('Save');
+        const notification = documents_preference.notificationHelper;
 
-                        expect(await notification.getErrorMessage()).toBe(
-                            'Document is required'
-                        );
-                    }
-                }
-            );
-        }
-    );
+        await documents_preference.init();
+
+        await test.step('Add Document Preference with empty Documents', async () => {
+            const count = await documents_preference.checkRowCount();
+            if (count < 5) {
+                await documents_preference.clickAddBtn();
+                await documents_preference.clickButton('Save');
+
+                expect(await notification.getErrorMessage()).toBe(
+                    'Document is required'
+                );
+            }
+        });
+    });
 
     test('TDP002 - Create Document Preference - Positive Case', async ({
         page,
     }) => {
-        const signin = new SignInHelper(page);
-        await signin.init();
-        await signin.checkDashboard({
-            username: userData.email,
-            password: userData.password,
-        });
-
+        await signupHelper.newLogin(page);
         const documents_preference = new DocumentspreferenceHelper(page);
 
         await documents_preference.init();

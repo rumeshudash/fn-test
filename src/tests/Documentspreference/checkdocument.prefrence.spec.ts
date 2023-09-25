@@ -2,7 +2,7 @@ import test from '@playwright/test';
 import { PROCESS_TEST } from '@/fixtures';
 
 import { DocumentspreferenceHelper } from '@/helpers/DocumentpreferenceHelper/documentspreference.helper';
-test.describe('Configuration - Document Preference', () => {
+test.describe('FinOps_DocumentPreferences - Configuration - Document Preference', () => {
     PROCESS_TEST('TDP003 - Document preference Details', async ({ page }) => {
         const documents_preference = new DocumentspreferenceHelper(page);
         const notification = documents_preference.notificationHelper;
