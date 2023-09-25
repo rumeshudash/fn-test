@@ -7,7 +7,7 @@ import { DocumentInfo } from '@/utils/required_data';
 
 const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
-describe('Employee Creation-detail>Finops Portal', () => {
+describe('FinOps_EmployeeCreation - Employee Creation-detail ', () => {
     const employeeCreationInfo_SaveAndCreate = {
         name: `${generateRandomName()}`,
         email: `email${generateRandomNumber()}@test.com`,
