@@ -107,7 +107,7 @@ export class NotificationHelper extends BaseHelper {
         })._locator;
         const errorCount = await error.count();
 
-        Logger.warning(`Error ocurred: ${errorCount}`);
+        Logger.info(`Found error: ${errorCount}`);
         if (errorCount > 0) {
             for (let i = 0; i < errorCount; i++) {
                 const errorMsg = await error.nth(i).innerText();

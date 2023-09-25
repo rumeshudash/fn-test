@@ -451,57 +451,6 @@ export class BaseHelper {
             await vendorBankDetails.isVisible(),
             'Check vendor bank details check'
         ).toBe(true);
-
-        // const error = this._page.locator('span.label.text-error');
-        // const errorCount = await error.count();
-        // if (errorCount > 0) {
-        //     console.log(chalk.red(`Error ocurred: ${errorCount}`));
-        //     for (let i = 0; i < errorCount; i++) {
-        //         const errorMsg = await error.nth(i).textContent();
-        //         console.log(`Error (error ${i}): `, chalk.red(errorMsg));
-        //     }
-        // }
-        // const toast = this._page.locator('div.ct-toast-success');
-        // const toastError = this._page.locator('div.ct-toast.ct-toast-error');
-        // const toastWarn = this._page.locator('div.ct-toast.ct-toast-warn');
-
-        // const toastErrorCount = await toastError.count();
-        // const toastWarnCount = await toastWarn.count();
-        // const toastCount = await toast.count();
-        // if (toastCount > 0) {
-        //     console.log(chalk.green(`toastMessage (success): ${toastCount}:`));
-        //     for (let i = 0; i < toastCount; i++) {
-        //         const successMsg = await toast.nth(i).textContent();
-        //         console.log(
-        //             `toastMessage (success ${i}): `,
-        //             chalk.green(successMsg)
-        //         );
-        //     }
-        // }
-        // if (toastWarnCount > 0) {
-        //     console.log(
-        //         chalk.red(
-        //             `Multiple toastMessage ocurred \n ${toastWarn}:`,
-        //             toastWarnCount
-        //         )
-        //     );
-        //     for (let i = 0; i < toastWarnCount; i++) {
-        //         const errorMsg = await toastWarn.nth(i).textContent();
-        //         console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-        //     }
-        // }
-        // if (toastErrorCount > 0) {
-        //     console.log(
-        //         chalk.red(
-        //             `Multiple toastMessage ocurred \n ${toastError}:`,
-        //             toastErrorCount
-        //         )
-        //     );
-        //     for (let i = 0; i < toastErrorCount; i++) {
-        //         const errorMsg = await toastError.nth(i).textContent();
-        //         console.log(`toastMessage (error ${i}): `, chalk.red(errorMsg));
-        //     }
-        // }
     }
     // we can't display display name field before gstin data fetched
     public async beforeGstinNameNotVisibleDisplayName() {
