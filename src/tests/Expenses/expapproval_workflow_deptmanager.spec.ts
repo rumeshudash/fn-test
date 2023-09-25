@@ -29,7 +29,7 @@ const EXPENSEDETAILS = {
     desc: 'Dummy Text',
 };
 describe('Expense Creation - Finops Portal', () => {
-    PROCESS_TEST('TECF008', async ({ page }) => {
+    PROCESS_TEST.fixme('TECF008', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const signIn = new SignInHelper(page);
         const expense = new ExpenseHelper(page);

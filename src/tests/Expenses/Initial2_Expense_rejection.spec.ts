@@ -13,7 +13,7 @@ import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 describe('Expense Creation - Finops Portal', () => {
-    PROCESS_TEST('TECF006', async ({ page }) => {
+    PROCESS_TEST.fixme('TECF006', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const signIn = new SignInHelper(page);

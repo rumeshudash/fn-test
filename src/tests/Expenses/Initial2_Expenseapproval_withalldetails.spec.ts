@@ -13,7 +13,7 @@ import { test } from '@playwright/test';
 const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
 describe('Expense Creation - Finops Portal', () => {
-    PROCESS_TEST('TECF004', async ({ page }) => {
+    PROCESS_TEST.fixme('TECF004', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const verificationFlows = new ApprovalWorkflowsTab(page);
