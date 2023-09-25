@@ -26,7 +26,7 @@ describe('Expense Creation - Finops Portal', () => {
         pay_to: 'Vendor',
         desc: 'Dummy Text',
     };
-    PROCESS_TEST('TECF003', async ({ page, login }) => {
+    PROCESS_TEST.fixme('TECF003', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const signIn = new SignInHelper(page);

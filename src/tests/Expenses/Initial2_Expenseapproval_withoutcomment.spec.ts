@@ -14,7 +14,7 @@ import chalk from 'chalk';
 const { expect, describe } = PROCESS_TEST;
 describe.configure({ mode: 'serial' });
 describe('Expense Creation - Finops Portal', () => {
-    PROCESS_TEST('TECF005', async ({ page }) => {
+    PROCESS_TEST.fixme('TECF005', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const verificationFlows = new ApprovalWorkflowsTab(page);

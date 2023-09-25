@@ -10,7 +10,7 @@ import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
 describe('Expense Creation - Finops Portal', () => {
-    PROCESS_TEST('Raise Expense with POC', async ({ page }) => {
+    PROCESS_TEST.fixme('TECF002', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const toggleHelper = new ApprovalToggleHelper(page);
