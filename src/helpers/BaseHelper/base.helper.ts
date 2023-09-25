@@ -602,7 +602,6 @@ export class BaseHelper {
         expect(data.length).toBe(expectedLength);
 
         for (let i = 0; i < expectedLength; i++) {
-            console.log(data[i]);
             // Locate the OTP input fields and fill them with the corresponding digit
             await this._page.locator('.otpInput').nth(i).fill(data[i]);
         }

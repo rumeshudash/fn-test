@@ -66,8 +66,11 @@ test.describe('Verify Phone', () => {
         await verifyPhone.fillOtp('1111', 4);
 
         await verifyPhone.clickVerify();
-        const message = await verifyPhone.getToastError();
-        test.skip(message.includes('invalid attempts'), 'Invalid Attempts');
+        const messages = await verifyPhone.getToastError();
+        test.skip(
+            messages.some((message) => message.includes('invalid attempts')),
+            'Invalid Attempts'
+        );
 
         await verifyPhone.checkToastError('Invalid otp');
     });
