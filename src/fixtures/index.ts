@@ -10,7 +10,6 @@ if (fs.existsSync('./state.json')) {
 export const PROCESS_TEST = test.extend<{ login: void }>({
     login: [
         async ({ page }: { page: Page }, use: () => any) => {
-            const orgName = 'New Test Auto';
             const helper = new BaseHelper(page);
 
             await page.goto(TEST_URL + '/login', { waitUntil: 'networkidle' });
@@ -40,13 +39,8 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
                     await helper.click({ id: 'org-1' });
                 }
 
-                // await helper.click({ selector: '#org-1' });
                 await helper.click({ text: 'FinOps Portal' });
                 await page.waitForTimeout(1000);
-
-                // await expect(
-                //     helper.locateByText(orgName)
-                // ).toBeVisible();
 
                 await page.context().storageState({ path: 'state.json' });
             }
