@@ -111,7 +111,7 @@ export class NotificationHelper extends BaseHelper {
         if (errorCount > 0) {
             for (let i = 0; i < errorCount; i++) {
                 const errorMsg = await error.nth(i).innerText();
-                Logger.error('Error: ', chalk.red(errorMsg));
+                Logger.info('Error: ', chalk.dim(errorMsg));
                 return errorMsg;
             }
         }
@@ -119,7 +119,7 @@ export class NotificationHelper extends BaseHelper {
 
     public async checkErrorMessage(message: string | number): Promise<void> {
         const toastMessage = await this.getErrorMessage();
-        expect(toastMessage, chalk.red('Error Message check ')).toBe(message);
+        expect(toastMessage, 'Error Message check ').toBe(message);
     }
 
     /**
