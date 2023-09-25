@@ -13,21 +13,51 @@ import { generateRandomNumber } from '@/utils/common.utils';
 import chalk from 'chalk';
 
 const { expect, describe } = PROCESS_TEST;
+const BusinessInfo = {
+    to: 'Hidesign India Pvt Ltd',
+    from: 'Adidas India Marketing Private Limited',
+};
+const EXPENSEDETAILS = {
+    // invoice: ' inv' + generateRandomNumber(),
+    amount: 10000,
+    taxable_amount: 10000,
+    // expense_head: 'Stationary',
+    pay_to: 'Vendor',
+    desc: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. N',
+};
+
+const TECF007_BusinessInfo = {
+    to: 'Hidesign India Pvt Ltd',
+    from: 'Chumbak Design Private Limited',
+};
+const TECF007_EXPENSEDETAILS = {
+    invoice: ' inv' + generateRandomNumber(),
+    amount: 10000,
+    taxable_amount: 10000,
+    department: 'Sales',
+    expense_head: 'Foods & Accommodations',
+    poc: 'Sunil',
+    pay_to: 'Vendor',
+    desc: 'Dummy Text',
+};
+
+const TECF008_BusinessInfo = {
+    to: 'Bata India Limited',
+    from: 'Amazon',
+};
+const TECF008_EXPENSEDETAILS = {
+    invoice: ' inv' + generateRandomNumber(),
+    amount: 6000,
+    taxable_amount: 6000,
+    department: 'Sales',
+    expense_head: 'Telemarketing Expense',
+    poc: 'Sunil',
+    pay_to: 'Vendor',
+    desc: 'Dummy Text',
+};
+
 describe.configure({ mode: 'serial' });
 describe('FinOps_ExpenseCreation - Expense Creation', () => {
-    const BusinessInfo = {
-        to: 'Hidesign India Pvt Ltd',
-        from: 'Adidas India Marketing Private Limited',
-    };
-    const EXPENSEDETAILS = {
-        invoice: ' inv' + generateRandomNumber(),
-        amount: 10000,
-        taxable_amount: 10000,
-        // expense_head: 'Stationary',
-        pay_to: 'Vendor',
-        desc: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. N',
-    };
-
     PROCESS_TEST(
         'TECF001 - without poc, department, expense head ',
         async ({ page }) => {
@@ -258,8 +288,8 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             // await page.waitForSelector('//div[@role="dialog"]', {
             //     state: 'attached',
             // });
-            await page.getByText('New Test Auto').click();
-            await page.waitForURL(TEST_URL + '/e/e');
+            // await page.getByText('New Test Auto').click();
+            // await page.waitForURL(TEST_URL + '/e/e');
             await savedExpensePage.clickLink('Expenses');
             await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickApprove([
@@ -770,8 +800,8 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await expense.addDocument();
 
             await PROCESS_TEST.step('Fill Expense', async () => {
-                await expense.fillBusinessDetails([BusinessInfo]);
-                await expense.fillExpenses([EXPENSEDETAILS]);
+                await expense.fillBusinessDetails([TECF007_BusinessInfo]);
+                await expense.fillExpenses([TECF007_EXPENSEDETAILS]);
             });
             await PROCESS_TEST.step('Add Taxes', async () => {
                 await expense.addTaxesData([
@@ -826,8 +856,8 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await page.waitForLoadState('networkidle');
                 await page.waitForLoadState('domcontentloaded');
                 await signIn.signInPage(pocEmail, '1234567');
-                await page.getByText('New Test Auto').click();
-                await page.waitForURL(TEST_URL + '/e/e');
+                // await page.getByText('New Test Auto').click();
+                // await page.waitForURL(TEST_URL + '/e/e');
                 await savedExpensePage.clickLink('Expenses');
                 await savedExpensePage.clickLink(expData.slice(1));
                 await savedExpensePage.clickApprove();
@@ -875,8 +905,8 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await page.waitForLoadState('networkidle');
                 await page.waitForLoadState('domcontentloaded');
                 await signIn.signInPage(finOpsEmail, '1234567');
-                await page.getByText('New Test Auto').click();
-                await page.waitForURL(TEST_URL + '/e/e');
+                // await page.getByText('New Test Auto').click();
+                // await page.waitForURL(TEST_URL + '/e/e');
                 await savedExpensePage.clickLink('Expenses');
                 await savedExpensePage.clickLink(expData.slice(1));
                 await savedExpensePage.clickApprove();
@@ -914,11 +944,11 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 expect(
                     await savedExpensePage.checkExpenseTo(),
                     chalk.red('Check To Expense Details match')
-                ).toBe(BusinessInfo.to);
+                ).toBe(TECF007_BusinessInfo.to);
                 expect(
                     await savedExpensePage.checkExpenseFrom(),
                     chalk.red('Vendor name match')
-                ).toBe(BusinessInfo.from);
+                ).toBe(TECF007_BusinessInfo.from);
                 await page.waitForTimeout(1000);
             });
         }
@@ -969,8 +999,8 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await expense.addDocument();
 
             await PROCESS_TEST.step('Fill Expense', async () => {
-                await expense.fillBusinessDetails([BusinessInfo]);
-                await expense.fillExpenses([EXPENSEDETAILS]);
+                await expense.fillBusinessDetails([TECF008_BusinessInfo]);
+                await expense.fillExpenses([TECF008_EXPENSEDETAILS]);
             });
 
             // await PROCESS_TEST.step('Add Taxes', async () => {

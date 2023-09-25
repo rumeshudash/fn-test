@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { uuidV4 } from '../../utils/common.utils';
+import { generateRandomNumber, uuidV4 } from '../../utils/common.utils';
 import { BaseHelper } from '.././BaseHelper/base.helper';
 import { FormHelper } from '../BaseHelper/form.helper';
 
@@ -159,8 +159,11 @@ export class ExpenseHelper extends BaseHelper {
             // if (expData.to_nth)
             //     await helper._selectDropdown('Select Business', {
             //         nth: expData.to_nth,
-            //     });
-            await helper.fillText(expData.invoice, {
+            //     });' inv' + generateRandomNumber()
+            // await helper.fillText(expData.invoice, {
+            //     name: 'invoice_number',
+            // });
+            await helper.fillText('inv' + generateRandomNumber(), {
                 name: 'invoice_number',
             });
             await this._page.waitForTimeout(1000);

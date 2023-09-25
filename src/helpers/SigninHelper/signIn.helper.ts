@@ -39,11 +39,18 @@ export class SignInHelper extends NotificationHelper {
      */
     public async signInPage(username: string, password: string) {
         const setPassword = '1234567';
-        await this.fillText(username, { id: 'username' });
-        await this.click({ role: 'button', name: ' Next → ' });
-        await this.fillText(password, { id: 'password' });
-        await this.click({ role: 'button', name: 'Submit' });
 
+        if (username === 'newtestauto@company.com') {
+            await this.fillText(username, { id: 'username' });
+            await this.click({ role: 'button', name: ' Next → ' });
+            await this.fillText('123456', { id: 'password' });
+            await this.click({ role: 'button', name: 'Submit' });
+        } else {
+            await this.fillText(username, { id: 'username' });
+            await this.click({ role: 'button', name: ' Next → ' });
+            await this.fillText(password, { id: 'password' });
+            await this.click({ role: 'button', name: 'Submit' });
+        }
         const createPassword = await this._page
             .getByText('Create New Password', {
                 exact: true,
