@@ -22,17 +22,6 @@ export const COI_NUMBER = '23332567';
 export const PICK_DATE = '20-06-2023';
 export const PAN_CODE_ADDRESS = 'New Delhi Central, Delhi';
 
-//Data used in Business Managed Onboarding with GSTIN
-export const businessVendorGstin: gstinDataType = {
-    trade_name: 'D Mart',
-    gstin: '29AKAPD8772G1Z0',
-    pan_number: 'AKAPD8772G',
-    business_type: 'Proprietorship',
-    address:
-        'CITY TOWER, SULTANPET MAIN ROAD, BENGALURU, SHOP NO. 204/15, Bengaluru Urban, 560053, Karnataka, NA, 1ST FLOOR',
-    status: 'Active',
-};
-
 //For Vendor and Client Info to fill
 
 //For checking client info from card

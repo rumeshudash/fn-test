@@ -380,11 +380,13 @@ export class FormHelper extends BaseHelper {
      * @return {Promise<void>} - A promise that resolves when the actions are completed.
      */
     private async _clickSubmitButton(button: any) {
-        expect(await button.isEnabled(), {
-            message: 'check save button enabled',
-        }).toBe(true);
-        await button.click();
         const button_title = await button.textContent();
+
+        expect(
+            await button.isEnabled(),
+            chalk.red('check save button enabled')
+        ).toBe(true);
+        await button.click();
 
         Logger.info(`${button_title} is clicked`);
 

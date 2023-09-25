@@ -2,6 +2,7 @@ import { BaseHelper } from '@/helpers/BaseHelper/base.helper';
 import { DialogHelper } from '@/helpers/BaseHelper/dialog.helper';
 import { FileHelper } from '@/helpers/BaseHelper/file.helper';
 import { FormHelper } from '@/helpers/BaseHelper/form.helper';
+import { Logger } from '@/helpers/BaseHelper/log.helper';
 import { NotificationHelper } from '@/helpers/BaseHelper/notification.helper';
 import GenericGstinCardHelper from '@/helpers/CommonCardHelper/genericGstin.card.helper';
 import {
@@ -79,7 +80,7 @@ export class VendorOnboarding extends BaseHelper {
     public dialog: DialogHelper;
     public form: FormHelper;
     public file: FileHelper;
-    constructor(lowerTDS, page) {
+    constructor(lowerTDS, page: any) {
         super(page);
         this.lowerTDS = lowerTDS;
         this.notification = new NotificationHelper(page);
@@ -90,7 +91,7 @@ export class VendorOnboarding extends BaseHelper {
     private BUSINESS_DETAILS_DOM =
         "//div[@class='input-addon-group input-group-md']/following-sibling::div[1]";
 
-    public async clickCopyLink() {
+    public async clickCopyLink(): Promise<void> {
         await this.click({
             role: 'button',
             name: 'Invite Vendor',
@@ -106,7 +107,7 @@ export class VendorOnboarding extends BaseHelper {
         }
     }
 
-    public async linkURL() {
+    public async linkURL(): Promise<string> {
         const linkInput = this._page.locator(
             "//span[contains(@class,'px-3 overflow-hidden')]"
         );
@@ -117,20 +118,16 @@ export class VendorOnboarding extends BaseHelper {
         return await linkInput.textContent();
     }
 
-    public async closeDialog() {
+    public async closeDialog(): Promise<void> {
         await this._page
             .locator("//button[contains(@class,'absolute right-4')]")
             .click();
     }
 
-    public async init(URL: string) {
+    public async init(URL: string): Promise<void> {
         await this._page.goto(URL);
         // 'https://devfn.vercel.app/vendor/register?client=57649556&client_name=New Test Auto'
     }
-    public async logOut() {
-        await this._page.locator('a').filter({ hasText: 'Logout' }).click();
-    }
-
     /**
      * Verifies the business details.
      *
@@ -180,8 +177,6 @@ export class VendorOnboarding extends BaseHelper {
         expect(getclient, chalk.red('check Client ID')).toBe(id);
     }
 
-    // dropdownName: string,
-    // data: string
     public async verifyAutoFetchClientName(): Promise<void> {
         await this._page.waitForTimeout(300);
         await this._page.waitForLoadState('networkidle');
@@ -197,67 +192,8 @@ export class VendorOnboarding extends BaseHelper {
         );
     }
 
-    // public async bankAccount(data: ClientBankAccountDetails[] = []) {
-    //     const bankAccountName = await this._page
-    //         .locator('#account_name')
-    //         .inputValue();
-    //     expect(
-    //         bankAccountName,
-    //         'Bank Account Name doest not match to Vendor'
-    //     ).toBe(vendorGstinInfo.trade_name);
-
-    //     for (let details of data) {
-    //         await this.fillText(details.accountNumber, {
-    //             name: 'account_number',
-    //         });
-    //         await this.fillText(details.accountNumber, {
-    //             name: 're_account_number',
-    //         });
-    //         await this.fillText(details.ifsc, {
-    //             name: 'ifsc_code',
-    //         });
-    //     }
-    //     await this._page.waitForTimeout(2000);
-    // }
-
-    // public async uploadDocument(data: UploadDocuments[] = []) {
-    //     await this._page.waitForTimeout(1000);
-    //     const addDocumentBtn = this._page.getByRole('button', {
-    //         name: ' Add New Document',
-    //     });
-
-    //     await expect(
-    //         addDocumentBtn,
-    //         'Add New Document button not visible'
-    //     ).toBeVisible();
-
-    //     await this.click({ role: 'button', name: ' Add New Document' });
-    //     const dialog = this._page.locator("//div[@role='dialog']");
-    //     if ((await dialog.isVisible()) === true) {
-    //         for (let details of data) {
-    //             await this.fillText(details.tdsCert, {
-    //                 placeholder: 'Enter TDS Certificate Number',
-    //             });
-    //             await this.fillText(details.tdsPercentage, {
-    //                 placeholder: 'Enter Lower TDS Percentage',
-    //             });
-    //             await this._page.locator('#date').fill(PICK_DATE);
-    //             getDate = await this._page.locator('#date').inputValue();
-    //             // await this._page
-    //             //     .locator("button:has-text('20')")
-    //             //     .first()
-    //             //     .click();
-    //         }
-    //     }
-    // }
-    public async fillDocuments() {
+    public async fillDocuments(): Promise<void> {
         await this._page.waitForTimeout(1500);
-
-        await expect(
-            this._page.locator("//span[text()=' Add New Document']"),
-            chalk.red('Add New Document button visibility')
-        ).toBeVisible();
-        await this.clickButton('Add New Document');
 
         // for (let details of data) {
         const inputSelect = this._page.locator(
@@ -314,7 +250,7 @@ export class VendorOnboarding extends BaseHelper {
             // }
         }
     }
-    public async fileUpload(imagePath: string) {
+    public async fileUpload(imagePath: string): Promise<void> {
         await this._page.setInputFiles(
             "//input[@type='file']",
             `./images/${imagePath}`
@@ -322,72 +258,35 @@ export class VendorOnboarding extends BaseHelper {
         await this._page.waitForTimeout(2000);
     }
 
-    // public async clientInvitation(businessName: string, clientGSTIN: string) {
-    //     await this._page.waitForTimeout(1000);
-    //     const dropdown = this._page.locator(
-    //         '//div[text()="Select Your Business"]'
-    //     );
-
-    //     const gstinDropdown = this._page.locator(
-    //         '//div[text()="Select client business"]'
-    //     );
-
-    //     if (await dropdown.isVisible()) {
-    //         expect
-    //             .soft(
-    //                 await dropdown.textContent(),
-    //                 chalk.red('Business Information auto fetched')
-    //             )
-    //             .toBe(vendorGstinInfo.trade_name);
-
-    //         await this.selectOption({
-    //             option: businessName,
-    //             placeholder: 'Select Your Business',
-    //         });
-
-    //         expect(
-    //             await gstinDropdown.textContent(),
-    //             chalk.red('Client Information auto fetched')
-    //         ).toBe(clientGstinInfo.trade_name);
-    //     }
-    //     if (await gstinDropdown.isVisible()) {
-    //         await this.selectOption({
-    //             input: clientGstinInfo.gstin,
-    //             placeholder: 'Select client business',
-    //         });
-    //     }
-    //     await this._page.waitForTimeout(1000);
-    //     await this.fillText('vasant02@harbourfront.com', { name: 'poc' });
-    // }
-    public async getClientID() {
+    public async getClientID(): Promise<string> {
         const clientID = await this._page
             .getByPlaceholder('Enter client Id')
             .textContent();
-        console.log(chalk.gray('Auto Fetch Client ID: ', clientID));
+        Logger.info('Auto Fetch Client ID: ', clientID);
         return clientID;
     }
 
-    public async getClientIDVisibility() {
+    public async getClientIDVisibility(): Promise<boolean> {
         const clientID = await this._page
             .getByPlaceholder('Enter client Id')
             .isVisible();
-        console.log(chalk.gray('Auto Fetch Client ID Visibility: ', clientID));
+        Logger.info('Auto Fetch Client ID Visibility: ', clientID);
         return clientID;
     }
 
     //Takes GSTIN from dropdown to compare with Auto Fetched Client GSTIN
-    public async getGSTINfromInput() {
+    public async getGSTINfromInput(): Promise<string> {
         const helper = this.locate(this.BUSINESS_DETAILS_DOM);
         const gstin = await helper._page
             .locator(
                 '(//div[contains(@class,"selectbox-control !bg-base-100")])[3]'
             )
             .textContent();
-        console.log(chalk.gray('GSTIN From Input dropdown: ', gstin));
+        Logger.info('GSTIN From Input dropdown: ', gstin);
         return gstin;
     }
 
-    public async uploadImageDocuments() {
+    public async uploadImageDocuments(): Promise<void> {
         await this._page.waitForTimeout(300);
         await this._page.waitForLoadState('networkidle');
         const container = this._page.locator(
@@ -397,24 +296,20 @@ export class VendorOnboarding extends BaseHelper {
         const documentError = this._page.locator(
             '//div[@class="text-xs text-error"]'
         );
-        // const containerBtn = this._page.locator(
-        //     '//div[@class="icon-container cursor-pointer"]'
-        // );
+
         if (await documentError.first().isVisible()) {
             const errorContainer = container.filter({ has: documentError });
 
             const errorContainerCount = await errorContainer.count();
-            console.log('Document Image Error: ', errorContainerCount);
+            Logger.warning('Document Image Error: ', errorContainerCount);
 
             for (let i = 0; i < errorContainerCount; i++) {
-                console.log(
+                Logger.warning(
                     'Document Image Error: ',
-                    chalk.red(await documentError.first().textContent()) +
+                    (await documentError.first().textContent()) +
                         ' Editable: ' +
-                        chalk.blue(
-                            (
-                                await errorContainer.first().textContent()
-                            ).includes('files')
+                        (await errorContainer.first().textContent()).includes(
+                            'files'
                         )
                 );
 
@@ -428,12 +323,8 @@ export class VendorOnboarding extends BaseHelper {
                     } else {
                         await errorContainer.locator('i').first().click();
                     }
-                    // await this._page.setInputFiles(
-                    //     "//input[@type='file']",
-                    //     `./images/${imagePath}`
-                    // );
+
                     await this.file.setFileInput({ isDialog: true });
-                    // await this._page.waitForTimeout(1000);
 
                     if (
                         await this._page
@@ -468,8 +359,6 @@ export class VendorOnboarding extends BaseHelper {
                         });
                     }
                     await this.click({ role: 'button', name: 'Save' });
-
-                    // await this._page.waitForTimeout(2000);
                 }
             }
         } else {
@@ -477,7 +366,7 @@ export class VendorOnboarding extends BaseHelper {
         }
     }
 
-    public async verifyOnboardingCompleted() {
+    public async verifyOnboardingCompleted(): Promise<void> {
         await this._page.waitForTimeout(1000);
         expect(
             await this.locate(
@@ -485,27 +374,5 @@ export class VendorOnboarding extends BaseHelper {
             )._locator.isVisible(),
             chalk.red('Onboarding text visibility')
         ).toBe(true);
-    }
-}
-
-export class VendorOnboardingWithGSTIN extends GenericGstinCardHelper {
-    public static VENDORONBOARDINGWITHOUTGSTIN_DOM =
-        '//div[text()="Documents for Approval"]';
-    public async fillGstinInput() {
-        await expect(
-            this._page.getByPlaceholder('ENTER GSTIN NUMBER'),
-            chalk.red('Gstin input field visibility')
-        ).toBeVisible();
-        await this.fillText(this.gstin_data.gstin, {
-            placeholder: 'ENTER GSTIN NUMBER',
-        });
-    }
-    public async gstinDisplayName(displayName: string): Promise<void> {
-        const display_name = await this._page
-            .locator('#display_name')
-            .inputValue();
-        expect(display_name, chalk.red('Display name match with vendor')).toBe(
-            displayName
-        );
     }
 }

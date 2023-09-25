@@ -10,7 +10,6 @@ import {
     VendorOnboarding,
 } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/VendorOnboarding.helper';
 import { BankAccountDetails } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/bankDetails.helper';
-import { VendorManagedWithoutGSTIN } from '@/helpers/VendorOnboardingHelper/Vendor_ManagedHelper/vendorOnboardingWithoutGstin.helper';
 import { generateRandomNumber } from '@/utils/common.utils';
 import chalk from 'chalk';
 
@@ -130,7 +129,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
     };
 
     PROCESS_TEST('TCVO003', async ({ page }) => {
-        const withnogstin = new VendorManagedWithoutGSTIN(page);
+        // const vendorOnboarding = new VendorManagedWithoutGSTIN(page);
         const vendorOnboarding = new VendorOnboarding(
             NON_GSTIN_LOWER_TDS_DETAILS,
             page
@@ -141,7 +140,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
             page
         );
         await PROCESS_TEST.step('Click Invite Vendor', async () => {
-            await withnogstin.clickLinkInviteVendor('Vendor Invitations');
+            await vendorOnboarding.clickLinkInviteVendor('Vendor Invitations');
             await vendorOnboarding.clickCopyLink();
             await vendorOnboarding.notification.checkToastSuccess(
                 'Link Successfully Copied!!!'
@@ -156,7 +155,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
         });
 
         await PROCESS_TEST.step('Signup - Vendor Onboarding', async () => {
-            await withnogstin.clickButton('Sign Up');
+            await vendorOnboarding.clickButton('Sign Up');
             const signup = new SignupHelper(page);
             await signup.fillSignup(SignupInfo);
             await signup.clickButton('Next');
@@ -167,12 +166,12 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
             const verifyEmail = new VerifyEmailHelper(page);
             await verifyEmail.fillCode('1');
             await verifyEmail.clickButton('Verify →');
-            await withnogstin.clickButton('Continue →');
+            await vendorOnboarding.clickButton('Continue →');
         });
 
         await PROCESS_TEST.step('Create Business Client', async () => {
-            await withnogstin.clickButton('Create New Business');
-            await withnogstin.setCheckbox('No');
+            await vendorOnboarding.clickButton('Create New Business');
+            await vendorOnboarding.setCheckbox('No');
         });
 
         await PROCESS_TEST.step(
@@ -221,7 +220,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
                     vendorNonGstinSchema,
                     vendorNonGstinInfo
                 );
-                await withnogstin.clickButton('Next');
+                await vendorOnboarding.clickButton('Next');
                 await vendorOnboarding.notification.checkToastSuccess(
                     'Successfully saved'
                 );
@@ -278,7 +277,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
                 NON_GSTIN_BANK_DETAILS
             );
             await vendorOnboarding.file.setFileInput({ isDialog: false });
-            await withnogstin.checkWizardNavigationClickDocument(
+            await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Bank Account'
             );
         });
@@ -291,8 +290,8 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
             );
 
             await getBankDetails.vendorIfscLogoVisibilityValidation();
-            await withnogstin.clickButton('Previous');
-            await withnogstin.clickButton('Next');
+            await vendorOnboarding.clickButton('Previous');
+            await vendorOnboarding.clickButton('Next');
 
             // await getBankDetails.fillBankAccount();
             await vendorOnboarding.form.fillFormInputInformation(
@@ -300,7 +299,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
                 NON_GSTIN_BANK_DETAILS
             );
 
-            await withnogstin.checkWizardNavigationClickDocument(
+            await vendorOnboarding.checkWizardNavigationClickDocument(
                 'Bank Account'
             );
 
@@ -311,12 +310,12 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
             //     chalk.red('Onboarding Completed text visibility')
             // ).toBe(true);
             await vendorOnboarding.verifyOnboardingCompleted();
-            await withnogstin.clickButton('Close');
+            await vendorOnboarding.clickButton('Close');
         });
     });
 
     PROCESS_TEST('TCVO004', async ({ page }) => {
-        const withnogstin = new VendorManagedWithoutGSTIN(page);
+        // const vendorOnboarding = new VendorManagedWithoutGSTIN(page);
         const vendorOnboarding = new VendorOnboarding(
             NON_GSTIN_LOWER_TDS_DETAILS,
             page
@@ -335,7 +334,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
         });
 
         await PROCESS_TEST.step('Without GSTIN Client Connect', async () => {
-            await withnogstin.clickButton('Connect With Client');
+            await vendorOnboarding.clickButton('Connect With Client');
             await page.waitForTimeout(1000);
         });
 
@@ -356,7 +355,7 @@ describe('Vendor onboarding of a non gst  vendor through inivation link (Vendor 
                 Client_Invitation_Info_Schema,
                 Client_Invitation_Info
             );
-            await withnogstin.clickButton('Next');
+            await vendorOnboarding.clickButton('Next');
         });
 
         await PROCESS_TEST.step('Upload Documents', async () => {
