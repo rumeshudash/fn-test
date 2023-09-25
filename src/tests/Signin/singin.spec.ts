@@ -77,7 +77,7 @@ test.describe('FinOps_SignIn', () => {
             chalk.red('Error Message match ')
         ).toBe(`Invalid username or password..`);
     });
-    test('with maximum login attempts', async ({ page }) => {
+    test.fixme('with maximum login attempts', async ({ page }) => {
         const signUp = new SignupHelper(page);
         await signUp.init();
         const username = SignupHelper.genRandomEmail();

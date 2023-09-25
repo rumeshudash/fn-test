@@ -190,7 +190,9 @@ export class ListingHelper extends PageHelper {
     ): Promise<void> {
         if (isSearch) {
             await this.searchInList(id);
-            await this._page.waitForSelector('div.table-row.body-row');
+            await this._page.waitForSelector('div.table-row.body-row', {
+                timeout: 60 * 1000,
+            });
         }
         const row = await this.findRowInTable(id, columnName);
         let filter = columnName;

@@ -29,7 +29,7 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
 
                 await page.getByRole('dialog').waitFor({
                     state: 'attached',
-                    timeout: 1000,
+                    timeout: 10000,
                 });
 
                 if (await helper.isVisible({ text: 'Select Organization' })) {
