@@ -11,7 +11,7 @@ test.describe('FinOps_ExpeseheadCreation -Configuration - Expense Head', () => {
     const expenseHeadData = {
         Name: 'Test' + generateRandomNumber(),
         Parent: 'Stationary',
-        Manager: 'Abhishek Gupta',
+        Manager: 'Ravi',
         Notes: 'Test' + generateRandomNumber(),
         NewName: 'Test' + generateRandomNumber(),
         NewNotes: 'Test' + generateRandomNumber(),
@@ -85,11 +85,7 @@ test.describe('FinOps_ExpeseheadCreation -Configuration - Expense Head', () => {
 
                     await page.waitForTimeout(1000);
 
-                    // await expenseHead.searchExpense(expenseHeadData.Name);
-
-                    // await expect(await notification.getToastSuccess()).toBe(
-                    //     'Successfully saved'
-                    // );
+                    await notification.checkToastSuccess('Successfully saved');
                 }
             );
 
@@ -99,7 +95,7 @@ test.describe('FinOps_ExpeseheadCreation -Configuration - Expense Head', () => {
                     await expenseHead.clickButton('Add Expense Head');
                     await expenseHead.addExpenseHead(expenseHeadData.Name);
 
-                    expect(await notification.getErrorMessage()).toBe(
+                    await notification.checkErrorMessage(
                         'Duplicate expense head name'
                     );
                 }
@@ -117,6 +113,8 @@ test.describe('FinOps_ExpeseheadCreation -Configuration - Expense Head', () => {
                         expenseHeadData.Parent,
                         expenseHeadData.Manager
                     );
+
+                    await notification.checkToastSuccess('Successfully saved');
                 }
             );
 
@@ -194,13 +192,13 @@ test.describe('FinOps_ExpeseheadCreation -Configuration - Expense Head', () => {
                 }
             );
 
-            // await PROCESS_TEST.step('Check save and AddAnother ', async () => {
-            //     const name = await ExpenseHeadHelper.generateRandomGradeName();
+            await PROCESS_TEST.step('Check save and AddAnother ', async () => {
+                const name = await ExpenseHeadHelper.generateRandomGradeName();
 
-            //     await expenseHead.addAndClickCheckbox(name);
+                await expenseHead.addAndClickCheckbox(name);
 
-            //     await dialog.checkDialogTitle('Add Expense Head');
-            // });
+                await dialog.checkDialogTitle('Add Expense Head');
+            });
         }
     );
 
@@ -299,21 +297,6 @@ test.describe('FinOps_ExpeseheadCreation -Configuration - Expense Head', () => {
                 'Add Documents',
             ]);
         });
-
-        // await PROCESS_TEST.step('Check Expense', async () => {
-        //     await expenseHeadDetails.checkExpense('EXPVN614', 'EXPENSE NO.');
-
-        //     const breadCrumb = expenseHeadDetails.breadCrumbHelper;
-
-        //     await expect(await breadCrumb.getBreadCrumbSubTitle()).toBe(
-        //         '#EXPVN614'
-        //     );
-        // });
-
-        // await PROCESS_TEST.step('Back to the page', async () => {
-        //     await page.goBack();
-        //     await expenseHeadDetails.clickOnTab('Expenses');
-        // });
     });
 
     PROCESS_TEST('TEH004-Expense Head Details Notes Tab', async ({ page }) => {
@@ -395,10 +378,6 @@ test.describe('FinOps_ExpeseheadCreation -Configuration - Expense Head', () => {
             await PROCESS_TEST.step('Check Zoom of documents', async () => {
                 await expenseHeadDetails.checkZoom();
             });
-
-            // await PROCESS_TEST.step('Check Paginations', async () => {
-            //     await expenseHeadDetails.checkPagination();
-            // });
 
             await PROCESS_TEST.step('Delete Document', async () => {
                 await expenseHeadDetails.documentDelete(document);
