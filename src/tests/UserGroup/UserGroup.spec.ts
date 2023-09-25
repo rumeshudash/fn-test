@@ -11,7 +11,7 @@ const { describe } = PROCESS_TEST;
 
 describe.configure({ mode: 'serial' });
 
-describe('Configuration -> User Group Creation and Details Verification', () => {
+describe('FinOps_UsergrpCreation', () => {
     let userData: UserGroupData = {
         name: `Test User Group ${generateRandomNumber()}`,
         manager: 'Amit Raj',
@@ -43,7 +43,7 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
         },
     };
 
-    PROCESS_TEST('TUA001', async ({ page }) => {
+    PROCESS_TEST('TUA001 -> User Group Creation', async ({ page }) => {
         const userCreation = new UserCreation(page);
         await userCreation.navigateTo('USERGROUPS');
 
@@ -136,7 +136,7 @@ describe('Configuration -> User Group Creation and Details Verification', () => 
         });
     });
 
-    PROCESS_TEST('TUAD001', async ({ page }) => {
+    PROCESS_TEST('TUAD001 -> User Group Detail Page', async ({ page }) => {
         const userDetails = new UserDetails(page);
         await userDetails.navigateTo('USERGROUPS');
         await page.waitForURL(LISTING_ROUTES.USERGROUPS);

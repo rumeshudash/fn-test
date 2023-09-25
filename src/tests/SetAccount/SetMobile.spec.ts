@@ -7,8 +7,8 @@ import chalk from 'chalk';
 
 const { describe } = PROCESS_TEST;
 
-describe('Mobile Number Addition', () => {
-    PROCESS_TEST('TMO001', async ({ page }) => {
+describe('FinOps_SetOrg', () => {
+    PROCESS_TEST('TMO001 -> Mobile Number Addition', async ({ page }) => {
         // const mobileSet = new SetMobile(page);
         // await mobileSet.init();
         // await test.step('Add New Number', async () => {

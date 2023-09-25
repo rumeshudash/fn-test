@@ -11,7 +11,7 @@ const { expect, describe } = PROCESS_TEST;
 
 describe.configure({ mode: 'serial' });
 
-describe('HR -> Department Creation and Details Verification', () => {
+describe('FinOps_DepartmentCreation', () => {
     let data: DepartmentCreationData = {
         name: '',
         parent_id: 'Sales',
@@ -32,7 +32,7 @@ describe('HR -> Department Creation and Details Verification', () => {
         },
     };
 
-    PROCESS_TEST('TDC001', async ({ page }) => {
+    PROCESS_TEST('TDC001 -> Department Creation', async ({ page }) => {
         const department = new DepartmentCreation(page);
         await department.init();
 
@@ -154,7 +154,7 @@ describe('HR -> Department Creation and Details Verification', () => {
         });
     });
 
-    PROCESS_TEST('TDD001', async ({ page }) => {
+    PROCESS_TEST('TDD001 -> Department Details Page', async ({ page }) => {
         let employeeData: EmployeeCreationData = {
             name: 'Employee' + generateRandomNumber(),
             manager_id: 'newtestauto@company.com',

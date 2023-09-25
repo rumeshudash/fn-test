@@ -59,7 +59,8 @@ export class ApprovalDelegation extends FormHelper {
     public async fillAndValidateForm(
         schema: any,
         data: DelegationFillData,
-        errors: ErrorType[]
+        errors: ErrorType[],
+        delegationData: ApprovalDelegationData
     ) {
         await this.fillInput('', {
             name: 'start_time',
@@ -69,6 +70,7 @@ export class ApprovalDelegation extends FormHelper {
         });
         await this.fillFormInputInformation(schema, data);
         await this.submitButton();
+        delegationData['ADDED AT'] = formatDate(new Date(), true) + ' ';
         for (const err of errors) {
             if (err.name === 'end_time' || err.name === 'start_time') {
                 await this.checkIsInputHasErrorMessage(

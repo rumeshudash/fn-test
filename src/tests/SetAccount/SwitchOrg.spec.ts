@@ -4,8 +4,8 @@ import { test } from '@playwright/test';
 
 const { describe } = PROCESS_TEST;
 
-describe('Switch Organization', () => {
-    PROCESS_TEST('TSO001', async ({ page }) => {
+describe('FinOps_SetOrg', () => {
+    PROCESS_TEST('TSO001 -> Switch Organization', async ({ page }) => {
         const switchOrg = new SwitchOrg(page);
 
         await test.step('Validate Switch Organization', async () => {
