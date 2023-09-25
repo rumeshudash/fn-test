@@ -1,11 +1,11 @@
 import { TEST_URL } from '@/constants/api.constants';
 import { PROCESS_TEST } from '@/fixtures';
+import { FinOpsVerificationHelper } from '@/helpers/ExpenseHelper/WorkflowsApproval/FinOpsApproval.helper';
+import { PaymentVerificationHelper } from '@/helpers/ExpenseHelper/WorkflowsApproval/PaymentApproval.helper';
+import { VerificationWorkflowsTab } from '@/helpers/ExpenseHelper/WorkflowsApproval/VerificationApproval.helper';
 import { ExpenseHelper } from '@/helpers/ExpenseHelper/expense.helper';
 import {
     ApprovalToggleHelper,
-    ApprovalWorkflowsTab,
-    FinOpsVerificationHelper,
-    PaymentVerificationHelper,
     SavedExpenseCreation,
 } from '@/helpers/ExpenseHelper/savedExpense.helper';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
@@ -17,6 +17,7 @@ const BusinessInfo = {
     to: 'Hidesign India Pvt Ltd',
     from: 'Adidas India Marketing Private Limited',
 };
+
 const EXPENSEDETAILS = {
     // invoice: ' inv' + generateRandomNumber(),
     amount: 10000,
@@ -202,7 +203,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
         await PROCESS_TEST.step('Check Approval Flows', async () => {
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
 
-            const verificationFlows = new ApprovalWorkflowsTab(page);
+            const verificationFlows = new VerificationWorkflowsTab(page);
             await verificationFlows.checkLevel();
             await verificationFlows.checkUser();
             await verificationFlows.checkEmail();
@@ -219,7 +220,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const signIn = new SignInHelper(page);
-        const verificationFlows = new ApprovalWorkflowsTab(page);
+        const verificationFlows = new VerificationWorkflowsTab(page);
         const toggleHelper = new ApprovalToggleHelper(page);
         await toggleHelper.gotoExpenseApproval();
         await toggleHelper.allInactive();
@@ -359,7 +360,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
     PROCESS_TEST('TECF004 - approval with all details', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
-        const verificationFlows = new ApprovalWorkflowsTab(page);
+        const verificationFlows = new VerificationWorkflowsTab(page);
         const signIn = new SignInHelper(page);
 
         const toggleHelper = new ApprovalToggleHelper(page);
@@ -485,7 +486,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
     PROCESS_TEST('TECF005 - approval without comment ', async ({ page }) => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
-        const verificationFlows = new ApprovalWorkflowsTab(page);
+        const verificationFlows = new VerificationWorkflowsTab(page);
         const signIn = new SignInHelper(page);
 
         const toggleHelper = new ApprovalToggleHelper(page);
@@ -620,7 +621,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
         // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const signIn = new SignInHelper(page);
-        const verificationFlows = new ApprovalWorkflowsTab(page);
+        const verificationFlows = new VerificationWorkflowsTab(page);
 
         const toggleHelper = new ApprovalToggleHelper(page);
         await toggleHelper.gotoExpenseApproval();
@@ -760,7 +761,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             // const tabHelper = new TabHelper(page);
             const signIn = new SignInHelper(page);
             const expense = new ExpenseHelper(page);
-            const verificationFlows = new ApprovalWorkflowsTab(page);
+            const verificationFlows = new VerificationWorkflowsTab(page);
             const finOpsFlows = new FinOpsVerificationHelper(page);
             const paymentFlows = new PaymentVerificationHelper(page);
 
@@ -960,7 +961,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             // const tabHelper = new TabHelper(page);
             const signIn = new SignInHelper(page);
             const expense = new ExpenseHelper(page);
-            const verificationFlows = new ApprovalWorkflowsTab(page);
+            const verificationFlows = new VerificationWorkflowsTab(page);
             const finOpsFlows = new FinOpsVerificationHelper(page);
             const paymentFlows = new PaymentVerificationHelper(page);
             const toggleHelper = new ApprovalToggleHelper(page);
