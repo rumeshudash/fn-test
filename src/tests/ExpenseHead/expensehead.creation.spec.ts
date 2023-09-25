@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 import { generateRandomNumber } from '@/utils/common.utils';
 test.describe.configure({ mode: 'serial' });
 
-test.describe('Configuration - Expense Head', () => {
+test.describe('FinOps_ExpeseheadCreation -Configuration - Expense Head', () => {
     const expenseHeadData = {
         Name: 'Test' + generateRandomNumber(),
         Parent: 'Stationary',
