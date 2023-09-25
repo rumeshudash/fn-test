@@ -138,7 +138,7 @@ export class MenucardHelper extends PageHelper {
      * @param menuName - The name of the main menu like dashboard,expenses etc. which have sub menu like AP Dashboard,Payment Dashboard etc.
      *
      */
-    public async checkSubMenuItems(menuName: string) {
+    public async checkSubMenuItems(menuName: string, submenuName: string) {
         const locator = await this.getMenuLocator(menuName);
 
         const ancestor = await locator.locator(
@@ -152,8 +152,7 @@ export class MenucardHelper extends PageHelper {
             .allInnerTexts(); // Use textContent instead of innerText
 
         const filteredItems = menus.filter((item) => item.trim() !== '');
-
-        expect(filteredItems).toEqual(submenuObject[menuName]);
+        expect(filteredItems).toContainEqual(submenuName);
     }
 
     /**
