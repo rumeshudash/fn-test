@@ -182,7 +182,7 @@ export class FormHelper extends BaseHelper {
                     });
             }
             await this._page.waitForTimeout(300);
-            await this._page.waitForLoadState('domcontentloaded');
+            await this._page.waitForLoadState('networkidle');
         }
         if (!targetClick) return;
         await this.click({

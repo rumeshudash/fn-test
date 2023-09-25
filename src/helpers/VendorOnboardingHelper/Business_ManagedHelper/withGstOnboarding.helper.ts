@@ -45,9 +45,9 @@ export class GstinBusinessManagedOnboarding extends BaseHelper {
         });
     }
 
-    public async expandClientInfoCard() {
-        const VendorInfocard = this._page.locator(
-            "(//div[contains(@class,'items-center justify-between')])[3]"
+    public async expandClientInfoCard(tradeName: string) {
+        const VendorInfocard = this.locate(
+            `(//div[@class='mt-2']) //div[text()="${tradeName}"]/parent::div/parent::div/parent::div`
         );
         expect(
             await VendorInfocard.isVisible(),

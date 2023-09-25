@@ -18,7 +18,7 @@ const data = {
 };
 
 //Business Managed vendor onboarding with GSTIN
-describe('Business Managed without GSTIN - Vendor Onboarding', () => {
+describe('FinOps_VonboardingBmanaged - without GSTIN', () => {
     const BusinessManagedInfo: nonGstinDataType = {
         trade_name: 'Hidesign India Pvt Ltd',
         // display_name: '',
