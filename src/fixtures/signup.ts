@@ -35,7 +35,7 @@ export const PROCESS_SIGNUP = test.extend<{ signup: void }>({
                 username: username,
                 password: password,
             });
-            await page.context().storageState({ path: 'state.json' });
+            // await page.context().storageState({ path: 'signup.json' });
 
             await use();
         },
