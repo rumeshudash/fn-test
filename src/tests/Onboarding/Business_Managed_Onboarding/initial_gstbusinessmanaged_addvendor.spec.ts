@@ -1,7 +1,14 @@
 import { PROCESS_TEST } from '@/fixtures';
+import { FormHelper } from '@/helpers/BaseHelper/form.helper';
+import { Logger } from '@/helpers/BaseHelper/log.helper';
 import GenericGstinCardHelper, {
     gstinDataType,
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
+import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
+import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
+import { CreateBusinessHelper } from '@/helpers/SignupHelper/createBusiness.helper';
+import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
+import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
 import { BusinessManagedOnboarding } from '@/helpers/VendorOnboardingHelper/Business_ManagedHelper/businessManagedOnboarding.helper';
 import {
     GstinBusinessManagedOnboarding,
@@ -12,10 +19,31 @@ import { generateRandomNumber } from '@/utils/common.utils';
 const { expect, describe } = PROCESS_TEST;
 
 //Business Managed vendor onboarding with GSTIN
-describe('Business Managed with GSTIN - Vendor Onboarding', () => {
+describe('FinOps_VonboardingBmanaged - Business Managedwith GSTIN', () => {
+    const formSchema = {
+        gstin: {
+            type: 'text',
+            required: true,
+        },
+        mobile: {
+            type: 'tel',
+            required: true,
+        },
+        email: {
+            type: 'email',
+            required: true,
+        },
+    };
+
+    const finopsBusinessInfo = {
+        gstin: '27AACCD0597N1Z8',
+        mobile: 9876543210,
+        email: `bus${generateRandomNumber()}@test.com`,
+    };
+
     const BusinessInfo = {
-        business_account_id: 'Hidesign India Pvt Ltd',
-        gstin: '33AACCH0586R1Z6',
+        business_account_id: finopsBusinessInfo.gstin,
+        // gstin: '27AACCD0597N1Z8',
         // business_type: '',
         // address: '',
         status: 'Active',
@@ -25,8 +53,8 @@ describe('Business Managed with GSTIN - Vendor Onboarding', () => {
     };
 
     const BusinessInfoGeneric: gstinDataType = {
-        trade_name: BusinessInfo.business_account_id,
-        gstin: BusinessInfo.gstin,
+        trade_name: 'Drupe Engineering Private Limited',
+        gstin: BusinessInfo.business_account_id,
         business_type: '',
         address: '',
         status: BusinessInfo.status,
@@ -41,12 +69,12 @@ describe('Business Managed with GSTIN - Vendor Onboarding', () => {
     };
     //Data used in Business Managed Onboarding with GSTIN
     const businessVendorGstin: gstinDataType = {
-        trade_name: 'Adani Electricity Mumbai Limited',
-        gstin: '27AADCD0086F1ZW',
-        pan_number: 'AADCD0086F',
+        trade_name: 'Pvr Limited',
+        gstin: '03AAACP4526D1Z0',
+        pan_number: 'AAACP4526D',
         business_type: 'Proprietorship',
         address:
-            'EKSAR DEVIDAS LANE, OFF SVP ROAD,BORIVALI WEST, MUMBAI, CTS 407/A NEW, Mumbai Suburban, 400103, Maharashtra, NA, 408 OLD VILLAGE',
+            'Flamez Mall, Ferozepur Road, Ludhiana, PVR Flamez, Ludhiana, Ludhiana, 141001, Punjab, NA, 3rd Floor',
         status: 'Active',
     };
     const VendorClientInfo = {
@@ -62,6 +90,13 @@ describe('Business Managed with GSTIN - Vendor Onboarding', () => {
         email: `email${generateRandomNumber()}@test.com`,
         mobile: 9876421231,
         // updated_display_name: 'Updated Vendor',
+    };
+
+    const signUpInfo = {
+        name: 'User130823',
+        email: `user${generateRandomNumber()}@test.com`,
+        password: '123456',
+        confirm_password: '123456',
     };
 
     PROCESS_TEST('TCBV001', async ({ page }) => {
@@ -83,6 +118,45 @@ describe('Business Managed with GSTIN - Vendor Onboarding', () => {
             businessVendorGstin,
             page
         );
+
+        const signIn = new SignInHelper(page);
+        await PROCESS_TEST.step('Create New User', async () => {
+            const createBusiness = new CreateBusinessHelper(page);
+            const form = new FormHelper(page);
+            await PROCESS_TEST.step('Create New User', async () => {
+                const signup = new SignupHelper(page);
+                const verify = new VerifyEmailHelper(page);
+                await signup.logOut();
+                await signup.init();
+                await signup.fillSignup(signUpInfo);
+                await signup.clickButton('Next');
+                await verify.fillCode('1');
+                await verify.clickButton('Verify');
+                await verify.clickButton('Continue');
+                await createBusiness.fillBusiness({
+                    business_name: `Business${generateRandomNumber()}`,
+                });
+                await createBusiness.clickContinue();
+                await createBusiness.init();
+            });
+
+            await PROCESS_TEST.step('Create Finops Business', async () => {
+                Logger.info(`\n-->Create Business Account.`, `\n`);
+                await createBusiness.clickButton('Add Business');
+                await form.fillFormInputInformation(
+                    formSchema,
+                    finopsBusinessInfo
+                );
+                // await createBusiness.getBusinessName()
+                await form.submitButton();
+            });
+
+            // await PROCESS_TEST.step('Logout then Login', async () => {
+            //     await businessManagedOnboarding.logOut();
+            //     await signIn.signInPage('newtestauto@company.com', '123456');
+            // });
+        });
+
         await PROCESS_TEST.step('Navigate to Add Vendor', async () => {
             await businessManagedOnboarding.clickVendor('My Vendors');
             await businessManagedOnboarding.verifyVendorPageURL();
@@ -133,20 +207,24 @@ describe('Business Managed with GSTIN - Vendor Onboarding', () => {
                     // await withGstin.editDisplayName(
                     //     VendorInfo.updated_display_name
                     // );
-                    await withGstin.expandClientInfoCard();
+                    await withGstin.expandClientInfoCard(
+                        businessVendorGstin.trade_name
+                    );
                     await vendorGstin.gstinInfoCheck();
                     await businessManagedOnboarding.saveAndCreateCheckbox();
 
                     await businessManagedOnboarding.form.submitButton();
-                    await businessManagedOnboarding.form.checkInputError(
-                        'gstin',
-                        VendorSchema
-                    );
+                    // await businessManagedOnboarding.form.checkInputError(
+                    //     'gstin',
+                    //     VendorSchema
+                    // );
+                    await businessManagedOnboarding.notification.getErrorMessage();
                 });
             }
         );
 
         await businessManagedOnboarding.afterSaveAndCreateValidation();
+        await businessManagedOnboarding.dialog.closeDialog();
         // expect
         //     .soft(
         //         await businessManagedOnboarding.toastMessage(),

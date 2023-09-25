@@ -29,12 +29,8 @@ export class ExpenseHelper extends BaseHelper {
     public department = 'Sales';
     public expenseHead = 'Travelling';
 
-    public async init() {
+    public async init(): Promise<void> {
         await this.navigateTo('RAISE_EXPENSES');
-    }
-
-    public static genInvoiceNumber() {
-        return `INV-${uuidV4()}-${Date.now()}`;
     }
 
     /**
@@ -42,7 +38,7 @@ export class ExpenseHelper extends BaseHelper {
      *
      * @return {Promise<void>} - A promise that resolves once the action is completed.
      */
-    public async nextPage() {
+    public async nextPage(): Promise<void> {
         await this.click({ text: 'Next' });
         await this._page.waitForTimeout(1000);
     }
@@ -64,7 +60,7 @@ export class ExpenseHelper extends BaseHelper {
             gstin?: string;
             nth?: number;
         }
-    ) {
+    ): Promise<void> {
         const { dropdownLabel = 'bill-to' } = selectors;
 
         const dropdown = this.locate(
@@ -92,7 +88,7 @@ export class ExpenseHelper extends BaseHelper {
         name?: string;
         gstin?: string;
         nth?: number;
-    }) {
+    }): Promise<void> {
         if (!name && !gstin && !nth) throw new Error('No name or gstin or nth');
 
         let menuSelector =
@@ -117,7 +113,9 @@ export class ExpenseHelper extends BaseHelper {
         await this.locate(menuSelector).click();
     }
 
-    public async fillBusinessDetails(data: BusinessDetails[] = []) {
+    public async fillBusinessDetails(
+        data: BusinessDetails[] = []
+    ): Promise<void> {
         const helper = this.locate(ExpenseHelper.DETAIL_DOM_SELECTOR);
         for (let expData of data) {
             if (expData.to)
@@ -148,68 +146,49 @@ export class ExpenseHelper extends BaseHelper {
      * @param {ExpenseDetailInputs[]} data - The array of expense detail inputs.
      * @return {Promise<void>} A promise that resolves when the expenses are filled.
      */
-    public async fillExpenses(data: ExpenseDetailInputs[] = []) {
-        const helper = this.locate(ExpenseHelper.DETAIL_DOM_SELECTOR);
-
+    public async fillExpenses(data: ExpenseDetailInputs[] = []): Promise<void> {
         for (let expData of data) {
-            // if (expData.to)
-            //     await helper._selectDropdown('Select Business', {
-            //         name: expData.to,
-            //     });
-            // if (expData.to_nth)
-            //     await helper._selectDropdown('Select Business', {
-            //         nth: expData.to_nth,
-            //     });' inv' + generateRandomNumber()
-            // await helper.fillText(expData.invoice, {
-            //     name: 'invoice_number',
-            // });
-            await helper.fillText('inv' + generateRandomNumber(), {
+            await this.fillText('inv' + generateRandomNumber(), {
                 name: 'invoice_number',
             });
             await this._page.waitForTimeout(1000);
 
-            await helper.fillInput(expData.amount, {
+            await this.fillInput(expData.amount, {
                 name: 'amount',
             });
-            await helper.fillInput(expData.taxable_amount, {
+            await this.fillInput(expData.taxable_amount, {
                 name: 'taxable_amount',
             });
 
-            // if (expData.department)
-            //     await helper.selectOption({
-            //         input: expData.department,
-            //         name: 'department',
-            //     });
-
             if (expData.expense_head)
-                await helper.selectOption({
+                await this.selectOption({
                     input: expData.expense_head,
                     name: 'expense_head',
                 });
 
             if (expData.poc)
-                await helper.selectOption({
+                await this.selectOption({
                     input: expData.poc,
                     name: 'poc',
                 });
 
             if (expData.pay_to)
-                await helper.selectOption({
+                await this.selectOption({
                     option: expData.pay_to,
                     name: 'pay_to',
                 });
             if (expData.employee) {
                 await this._page.waitForTimeout(300);
-                await helper.selectOption({
+                await this.selectOption({
                     option: expData.employee,
                     placeholder: 'Select Employee',
                 });
             }
-            await helper.fillText(expData.desc, { name: 'description' });
+            await this.fillText(expData.desc, { name: 'description' });
         }
     }
 
-    public async addTaxesData(data: AddTaxesData[] = []) {
+    public async addTaxesData(data: AddTaxesData[] = []): Promise<void> {
         await this._page.getByRole('button', { name: 'Add Taxes' }).click();
         await this._page.waitForSelector('//div[@role="dialog"]', {
             state: 'attached',
@@ -249,14 +228,7 @@ export class ExpenseHelper extends BaseHelper {
         }
     }
 
-    // public async checkDepartmentFetch() {
-    //     const department = this.locate(
-    //         '//input[@name="department"][1]'
-    //     )._locator.first();
-    //     await expect(department).toBeVisible();
-    // }
-
-    public async addDocument() {
+    public async addDocument(): Promise<void> {
         await this._page
             .locator("//div[@role='presentation']")
             .locator("//input[@type='file']")
@@ -264,7 +236,7 @@ export class ExpenseHelper extends BaseHelper {
         await this._page.waitForTimeout(1000);
     }
 
-    public async removeDefaultInputValue(name: string) {
+    public async removeDefaultInputValue(name: string): Promise<void> {
         // remove default poc
         await this.locate(
             `//input[@name='${name}']/parent::div[contains(@class,'selectbox-container')]`
