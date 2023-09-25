@@ -13,55 +13,17 @@ export const vendorGstinInfo: gstinDataType = {
 
 //Vendor Onboarding with GSTIN Clinet Info Card
 
-export const NON_GSTIN_LOWER_TDS_DETAILS = {
-    selectInput: 'Lower TDS',
-    tdsCertNumber: '10',
-    date: '22-02-2023',
-    tdsPercentage: '20',
-};
-
 //For Vendor Managed Onboarding NON GSTIN
-export const NON_GSTIN_BANK_DETAILS_ONE = {
-    bankName: 'ABC Pvt Ltd',
-    accountNumber: '12345678',
-    ifsc: 'HDFC0000009',
-    address: 'HDFC0000009, Bangalore - Kasturba Gandhi Marg ',
-};
-
-//For Vendor Managed Onboarding Client Connect NON GSTIN
-export const NON_GSTIN_BANK_DETAILS_TWO = {
-    bankName: 'ABD Pvt Ltd',
-    accountNumber: '1234567',
-    ifsc: 'HDFC0000002',
-    address: 'HDFC0000002,MUMBAI - KHAR WEST',
-};
 
 export const IMAGE_NAME = 'invoice3.png';
 export const MSME_NUMBER = '22';
-export const PAN_CARD = '20';
+export const PAN_CARD = 'BAJPC4350M';
 export const COI_NUMBER = '23332567';
 export const PICK_DATE = '20-06-2023';
 export const PAN_CODE_ADDRESS = 'New Delhi Central, Delhi';
 
-//Data used in Business Managed Onboarding with GSTIN
-export const businessVendorGstin: gstinDataType = {
-    trade_name: 'D Mart',
-    gstin: '29AKAPD8772G1Z0',
-    pan_number: 'AKAPD8772G',
-    business_type: 'Proprietorship',
-    address:
-        'CITY TOWER, SULTANPET MAIN ROAD, BENGALURU, SHOP NO. 204/15, Bengaluru Urban, 560053, Karnataka, NA, 1ST FLOOR',
-    status: 'Active',
-};
-
 //For Vendor and Client Info to fill
-export const VendorClientInfo = {
-    trade_name: 'Hidesign India Pvt Ltd', //Client Business Name
-    displayName: businessVendorGstin.trade_name.slice(5),
-    value: businessVendorGstin.gstin, //Vendor GSTIN
-    vendorEmail: 'meatshop@gmail.com',
-    vendorNumber: '9876543210',
-};
+
 //For checking client info from card
 export const ClientBusinessDetails: gstinDataType = {
     trade_name: 'Hidesign India Pvt Ltd',

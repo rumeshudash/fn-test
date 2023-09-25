@@ -5,7 +5,7 @@ import { DocumentspreferenceHelper } from '@/helpers/DocumentpreferenceHelper/do
 test.describe('Configuration - Document Preference', () => {
     PROCESS_TEST('TDP003 - Document preference Details', async ({ page }) => {
         const documents_preference = new DocumentspreferenceHelper(page);
-        const notification = await documents_preference.notificationHelper;
+        const notification = documents_preference.notificationHelper;
 
         await documents_preference.init();
 

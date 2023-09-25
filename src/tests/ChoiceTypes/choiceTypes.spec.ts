@@ -4,7 +4,7 @@ import { generateRandomNumber } from '@/utils/common.utils';
 import { expect } from '@playwright/test';
 const { describe } = PROCESS_TEST;
 
-describe('Configuration -> Choice Types', () => {
+describe('FinOps_ChoiceTypeCreation - Choice Types', () => {
     const choiceTypeInfo = {
         name: 'choice-type-' + generateRandomNumber(),
         description: 'description' + generateRandomNumber(),

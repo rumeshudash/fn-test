@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
-import { FileHelper } from '../BaseHelper/file.helper';
+import { BaseHelper } from '../../BaseHelper/base.helper';
+import { FileHelper } from '../../BaseHelper/file.helper';
 import chalk from 'chalk';
 
 export class BankAccountDetails extends BaseHelper {
@@ -12,7 +12,7 @@ export class BankAccountDetails extends BaseHelper {
         this.file = new FileHelper(page);
     }
     // validate bank account name with business name
-    public async validateBankAccountName() {
+    public async validateBankAccountName(name: string) {
         expect(
             await this._page.locator('#account_name').isVisible(),
             chalk.red('Bank Name visibility')
@@ -21,9 +21,7 @@ export class BankAccountDetails extends BaseHelper {
         const clientBusinessName = await this._page
             .locator('#account_name')
             .inputValue();
-        expect(clientBusinessName, chalk.red('Bank Name match')).toBe(
-            this.bankDetails.bankName
-        );
+        expect(clientBusinessName, chalk.red('Bank Name match')).toBe(name);
     }
 
     // Check if a button with the name 'Next' is visible and clickable on the page

@@ -10,7 +10,6 @@ if (fs.existsSync('./state.json')) {
 export const PROCESS_TEST = test.extend<{ login: void }>({
     login: [
         async ({ page }: { page: Page }, use: () => any) => {
-            const orgName = 'New Test Auto';
             const helper = new BaseHelper(page);
 
             await page.goto(TEST_URL + '/login', { waitUntil: 'networkidle' });
@@ -18,12 +17,9 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
             await page.waitForLoadState('networkidle');
 
             if (await helper.isVisible({ id: 'username' })) {
-                await helper.fillInput(
-                    process.env.TEST_USER || 'newtestauto@company.com',
-                    {
-                        name: 'username',
-                    }
-                );
+                await helper.fillInput('newtestauto@company.com', {
+                    name: 'username',
+                });
                 await helper.click({ role: 'button', name: 'Next →' });
 
                 await helper.fillInput(process.env.TEST_PASS || '123456', {
@@ -40,13 +36,8 @@ export const PROCESS_TEST = test.extend<{ login: void }>({
                     await helper.click({ id: 'org-1' });
                 }
 
-                // await helper.click({ selector: '#org-1' });
                 await helper.click({ text: 'FinOps Portal' });
                 await page.waitForTimeout(1000);
-
-                // await expect(
-                //     helper.locateByText(orgName)
-                // ).toBeVisible();
 
                 await page.context().storageState({ path: 'state.json' });
             }

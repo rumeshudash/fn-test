@@ -303,7 +303,7 @@ export class BaseHelper {
         } else {
             await selectBox.click();
         }
-        console.log(`${input || option} is selected`);
+        Logger.info(`${input || option} is selected`);
 
         const elements = await selectBox
             .getLocator()
@@ -560,7 +560,7 @@ export class BaseHelper {
         expect(await checkBox.isVisible(), 'Checkbox is not visible').toBe(
             true
         );
-        console.log('CheckBox: ', checkBox);
+        Logger.info('CheckBox: ', checkBox);
 
         await checkBox.click();
     }

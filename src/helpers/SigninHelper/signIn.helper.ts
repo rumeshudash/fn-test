@@ -105,6 +105,7 @@ export class SignInHelper extends NotificationHelper {
         await this.fillText(data.password, { id: 'password' });
         await this.click({ role: 'button', name: 'Submit' });
         await this._page.waitForTimeout(1000);
+        await this._page.waitForLoadState('networkidle');
     }
 
     /**
@@ -133,11 +134,12 @@ export class SignInHelper extends NotificationHelper {
             await this.click({ id: 'org-1' });
         }
         await this.portalSelectorHelper.selectFinopsPortal();
-        // await this._page.getByText('FinOps Portal').click();
 
         this._page.getByText('Dashboard');
 
         await this._page.waitForTimeout(1000);
+
+        await this._page.waitForLoadState('networkidle');
     }
 
     /**

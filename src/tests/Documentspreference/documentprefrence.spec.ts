@@ -1,38 +1,44 @@
 import { DocumentspreferenceHelper } from '@/helpers/DocumentpreferenceHelper/documentspreference.helper';
 import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
+import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
+import { PROCESS_SIGNUP } from '@/fixtures/signup';
 
 import { test, expect } from '@playwright/test';
-import { PROCESS_TEST } from '@/fixtures';
+
+test.describe.configure({ mode: 'serial' });
 
 test.describe('Configuration - Document Preference', () => {
-    test('TDP001 -   Create Document Preference - Negative Case ', async ({
-        page,
-    }) => {
-        const documents_preference = new DocumentspreferenceHelper(page);
-        const signin = new SignInHelper(page);
-        await signin.init();
-        await signin.checkDashboard({
-            username: 'doc@finnoto.com',
-            password: '123456',
-        });
+    const userData = {
+        name: 'Test User',
+        email: '',
+        password: '123456',
+        confirmPassword: '123456',
+    };
+    PROCESS_SIGNUP(
+        'TDP001 -   Create Document Preference - Negative Case ',
+        async ({ page }) => {
+            const documents_preference = new DocumentspreferenceHelper(page);
 
-        const notification = documents_preference.notificationHelper;
-        const dialog = documents_preference.dialogHelper;
+            const notification = documents_preference.notificationHelper;
 
-        await documents_preference.init();
+            await documents_preference.init();
 
-        await test.step('Add Document Preference with empty Documents', async () => {
-            const count = await documents_preference.checkRowCount();
-            if (count < 5) {
-                await documents_preference.clickAddBtn();
-                await documents_preference.clickButton('Save');
+            await PROCESS_SIGNUP.step(
+                'Add Document Preference with empty Documents',
+                async () => {
+                    const count = await documents_preference.checkRowCount();
+                    if (count < 5) {
+                        await documents_preference.clickAddBtn();
+                        await documents_preference.clickButton('Save');
 
-                expect(await notification.getErrorMessage()).toBe(
-                    'Document is required'
-                );
-            }
-        });
-    });
+                        expect(await notification.getErrorMessage()).toBe(
+                            'Document is required'
+                        );
+                    }
+                }
+            );
+        }
+    );
 
     test('TDP002 - Create Document Preference - Positive Case', async ({
         page,
@@ -40,12 +46,11 @@ test.describe('Configuration - Document Preference', () => {
         const signin = new SignInHelper(page);
         await signin.init();
         await signin.checkDashboard({
-            username: 'doc@finnoto.com',
-            password: '123456',
+            username: userData.email,
+            password: userData.password,
         });
 
         const documents_preference = new DocumentspreferenceHelper(page);
-        const notification = documents_preference.notificationHelper;
 
         await documents_preference.init();
 

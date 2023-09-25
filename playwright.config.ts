@@ -4,7 +4,7 @@ require('dotenv').config();
 export default defineConfig({
     testDir: './src/tests',
     /* Maximum time one test can run for. */
-    timeout: 4 * 60 * 1000, // 4 min
+    timeout: 3 * 60 * 1000, // 3 min
 
     expect: {
         /**
@@ -19,7 +19,7 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     /* Opt out of parallel tests on CI. */
-    workers: process.env.CI ? 2 : undefined,
+    workers: 1,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: process.env.CI ? 'github' : [['list', { printSteps: true }]],
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

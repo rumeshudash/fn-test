@@ -96,9 +96,9 @@ describe('Expense Creation - Finops Portal', () => {
             await savedExpensePage.logOut();
             await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(pocEmail, '1234567');
-            await page.waitForSelector('//div[@role="dialog"]', {
-                state: 'attached',
-            });
+            // await page.waitForSelector('//div[@role="dialog"]', {
+            //     state: 'attached',
+            // });
             await page.getByText('New Test Auto').click();
             await page.waitForURL(TEST_URL + '/e/e');
             await savedExpensePage.clickLink('Expenses');

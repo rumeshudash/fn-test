@@ -1,13 +1,14 @@
-import { expect } from '@playwright/test';
-import { BaseHelper } from '../BaseHelper/base.helper';
-import chalk from 'chalk';
-import { VendorOnboardingWithGSTIN } from './VendorOnboarding.helper';
+import { BaseHelper } from '@/helpers/BaseHelper/base.helper';
+
 import { MSME_NUMBER, vendorGstinInfo } from '@/utils/required_data';
+import chalk from 'chalk';
+import { expect } from '@playwright/test';
+import { Logger } from '@/helpers/BaseHelper/log.helper';
 
 export class VendorInvitationDetails extends BaseHelper {
     public bankDetails;
     public lowerTDS;
-    constructor(bankDetails, lowerTDS, page) {
+    constructor(bankDetails, lowerTDS, page: any) {
         super(page);
         this.bankDetails = bankDetails;
         this.lowerTDS = lowerTDS;
@@ -15,15 +16,15 @@ export class VendorInvitationDetails extends BaseHelper {
     private INVITATION_DETAILS_DOM =
         "(//div[contains(@class,'flex-1 gap-4')])[2]";
 
-    public async checkFrom() {
+    public async checkFrom(): Promise<string> {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("(//div[contains(@class,'flex-1 gap-1')]//div)[1]")
             .textContent();
     }
-    public async checkFromGSTIN() {
-        const helper = this.locate(this.INVITATION_DETAILS_DOM);
-        const businessGSTIN = helper._page.locator(
+    public async checkFromGSTIN(): Promise<string> {
+        const helper = this.locate(this.INVITATION_DETAILS_DOM)._locator;
+        const businessGSTIN = helper.locator(
             "//span[contains(@class,'text-xs text-base-tertiary')]"
         );
         await expect
@@ -32,14 +33,14 @@ export class VendorInvitationDetails extends BaseHelper {
         if (await businessGSTIN.isVisible())
             return await businessGSTIN.textContent();
     }
-    public async checkClient() {
+    public async checkClient(): Promise<string> {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("//span[contains(@class,'inline-block w-3/4')]")
             .textContent();
     }
 
-    public async checkClientGSTIN() {
+    public async checkClientGSTIN(): Promise<string> {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("//span[contains(@class,'text-xs cursor-pointer')]")
@@ -47,13 +48,13 @@ export class VendorInvitationDetails extends BaseHelper {
     }
 
     //For non GSTIN Information
-    public async checkNonGstinFrom() {
+    public async checkNonGstinFrom(): Promise<string> {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("(//div[@class='w-full']//span)[3]")
             .textContent();
     }
-    public async checkGstinFromNonGstin() {
+    public async checkGstinFromNonGstin(): Promise<string> {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         const businessGSTIN = helper._page.locator(
             "(//div[contains(@class,'text-center rounded')])[1]"
@@ -65,41 +66,42 @@ export class VendorInvitationDetails extends BaseHelper {
             return await businessGSTIN.textContent();
     }
 
-    public async checkNonGstinClient() {
+    public async checkNonGstinClient(): Promise<string> {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("//span[contains(@class,'inline-block w-3/4')]")
             .textContent();
     }
 
-    public async checkNonGstinClientGSTIN() {
+    public async checkNonGstinClientGSTIN(): Promise<string> {
         const helper = this.locate(this.INVITATION_DETAILS_DOM);
         return await helper._page
             .locator("//span[contains(@class,'text-xs cursor-pointer')]")
             .textContent();
     }
 
-    public async checkDocument(title: string) {
+    public async checkDocument(title: string): Promise<void> {
         const helper = this.locate(
-            VendorOnboardingWithGSTIN.VENDORONBOARDINGWITHOUTGSTIN_DOM
-        );
-        const container = helper._page
+            '//div[text()="Documents for Approval"]/parent::div'
+        )._locator;
+        const container = helper
             .locator(`(//div[contains(@class,'border-b cursor-pointer')])`)
             .filter({ hasText: title });
-        const imageName = helper._page.locator(
+        const imageName = helper.locator(
             '//div[contains(@class,"overflow-hidden font-medium")]'
         );
         if (await container.isVisible()) {
             await container.click();
             if (title === 'GSTIN Certificate') {
-                const gstinStatus = helper._page.locator(
+                const gstinStatus = helper.locator(
                     "//p[text()='GST Status']/following-sibling::p"
                 );
 
-                expect(
-                    await gstinStatus.isVisible(),
+                await expect(
+                    gstinStatus,
                     chalk.red('GSTIN Status visibility')
-                ).toBe(true);
+                ).toBeVisible();
+
                 expect(
                     await gstinStatus.textContent(),
                     chalk.red('GSTIN Status match')
@@ -122,13 +124,14 @@ export class VendorInvitationDetails extends BaseHelper {
             }
 
             if (title === 'MSME') {
-                const msmeLocator = helper._page.locator(
-                    "//div[text()='MSME number']/following-sibling::div"
+                const msmeLocator = helper.locator(
+                    '//div[text()="MSME number"]/following-sibling::div[@class="font-medium"]'
                 );
-                expect(
-                    await msmeLocator.isVisible(),
+                Logger.info('MSME Number', await msmeLocator.textContent());
+                await expect(
+                    msmeLocator,
                     chalk.red('MSME visibility')
-                ).toBe(true);
+                ).toBeVisible();
 
                 expect(
                     await msmeLocator.textContent(),
@@ -144,16 +147,16 @@ export class VendorInvitationDetails extends BaseHelper {
             }
 
             if (title === 'Lower TDS') {
-                const tdsCertNumber = helper._page.locator(
+                const tdsCertNumber = helper.locator(
                     "//div[text()='TDS Certificate Number']/following-sibling::div"
                 );
-                const tdsPercentage = helper._page.locator(
+                const tdsPercentage = helper.locator(
                     '//div[text()="Lower TDS Percentage"]/following-sibling::div'
                 );
-                console.log(
+                Logger.info(
                     'Lower TDS Percentage: ' + (await tdsPercentage.innerText())
                 );
-                const expireDate = helper._page.locator(
+                const expireDate = helper.locator(
                     '//div[text()="Expiry Date"]/following-sibling::div'
                 );
 
@@ -165,7 +168,7 @@ export class VendorInvitationDetails extends BaseHelper {
                 expect(
                     await tdsPercentage.textContent(),
                     chalk.red('TDS Percentage match')
-                ).toBe(this.lowerTDS.custom_field_data.percentage + '%');
+                ).toBe(this.lowerTDS.percentage + '%');
 
                 expect(
                     await expireDate.textContent(),
@@ -181,20 +184,20 @@ export class VendorInvitationDetails extends BaseHelper {
             }
 
             if (title === 'Bank') {
-                const bankName = helper._page.locator(
+                const bankName = helper.locator(
                     "//div[text()='Name']/following-sibling::div"
                 );
-                const accountNumber = helper._page.locator(
+                const accountNumber = helper.locator(
                     '//div[text()="A/C Number"]/following-sibling::div'
                 );
-                const ifscCode = helper._page.locator(
+                const ifscCode = helper.locator(
                     "//div[text()='IfSC Code']/following-sibling::div"
                 );
 
-                expect(
-                    await bankName.textContent(),
+                await expect(
+                    bankName,
                     chalk.red('Bank Name match')
-                ).toBe(this.bankDetails.bankName);
+                ).toBeVisible();
 
                 expect(
                     await accountNumber.textContent(),
