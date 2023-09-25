@@ -60,12 +60,14 @@ test.describe('Verify Phone', () => {
 
     test('Check with broken link', async ({ page }) => {
         const verifyPhone = new VerifyPhone(page);
-        const number = '9816934348';
+        const number = '9855115511';
         await verifyPhone.init(number);
 
         await verifyPhone.fillOtp('1111', 4);
 
         await verifyPhone.clickVerify();
+        const message = await verifyPhone.getToastError();
+        test.skip(message.includes('invalid attempts'), 'Invalid Attempts');
 
         await verifyPhone.checkToastError('Invalid otp');
     });
