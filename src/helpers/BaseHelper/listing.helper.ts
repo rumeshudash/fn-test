@@ -151,14 +151,24 @@ export class ListingHelper extends PageHelper {
         return headingTitles.indexOf(columnName);
     }
 
-    public async openDialogFormByButtonText(text: string) {
-        const button = this.locateByText(text);
+    public async openDialogFormByButtonText(
+        text: string,
+        byButtonTitle?: string
+    ) {
+        let button;
+        if (byButtonTitle) {
+            button = this._page.locator(
+                `//button[@data-title='${byButtonTitle}']`
+            );
+        } else button = this.locateByText(text);
 
         expect(await button.isVisible(), {
             message: `opening "${text}" dialog form`,
         }).toBe(true);
         await button.click();
-        console.log(chalk.blue('Open Add Business Form'));
+        await this._page.waitForLoadState('domcontentloaded');
+        await this._page.waitForLoadState('networkidle');
+        console.log(chalk.blue(`Open ${text} dialog form`));
     }
 
     /**

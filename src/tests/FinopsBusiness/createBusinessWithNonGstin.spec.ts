@@ -72,7 +72,7 @@ const createInit = async (page: any) => {
 const { describe } = PROCESS_TEST;
 
 describe.configure({ mode: 'serial' });
-describe(`Non Gst Business Creation`, () => {
+describe(`FinOps_BusinessCreation - Non Gst Business Creation`, () => {
     PROCESS_TEST('TBA002 ', async ({ page }) => {
         Logger.info('Initial Business Data Setup', `\n`);
         const helper = await createInit(page);
@@ -353,6 +353,7 @@ describe(`Non Gst Business Creation`, () => {
                     },
                     'name'
                 );
+                await page.waitForLoadState('networkidle');
 
                 await helper.formHelper.submitButton('Save', {
                     waitForNetwork: true,
@@ -371,7 +372,7 @@ describe(`Non Gst Business Creation`, () => {
     });
 });
 
-describe('Business Detail', () => {
+describe('FinOps_BusinessCreation - Non Gstin Business Detail', () => {
     PROCESS_TEST('TBD001', async ({ page }) => {
         const businessDetails = new BusinessDetailsPageHelper(
             businessInformation,
