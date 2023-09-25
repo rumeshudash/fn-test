@@ -23,6 +23,8 @@ export class SavedExpenseCreation extends BaseHelper {
         this.locate(SavedExpenseCreation.SAVED_EXPENSE_DOM_SELECTOR);
     }
     public async checkPartyStatus() {
+        await this._page.waitForTimeout(1 * 5 * 1000);
+        await this._page.reload();
         return await this._page
             .locator("//div[@id='party-status']/div[1]/div[1]")
             .textContent();
