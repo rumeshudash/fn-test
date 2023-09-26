@@ -151,7 +151,9 @@ export class ExpenseHelper extends BaseHelper {
             await this.fillText('inv' + generateRandomNumber(), {
                 name: 'invoice_number',
             });
-            await this._page.waitForTimeout(1000);
+            // await this.fillInput(expData.date, {
+            //     name: 'invoice_date',
+            // });
 
             await this.fillInput(expData.amount, {
                 name: 'amount',

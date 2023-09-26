@@ -242,9 +242,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 },
             ]);
         });
-        // await PROCESS_TEST.step('Remove default input value', async () => {
-        //     await expense.removeDefaultInputValue('department');
-        // });
+
         await expense.clickButton('Save');
 
         const savedExpensePage = new SavedExpenseCreation(page);
@@ -255,10 +253,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await savedExpensePage.notification.checkToastSuccess(
                     'Invoice raised successfully.'
                 );
-                // expect(
-                //     await savedExpensePage.toastMessage(),
-                //     chalk.red('Toast message match')
-                // ).toBe('Invoice raised successfully.');
+
                 expect(
                     await savedExpensePage.checkPartyStatus(),
                     chalk.red('Check party status')
@@ -286,13 +281,10 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await savedExpensePage.logOut();
             await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(pocEmail, '1234567');
-            // await page.waitForSelector('//div[@role="dialog"]', {
-            //     state: 'attached',
-            // });
-            // await page.getByText('New Test Auto').click();
-            // await page.waitForURL(TEST_URL + '/e/e');
+
             await savedExpensePage.clickLink('Expenses');
-            await savedExpensePage.clickLink(expData.slice(1));
+            await savedExpensePage.listing.searchInList(expData.slice(1));
+            await savedExpensePage.clickExpensesLink(expData.slice(1));
             await savedExpensePage.clickApprove([
                 {
                     department: 'Sales',
@@ -380,6 +372,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await expense.fillExpenses([
                 {
                     invoice: ' inv' + generateRandomNumber(),
+                    // date: '24-10-2023',
                     amount: 10000,
                     taxable_amount: 10000,
                     department: 'Sales',
@@ -410,9 +403,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await savedExpensePage.notification.checkToastSuccess(
                     'Invoice raised successfully.'
                 );
-                // expect(await savedExpensePage.toastMessage()).toBe(
-                //     'Invoice raised successfully.'
-                // );
+
                 expect(await savedExpensePage.checkPartyStatus()).toBe(
                     'Submitted'
                 );
@@ -439,13 +430,13 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await page.waitForLoadState('networkidle');
             await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(pocEmail, '1234567');
-            // await page.waitForSelector('//div[@role="dialog"]', {
-            //     state: 'attached',
-            // });
+
             await page.getByText('New Test Auto').click();
             await page.waitForURL(TEST_URL + '/e/e');
             await savedExpensePage.clickLink('Expenses');
-            await savedExpensePage.clickLink(expData.slice(1));
+            // await savedExpensePage.clickLink(expData.slice(1));
+            await savedExpensePage.listing.searchInList(expData.slice(1));
+            await savedExpensePage.clickExpensesLink(expData.slice(1));
             await savedExpensePage.clickApprove();
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await page.waitForTimeout(1000);
@@ -462,7 +453,9 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage('newtestauto@company.com', '123456');
             await savedExpensePage.clickLink('Expenses');
-            await savedExpensePage.clickLink(expData.slice(1));
+            // await savedExpensePage.clickLink(expData.slice(1));
+            await savedExpensePage.listing.searchInList(expData.slice(1));
+            await savedExpensePage.clickExpensesLink(expData.slice(1));
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await page.waitForTimeout(1500);
             expect(
@@ -484,7 +477,6 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
     });
 
     PROCESS_TEST('TECF005 - approval without comment ', async ({ page }) => {
-        // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const verificationFlows = new VerificationWorkflowsTab(page);
         const signIn = new SignInHelper(page);
@@ -507,8 +499,8 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await expense.fillExpenses([
                 {
                     invoice: ' inv' + generateRandomNumber(),
-                    amount: 10000,
-                    taxable_amount: 10000,
+                    amount: 12000,
+                    taxable_amount: 12000,
                     department: 'Sales',
                     expense_head: 'Foods & Accommodations',
                     poc: 'Abhishek',
@@ -537,10 +529,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await savedExpensePage.notification.checkToastSuccess(
                     'Invoice raised successfully.'
                 );
-                // expect(
-                //     await savedExpensePage.toastMessage(),
-                //     chalk.red('ToastMessage match')
-                // ).toBe('Invoice raised successfully.');
+
                 expect(
                     await savedExpensePage.checkPartyStatus(),
                     chalk.red('ToastMessage match')
@@ -574,7 +563,9 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await page.getByText('New Test Auto').click();
                 await page.waitForURL(TEST_URL + '/e/e');
                 await savedExpensePage.clickLink('Expenses');
-                await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.listing.searchInList(expData.slice(1));
+                await savedExpensePage.clickExpensesLink(expData.slice(1));
+                // await savedExpensePage.clickLink(expData.slice(1));
                 await verificationFlows.clickApproveWithoutComment();
                 await savedExpensePage.tabHelper.clickTab('Approval Workflows');
                 expect(
@@ -593,7 +584,9 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage('newtestauto@company.com', '123456');
             await savedExpensePage.clickLink('Expenses');
-            await savedExpensePage.clickLink(expData.slice(1));
+            // await savedExpensePage.clickLink(expData.slice(1));
+            await savedExpensePage.listing.searchInList(expData.slice(1));
+            await savedExpensePage.clickExpensesLink(expData.slice(1));
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             expect(
                 await verificationFlows.checkByFinOpsAdmin(
@@ -618,7 +611,6 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
     });
 
     PROCESS_TEST('TECF006 - expense rejection', async ({ page }) => {
-        // const tabHelper = new TabHelper(page);
         const expense = new ExpenseHelper(page);
         const signIn = new SignInHelper(page);
         const verificationFlows = new VerificationWorkflowsTab(page);
@@ -669,10 +661,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await savedExpensePage.notification.checkToastSuccess(
                     'Invoice raised successfully.'
                 );
-                // expect(
-                //     await savedExpensePage.toastMessage(),
-                //     chalk.red('ToastMessage match')
-                // ).toBe('Invoice raised successfully.');
+
                 expect(
                     await savedExpensePage.checkPartyStatus(),
                     chalk.red('Check party status match')
@@ -702,13 +691,13 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await page.waitForLoadState('networkidle');
             await page.waitForLoadState('domcontentloaded');
             await signIn.signInPage(pocEmail, '1234567');
-            // await page.waitForSelector('//div[@role="dialog"]', {
-            //     state: 'attached',
-            // });
+
             await page.getByText('New Test Auto').click();
             await page.waitForURL(TEST_URL + '/e/e');
             await savedExpensePage.clickLink('Expenses');
-            await savedExpensePage.clickLink(expData.slice(1));
+            await savedExpensePage.listing.searchInList(expData.slice(1));
+            await savedExpensePage.clickExpensesLink(expData.slice(1));
+            // await savedExpensePage.clickLink(expData.slice(1));
             await savedExpensePage.clickReject();
             await savedExpensePage.tabHelper.clickTab('Approval Workflows');
             await page.waitForTimeout(1000);
@@ -758,7 +747,6 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
     PROCESS_TEST(
         'TECF007 - approval by individual and auto',
         async ({ page }) => {
-            // const tabHelper = new TabHelper(page);
             const signIn = new SignInHelper(page);
             const expense = new ExpenseHelper(page);
             const verificationFlows = new VerificationWorkflowsTab(page);
@@ -824,10 +812,6 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                     await savedExpensePage.notification.checkToastSuccess(
                         'Invoice raised successfully.'
                     );
-                    // expect(
-                    //     await savedExpensePage.toastMessage(),
-                    //     chalk.red('Toast message match')
-                    // ).toBe('Invoice raised successfully.');
 
                     expect(
                         await savedExpensePage.checkPartyStatus(),
@@ -857,10 +841,11 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await page.waitForLoadState('networkidle');
                 await page.waitForLoadState('domcontentloaded');
                 await signIn.signInPage(pocEmail, '1234567');
-                // await page.getByText('New Test Auto').click();
-                // await page.waitForURL(TEST_URL + '/e/e');
+
                 await savedExpensePage.clickLink('Expenses');
-                await savedExpensePage.clickLink(expData.slice(1));
+                // await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.listing.searchInList(expData.slice(1));
+                await savedExpensePage.clickExpensesLink(expData.slice(1));
                 await savedExpensePage.clickApprove();
                 await savedExpensePage.tabHelper.clickTab('Approval Workflows');
                 await page.waitForTimeout(1000);
@@ -880,7 +865,9 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await signIn.signInPage('newtestauto@company.com', '123456');
                 await page.waitForURL(TEST_URL + '/e/f');
                 await savedExpensePage.clickLink('Expenses');
-                await savedExpensePage.clickLink(expData.slice(1));
+                // await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.listing.searchInList(expData.slice(1));
+                await savedExpensePage.clickExpensesLink(expData.slice(1));
                 await savedExpensePage.tabHelper.clickTab('Approval Workflows');
                 await verificationFlows.checkApprovalByFinOps();
             });
@@ -906,10 +893,11 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await page.waitForLoadState('networkidle');
                 await page.waitForLoadState('domcontentloaded');
                 await signIn.signInPage(finOpsEmail, '1234567');
-                // await page.getByText('New Test Auto').click();
-                // await page.waitForURL(TEST_URL + '/e/e');
+
                 await savedExpensePage.clickLink('Expenses');
-                await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.listing.searchInList(expData.slice(1));
+                await savedExpensePage.clickExpensesLink(expData.slice(1));
+                // await savedExpensePage.clickLink(expData.slice(1));
                 await savedExpensePage.clickApprove();
 
                 await savedExpensePage.tabHelper.clickTab('Approval Workflows');
@@ -930,7 +918,9 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await page.getByText('New Test Auto').click();
                 await page.waitForURL(TEST_URL + '/e/e');
                 await savedExpensePage.clickLink('Expenses');
-                await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.listing.searchInList(expData.slice(1));
+                await savedExpensePage.clickExpensesLink(expData.slice(1));
+                // await savedExpensePage.clickLink(expData.slice(1));
 
                 await savedExpensePage.clickApprove();
 
@@ -1025,10 +1015,6 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                     await savedExpensePage.notification.checkToastSuccess(
                         'Invoice raised successfully.'
                     );
-                    // expect(
-                    //     await savedExpensePage.toastMessage(),
-                    //     chalk.red('Toast Message match')
-                    // ).toBe('Invoice raised successfully.');
 
                     expect(
                         await savedExpensePage.checkPartyStatus(),
@@ -1061,7 +1047,9 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await page.getByText('New Test Auto').click();
                 await page.waitForURL(TEST_URL + '/e/e');
                 await savedExpensePage.clickLink('Expenses');
-                await savedExpensePage.clickLink(expData.slice(1));
+                // await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.listing.searchInList(expData.slice(1));
+                await savedExpensePage.clickExpensesLink(expData.slice(1));
                 await savedExpensePage.clickApprove();
                 await savedExpensePage.tabHelper.clickTab('Approval Workflows');
                 await page.waitForTimeout(1000);
@@ -1080,16 +1068,17 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await page.waitForLoadState('domcontentloaded');
                 await signIn.signInPage('newtestauto@company.com', '123456');
                 await savedExpensePage.clickLink('Expenses');
-                await savedExpensePage.clickLink(expData.slice(1));
+                // await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.listing.searchInList(expData.slice(1));
+                await savedExpensePage.clickExpensesLink(expData.slice(1));
                 await savedExpensePage.tabHelper.clickTab('Approval Workflows');
-                await page.waitForTimeout(1000);
+                // await page.waitForTimeout(1000);
                 expect(
                     await verificationFlows.checkByFinOpsAdmin(
                         'Verification Approvals'
                     ),
                     chalk.red('Verification Approval match')
                 ).toBe('Approved');
-                // await verificationFlows.checkApprovalByFinOps();
             });
 
             await PROCESS_TEST.step(
@@ -1127,7 +1116,9 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
                 await page.getByText('New Test Auto').click();
                 await page.waitForURL(TEST_URL + '/e/e');
                 await savedExpensePage.clickLink('Expenses');
-                await savedExpensePage.clickLink(expData.slice(1));
+                // await savedExpensePage.clickLink(expData.slice(1));
+                await savedExpensePage.listing.searchInList(expData.slice(1));
+                await savedExpensePage.clickExpensesLink(expData.slice(1));
 
                 await savedExpensePage.clickApprove();
 

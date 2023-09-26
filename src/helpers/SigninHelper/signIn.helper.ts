@@ -88,7 +88,9 @@ export class SignInHelper extends NotificationHelper {
             '//div[@role="dialog"]//h2[text()="Select Portal"]'
         )._locator.isVisible();
         if (portal) await this.locate('div', { id: 'pro-3' })._locator.click();
-        await this._page.waitForTimeout(2000);
+        await this._page.waitForTimeout(3000);
+        await this._page.waitForLoadState('networkidle');
+        await this._page.waitForLoadState('domcontentloaded');
         // };
         // if (username === 'newtestauto@company.com') selectOrgPortal;
 
