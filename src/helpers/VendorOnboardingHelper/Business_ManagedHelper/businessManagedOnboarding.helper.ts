@@ -5,14 +5,17 @@ import { vendorGstinInfo } from '@/utils/required_data';
 import chalk from 'chalk';
 import { DialogHelper } from '../../BaseHelper/dialog.helper';
 import { FormHelper } from '../../BaseHelper/form.helper';
+import { NotificationHelper } from '@/helpers/BaseHelper/notification.helper';
 
 export class BusinessManagedOnboarding extends BaseHelper {
     public form: FormHelper;
     public dialog: DialogHelper;
+    public notification: NotificationHelper;
     constructor(page: any) {
         super(page);
         this.dialog = new DialogHelper(page);
         this.form = new FormHelper(page);
+        this.notification = new NotificationHelper(page);
     }
     public vendorBusiness;
     public ignore_next_page: string[] = [];
@@ -25,7 +28,6 @@ export class BusinessManagedOnboarding extends BaseHelper {
             .nth(1);
         await partyHover.hover();
         await partyClick.click();
-        await this._page.waitForTimeout(2000);
     }
     async verifyVendorPageURL() {
         await expect(this._page, chalk.red('Invite vendor URL')).toHaveURL(
@@ -33,6 +35,8 @@ export class BusinessManagedOnboarding extends BaseHelper {
         );
     }
     async verifyAddIcon() {
+        await this._page.waitForTimeout(3000);
+        await this._page.waitForLoadState('domcontentloaded');
         const addIcon = this._page.locator(
             "//div[contains(@class,'flex-wrap justify-end')]//button[1]"
         );
@@ -73,6 +77,8 @@ export class BusinessManagedOnboarding extends BaseHelper {
     }
 
     async afterSaveAndCreateValidation() {
+        await this._page.waitForTimeout(1000);
+        await this._page.waitForLoadState('networkidle');
         // if (!this.ignore_next_page.includes('move_to_next_page')) {
         const email_field = this.locate('input', {
             name: 'email',
@@ -92,8 +98,10 @@ export class BusinessManagedOnboarding extends BaseHelper {
     }
 
     async verifyBusinessManaged() {
-        await this._page.waitForTimeout(1500);
+        await this._page.reload();
+        await this._page.waitForTimeout(3000);
         await this._page.waitForLoadState('networkidle');
+        await this._page.waitForLoadState('domcontentloaded');
         expect(
             await this.locate(
                 '(//div[contains(@class,"text-center rounded")])[1]'
