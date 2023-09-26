@@ -4,8 +4,6 @@ import { Logger } from '@/helpers/BaseHelper/log.helper';
 import GenericGstinCardHelper, {
     gstinDataType,
 } from '@/helpers/CommonCardHelper/genericGstin.card.helper';
-import CreateFinopsBusinessHelper from '@/helpers/FinopsBusinessHelper/createFinopsBusiness.helper';
-import { SignInHelper } from '@/helpers/SigninHelper/signIn.helper';
 import { CreateBusinessHelper } from '@/helpers/SignupHelper/createBusiness.helper';
 import { SignupHelper } from '@/helpers/SignupHelper/signup.helper';
 import { VerifyEmailHelper } from '@/helpers/SignupHelper/verifyEmail.helper';
@@ -119,8 +117,7 @@ describe('FinOps_VonboardingBmanaged - Business Managedwith GSTIN', () => {
             page
         );
 
-        const signIn = new SignInHelper(page);
-        await PROCESS_TEST.step('Create New User', async () => {
+        await PROCESS_TEST.step('Create New User and Business', async () => {
             const createBusiness = new CreateBusinessHelper(page);
             const form = new FormHelper(page);
             await PROCESS_TEST.step('Create New User', async () => {
@@ -147,14 +144,8 @@ describe('FinOps_VonboardingBmanaged - Business Managedwith GSTIN', () => {
                     formSchema,
                     finopsBusinessInfo
                 );
-                // await createBusiness.getBusinessName()
                 await form.submitButton();
             });
-
-            // await PROCESS_TEST.step('Logout then Login', async () => {
-            //     await businessManagedOnboarding.logOut();
-            //     await signIn.signInPage('newtestauto@company.com', '123456');
-            // });
         });
 
         await PROCESS_TEST.step('Navigate to Add Vendor', async () => {
@@ -173,7 +164,6 @@ describe('FinOps_VonboardingBmanaged - Business Managedwith GSTIN', () => {
         await PROCESS_TEST.step(
             'Fill Client and Vendor Information',
             async () => {
-                // await businessManagedOnboarding.setCheckbox('GSTIN Registered');
                 await businessManagedOnboarding.clickNavigationTab(
                     'GST Registered'
                 );
@@ -181,7 +171,6 @@ describe('FinOps_VonboardingBmanaged - Business Managedwith GSTIN', () => {
                     BusinessSchema,
                     BusinessInfo
                 );
-                // await withGstin.selectClientTradeName();
 
                 await PROCESS_TEST.step(
                     'verify client/business gstin info',
@@ -195,42 +184,106 @@ describe('FinOps_VonboardingBmanaged - Business Managedwith GSTIN', () => {
                         await businessGstin.gstinInfoCheck();
                     }
                 );
-                await PROCESS_TEST.step('Fill vendor details', async () => {
-                    // await withGstin.fillBusinessDetails();
-                    await businessManagedOnboarding.form.fillFormInputInformation(
-                        VendorSchema,
-                        VendorInfo
-                    );
-                    // await withGstin.expandClientInfoCard();
+            }
+        );
+        await PROCESS_TEST.step('Invalid GST Number', async () => {
+            await businessManagedOnboarding.form.fillFormInputInformation(
+                VendorSchema,
+                { ...VendorInfo, gstin: '03AAACP4526D1SS' }
+            );
+            await businessManagedOnboarding.form.submitButton();
+            await businessManagedOnboarding.form.checkInputError(
+                'gstin',
+                VendorSchema
+            );
+        });
+        await PROCESS_TEST.step('Fill vendor details', async () => {
+            await businessManagedOnboarding.form.fillFormInputInformation(
+                VendorSchema,
+                VendorInfo
+            );
 
-                    // await withGstin.checkDisplayName();
-                    // await withGstin.editDisplayName(
-                    //     VendorInfo.updated_display_name
-                    // );
-                    await withGstin.expandClientInfoCard(
-                        businessVendorGstin.trade_name
-                    );
-                    await vendorGstin.gstinInfoCheck();
-                    await businessManagedOnboarding.saveAndCreateCheckbox();
+            await withGstin.expandClientInfoCard(
+                businessVendorGstin.trade_name
+            );
+            await vendorGstin.gstinInfoCheck();
+            await businessManagedOnboarding.saveAndCreateCheckbox();
 
-                    await businessManagedOnboarding.form.submitButton();
-                    // await businessManagedOnboarding.form.checkInputError(
-                    //     'gstin',
-                    //     VendorSchema
-                    // );
-                    await businessManagedOnboarding.notification.getErrorMessage();
-                });
+            await businessManagedOnboarding.form.submitButton();
+
+            await businessManagedOnboarding.notification.getErrorMessage();
+        });
+
+        await PROCESS_TEST.step(
+            'Verify Input after save and create',
+            async () => {
+                await businessManagedOnboarding.afterSaveAndCreateValidation();
             }
         );
 
-        await businessManagedOnboarding.afterSaveAndCreateValidation();
-        await businessManagedOnboarding.dialog.closeDialog();
-        // expect
-        //     .soft(
-        //         await businessManagedOnboarding.toastMessage(),
-        //         'Successfully saved is not shown'
-        //     )
-        //     .toBe('Successfully saved!');
-        await businessManagedOnboarding.verifyBusinessManaged();
+        await PROCESS_TEST.step('Verify vendor exist', async () => {
+            await businessManagedOnboarding.form.fillFormInputInformation(
+                BusinessSchema,
+                BusinessInfo
+            );
+            await businessManagedOnboarding.form.fillFormInputInformation(
+                VendorSchema,
+                VendorInfo
+            );
+
+            await businessManagedOnboarding.form.submitButton();
+            await businessManagedOnboarding.form.checkInputError(
+                'gstin',
+                VendorSchema
+            );
+        });
+
+        await PROCESS_TEST.step('Verify Invalid Email', async () => {
+            await businessManagedOnboarding.form.fillFormInputInformation(
+                BusinessSchema,
+                BusinessInfo
+            );
+            await businessManagedOnboarding.form.fillFormInputInformation(
+                VendorSchema,
+                { ...VendorInfo, email: 'testt.com' }
+            );
+
+            // await businessManagedOnboarding.form.submitButton();
+            await businessManagedOnboarding.form.checkInputError(
+                'email',
+                VendorSchema
+            );
+            await businessManagedOnboarding.form.checkSubmitIsDisabled();
+        });
+
+        await PROCESS_TEST.step('Verify Invalid Mobile Number', async () => {
+            await businessManagedOnboarding.form.fillFormInputInformation(
+                BusinessSchema,
+                BusinessInfo
+            );
+            await businessManagedOnboarding.form.fillFormInputInformation(
+                VendorSchema,
+                { ...VendorInfo, mobile: '0987655221' }
+            );
+            await businessManagedOnboarding.form.checkSubmitIsDisabled();
+            await businessManagedOnboarding.fillText(VendorInfo.email, {
+                name: 'email',
+            });
+            // await businessManagedOnboarding.form.submitButton();
+            await businessManagedOnboarding.form.checkInputError(
+                'mobile',
+                VendorSchema
+            );
+        });
+
+        await PROCESS_TEST.step('Close Dialog then Verify', async () => {
+            await businessManagedOnboarding.dialog.checkConfirmDialogOpenOrNot();
+            await businessManagedOnboarding.form.submitButton('Yes!');
+            // await businessManagedOnboarding.verifyBusinessManaged();
+            await businessManagedOnboarding.verifyBusiness(
+                businessVendorGstin.trade_name,
+                'Business Managed'
+            );
+        });
     });
 });
