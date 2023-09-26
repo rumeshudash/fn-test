@@ -300,6 +300,7 @@ export class BaseHelper {
                 .locator('input[type="text"]')
                 .fill(input + '');
             await this._page.waitForTimeout(1000);
+            await this._page.waitForLoadState('networkidle');
         } else {
             await selectBox.click();
         }
