@@ -6,21 +6,24 @@ import chalk from 'chalk';
 import { DialogHelper } from '../../BaseHelper/dialog.helper';
 import { FormHelper } from '../../BaseHelper/form.helper';
 import { NotificationHelper } from '@/helpers/BaseHelper/notification.helper';
+import { ListingHelper } from '@/helpers/BaseHelper/listing.helper';
 
 export class BusinessManagedOnboarding extends BaseHelper {
     public form: FormHelper;
     public dialog: DialogHelper;
     public notification: NotificationHelper;
+    public listing: ListingHelper;
     constructor(page: any) {
         super(page);
         this.dialog = new DialogHelper(page);
         this.form = new FormHelper(page);
         this.notification = new NotificationHelper(page);
+        this.listing = new ListingHelper(page);
     }
     public vendorBusiness;
     public ignore_next_page: string[] = [];
 
-    async clickVendor(linkName: string) {
+    public async clickVendor(linkName: string) {
         const partyHover = this._page.getByText('Partiesarrow_drop_down');
         const partyClick = this._page
             .locator('a')
@@ -29,12 +32,12 @@ export class BusinessManagedOnboarding extends BaseHelper {
         await partyHover.hover();
         await partyClick.click();
     }
-    async verifyVendorPageURL() {
+    public async verifyVendorPageURL() {
         await expect(this._page, chalk.red('Invite vendor URL')).toHaveURL(
             LISTING_ROUTES.VENDORS
         );
     }
-    async verifyAddIcon() {
+    public async verifyAddIcon() {
         await this._page.waitForTimeout(3000);
         await this._page.waitForLoadState('domcontentloaded');
         const addIcon = this._page.locator(
@@ -46,7 +49,7 @@ export class BusinessManagedOnboarding extends BaseHelper {
             chalk.red('Add Vendor Icon visibility')
         ).toBe(true);
     }
-    async clickAddIcon() {
+    public async clickAddIcon() {
         await this.verifyAddIcon();
         await this._page
             .locator(
@@ -55,20 +58,11 @@ export class BusinessManagedOnboarding extends BaseHelper {
             .click();
     }
 
-    // async verifyDialog() {
-    //     expect(
-    //         await this._page
-    //             .locator("//div[text()='Add Vendor Account']")
-    //             .isVisible(),
-    //         chalk.red('Add vendor account visibility')
-    //     ).toBe(true);
-    // }
-
-    async clickNavigationTab(nav: string) {
+    public async clickNavigationTab(nav: string) {
         await this._page.locator(`//span[text()='${nav}']`).click();
     }
 
-    async validateCheckbox() {
+    public async validateCheckbox() {
         const checkbox = this.locate("//input[@type='checkbox']")._locator;
         expect(
             !(await checkbox.isChecked()),
@@ -76,7 +70,7 @@ export class BusinessManagedOnboarding extends BaseHelper {
         ).toBe(true);
     }
 
-    async afterSaveAndCreateValidation() {
+    public async afterSaveAndCreateValidation() {
         await this._page.waitForTimeout(1000);
         await this._page.waitForLoadState('networkidle');
         // if (!this.ignore_next_page.includes('move_to_next_page')) {
@@ -97,8 +91,30 @@ export class BusinessManagedOnboarding extends BaseHelper {
         // }
     }
 
-    async verifyBusinessManaged() {
+    private async _parentRow(vendor: string) {
+        const row = await this.listing.findRowInTable(vendor, 'NAME');
+        return row;
+    }
+
+    /**
+     * Verifies the business type of a vendor.
+     *
+     * @param {string} vendor - the name of the vendor
+     * @param {string} columnText - the expected business type
+     * @return {Promise<void>} - a Promise that resolves when the business type is verified
+     */
+    public async verifyBusiness(
+        vendor: string,
+        columnText: string
+    ): Promise<void> {
         await this._page.reload();
+        await this._page.waitForLoadState('networkidle');
+        const row = await this._parentRow(vendor);
+        const businessType = await this.listing.getCellText(row, 'TYPE');
+        expect(businessType).toBe(columnText);
+    }
+
+    public async verifyBusinessManaged() {
         await this._page.waitForTimeout(3000);
         await this._page.waitForLoadState('networkidle');
         await this._page.waitForLoadState('domcontentloaded');
@@ -117,7 +133,7 @@ export class BusinessManagedOnboarding extends BaseHelper {
         ).toBe('Business Managed');
     }
 
-    async verifyNonGstinStatus() {
+    public async verifyNonGstinStatus() {
         expect(
             await this.locate(
                 '(//div[contains(@class,"text-center rounded")])[2]'

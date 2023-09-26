@@ -70,19 +70,10 @@ export class WithoutGstinBusinessManagedOnboarding extends BaseHelper {
         });
     }
 
-    public async searchVendor() {
-        await this.fillText(this.vendorBusiness.vendorBusiness, {
-            placeholder: 'Search ( min: 3 characters )',
-        });
-        await this._page.waitForTimeout(2000);
-    }
-
-    public async verifyVendorInList() {
-        const vendorLocator = await this._page
-            .locator("(//a[contains(@class,'cursor-pointer link')]//span)[1]")
-            .textContent();
-        expect(vendorLocator, chalk.red('Vendor match')).toBe(
-            this.vendorBusiness.vendorBusiness
-        );
+    public async uncheckSaveAndCreate() {
+        const checkbox = this.locate('label', {
+            text: 'save and create another',
+        })._locator;
+        await checkbox.click();
     }
 }
