@@ -4,15 +4,19 @@ import chalk from 'chalk';
 import { TabHelper } from '../BaseHelper/tab.helper';
 import { NotificationHelper } from '../BaseHelper/notification.helper';
 import { Logger } from '../BaseHelper/log.helper';
+import { ListingHelper } from '../BaseHelper/listing.helper';
+import { tr } from 'date-fns/locale';
 // import { firefox } from 'playwright';
 
 export class SavedExpenseCreation extends BaseHelper {
+    public listing: ListingHelper;
     public tabHelper: TabHelper;
     public notification: NotificationHelper;
     constructor(page: any) {
         super(page);
         this.tabHelper = new TabHelper(page);
         this.notification = new NotificationHelper(page);
+        this.listing = new ListingHelper(page);
     }
     private static SAVED_EXPENSE_DOM_SELECTOR =
         "//div[@dir='ltr']/following-sibling::div[1]";
@@ -29,8 +33,29 @@ export class SavedExpenseCreation extends BaseHelper {
     }
 
     public async clickLink(linkName: string): Promise<void> {
-        await this._page.locator('a').filter({ hasText: linkName }).click();
+        const link = this._page.locator('a').filter({ hasText: linkName });
+        expect(
+            await link.isVisible(),
+            chalk.red(linkName + ' visibility check')
+        ).toBe(true);
+
+        await link.click();
+        await this._page.waitForTimeout(2000);
+        await this._page.waitForLoadState('networkidle');
+        await this._page.waitForLoadState('domcontentloaded');
+    }
+
+    public async clickExpensesLink(identifier: string) {
+        await this._page.reload();
         await this._page.waitForTimeout(1000);
+        await this._page.waitForLoadState('domcontentloaded');
+        const link = this.locate(`//a[text()="${identifier}"]`)._locator;
+        expect(
+            await link.isVisible(),
+            chalk.red(`Check expenses ${identifier}`)
+        ).toBe(true);
+
+        await link.click();
     }
 
     public async expenseStatusSuccess(statusName: string): Promise<boolean> {
@@ -118,6 +143,8 @@ export class ApprovalToggleHelper extends BaseHelper {
             .locator('.sidebar-item-title')
             .filter({ hasText: 'Expense Approvals' })
             .click();
+
+        await this._page.locator('.hamburger_button').click();
     }
 
     public async gotoTab(tab: string): Promise<void> {

@@ -127,6 +127,7 @@ interface BusinessDetails {
 }
 interface ExpenseDetailInputs {
     invoice?: string;
+    date?: string;
     amount?: number;
     taxable_amount?: number;
     department?: string;

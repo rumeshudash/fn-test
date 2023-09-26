@@ -2,12 +2,15 @@ import { expect } from '@playwright/test';
 import { generateRandomNumber, uuidV4 } from '../../utils/common.utils';
 import { BaseHelper } from '.././BaseHelper/base.helper';
 import { FormHelper } from '../BaseHelper/form.helper';
+import { NotificationHelper } from '../BaseHelper/notification.helper';
 
 export class ExpenseHelper extends BaseHelper {
     public form: FormHelper;
+    public notification: NotificationHelper;
     constructor(page: any) {
         super(page);
         this.form = new FormHelper(page);
+        this.notification = new NotificationHelper(page);
     }
     // private static DOM_SELECTOR =
     //     '//div[text()='Details']/parent::div/parent::div';
@@ -151,7 +154,9 @@ export class ExpenseHelper extends BaseHelper {
             await this.fillText('inv' + generateRandomNumber(), {
                 name: 'invoice_number',
             });
-            await this._page.waitForTimeout(1000);
+            // await this.fillInput(expData.date, {
+            //     name: 'invoice_date',
+            // });
 
             await this.fillInput(expData.amount, {
                 name: 'amount',
