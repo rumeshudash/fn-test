@@ -231,6 +231,11 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             await expense.fillBusinessDetails([BusinessInfo]);
             await expense.fillExpenses([EXPENSEDETAILS]);
         });
+
+        await PROCESS_TEST.step('Remove default input value', async () => {
+            await expense.removeDefaultInputValue('department');
+        });
+
         // await expense.checkDepartmentFetch();
         await PROCESS_TEST.step('Add Taxes', async () => {
             await expense.addTaxesData([
@@ -1006,6 +1011,7 @@ describe('FinOps_ExpenseCreation - Expense Creation', () => {
             //     await expense.clickButton('Save');
             // });
             await expense.clickButton('Save');
+            await expense.notification.getErrorMessage();
 
             const savedExpensePage = new SavedExpenseCreation(page);
 
